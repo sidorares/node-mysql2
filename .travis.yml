@@ -1,4 +1,6 @@
 language: node_js
+before_script:
+  - mysql -e 'create database test;'
 node_js:
   - 0.4
   - 0.6
