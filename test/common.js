@@ -8,7 +8,12 @@ module.exports.createConnection = function() {
       return [seconds - start[0], (timestamp-seconds*1000)*1000 - start[1]];
     };
 
-  return require('../index.js').createConnection({
+  var driver = require('../index.js');
+
+  // uncomment to benchmark against mysql:
+  //var driver = require('mysql');
+
+  return driver.createConnection({
    host: process.env.MYSQL_HOST  || '127.0.0.1',
    user: process.env.MYSQL_USER  || 'root',
    password: process.env.CI ? null : 'test',
@@ -17,3 +22,6 @@ module.exports.createConnection = function() {
  });
 };
 
+module.exports.hrdiff = function(t1, t2) {
+  return t2[1] - t1[1] + (t2[0] - t1[0])*1e9;
+};
