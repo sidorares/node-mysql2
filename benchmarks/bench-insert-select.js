@@ -60,15 +60,18 @@ function benchmarkSelects(n, size, cb) {
   });
 }
 
-var testStart = process.hrtime();
-benchmarkInserts(5, function() {
-  benchmarkSelects(5, 10000, function() {
-    benchmarkSelects(10, 1000, function() {
-      benchmarkSelects(2, 50000, function() {
-        var testEnd = process.hrtime();
-        console.log('total time: ', common.hrdiff(testStart, testEnd)/1e9 );
-        connection.end();
+module.exports = function(done) {
+  var testStart = process.hrtime();
+  benchmarkInserts(5, function() {
+    benchmarkSelects(5, 10000, function() {
+      benchmarkSelects(10, 1000, function() {
+        benchmarkSelects(2, 50000, function() {
+          var testEnd = process.hrtime();
+          console.log('total time: ', common.hrdiff(testStart, testEnd)/1e9 );
+          connection.end();
+          done();
+        });
       });
     });
   });
-});
+};

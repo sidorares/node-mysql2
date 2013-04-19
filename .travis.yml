@@ -1,6 +1,6 @@
 language: node_js
 before_script:
-  - mysql -e 'create database if not exists test;' & node benchmarks/bench-insert-select.js
+  - mysql -e 'create database if not exists test;'
 node_js:
   - "0.4"
   - "0.6"
