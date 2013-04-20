@@ -9,9 +9,8 @@ module.exports.createConnection = function() {
     };
 
   var driver = require('../index.js');
-
-  // uncomment to benchmark against mysql:
-  //var driver = require('mysql');
+  if (process.env.BENCHMARK_MYSQL1)
+    driver = require('mysql');
 
   return driver.createConnection({
    host: process.env.MYSQL_HOST  || '127.0.0.1',
