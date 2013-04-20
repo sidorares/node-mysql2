@@ -14,6 +14,7 @@ connection.query([
 
 function benchmarkInsert(numLeft, callback) {
   connection.query('INSERT INTO ' + table + ' SET title="' + text + '"', function(err, result) {
+    debugger;
     if (err) throw err;
     if (numLeft > 1)
       benchmarkInsert(numLeft-1, callback);
@@ -69,9 +70,14 @@ module.exports = function(done) {
           var testEnd = process.hrtime();
           console.log('total time: ', common.hrdiff(testStart, testEnd)/1e9 );
           connection.end();
-          done();
+          if (done)
+            done();
         });
       });
     });
   });
 };
+
+if (require.main === module) {
+  module.exports();
+}
