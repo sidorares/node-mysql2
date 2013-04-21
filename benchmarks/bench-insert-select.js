@@ -14,7 +14,6 @@ connection.query([
 
 function benchmarkInsert(numLeft, callback) {
   connection.query('INSERT INTO ' + table + ' SET title="' + text + '"', function(err, result) {
-    debugger;
     if (err) throw err;
     if (numLeft > 1)
       benchmarkInsert(numLeft-1, callback);
