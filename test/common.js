@@ -1,4 +1,4 @@
-module.exports.createConnection = function() {
+module.exports.createConnection = function(callback) {
   // hrtime polyfill for old node versions:
   if (!process.hrtime)
     process.hrtime = function(start) {
@@ -7,6 +7,35 @@ module.exports.createConnection = function() {
       var seconds = Math.ceil(timestamp/1000);
       return [seconds - start[0], (timestamp-seconds*1000)*1000 - start[1]];
     };
+
+  if (process.env.BENCHMARK_MARIA) {
+    var Client = require('mariasql');
+    var c = new Client();
+    c.connect({
+      host: '127.0.0.1',
+      user: 'root',
+      password: 'test',
+      db: 'test'
+    });
+    //c.on('connect', function() {
+    //
+    //});
+    setTimeout( function() {
+    console.log('altering client...');
+    c.oldQuery = c.query;
+    c.query = function(sql, callback) {
+      var rows = [];
+      var q = c.oldQuery(sql);
+      q.on('result', function(res) {
+        res.on('row', function(row) { rows.push(row) });
+        res.on('end', function() {
+          callback(null, rows);
+        });
+      });
+    };
+    }, 1000);
+    return c;
+  }
 
   var driver = require('../index.js');
   if (process.env.BENCHMARK_MYSQL1)
@@ -19,6 +48,12 @@ module.exports.createConnection = function() {
    database: 'test',
    port: process.env.MYSQL_PORT || 3306
  });
+};
+
+module.exports.createTemplate = function() {
+  var jade = require('jade');
+  var template = require('fs').readFileSync(__dirname + '/template.jade', 'ascii');
+  return jade.compile(template);
 };
 
 module.exports.hrdiff = function(t1, t2) {
