@@ -1,0 +1,5 @@
+html
+  body
+    ul#users
+    each record in records
+      li(class='user-' + record.id) #{record.name}
