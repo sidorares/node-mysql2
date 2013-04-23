@@ -1,6 +1,6 @@
 {
   "name": "mysql2",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "fast mysql driver",
   "main": "index.js",
   "directories": {
@@ -19,8 +19,7 @@
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "underscore": "~1.4.4",
-    "readable-stream": "~1.0.2"
+    "underscore": "~1.4.4"
   },
   "devDependencies": {
     "urun": "0.0.6"
