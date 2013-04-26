@@ -4,3 +4,4 @@ module.exports.createConnection = function(opts) {
 };
 
 module.exports.Connection = Connection;
+module.exports.Types      = require('./lib/constants/types');;
