@@ -4,4 +4,11 @@ module.exports.createConnection = function(opts) {
 };
 
 module.exports.Connection = Connection;
-module.exports.Types      = require('./lib/constants/types');;
+module.exports.Types      = require('./lib/constants/types');
+
+
+var PoolConfig = require('./lib/pool_config');
+var Pool = require('./lib/pool');
+module.exports.createPool = function(config) {
+    return new Pool({config: new PoolConfig(config)});
+};
