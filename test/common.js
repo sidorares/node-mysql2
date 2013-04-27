@@ -50,6 +50,20 @@ module.exports.createConnection = function(callback) {
  });
 };
 
+module.exports.createPool = function(callback) {
+  var driver = require('../index.js');
+  if (process.env.BENCHMARK_MYSQL1)
+    driver = require('mysql');
+
+  return driver.createPool({
+   host: process.env.MYSQL_HOST  || '127.0.0.1',
+   user: process.env.MYSQL_USER  || 'root',
+   password: process.env.CI ? null : 'test',
+   database: 'test',
+   port: process.env.MYSQL_PORT || 3306
+ });
+};
+
 module.exports.createTemplate = function() {
   var jade = require('jade');
   var template = require('fs').readFileSync(__dirname + '/template.jade', 'ascii');
