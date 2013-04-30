@@ -4,7 +4,8 @@ var conn = mysql.createConnection({
    user: 'root',
    password: '',
    database: 'test',
-   socketPath: '/tmp/mysql.sock',
+   host: '127.0.0.1',
+   port: '3306',
    ssl: {
      key: fs.readFileSync('./certs/client-key.pem'),
      cert: fs.readFileSync('./certs/client-cert.pem')
@@ -13,4 +14,7 @@ var conn = mysql.createConnection({
 
 conn.query('select 1+1 as test', function(err, res) {
   console.log(res);
+  conn.query('select repeat("a", 100) as test', function(err, res) {
+    console.log(res);
+  });
 });
