@@ -1,6 +1,8 @@
 var Connection = require('./lib/connection');
+var ConnectionConfig = require('./lib/connection_config');
 module.exports.createConnection = function(opts) {
-  return new Connection(opts);
+  return new Connection({config: new ConnectionConfig(opts)});
+  //return new Connection(opts);
 };
 
 module.exports.Connection = Connection;
