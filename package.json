@@ -19,7 +19,8 @@
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "underscore": "~1.4.4"
+    "underscore": "~1.4.4",
+    "fastqueue": "~0.1.0"
   },
   "devDependencies": {
     "urun": "0.0.6"
