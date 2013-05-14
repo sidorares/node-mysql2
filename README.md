@@ -111,7 +111,7 @@ server.on('connection', function(conn) {
 
 events: 
 
-  *  **connect` - new incoming connection.
+  *  **connect** - new incoming connection.
  
 ### Connection
 
