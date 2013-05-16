@@ -8,11 +8,11 @@ Mysql client for node.js. Written in native JavaScript and aims to be mostly api
 ## Installation
 
     npm install mysql2
-    
+
 ## Features
 
  In addition to client-side query/escape and connection pooling
- 
+
   - server-side API
   - SSL and compression
   - prepared statements
@@ -30,7 +30,7 @@ var mysql      = require('mysql2');
 var connection = mysql.createConnection({ user: 'test', database: 'test'});
 
 connection.query('SELECT 1+1 as test1', function(err, rows) {
-  // 
+  //
 });
 ```
 
@@ -41,7 +41,7 @@ var mysql      = require('mysql2');
 var connection = mysql.createConnection({ user: 'test', database: 'test'});
 
 connection.execute('SELECT 1+? as test1', [10], function(err, rows) {
-  // 
+  //
 });
 ```
 
@@ -109,22 +109,24 @@ server.on('connection', function(conn) {
   *  **createServer()** - creates server instance
   *  **Server.listen**  - listen port / unix socket (same arguments as [net.Server.listen](http://nodejs.org/api/net.html#net_server_listen_port_host_backlog_callback))
 
-events: 
+events:
 
   *  **connect** - new incoming connection.
- 
+
 ### Connection
 
-  *  **writeOk({affectedRows: num, insertId: num)** - send [OK packet](http://dev.mysql.com/doc/internals/en/overview.html#packet-OK_Packet) to client
+  *  **serverHandshake({serverVersion, protocolVersion, connectionId, statusFlags, characterSet, capabilityFlags})** - send server handshake initialisation packet, wait handshake response and start listening for commands
+  *  **writeOk({affectedRows: num, insertId: num})** - send [OK packet](http://dev.mysql.com/doc/internals/en/overview.html#packet-OK_Packet) to client
   *  **writeEof(warnings, statusFlags)** - send EOF packet
   *  **writeTextResult(rows, fields)** - write query result to client. Rows and fields are in the same format as in `connection.query` callback.
   *  **writeColumns(fields)** - write fields + EOF packets.
   *  **writeTextRow(row)**  - write array (not hash!) ov values as result row
-  
+  *  TODO: binary protocol
+
 events:
 
    *  **query(sql)** - query from client
- 
+
 
 ## License
 
@@ -137,7 +139,7 @@ events:
   - SSL upgrade code based on @TooTallNate [code](https://gist.github.com/TooTallNate/848444)
   - Secure connection / compressed connection api flags compatible to [mariasql](https://github.com/mscdex/node-mariasql/) client.
   - [contributors](https://github.com/sidorares/node-mysql2/graphs/contributors)
-  
+
 ## Benchmarks
   - see [node-mysql-benchmarks](https://github.com/mscdex/node-mysql-benchmarks)
   - try to run example [benchmarks](https://github.com/sidorares/node-mysql2/tree/master/benchmarks) on your system
@@ -148,7 +150,7 @@ events:
 Feel free to create pull requests.
 TODO in order of importance:
 
-  - node-mysql api incompatibility fixes 
+  - node-mysql api incompatibility fixes
   - documentation
   - tests
   - benchmarks
