@@ -67,7 +67,6 @@ Connecting using custom stream:
 var net        = require('net');
 var mysql      = require('mysql2');
 var shape      = require('shaper');
-var slowConnection = shape(10); // 10 bytes/sec
 var connection = mysql.createConnection({
    user: 'test',
    database: 'test',
@@ -92,14 +91,15 @@ server.on('connection', function(conn) {
     characterSet: 8,
     capabilityFlags: 0xffffff
   });
-
+  
+  var remote = mysql.createConnection({user: 'root', database: 'test'});
   conn.on('query', function(sql) {
     console.log('proxying query:' + sql);
-    var cli = mysql.createConnection({user: 'root', database: 'test'});
-    cli.query(sql, function(err, rows, columns) {
+    remote.query(sql, function(err, rows, columns) {
       conn.writeTextResult(rows, columns);
     });
   });
+  conn.on('end', remote.end.bind(remote));
 });
 ```
 ## MySQL Server API
