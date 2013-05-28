@@ -94,10 +94,22 @@ server.on('connection', function(conn) {
   
   var remote = mysql.createConnection({user: 'root', database: 'test'});
   conn.on('query', function(sql) {
-    console.log('proxying query:' + sql);
-    remote.query(sql, function(err, rows, columns) {
-      conn.writeTextResult(rows, columns);
-    });
+    console.log('proxying query:' + sql);    
+    if (sql.match(/^select/i) || sql.match(/^show/i)) {
+      // handle select and show queries
+      remote.query(sql, function(err, rows, columns) {
+        console.log('rows', rows);
+        console.log('columns', columns);
+        conn.writeTextResult(rows, columns);
+      });
+    } else {
+      // handle other queries
+      remote.query(sql, function(err, result) {
+        console.log('result', result);
+        conn.writeOk({affectedRows:result.affectedRows,insertId:result.insertId});
+      });
+    }
+
   });
   conn.on('end', remote.end.bind(remote));
 });
