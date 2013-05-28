@@ -1,4 +1,4 @@
-var mysql = require('mysql2');
+var mysql = require('../index.js');
 
 var server = mysql.createServer();
 server.listen(3307);
