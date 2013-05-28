@@ -1,8 +1,9 @@
-var mysql = require('../index.js');
+var mysql = require('mysql2');
 
 var server = mysql.createServer();
-server.listen(3333);
+server.listen(3307);
 server.on('connection', function(conn) {
+  console.log('connection');
 
   conn.serverHandshake({
     protocolVersion: 10,
@@ -18,10 +19,27 @@ server.on('connection', function(conn) {
     conn.writeEof();
   });
 
+  var remote = mysql.createConnection({user: 'root', database: 'dbname', host:'server.example.com', password: 'secret'});
+
   conn.on('query', function(sql) {
-    var cli = mysql.createConnection({user: 'root', database: 'test'});
-    cli.query(sql, function(err, rows, columns) {
-      conn.writeTextResult(rows, columns);
+    console.log('proxying query:' + sql);
+    remote.query(sql, function(err) { // overloaded args, either (err, result :object) 
+                                      // or (err, rows :array, columns :array)
+      if (Array.isArray(arguments[1])) {
+        // response to a 'select', 'show' or similar
+        var rows = arguments[1], columns = arguments[2];
+        console.log('rows', rows);
+        console.log('columns', columns);
+        conn.writeTextResult(rows, columns);
+      } else {
+        // response to an 'insert', 'update' or 'delete' 
+        var result = arguments[1];
+        console.log('result', result);
+        conn.writeOk({affectedRows:result.affectedRows,insertId:result.insertId});
+      }
     });
   });
+
+  conn.on('end', remote.end.bind(remote));
 });
+
