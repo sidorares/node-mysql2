@@ -5,9 +5,7 @@
 
 Mysql client for node.js. Written in native JavaScript and aims to be mostly api compatible with [node-mysql](https://github.com/felixge/node-mysql)
 
-## Installation
-
-    npm install mysql2
+[![NPM](http://nodei.co/npm/mysql2.png)](http://nodei.co/npm/mysql2/)
 
 ## Features
 
@@ -103,7 +101,7 @@ server.on('connection', function(conn) {
 
   conn.on('query', function(sql) {
     console.log('proxying query:' + sql);
-    remote.query(sql, function(err) { // overloaded args, either (err, result :object) 
+    remote.query(sql, function(err) { // overloaded args, either (err, result :object)
                                       // or (err, rows :array, columns :array)
       if (Array.isArray(arguments[1])) {
         // response to a 'select', 'show' or similar
@@ -112,7 +110,7 @@ server.on('connection', function(conn) {
         console.log('columns', columns);
         conn.writeTextResult(rows, columns);
       } else {
-        // response to an 'insert', 'update' or 'delete' 
+        // response to an 'insert', 'update' or 'delete'
         var result = arguments[1];
         console.log('result', result);
         conn.writeOk(result);
