@@ -163,7 +163,20 @@ events:
   - see [node-mysql-benchmarks](https://github.com/mscdex/node-mysql-benchmarks)
   - try to run example [benchmarks](https://github.com/sidorares/node-mysql2/tree/master/benchmarks) on your system
 
+## Examples using MySQL server API:
 
+  - [Mysql-pg-proxy](https://github.com/sidorares/mysql-pg-proxy)  - mysql to postgres proxy server.
+  - [Mysqlite.js](https://github.com/sidorares/mysqlite.js) - mysql server with JS-only (emscripten compiled) sqlite backend.
+  - [sql-engine](https://github.com/eugeneware/sql-engine) - mysql server with leveldb backend. 
+
+## See also:
+
+  - [wire protocol documentation](http://dev.mysql.com/doc/internals/en/client-server-protocol.html)
+  - [node-mysql](https://github.com/felixge/node-mysql) - most popular node.js mysql client library
+  - [node-mariasql](https://github.com/mscdex/node-mariasql/) - bindings to libmariasql. One of the fastest clients
+  - [node-libmysqlclident](https://github.com/Sannis/node-mysql-libmysqlclient) - bindings to libmysqlclient
+  - [mysql-co](https://github.com/sidorares/mysql-co) - wrappers to use mysql2 with generators and [co library](https://github.com/visionmedia/co)
+  
 ## Contributing
 
 Feel free to create pull requests.
@@ -181,5 +194,3 @@ TODO in order of importance:
 ## Features TODO
   - more server side commands support (binary protocol, etc)
   - named parameters interpolarion into unnamed parameters translation for prepared statements
-  - mysql-postgres bridge example
-  - mysql-mongo bridge example using js-based sql parser
