@@ -2,6 +2,8 @@
 0.9.2
   - Multiple results support in binary protocol              #27
   - Apply timezone from config to DATETIME values with no tz #15
+  - correctly parse NULL result for string and number        #35       0a4ac65ec812f75861dc00c9243921d5d6602914
+  - do not pollute global namespace from evaled parser       #11       4b6ddaf0f70150945d0fea804db9106f343a0e51
 
 0.9.1
   - PoolClaster ported from node-mysql                       #34
