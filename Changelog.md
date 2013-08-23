@@ -1,7 +1,10 @@
 // top version is work in progres
-0.8.22
+0.9.2
   - Multiple results support in binary protocol              #27
   - Apply timezone from config to DATETIME values with no tz #15
+
+0.9.1
+  - PoolClaster ported from node-mysql                       #34
 
 0.8.21
   - Fix in error message parsing (Noam Wasersprung)          #31       6cc80a67eaa3baac7dd8eee7182c9eb00977e81a
