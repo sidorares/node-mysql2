@@ -1,7 +1,10 @@
 // top version is work in progres
-0.9.3
+0.10.2
   - Multiple results support in binary protocol              #27
   - Apply timezone from config to DATETIME values with no tz #15
+
+0.10.1
+  - Added ping command                                       #38       cbca8648d1282fb57e55b3735c3b4d9a46d89d7b
 
 0.9.2
   - correctly parse NULL result for string and number        #35       0a4ac65ec812f75861dc00c9243921d5d6602914
