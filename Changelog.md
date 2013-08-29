@@ -1,7 +1,10 @@
 // top version is work in progres
-0.10.2
+0.10.3
   - Multiple results support in binary protocol              #27
   - Apply timezone from config to DATETIME values with no tz #15
+
+0.10.2
+  - return DECIMAL and NEWDECIMAL as string in binary prot   #40       969fba6ff1dbf14d53d3efc9f94083b8306cf0b5
 
 0.10.1
   - Added ping command                                       #38       cbca8648d1282fb57e55b3735c3b4d9a46d89d7b
