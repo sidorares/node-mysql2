@@ -7,8 +7,9 @@ var conn = mysql.createConnection({
    host: '127.0.0.1',
    port: '3306',
    ssl: {
-     key: fs.readFileSync('./certs/client-key.pem'),
-     cert: fs.readFileSync('./certs/client-cert.pem')
+     //key: fs.readFileSync('./certs/client-key.pem'),
+     //cert: fs.readFileSync('./certs/client-cert.pem')
+     ca: fs.readFileSync('./certs/ca-cert.pem')
    }
 });
 
