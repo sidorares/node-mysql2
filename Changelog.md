@@ -1,7 +1,12 @@
-// top version is work in progres
-0.10.3
+Backlog:
   - Multiple results support in binary protocol              #27
   - Apply timezone from config to DATETIME values with no tz #15
+  - custom typeCast handlers in generated parser             #39
+
+0.10.3
+  - various ssl fixes and refactoring (ssl was broken for some time)   213d375f7263cb6f5e724fdac3ea156ccee4bbd4
+  - Server protocol: handle null values serialisation
+     (Michael Muturi Njonge)                                 #36       831b2a100795f36649f0c3d79b7839a95f771a05
 
 0.10.2
   - return DECIMAL and NEWDECIMAL as string in binary prot   #40       969fba6ff1dbf14d53d3efc9f94083b8306cf0b5
