@@ -5,7 +5,7 @@
 
 Mysql client for node.js. Written in native JavaScript and aims to be mostly api compatible with [node-mysql](https://github.com/felixge/node-mysql)
 
-[![NPM](http://nodei.co/npm/mysql2.png)](http://nodei.co/npm/mysql2/)
+[![NPM](https://nodei.co/npm/mysql2.png?downloads=true&stars=true)](https://nodei.co/npm/mysql2/)
 [![NPM](https://nodei.co/npm-dl/mysql2.png?months=6)](https://nodei.co/npm/mysql2/)
 
 ## Features
