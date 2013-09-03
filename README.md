@@ -5,7 +5,8 @@
 
 Mysql client for node.js. Written in native JavaScript and aims to be mostly api compatible with [node-mysql](https://github.com/felixge/node-mysql)
 
-[![NPM](http://nodei.co/npm/mysql2.png)](http://nodei.co/npm/mysql2/)
+[![NPM](https://nodei.co/npm/mysql2.png?downloads=true&stars=true)](https://nodei.co/npm/mysql2/)
+[![NPM](https://nodei.co/npm-dl/mysql2.png?months=6)](https://nodei.co/npm/mysql2/)
 
 ## Features
 
@@ -167,7 +168,7 @@ events:
 
   - [Mysql-pg-proxy](https://github.com/sidorares/mysql-pg-proxy)  - mysql to postgres proxy server.
   - [Mysqlite.js](https://github.com/sidorares/mysqlite.js) - mysql server with JS-only (emscripten compiled) sqlite backend.
-  - [sql-engine](https://github.com/eugeneware/sql-engine) - mysql server with leveldb backend. 
+  - [sql-engine](https://github.com/eugeneware/sql-engine) - mysql server with leveldb backend.
 
 ## See also:
 
@@ -176,7 +177,7 @@ events:
   - [node-mariasql](https://github.com/mscdex/node-mariasql/) - bindings to libmariasql. One of the fastest clients
   - [node-libmysqlclident](https://github.com/Sannis/node-mysql-libmysqlclient) - bindings to libmysqlclient
   - [mysql-co](https://github.com/sidorares/mysql-co) - wrappers to use mysql2 with generators and [co library](https://github.com/visionmedia/co)
-  
+
 ## Contributing
 
 Feel free to create pull requests.
