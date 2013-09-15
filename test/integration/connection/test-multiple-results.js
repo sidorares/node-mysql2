@@ -1,5 +1,7 @@
 var mysql = require('../../common').createConnection({multipleStatements: true});
 var assert = require('assert');
+require('coffee-script');
+require('very-assertive');
 mysql.query('CREATE TEMPORARY TABLE no_rows (test int)');
 mysql.query('CREATE TEMPORARY TABLE some_rows (test int)');
 mysql.query('INSERT INTO some_rows values(0)');
@@ -56,6 +58,7 @@ var fields2 = clone(fields1);
 fields2[0].name = "2";
 
 var tests = [
+  ["select * from some_rows", [select3,sr_fields,1]], //  select 3 rows
   ["SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT; SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS;", twoInsertResult],
   ["/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;", twoInsertResult], // issue #26
   ["set @a = 1", [rs2, undefined, 1]],  // one insert result
@@ -77,7 +80,21 @@ function do_test(testIndex) {
   var entry = tests[testIndex];
   var sql = entry[0];
   var expectation = entry[1];
-  mysql.query(sql, function(err, _rows, _columns, _numResults) {
+  mysql.query(sql, function(err, _rows, _columns) {
+    var _numResults = 0;
+    if (_rows.constructor.name == 'ResultSetHeader')
+      _numResults = 1;
+    else if (_rows.length === 0) {
+      // empty select
+      _numResults = 1;
+    }
+    else if (_rows.length > 0) {
+      if (_rows.constructor.name == 'Array' && _rows[0].constructor.name == 'TextRow')
+        _numResults = 1;
+      if (_rows.constructor.name == 'Array' && 
+        (_rows[0].constructor.name == 'Array' || _rows[0].constructor.name =='ResultSetHeader'))
+        _numResults = _rows.length
+    }
     if (err) {
       console.log(err);
       process.exit(-1);
@@ -107,8 +124,8 @@ function do_test(testIndex) {
     }
     function checkFields(fields, index) {
       if (_numResults == 1) {
-        assert.equal(index, 0);
-        assert.deepEqual(_columns, fields);
+       assert.equal(index, 0);
+       assert.deepEqual(_columns, fields);
       }
       else
         assert.deepEqual(_columns[index], fields);
