@@ -1,7 +1,5 @@
 var mysql = require('../../common').createConnection({multipleStatements: true});
 var assert = require('assert');
-require('coffee-script');
-require('very-assertive');
 mysql.query('CREATE TEMPORARY TABLE no_rows (test int)');
 mysql.query('CREATE TEMPORARY TABLE some_rows (test int)');
 mysql.query('INSERT INTO some_rows values(0)');
