@@ -3,6 +3,11 @@ Backlog:
   - Apply timezone from config to DATETIME values with no tz #15
   - custom typeCast handlers in generated parser             #39
 
+0.10.4
+  - node-mysql compatibility: remove 'number of results in response'
+    callback argument (Brian White)                          #45       c9cb926360da5e4028f7d2f83f4b4e94897cd8b8
+  - 'resultIndex' parameter for non-multiple results query             8879bdde397b6cd730d234383fa322becd1134de
+
 0.10.3
   - various ssl fixes and refactoring (ssl was broken for some time)   213d375f7263cb6f5e724fdac3ea156ccee4bbd4
   - Server protocol: handle null values serialisation
