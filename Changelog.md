@@ -3,7 +3,11 @@ Backlog:
   - Apply timezone from config to DATETIME values with no tz #15
   - custom typeCast handlers in generated parser             #39
 
+0.10.6
+  - handle TIMESTAMP type                                    #59      6dd6fc82d95a16e18092c4db4e8da225b37e9314
+
 0.10.5
+
   - node-mysql compatibility: remove 'number of results in response'
     callback argument (Brian White)                          #46       40af0530403a3892743d32974055c5ea23cbd3ec 
   - node 0.11 (use on('data') instead os ondata )                      39906c78b85a77e468694814a50f99714d7bbbd6
