@@ -1,6 +1,6 @@
 {
   "name": "mysql2",
-  "version": "0.10.5",
+  "version": "0.10.6",
   "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
   "directories": {
@@ -14,7 +14,9 @@
     "url": "https://github.com/sidorares/node-mysql2"
   },
   "keywords": [
-    "mysql", "client", "server"
+    "mysql",
+    "client",
+    "server"
   ],
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
