@@ -24,7 +24,12 @@ process.on('exit', function() {
   assert.deepEqual(rows[0].f.toString(), 'Invalid Date');
   assert(rows[0].f instanceof Date);
   assert(rows[1].f instanceof Date);
-  assert.equal(+rows[1].f, 1358776923000);
+  assert.equal(rows[1].f.getYear(), 113);
+  assert.equal(rows[1].f.getMonth(), 0);
+  assert.equal(rows[1].f.getDate(), 22);
+  assert.equal(rows[1].f.getHours(), 1);
+  assert.equal(rows[1].f.getMinutes(), 2);
+  assert.equal(rows[1].f.getSeconds(), 3);
   assert.equal(fields[0].name, 'f');
   assert.deepEqual(rows[1], rows1[1]);
   assert.deepEqual(fields, fields1);
