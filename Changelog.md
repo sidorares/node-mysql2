@@ -5,6 +5,7 @@ Backlog:
 
 0.10.6
   - handle TIMESTAMP type                                    #59      6dd6fc82d95a16e18092c4db4e8da225b37e9314
+  - rename pool's connection.end() to connection.release()   #53      c63b2442e3c0fb5ea3953725ba9c1b3e08b2b831
 
 0.10.5
 
