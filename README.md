@@ -195,3 +195,7 @@ TODO in order of importance:
 ## Features TODO
   - more server side commands support (binary protocol, etc)
   - named parameters interpolarion into unnamed parameters translation for prepared statements
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/sidorares/node-mysql2/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
