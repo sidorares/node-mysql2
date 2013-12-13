@@ -177,6 +177,7 @@ events:
   - [node-mariasql](https://github.com/mscdex/node-mariasql/) - bindings to libmariasql. One of the fastest clients
   - [node-libmysqlclident](https://github.com/Sannis/node-mysql-libmysqlclient) - bindings to libmysqlclient
   - [mysql-co](https://github.com/sidorares/mysql-co) - wrappers to use mysql2 with generators and [co library](https://github.com/visionmedia/co)
+  - [mysql-utilities](https://github.com/tshemsedinov/node-mysql-utilities) - useful utilities on top of mysql connection
 
 ## Contributing
 
