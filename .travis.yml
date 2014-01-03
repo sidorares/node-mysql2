@@ -1,7 +1,6 @@
 language: node_js
 before_script:
-  - npm config set strict-ssl false
-  - mysql -e 'create database if not exists test;'
+  - npm config set strict-ssl false && mysql -e 'create database if not exists test;'
 node_js:
   - "0.6"
   - "0.8"
