@@ -60,6 +60,8 @@ var connection = mysql.createConnection({
 connection.query('SELECT 1+1 as test1', console.log);
 ```
 
+See [rds-ssl](https://github.com/sidorares/node-mysql2/blob/master/examples/ssl/rds-ssl.js) example to connect to Amazon RDS over ssl.
+
 Connecting using custom stream:
 
 ```js
