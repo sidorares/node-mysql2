@@ -3,6 +3,11 @@ Backlog:
   - Apply timezone from config to DATETIME values with no tz #15
   - custom typeCast handlers in generated parser             #39
 
+
+PRE
+  - Amazon RDS+ssl example and public CA cert                         709394a4afbbaf0500439e72caec5d37e949fe26
+  - pool updated from node-mysql                        #68, #61      db561dbe10a55bb0f9893eb0e2c4b429edd6ee3a
+
 0.10.6
   - handle TIMESTAMP type                                    #59      6dd6fc82d95a16e18092c4db4e8da225b37e9314
   - rename pool's connection.end() to connection.release()   #53      c63b2442e3c0fb5ea3953725ba9c1b3e08b2b831
@@ -11,7 +16,7 @@ Backlog:
 
   - node-mysql compatibility: remove 'number of results in response'
     callback argument (Brian White)                          #46       40af0530403a3892743d32974055c5ea23cbd3ec 
-  - node 0.11 (use on('data') instead os ondata )                      39906c78b85a77e468694814a50f99714d7bbbd6
+  - node 0.11 (use on('data') instead of ondata )                      39906c78b85a77e468694814a50f99714d7bbbd6
   - fix again ssl (#41)                                                713051bf997a186774b618cde583707320a1d551
   
 0.10.4
@@ -44,6 +49,7 @@ Backlog:
 0.8.20
   - Make packet parser work with 0.11 ondata(buffer) with no start,end 9005fd1
   - Allow to use Date-like objects as date parameters (Amir Livneh)    6138dad0581fd5e2c45e1ce0b999e334db8979cf
+
 0.8.19
   - Multiple results support in text protocol #15                      4812adaf1aa5b1dfa775a6cf0fa3bae54a7827d0
   - Use connection flags from createConnection parameters/url string   9218f055ceeb95ae7205348e06c07b89b799d031
