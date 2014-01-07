@@ -3,6 +3,8 @@ Backlog:
   - Apply timezone from config to DATETIME values with no tz #15
   - custom typeCast handlers in generated parser             #39
 
+0.10.8
+  - Bundle Amazon RDS cert and allow to connect using 'Amazon RDS' as ssl value
 
 0.10.7
 

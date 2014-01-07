@@ -60,7 +60,22 @@ var connection = mysql.createConnection({
 connection.query('SELECT 1+1 as test1', console.log);
 ```
 
-See [rds-ssl](https://github.com/sidorares/node-mysql2/blob/master/examples/ssl/rds-ssl.js) example to connect to Amazon RDS over ssl.
+You can use 'Amazon RDS' string as value to ssl property to connect to Amazon RDS mysql over ssl (in that case http://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used)
+
+```
+var mysql      = require('mysql2');
+var connection = mysql.createConnection({
+   user: 'foo',
+   password: 'bar',
+   host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+   ssl: 'Amazon RDS'
+});
+
+conn.query('show status like \'Ssl_cipher\'', function(err, res) {
+  console.log(err, res);
+  conn.end();
+});
+```
 
 Connecting using custom stream:
 
