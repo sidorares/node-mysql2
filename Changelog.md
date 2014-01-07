@@ -4,9 +4,10 @@ Backlog:
   - custom typeCast handlers in generated parser             #39
 
 
-PRE
+0.10.7
+
   - Amazon RDS+ssl example and public CA cert                         709394a4afbbaf0500439e72caec5d37e949fe26
-  - pool updated from node-mysql                        #68, #61      db561dbe10a55bb0f9893eb0e2c4b429edd6ee3a
+  - pool updated from node-mysql                   #71, #68, #61      db561dbe10a55bb0f9893eb0e2c4b429edd6ee3a
 
 0.10.6
   - handle TIMESTAMP type                                    #59      6dd6fc82d95a16e18092c4db4e8da225b37e9314
