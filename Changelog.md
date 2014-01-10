@@ -3,6 +3,10 @@ Backlog:
   - Apply timezone from config to DATETIME values with no tz #15
   - custom typeCast handlers in generated parser             #39
 
+0.11.1
+  - buxfix: connection.connect callback was called more than once
+                                                             #72      0352eefdafc0986f1ec79c0ce285f722ca12af16 
+
 0.11.0
   - Bundle Amazon RDS cert and allow to connect using                 e6af097b5facc089f1999c1fb076ada0ce2e7e99
     'Amazon RDS' as ssl value
