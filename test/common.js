@@ -104,6 +104,10 @@ module.exports.createServer = function(cb) {
   return server;
 }
 
+module.exports.useTestDb = function(cb) {
+  // no-op in my setup, need it for compatibility with node-mysql tests
+}
+
 module.exports.hrdiff = function(t1, t2) {
   return t2[1] - t1[1] + (t2[0] - t1[0])*1e9;
 };
