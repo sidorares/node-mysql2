@@ -3,6 +3,10 @@ Backlog:
   - Apply timezone from config to DATETIME values with no tz #15
   - custom typeCast handlers in generated parser             #39
 
+0.11.2
+  - wrap callbacks in nextTick for exception safety                  b73ac9868804b603a0ab6df6129cf3682476d118
+  - domains support                                         #73      36cba61359c83018a847ac4e7748d920b6f863c4
+
 0.11.1
   - buxfix: connection.connect callback was called more than once
                                                              #72      0352eefdafc0986f1ec79c0ce285f722ca12af16 
