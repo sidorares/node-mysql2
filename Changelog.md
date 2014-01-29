@@ -3,7 +3,10 @@ Backlog:
   - Apply timezone from config to DATETIME values with no tz #15
   - custom typeCast handlers in generated parser             #39
 
-HEAD
+
+
+0.11.3
+  - clean up debugger keywords                               #79
   - add transaction helpers                             #56, #76     cc0a9f9b721900d3a22c7fc84a5244c74cd33dd5      
 
 0.11.2
