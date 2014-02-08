@@ -4,14 +4,19 @@ Backlog:
   - custom typeCast handlers in generated parser             #39
 
 HEAD
+
+0.11.3
+
   - support YEAR tipe in prepared statements                         a0f33b5a4de4529130b3c4137f7a1dd3c02aed9e   
   - add transaction helpers                             #56, #76     cc0a9f9b721900d3a22c7fc84a5244c74cd33dd5      
 
 0.11.2
+
   - wrap callbacks in nextTick for exception safety                  b73ac9868804b603a0ab6df6129cf3682476d118
   - domains support                                          #73     36cba61359c83018a847ac4e7748d920b6f863c4
 
 0.11.1
+
   - buxfix: connection.connect callback was called more than once
                                                              #72      0352eefdafc0986f1ec79c0ce285f722ca12af16 
 
