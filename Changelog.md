@@ -4,6 +4,7 @@ Backlog:
   - custom typeCast handlers in generated parser             #39
 
 HEAD
+  - support YEAR tipe in prepared statements                         a0f33b5a4de4529130b3c4137f7a1dd3c02aed9e   
   - add transaction helpers                             #56, #76     cc0a9f9b721900d3a22c7fc84a5244c74cd33dd5      
 
 0.11.2
