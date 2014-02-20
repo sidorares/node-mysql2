@@ -60,6 +60,23 @@ var connection = mysql.createConnection({
 connection.query('SELECT 1+1 as test1', console.log);
 ```
 
+You can use 'Amazon RDS' string as value to ssl property to connect to Amazon RDS mysql over ssl (in that case http://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used)
+
+```
+var mysql      = require('mysql2');
+var connection = mysql.createConnection({
+   user: 'foo',
+   password: 'bar',
+   host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+   ssl: 'Amazon RDS'
+});
+
+conn.query('show status like \'Ssl_cipher\'', function(err, res) {
+  console.log(err, res);
+  conn.end();
+});
+```
+
 Connecting using custom stream:
 
 ```js
@@ -177,6 +194,7 @@ events:
   - [node-mariasql](https://github.com/mscdex/node-mariasql/) - bindings to libmariasql. One of the fastest clients
   - [node-libmysqlclident](https://github.com/Sannis/node-mysql-libmysqlclient) - bindings to libmysqlclient
   - [mysql-co](https://github.com/sidorares/mysql-co) - wrappers to use mysql2 with generators and [co library](https://github.com/visionmedia/co)
+  - [mysql-utilities](https://github.com/tshemsedinov/node-mysql-utilities) - useful utilities on top of mysql connection
 
 ## Contributing
 
@@ -195,3 +213,7 @@ TODO in order of importance:
 ## Features TODO
   - more server side commands support (binary protocol, etc)
   - named parameters interpolarion into unnamed parameters translation for prepared statements
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/sidorares/node-mysql2/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+

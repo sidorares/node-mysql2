@@ -47,7 +47,7 @@ module.exports.createConnection = function(args, callback) {
    password: process.env.CI ? null : '',
    database: 'test',
    multipleStatements: args ? args.multipleStatements : false,
-   port: process.env.MYSQL_PORT || 3306
+   port: (args && args.port) || process.env.MYSQL_PORT || 3306
  });
 };
 
@@ -70,6 +70,43 @@ module.exports.createTemplate = function() {
   var template = require('fs').readFileSync(__dirname + '/template.jade', 'ascii');
   return jade.compile(template);
 };
+
+module.exports.createServer = function(cb) {
+  var server = require('../index.js').createServer();
+  server.on('connection', function(conn) {
+    conn.on('error', function() {
+      // we are here when client drops connection
+    });
+    conn.serverHandshake({
+      protocolVersion: 10,
+      serverVersion: 'node.js rocks',
+      connectionId: 1234,
+      statusFlags: 2,
+      characterSet: 8,
+      capabilityFlags: 0xffffff
+    });
+    conn.on('query', function(sql) {
+      conn.writeTextResult([ { '1': '1' } ], [ { catalog: 'def',
+       schema: '',
+       table: '',
+       orgTable: '',
+       name: '1',
+       orgName: '',
+       characterSet: 63,
+       columnLength: 1,
+       columnType: 8,
+       flags: 129,
+       decimals: 0 } ]);
+    });
+    //conn.on('end', );
+  });
+  server.listen(3307, undefined, undefined, cb);
+  return server;
+}
+
+module.exports.useTestDb = function(cb) {
+  // no-op in my setup, need it for compatibility with node-mysql tests
+}
 
 module.exports.hrdiff = function(t1, t2) {
   return t2[1] - t1[1] + (t2[0] - t1[0])*1e9;
