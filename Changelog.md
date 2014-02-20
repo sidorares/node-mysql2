@@ -5,6 +5,8 @@ Backlog:
 
 HEAD
 
+0.11.5
+  - fix for non-utf strings serialisation (binary protocol only)     cf9594aaab5b3d51a112bd1f43b39a55f508eef7
 
 0.11.4
   - support YEAR type in prepared statements                         a0f33b5a4de4529130b3c4137f7a1dd3c02aed9e   
