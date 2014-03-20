@@ -5,14 +5,22 @@ Backlog:
 
 HEAD
 
+0.11.7
+  - initial implementaion of binlog protocol            #83 #78      c8d45da6fc13a56d95ce6d57c3c8aa9524548770
+  - interpret null DOUBLE values as null instead 0 #85               4c03b23f30949be0608d9543d69243944d79bb4a
+  - use srcEscape for null values (bunary parser)                    ef50bcafa452588eda4a40037b41f6b961085046
+
+0.11.6
+  - minor cleanups
+
 0.11.5
   - fix for non-utf strings serialisation (binary protocol only)     cf9594aaab5b3d51a112bd1f43b39a55f508eef7
 
 0.11.4
-  - support YEAR type in prepared statements                         a0f33b5a4de4529130b3c4137f7a1dd3c02aed9e   
+  - support YEAR type in prepared statements                         a0f33b5a4de4529130b3c4137f7a1dd3c02aed9e
 
 0.11.3
-  - add transaction helpers                             #56, #76     cc0a9f9b721900d3a22c7fc84a5244c74cd33dd5      
+  - add transaction helpers                             #56, #76     cc0a9f9b721900d3a22c7fc84a5244c74cd33dd5
 
 0.11.2
 
@@ -22,7 +30,7 @@ HEAD
 0.11.1
 
   - buxfix: connection.connect callback was called more than once
-                                                             #72      0352eefdafc0986f1ec79c0ce285f722ca12af16 
+                                                             #72      0352eefdafc0986f1ec79c0ce285f722ca12af16
 
 0.11.0
   - Bundle Amazon RDS cert and allow to connect using                 e6af097b5facc089f1999c1fb076ada0ce2e7e99
@@ -40,10 +48,10 @@ HEAD
 0.10.5
 
   - node-mysql compatibility: remove 'number of results in response'
-    callback argument (Brian White)                          #46       40af0530403a3892743d32974055c5ea23cbd3ec 
+    callback argument (Brian White)                          #46       40af0530403a3892743d32974055c5ea23cbd3ec
   - node 0.11 (use on('data') instead of ondata )                      39906c78b85a77e468694814a50f99714d7bbbd6
   - fix again ssl (#41)                                                713051bf997a186774b618cde583707320a1d551
-  
+
 0.10.4
   - node-mysql compatibility: remove 'number of results in response'
     callback argument (Brian White)                          #45       c9cb926360da5e4028f7d2f83f4b4e94897cd8b8
