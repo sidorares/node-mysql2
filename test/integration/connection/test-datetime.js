@@ -4,7 +4,13 @@ var assert     = require('assert');
 
 var rows = undefined;
 var rows1 = undefined;
+var rows2 = undefined;
+var rows3 = undefined;
+
 var date = new Date('1990-01-01 08:15:11 UTC');
+connection.query('CREATE TEMPORARY TABLE t (d1 DATE)');
+connection.query('INSERT INTO t set d1=?', [date]);
+
 connection.execute('select from_unixtime(?) t', [(+date).valueOf()/1000], function(err, _rows, _fields) {
   if (err) throw err;
   rows = _rows;
@@ -13,6 +19,16 @@ connection.execute('select from_unixtime(?) t', [(+date).valueOf()/1000], functi
 connection.query('select from_unixtime(631152000) t', function(err, _rows, _fields) {
   if (err) throw err;
   rows1 = _rows;
+});
+
+connection.query('select * from t', function(err, _rows, _fields) {
+  if (err) throw err;
+  rows2 = _rows;
+});
+
+connection.execute('select * from t', function(err, _rows, _fields) {
+  if (err) throw err;
+  rows3 = _rows;
 });
 
 connection.end();
@@ -26,4 +42,7 @@ process.on('exit', function() {
 
   assert.equal(rows1[0].t.constructor, Date);
   assert.equal(rows1[0].t - new Date('Mon Jan 01 1990 11:00:00 GMT+1100 (EST)'), 0);
+
+  assert.equal(rows2[0].d1.getDate(), date.getDate());
+  assert.equal(rows3[0].d1.getDate(), date.getDate());
 });
