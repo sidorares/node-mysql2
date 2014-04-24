@@ -5,6 +5,12 @@ Backlog:
 
 HEAD
 
+0.11.8
+
+  - add DATE type support                                    #84     1d49651d8e40bf43b79937d9de9b2909126b892c
+  - faster DATE parsing in text protocol                             cdfed2881462798bd85fbf906ea604875a3bd625
+
+
 0.11.7
   - initial implementaion of binlog protocol            #83 #78      c8d45da6fc13a56d95ce6d57c3c8aa9524548770
   - interpret null DOUBLE values as null instead 0 #85               4c03b23f30949be0608d9543d69243944d79bb4a
