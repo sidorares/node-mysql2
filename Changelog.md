@@ -4,6 +4,9 @@ Backlog:
   - custom typeCast handlers in generated parser             #39
 
 HEAD
+  - bugfix: date as parameter in prepared statement,
+    day of week was used incorrectly
+    instead of day of month                                  #89     ab28dfca839728dfe40d941091902185d7c19b57
 
 0.11.8
 
