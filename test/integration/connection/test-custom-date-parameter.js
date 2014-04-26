@@ -12,7 +12,7 @@ Date = function() {
   return CustomDate;
 }();
 
-connection.execute('SELECT UNIX_TIMESTAMP(?) t', [new Date('1990-01-01 UTC')], function(err, _rows, _fields) {
+connection.execute('SELECT UNIX_TIMESTAMP(?) t', [new Date('1990-08-08 UTC')], function(err, _rows, _fields) {
   if (err) throw err;
   rows = _rows;
   console.log(_rows, _fields);
@@ -21,5 +21,5 @@ connection.execute('SELECT UNIX_TIMESTAMP(?) t', [new Date('1990-01-01 UTC')], f
 connection.end();
 
 process.on('exit', function() {
-  assert.deepEqual(rows, [{t: 631152000}]);
+  assert.deepEqual(rows, [{t: 650073600}]);
 });
