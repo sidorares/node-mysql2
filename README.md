@@ -15,10 +15,23 @@ Mysql client for node.js. Written in native JavaScript and aims to be mostly api
   - MySQL server API for proxies and mocks
   - SSL and compression
   - prepared statements
+  - binlog protocol client
 
 ## Documentation
 
 See [node-mysql](https://github.com/felixge/node-mysql) documentation. If you see api incompatibilities, please report via github issue.
+
+## Known incompatibilities with node-mysql
+
+All numeric types converted to numbers. In contrast to node-mysql `zeroFill` flag is ignored in type conversion
+You need to check corresponding field zeroFill flag and convert to string manually if this is of importance to you.
+
+DECIMAL and NEWDECIMAL types always returned as string
+
+## Known not yet supported features
+
+`LOAD DATA INFILE` and `SELECT INTO OUTFILE`
+`client.changeUser()`
 
 ## Examples
 
@@ -213,7 +226,3 @@ TODO in order of importance:
 ## Features TODO
   - more server side commands support (binary protocol, etc)
   - named parameters interpolarion into unnamed parameters translation for prepared statements
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/sidorares/node-mysql2/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
