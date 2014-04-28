@@ -89,6 +89,22 @@ conn.query('show status like \'Ssl_cipher\'', function(err, res) {
   conn.end();
 });
 ```
+Receiving rows as array of columns instead of hash with column name as key:
+
+```js
+var options = {sql: 'select A,B,C,D from foo', rowsAsArray: true};
+connection.query(options, function(err, results) {
+  /* results will be an array of arrays like this now:
+  [[
+     'field A value',
+     'field B value',
+     'field C value',
+     'field D value',
+  ], ...]
+  */
+});
+
+```
 
 Connecting using custom stream:
 
