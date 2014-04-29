@@ -4,6 +4,8 @@ Backlog:
   - custom typeCast handlers in generated parser             #39
 
 HEAD
+  - use anonymous function for packet routing instead
+    of .bind() 3-5% speed improvement
 
 0.12.0 - 29/04/2014
 
@@ -16,6 +18,8 @@ HEAD
   - bugfix: date as parameter in prepared statement,
     day of week was used incorrectly
     instead of day of month                                  #89     ab28dfca839728dfe40d941091902185d7c19b57
+
+   - GEOMETRY type support ported from node-mysql            #93     ebd30fd12b3b7f53d97b9d09f947b12f61e0c2c5
 
 0.11.8
 
