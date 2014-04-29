@@ -33,7 +33,7 @@ connection.query(createTable);
 connection.query('INSERT INTO ' + table + ' SET' + inserts.join(',\n'));
 
 var row;
-connection.query('SELECT * FROM type_casting', function(err, rows) {
+connection.execute('SELECT * FROM ' + table + ' WHERE id = ?;', [1], function(err, rows) {
   if (err) throw err;
 
   row = rows[0];
