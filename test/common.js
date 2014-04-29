@@ -1,3 +1,11 @@
+var config = {
+  host: process.env.MYSQL_HOST || '127.0.0.1',
+  user: process.env.MYSQL_USER || 'root',
+  password: process.env.CI ? null : process.env.MYSQL_PASSWORD || 'test',
+  database: process.env.MYSQL_DATABASE || 'test',
+  port: process.env.MYSQL_PORT || 3306
+}
+
 module.exports.createConnection = function(args, callback) {
   // hrtime polyfill for old node versions:
   if (!process.hrtime)
@@ -12,10 +20,10 @@ module.exports.createConnection = function(args, callback) {
     var Client = require('mariasql');
     var c = new Client();
     c.connect({
-      host: '127.0.0.1',
-      user: 'root',
-      password: 'test',
-      db: 'test'
+      host: config.host,
+      user: config.user,
+      password: config.password,
+      db: config.database
     });
     //c.on('connect', function() {
     //
@@ -42,13 +50,13 @@ module.exports.createConnection = function(args, callback) {
     driver = require('mysql');
 
   return driver.createConnection({
-   host: process.env.MYSQL_HOST  || '127.0.0.1',
-   user: process.env.MYSQL_USER  || 'root',
-   password: process.env.CI ? null : '',
-   database: 'test',
-   multipleStatements: args ? args.multipleStatements : false,
-   port: (args && args.port) || process.env.MYSQL_PORT || 3306
- });
+    host: config.host,
+    user: config.user,
+    password: config.password,
+    database: config.database,
+    multipleStatements: args ? args.multipleStatements : false,
+    port: (args && args.port) || config.port
+  });
 };
 
 module.exports.createPool = function(callback) {
@@ -56,13 +64,7 @@ module.exports.createPool = function(callback) {
   if (process.env.BENCHMARK_MYSQL1)
     driver = require('mysql');
 
-  return driver.createPool({
-   host: process.env.MYSQL_HOST  || '127.0.0.1',
-   user: process.env.MYSQL_USER  || 'root',
-   password: process.env.CI ? null : 'test',
-   database: 'test',
-   port: process.env.MYSQL_PORT || 3306
- });
+  return driver.createPool(config);
 };
 
 module.exports.createTemplate = function() {
