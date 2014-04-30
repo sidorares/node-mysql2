@@ -16,7 +16,7 @@ connection1.query('INSERT INTO t set d1=?, d2=?, d3=?', [date, date1, date2]);
 
 var dateAsStringExpected = [
      { d1: '1990-01-01',
-       d2: '2000-03-03 19:15:11',
+       d2: '2000-03-03 08:15:11',
        d3: '2010-12-10 14:12:09' } ];
 
 
