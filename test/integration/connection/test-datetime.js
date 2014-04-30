@@ -1,15 +1,24 @@
-var common     = require('../../common');
-var connection = common.createConnection();
-var assert     = require('assert');
+var common      = require('../../common');
+var connection  = common.createConnection();
+var connection1 = common.createConnection({ dateStrings: true });
+var assert      = require('assert');
 
-var rows = undefined;
-var rows1 = undefined;
-var rows2 = undefined;
-var rows3 = undefined;
+var rows, rows1, rows2, rows3, rows4, rows5;
 
 var date = new Date('1990-01-01 08:15:11 UTC');
+var date1 = new Date('2000-03-03 08:15:11 UTC');
+var date2 = '2010-12-10 14:12:09.019473';
 connection.query('CREATE TEMPORARY TABLE t (d1 DATE)');
 connection.query('INSERT INTO t set d1=?', [date]);
+
+connection1.query('CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME)');
+connection1.query('INSERT INTO t set d1=?, d2=?, d3=?', [date, date1, date2]);
+
+var dateAsStringExpected = [
+     { d1: '1990-01-01',
+       d2: '2000-03-03 19:15:11',
+       d3: '2010-12-10 14:12:09' } ];
+
 
 connection.execute('select from_unixtime(?) t', [(+date).valueOf()/1000], function(err, _rows, _fields) {
   if (err) throw err;
@@ -31,7 +40,20 @@ connection.execute('select * from t', function(err, _rows, _fields) {
   rows3 = _rows;
 });
 
+connection1.query('select * from t', function(err, _rows, _fields) {
+  console.log(_rows);
+  if (err) throw err;
+  rows4 = _rows;
+});
+
+connection1.execute('select * from t', function(err, _rows, _fields) {
+  console.log(_rows);
+  if (err) throw err;
+  rows5 = _rows;
+});
+
 connection.end();
+connection1.end();
 
 process.on('exit', function() {
   assert.equal(rows[0].t.constructor, Date);
@@ -45,4 +67,7 @@ process.on('exit', function() {
 
   assert.equal(rows2[0].d1.getDate(), date.getDate());
   assert.equal(rows3[0].d1.getDate(), date.getDate());
+
+  assert.deepEqual(rows4, dateAsStringExpected);
+  assert.deepEqual(rows5, dateAsStringExpected);
 });

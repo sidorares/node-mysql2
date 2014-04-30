@@ -4,8 +4,13 @@ Backlog:
   - custom typeCast handlers in generated parser             #39
 
 HEAD
+
+0.12.1 0 30/04/2014
+
+  - 'dateStrings' connection option support                  #99
   - use anonymous function for packet routing instead
     of .bind() 3-5% speed improvement
+  - GEOMETRY type support in bimary protocol                 #97
 
 0.12.0 - 29/04/2014
 

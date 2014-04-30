@@ -55,7 +55,8 @@ module.exports.createConnection = function(args, callback) {
     password: config.password,
     database: config.database,
     multipleStatements: args ? args.multipleStatements : false,
-    port: (args && args.port) || config.port
+    port: (args && args.port) || config.port,
+    dateStrings: args && args.dateStrings
   });
 };
 
