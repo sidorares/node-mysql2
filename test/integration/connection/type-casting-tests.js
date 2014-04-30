@@ -1,7 +1,7 @@
 module.exports = function(connection){
   return [
-    {type: 'decimal(4,3)', insert: '1.234'},
-//  {type: 'decimal(3,3)', insert: 0.33},
+    {type: 'decimal(4,3)', insert: 1.234},
+    {type: 'decimal(4,3)', insert: '0.230', expect: 0.23},
     {type: 'tinyint', insert: 1},
     {type: 'smallint', insert: 2},
     {type: 'int', insert: 3},
