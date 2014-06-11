@@ -29,7 +29,17 @@ connection.query("INSERT INTO bigs SET title='test1'", function(err, result) {
       connection.config.bigNumberStrings = true;
       connection.query("INSERT INTO bigs SET title='test4'", function(err, result) {
         assert.strictEqual(result.insertId, "90071992547409925");
-        connection.end();
+        connection.query("select * from bigs", function(err, result) {
+          assert.strictEqual(result[0].id, 123);
+          assert.strictEqual(result[1].id, 124);
+          assert.strictEqual(result[2].id, 123456789);
+          assert.strictEqual(result[3].id, 123456790);
+          assert.strictEqual(result[4].id, 9007199254740992);
+          assert.strictEqual(result[5].id, "9007199254740993");
+          assert.strictEqual(result[6].id, "90071992547409924");
+          assert.strictEqual(result[7].id, "90071992547409925");
+          connection.end();
+        });
       });
     });
   });
