@@ -21,7 +21,7 @@
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "bn.js": "^0.11.7",
+    "bn.js": "0.11.7",
     "fastqueue": "~0.1.0"
   },
   "devDependencies": {
