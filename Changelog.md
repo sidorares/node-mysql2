@@ -5,7 +5,14 @@ Backlog:
 
 HEAD
 
-0.12.1 0 30/04/2014
+0.12.2 - 11/07/2014
+
+  - output milliseconds in date type                         #107
+  - deserialise length coded int with > 24 bit numbers
+    to js int / float (and not throw "Bignts not supported") #108
+  - support for Bigint numbers in insertId
+
+0.12.1 - 30/04/2014
 
   - 'dateStrings' connection option support                  #99
   - use anonymous function for packet routing instead
