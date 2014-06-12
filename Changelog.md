@@ -5,6 +5,9 @@ Backlog:
 
 HEAD
 
+0.12.3 - 11/07/2014
+  - fix node 0.8 - incompatible dependency version
+
 0.12.2 - 11/07/2014
 
   - output milliseconds in date type                         #107
