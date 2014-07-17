@@ -5,6 +5,12 @@ Backlog:
 
 HEAD
 
+0.12.4 - 17/07/2014
+  - 'debug' connection option now result in lots of
+     debug output                                            #112 #77
+  - send corectly compression flag if compression is on      #102
+
+
 0.12.3 - 11/07/2014
   - fix node 0.8 - incompatible dependency version
 
