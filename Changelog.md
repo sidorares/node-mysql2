@@ -5,6 +5,10 @@ Backlog:
 
 HEAD
 
+0.12.5 - 30/07/2014
+  - add 'execute' pool method similar to Pool##query         #114
+  - more debug output behind debug flag
+
 0.12.4 - 17/07/2014
   - 'debug' connection option now result in lots of
      debug output                                            #112 #77
