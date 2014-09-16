@@ -105,7 +105,7 @@ module.exports.createServer = function(cb) {
     });
     //conn.on('end', );
   });
-  server.listen(3307, undefined, undefined, cb);
+  server.listen(3307, cb);
   return server;
 }
 
