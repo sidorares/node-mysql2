@@ -37,5 +37,6 @@ server.on('connection', function(conn) {
     conn.writeTextRow(['test тест テスト փորձարկում পরীক্ষা kiểm tra ']);
     conn.writeTextRow(['ტესტი પરીક્ષણ  מבחן פּרובירן اختبار परीक्षण']);
     conn.writeEof();
+    conn.close();
   });
 });
