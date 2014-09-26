@@ -1,18 +1,33 @@
 var mysql = require('../index.js');
-var flags  = require('../lib/constants/client');
+var flags = require('../lib/constants/client.js');
+var auth  = require('../lib/auth_41.js');
+
+function authenticate(params, cb) {
+  console.log(params);
+  var doubleSha = auth.doubleSha1('pass123');
+  var isValid = auth.verifyToken(params.authPluginData1, params.authPluginData2, params.authToken, doubleSha);
+  if (isValid)
+    cb(null);
+  else
+    // for list of codes lib/constants/errors.js
+    cb(null, { message: 'wrong password dude', code: 1045});
+}
 
 var server = mysql.createServer();
 server.listen(3333);
 server.on('connection', function(conn) {
+
   // we can deny connection here:
-  // conn.writeError({ message: 'secret', errno: 123 });
+  // conn.writeError({ message: 'secret', code: 123 });
+  // conn.close();
   conn.serverHandshake({
     protocolVersion: 10,
     serverVersion: '5.6.10', //'node.js rocks',
     connectionId: 1234,
     statusFlags: 2,
     characterSet: 8,
-    capabilityFlags: 0xffffff
+    capabilityFlags: 0xffffff,
+    authCallback: authenticate
   });
 
   conn.on('field_list', function(table, fields) {
@@ -37,5 +52,6 @@ server.on('connection', function(conn) {
     conn.writeTextRow(['test тест テスト փորձարկում পরীক্ষা kiểm tra ']);
     conn.writeTextRow(['ტესტი પરીક્ષણ  מבחן פּרובירן اختبار परीक्षण']);
     conn.writeEof();
+    conn.close();
   });
 });

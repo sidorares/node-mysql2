@@ -53,9 +53,9 @@ module.exports.createConnection = function(args, callback) {
 
   return driver.createConnection({
     host: config.host,
-    user: config.user,
-    password: config.password,
-    database: config.database,
+    user: (args && args.user) || config.user,
+    password: (args && args.password) || config.password,
+    database: (args && args.database) || config.database,
     multipleStatements: args ? args.multipleStatements : false,
     port: (args && args.port) || config.port,
     dateStrings: args && args.dateStrings
@@ -105,7 +105,7 @@ module.exports.createServer = function(cb) {
     });
     //conn.on('end', );
   });
-  server.listen(3307, undefined, undefined, cb);
+  server.listen(3307, cb);
   return server;
 }
 
