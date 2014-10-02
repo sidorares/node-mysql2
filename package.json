@@ -23,7 +23,8 @@
   "dependencies": {
     "bn.js": "0.11.7",
     "cardinal": "0.4.4",
-    "fastqueue": "~0.1.0"
+    "fastqueue": "~0.1.0",
+    "named-placeholders": "^0.1.1"
   },
   "devDependencies": {
     "urun": "0.0.8",
