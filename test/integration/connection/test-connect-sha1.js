@@ -48,6 +48,21 @@ connection.query('select 1+1', function(err) {
   server._server.close();
 });
 
+var _1_2 = false;
+var _1_3 = false;
+
+connection.query('select 1+2', function(err) {
+  assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+  _1_2 = true;
+});
+
+connection.query('select 1+3', function(err) {
+  assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+  _1_3 = true;
+});
+
 process.on('exit', function() {
   assert.equal(queryCalls, 1);
+  assert.equal(_1_2, true);
+  assert.equal(_1_3, true);
 });
