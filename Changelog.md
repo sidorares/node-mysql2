@@ -1,9 +1,9 @@
-Backlog:
-  - Multiple results support in binary protocol              #27
-  - Apply timezone from config to DATETIME values with no tz #15
-  - custom typeCast handlers in generated parser             #39
-
-HEAD
+0.13.0
+  - connection errors sent to all commands in queue
+  - server-side authentication support                       #122
+  - server.listen() is now chainable (returns server)
+  - allow to login using sha1(password)                      #124
+  - Query.sql as alias to Query.query                        #121
 
 0.12.5 - 30/07/2014
   - add 'execute' pool method similar to Pool##query         #114
