@@ -1,3 +1,6 @@
+0.14.0 - 26/11/2014
+  - added connection.pause() and connection.resume()         #129
+
 0.13.0
   - connection errors sent to all commands in queue
   - server-side authentication support                       #122
