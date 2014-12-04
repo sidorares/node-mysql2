@@ -3,7 +3,9 @@ var connection = common.createConnection();
 var assert     = require('assert');
 
 connection.prepare('select 1 + ? + ? as test', function(err, stmt) {
-  assert(stmt.id > 0);
+  assert(stmt.id >= 0);
+  connection.close();
+  // WIP
   debugger;
 });
 
