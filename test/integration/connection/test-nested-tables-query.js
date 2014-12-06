@@ -63,15 +63,13 @@ connection.execute(options3, function(err, _rows) {
   if (err) throw err;
 
   rows3e = _rows;
+  connection.end();
 });
-
-connection.end();
 
 process.on('exit', function() {
   assert.equal(rows1.length, 1);
   assert.equal(rows1[0].nested_test.id, 1);
   assert.equal(rows1[0].nested_test.title, 'test');
-  
   assert.equal(rows2.length, 1);
   assert.equal(rows2[0].nested_test_id, 1);
   assert.equal(rows2[0].nested_test_title, 'test');

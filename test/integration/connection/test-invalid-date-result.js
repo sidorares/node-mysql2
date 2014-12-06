@@ -7,9 +7,8 @@ var rows = undefined;
 connection.execute('SELECT TIMESTAMP(0000-00-00) t', [], function(err, _rows, _fields) {
   if (err) throw err;
   rows = _rows;
+  connection.end();
 });
-
-connection.end();
 
 function isInvalidTime(t) {
   return isNaN(t.getTime());

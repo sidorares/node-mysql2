@@ -22,9 +22,9 @@ connection.execute('SELECT * from test_table', [], function(err, _rows, _fields)
   if (err) throw err;
   rows = _rows;
   fields = _fields;
+  connection.end();
 });
 
-connection.end();
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{"id":1,"num":1,"l": 3},{"id":2,"num":-2,"l":-10},{"id":3,"num":-1,"l":-4000000}]);

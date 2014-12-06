@@ -11,9 +11,9 @@ connection.query('INSERT INTO t VALUES(123)');
 connection.query('SELECT * from t', function(err, _rows, _fields) {
   if (err) throw err;
   rows = _rows;
+  connection.end();
 });
 
-connection.end();
 
 process.on('exit', function() {
   assert.deepEqual(rows[0], {i: null});

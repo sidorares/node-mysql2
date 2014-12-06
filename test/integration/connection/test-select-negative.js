@@ -17,9 +17,8 @@ connection.query('SELECT -1 v', function(err, _rows, _fields) {
   if (err) throw err;
   rows1 = _rows;
   fields1 = _fields;
+  connection.end();
 });
-
-connection.end();
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{v: -1}]);

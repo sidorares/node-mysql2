@@ -24,9 +24,9 @@ connection.query('SELECT * FROM ' + table, function(err, _results) {
   if (err) throw err;
 
   results = _results;
+  connection.end();
 });
 
-connection.end();
 
 process.on('exit', function() {
   assert.strictEqual(results[0].date, null);

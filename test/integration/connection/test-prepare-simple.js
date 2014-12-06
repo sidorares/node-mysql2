@@ -9,12 +9,13 @@ var query3 = 'create temporary table aaa(i int);' // no parameters, no result co
 
 connection.prepare(query1, function(err1, stmt1) {
   _stmt1 = stmt1;
-  //_stmt1.close();
+  _stmt1.close();
   connection.prepare(query2, function(err2, stmt2) {
     _stmt2 = stmt2;
     connection.prepare(query3, function(err3, stmt3) {
       _stmt3 = stmt3;
-      //debugger;
+      _stmt2.close();
+      _stmt3.close()
       connection.end();
     });
   });

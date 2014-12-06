@@ -37,9 +37,8 @@ connection.execute('SELECT * FROM ' + table + ' WHERE id = ?;', [1], function(er
   if (err) throw err;
 
   row = rows[0];
+  connection.end();
 });
-
-connection.end();
 
 process.on('exit', function() {
   tests.forEach(function(test) {

@@ -43,9 +43,9 @@ connection.execute('SELECT * FROM announcements', function (err, rows) {
   assert.equal(rows[0].text, 'Расти борода, расти');
   assert.equal(rows[1].title, 'Граждане Российской Федерации имеют право собираться мирно без оружия');
   assert.equal(rows[1].text, 'проводить собрания, митинги и демонстрации, шествия и пикетирование');
+  connection.end();
 });
 
-connection.end();
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{'test': 124}]);

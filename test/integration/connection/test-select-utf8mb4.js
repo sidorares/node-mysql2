@@ -9,9 +9,8 @@ connection.query("SELECT '" + multibyteText + "'", function(err, _rows, _fields)
   if (err) throw err;
   rows = _rows;
   fields = _fields;
+  connection.end();
 });
-
-connection.end();
 
 process.on('exit', function() {
   assert.equal(rows[0][multibyteText], multibyteText);
