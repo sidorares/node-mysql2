@@ -18,6 +18,7 @@ function prepare(i) {
         return connection.end();
       }
       setTimeout(function() {prepare(i+1)}, 2);
+      return;
     }
     assert(0, 'Error in prepare!');
   });
