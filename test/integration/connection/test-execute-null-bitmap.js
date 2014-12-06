@@ -19,4 +19,4 @@ function dotest() {
   });
 }
 
-dotest();
+connection.query('SET GLOBAL max_prepared_stmt_count=300', dotest);
