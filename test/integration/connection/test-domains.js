@@ -40,7 +40,6 @@ d1.run(function() {
     err2 = err;
   });
   d3.on('error', function(err) {
-    debugger;
     err3 = err;
   });
   d4.on('error', function(err) {
