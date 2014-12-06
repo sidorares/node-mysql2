@@ -17,7 +17,7 @@ function prepare(i) {
         console.log(max*1e9/ns + ' prepares/sec');
         return connection.end();
       }
-      return prepare(i+1);
+      setTimeout(function() {prepare(i+1)}, 2);
     }
     assert(0, 'Error in prepare!');
   });
