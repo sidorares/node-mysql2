@@ -58,6 +58,7 @@ module.exports.createConnection = function(args, callback) {
     database: (args && args.database) || config.database,
     multipleStatements: args ? args.multipleStatements : false,
     port: (args && args.port) || config.port,
+    debug: process.env.DEBUG,
     dateStrings: args && args.dateStrings
   });
 };
