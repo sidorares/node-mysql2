@@ -2,9 +2,6 @@ var common     = require('../../common');
 var connection = common.createConnection();
 var assert     = require('assert');
 
-// usually default MAX_PREPARED_STATEMENTS on server is 16384
-// check close() actually works by preparing more then MAX
-// (connection has only one prepared ata a time)
 var max = 500;
 var start = process.hrtime();
 function prepare(i) {
