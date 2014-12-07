@@ -18,7 +18,6 @@ module.exports.createPool = function(config) {
 };
 
 exports.createPoolCluster = function(config) {
-  var PoolConfig  = require('./lib/pool_config.js');
   var PoolCluster = require('./lib/pool_cluster.js');
   return new PoolCluster(config);
 };
