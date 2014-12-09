@@ -1,3 +1,8 @@
+0.14.1 - 9/12/2014
+ - stream connection option now can be a function            #80
+ - bugfix/prepared statements: fix case when no columns
+   in statement header bot there are columns in results      #130
+
 0.14.0 - 26/11/2014
   - added connection.pause() and connection.resume()         #129
 
