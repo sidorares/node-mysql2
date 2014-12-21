@@ -32,20 +32,17 @@ for (var i=0; i < npackets; ++i) {
 }
 
 var c;
-var repeats = 1000000;
+var repeats = 10000;
 
-function bench() {
-  var start = process.hrtime();
+function bench(done) {
   for (var i=0; i < repeats; ++i) {
     for (var j=0; j < npackets; ++j) {
       packets[j].offset = 0;
       c =new ColumnDefinition(packets[j]);
     }
   }
-  var end = process.hrtime(start);
-  console.log(1e9*repeats/(end[0]*1000000000 + end[1]));
-  setImmediate(bench);
+  done();
 }
 
-bench();
-
+module.exports = bench;
+module.exports.comment = "read 43 column definitions (select * from mysql.user) x " + repeats;
