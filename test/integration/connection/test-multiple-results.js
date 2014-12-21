@@ -1,4 +1,4 @@
-var mysql = require('../../common').createConnection({multipleStatements: true});
+var mysql = require('../../common.js').createConnection({multipleStatements: true});
 var assert = require('assert');
 mysql.query('CREATE TEMPORARY TABLE no_rows (test int)');
 mysql.query('CREATE TEMPORARY TABLE some_rows (test int)');
@@ -89,7 +89,7 @@ function do_test(testIndex) {
     else if (_rows.length > 0) {
       if (_rows.constructor.name == 'Array' && _rows[0].constructor.name == 'TextRow')
         _numResults = 1;
-      if (_rows.constructor.name == 'Array' && 
+      if (_rows.constructor.name == 'Array' &&
         (_rows[0].constructor.name == 'Array' || _rows[0].constructor.name =='ResultSetHeader'))
         _numResults = _rows.length
     }
@@ -97,7 +97,16 @@ function do_test(testIndex) {
       console.log(err);
       process.exit(-1);
     }
-    assert.deepEqual(expectation, [_rows, _columns, _numResults]);
+    var arrOrColumn = function (c) {
+      if (Array.isArray(c))
+        return c.map(arrOrColumn);
+
+      if (typeof c == 'undefined')
+        return void(0);
+
+      return c.inspect();
+    };
+    assert.deepEqual(expectation, [_rows, arrOrColumn(_columns), _numResults]);
     var q = mysql.query(sql);
     var resIndex = 0;
     var rowIndex = 0;
@@ -123,10 +132,11 @@ function do_test(testIndex) {
     function checkFields(fields, index) {
       if (_numResults == 1) {
        assert.equal(index, 0);
-       assert.deepEqual(_columns, fields);
+       debugger
+       assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
       }
       else
-        assert.deepEqual(_columns[index], fields);
+        assert.deepEqual(arrOrColumn(_columns[index]), arrOrColumn(fields));
     }
     q.on('result', checkRow);
     q.on('fields', checkFields);

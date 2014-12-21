@@ -32,5 +32,5 @@ process.on('exit', function() {
   assert.equal(rows[1].f.getSeconds(), 3);
   assert.equal(fields[0].name, 'f');
   assert.deepEqual(rows[1], rows1[1]);
-  assert.deepEqual(fields, fields1);
+  assert.deepEqual(fields[0].inspect(), fields1[0].inspect());
 });
