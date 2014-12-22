@@ -45,4 +45,12 @@ function bench(done) {
 }
 
 module.exports = bench;
-module.exports.comment = "read 43 column definitions (select * from mysql.user) x " + repeats;
+module.exports.comment = "read " + npackets + " column definitions (select * from mysql.user) x " + repeats;
+module.exports.toSpeed = function(timeAvg, timeStdev) {
+  var value = 43*repeats*1e9 / timeAvg;
+  return {
+    value: value,
+    error: value*(timeStdev / timeAvg),
+    units: 'columns/second'
+  }
+}
