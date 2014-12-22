@@ -18,9 +18,9 @@ connection.query('SELECT HEX(?) as buf', [buf], function(err, _rows, _fields) {
   if (err) throw err;
   rows1 = _rows;
   fields1 = _fields;
+  connection.end();
 });
 
-connection.end();
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{buf: buf.toString('hex').toUpperCase()}]);

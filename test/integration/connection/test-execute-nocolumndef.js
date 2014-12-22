@@ -14,8 +14,8 @@ connection.execute('explain SELECT 1', function(err, _rows, _fields) {
 
   rows = _rows
   fields = _fields;
+  connection.end();
 });
-connection.end();
 
 var expectedRows;
 var expectedFields;

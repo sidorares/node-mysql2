@@ -37,9 +37,9 @@ connection.query('SELECT * FROM type_casting', function(err, rows) {
   if (err) throw err;
 
   row = rows[0];
+  connection.end();
 });
 
-connection.end();
 
 process.on('exit', function() {
   tests.forEach(function(test) {

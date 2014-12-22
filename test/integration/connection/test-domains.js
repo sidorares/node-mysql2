@@ -10,7 +10,7 @@ d1.run(function() {
   var common     = require('../../common');
   var connection = common.createConnection();
   var assert     = require('assert');
- 
+
   d2.run(function() {
     connection.query('SELECT 1', function(err, _rows, _fields) {
       if (err) throw err;
@@ -20,6 +20,7 @@ d1.run(function() {
 
   d3.run(function() {
     connection.execute('SELECT 1', function(err, _rows, _fields) {
+      connection.end();
       if (err) throw err;
       throw new Error('inside domain 3');
     });
@@ -31,7 +32,6 @@ d1.run(function() {
    });
   });
 
-  connection.end();
   setTimeout(function() {
     throw new Error('inside domain 1');
   }, 100);
@@ -55,6 +55,6 @@ d1.on('error', function(err) {
 process.on('exit', function() {
   assert.equal(''+err1, 'Error: inside domain 1')
   assert.equal(''+err2, 'Error: inside domain 2')
-  assert.equal(''+err3, 'Error: inside domain 3') 
-  assert.equal(''+err4, 'Error: inside domain 4') 
+  assert.equal(''+err3, 'Error: inside domain 3')
+  assert.equal(''+err4, 'Error: inside domain 4')
 });

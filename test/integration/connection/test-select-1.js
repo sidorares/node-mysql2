@@ -9,9 +9,8 @@ connection.query('SELECT 1', function(err, _rows, _fields) {
 
   rows = _rows;
   fields = _fields;
+  connection.end();
 });
-
-connection.end();
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{1: 1}]);

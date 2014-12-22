@@ -54,12 +54,9 @@ connection.execute(query1, [], function(err, _rows, _fields) {
   if (err) throw err;
   rows3 = _rows;
   fields3 = _fields;
+  connection.end();
 });
 
-connection.end();
-
-
-connection.end();
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{"x'010203'": Buffer([1, 2, 3])}]);

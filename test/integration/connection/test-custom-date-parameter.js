@@ -16,9 +16,9 @@ connection.execute('SELECT UNIX_TIMESTAMP(?) t', [new Date('1990-08-08 UTC')], f
   if (err) throw err;
   rows = _rows;
   console.log(_rows, _fields);
+  connection.end();
 });
 
-connection.end();
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{t: 650073600}]);

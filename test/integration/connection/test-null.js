@@ -16,9 +16,8 @@ connection.query('SELECT * from t', function(err, _rows, _fields) {
   if (err) throw err;
   rows1 = _rows;
   fields1 = _fields;
+  connection.end();
 });
-
-connection.end();
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{'cast(NULL AS CHAR)': null}]);

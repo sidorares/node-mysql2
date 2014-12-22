@@ -10,8 +10,8 @@ connection.execute('SELECT f FROM t', function(err, _rows, _fields) {
   if (err) throw err;
   rows = _rows;
   fields = _fields;
+  connection.end();
 });
-connection.end();
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{'f': '12345.6700'}]);

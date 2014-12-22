@@ -38,6 +38,7 @@ connection.query('select * from t', function(err, _rows, _fields) {
 connection.execute('select * from t', function(err, _rows, _fields) {
   if (err) throw err;
   rows3 = _rows;
+  connection.end();
 });
 
 connection1.query('select * from t', function(err, _rows, _fields) {
@@ -50,10 +51,8 @@ connection1.execute('select * from t', function(err, _rows, _fields) {
   console.log(_rows);
   if (err) throw err;
   rows5 = _rows;
+  connection1.end();
 });
-
-connection.end();
-connection1.end();
 
 process.on('exit', function() {
   assert.equal(rows[0].t.constructor, Date);

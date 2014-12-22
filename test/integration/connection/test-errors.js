@@ -28,9 +28,9 @@ connection.execute('error in execute 1', []).on('error', function() {
 });
 connection.query('error in query 1').on('error', function() {
   onQueryErrorEvent1 = true;
+  connection.end();
 });
 
-connection.end();
 
 process.on('exit', function() {
   assert.equal(onExecuteResultError, true);
