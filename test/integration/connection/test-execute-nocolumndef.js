@@ -22,7 +22,8 @@ var expectedFields;
 
 process.on('exit', function() {
   assert.deepEqual(rows, expectedRows);
-  assert.deepEqual(fields, expectedFields);
+  var fi = fields.map(function(c) { return c.inspect() });
+  assert.deepEqual(fi, expectedFields);
 });
 
 expectedFields = [{ catalog: 'def',
