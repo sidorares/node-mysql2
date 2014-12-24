@@ -208,7 +208,9 @@ events:
   - [contributors](https://github.com/sidorares/node-mysql2/graphs/contributors)
 
 ## Benchmarks
-  - see [node-mysql-benchmarks](https://github.com/mscdex/node-mysql-benchmarks)
+  - https://gist.github.com/sidorares/ffe9ee9c423f763e3b6b
+  - `npm run benchmarks`
+  - [node-mysql-benchmarks](https://github.com/mscdex/node-mysql-benchmarks)
   - try to run example [benchmarks](https://github.com/sidorares/node-mysql2/tree/master/benchmarks) on your system
 
 ## Examples using MySQL server API:
