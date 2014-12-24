@@ -12,6 +12,7 @@ Mysql client for node.js. Written in native JavaScript and aims to be mostly api
 
  In addition to client-side query/escape and connection pooling
 
+  - [fast](https://gist.github.com/sidorares/ffe9ee9c423f763e3b6b)
   - MySQL server API for proxies and mocks
   - SSL and compression
   - prepared statements
