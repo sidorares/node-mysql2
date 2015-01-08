@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "progress": "1.1.8",
+    "readable-stream": "1.0.33",
     "urun": "0.0.8",
     "utest": "0.0.8"
   }

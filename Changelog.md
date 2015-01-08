@@ -1,7 +1,16 @@
+0.15.0 - ( https://github.com/sidorares/node-mysql2/milestones/0.15.0 )
+ ( marked with + are in master, other wip )
+ - connection.changeUser()                                   #63
+ - named placeholders                                        #117
+ - new prepared statements api                               +#132 #139
+ - support LOAD INFILE                                       +#64 +#142
+ - refactored faster packet parser                           +#140
+ - lazy parse rarely used column definition fields           +#137
+
 0.14.1 - 9/12/2014
  - stream connection option now can be a function            #80
  - bugfix/prepared statements: fix case when no columns
-   in statement header bot there are columns in results      #130
+   in statement header but there are columns in results      #130
 
 0.14.0 - 26/11/2014
   - added connection.pause() and connection.resume()         #129
@@ -38,7 +47,7 @@
   - 'dateStrings' connection option support                  #99
   - use anonymous function for packet routing instead
     of .bind() 3-5% speed improvement
-  - GEOMETRY type support in bimary protocol                 #97
+  - GEOMETRY type support in binary protocol                 #97
 
 0.12.0 - 29/04/2014
 
