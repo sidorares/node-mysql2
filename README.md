@@ -106,17 +106,16 @@ connection.query(options, function(err, results) {
 
 Sending tabular data with 'load infile' and local stream:
 
-In addition to sending local fs files you can send any stream using `infileMapping` query option
+In addition to sending local fs files you can send any stream using `infileStreamFactory` query option. If set, it has to be a function that return a readable stream. It gets file path from query as a parameter.
 
 ```
 // local file
 connection.query('LOAD DATA LOCAL INFILE "/tmp/data.csv" INTO TABLE test FIELDS TERMINATED BY ? (id, title)', onInserted1);
-// local stream - does not exist on fs. Any name can be used, if matched to mapping stream parameteris used, otherwise local file.
-
+// local stream
 var sql = 'LOAD DATA LOCAL INFILE "mystream" INTO TABLE test FIELDS TERMINATED BY ? (id, title)';
 connection.query({
   sql: sql,
-  infileMapping: { mystream: request }
+  infileStreamFactory: function(path) { return getStream(); }
 }, onInserted2);
 ```
 

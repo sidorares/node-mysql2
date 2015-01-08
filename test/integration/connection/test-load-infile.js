@@ -42,13 +42,12 @@ connection.query(sql, [badPath, ','], function(err, result) {
 var Stream = require('readable-stream').PassThrough;
 var myStream = new Stream();
 
-infileMapping = {};
-infileMapping[badPath] = myStream;
+var createMyStream = function(path) { return myStream; };
 var streamResult;
 connection.query({
     sql: sql,
     values: [badPath, ','],
-    infileMapping: infileMapping
+    infileStreamFactory: createMyStream
   }, function(err, result) {
     if (err) throw err;
     streamResult = result;
