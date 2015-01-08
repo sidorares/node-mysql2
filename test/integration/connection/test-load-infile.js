@@ -39,13 +39,8 @@ connection.query(sql, [badPath, ','], function(err, result) {
 });
 
 // test path mapping
-var stream = new EventEmitter();
-stream.write = function(chunk) {
-  this.emit('data', chunk);
-};
-stream.end = function() {
-  this.emit('end');
-}
+var Stream = require('readable-stream').PassThrough;
+var myStream = new Stream();
 
 infileMapping = {};
 infileMapping[badPath] = myStream;
