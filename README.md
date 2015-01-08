@@ -116,7 +116,7 @@ connection.query('LOAD DATA LOCAL INFILE "/tmp/data.csv" INTO TABLE test FIELDS 
 var sql = 'LOAD DATA LOCAL INFILE "mystream" INTO TABLE test FIELDS TERMINATED BY ? (id, title)';
 connection.query({
   sql: sql,
-  infileMapping: { mysqtream: request }
+  infileMapping: { mystream: request }
 }, onInserted2);
 ```
 
