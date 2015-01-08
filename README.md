@@ -31,7 +31,6 @@ DECIMAL and NEWDECIMAL types always returned as string
 
 ## Known not yet supported features
 
-`LOAD DATA INFILE` and `SELECT INTO OUTFILE`
 `client.changeUser()`
 
 ## Examples
@@ -105,6 +104,20 @@ connection.query(options, function(err, results) {
   */
 });
 
+Sending tabular data with 'load infile' and local stream:
+
+In addition to sending local fs files you can send any stream using `infileMapping` query option
+
+```
+// local file
+connection.query('LOAD DATA LOCAL INFILE "/tmp/data.csv" INTO TABLE test FIELDS TERMINATED BY ? (id, title)', onInserted1);
+// local stream - does not exist on fs. Any name can be used, if matched to mapping stream parameteris used, otherwise local file.
+
+var sql = 'LOAD DATA LOCAL INFILE "mystream" INTO TABLE test FIELDS TERMINATED BY ? (id, title)';
+connection.query({
+  sql: sql,
+  infileMapping: { mysqtream: request }
+}, onInserted2);
 ```
 
 Connecting using custom stream:
@@ -225,8 +238,7 @@ events:
   - [node-mysql](https://github.com/felixge/node-mysql) - most popular node.js mysql client library
   - [node-mariasql](https://github.com/mscdex/node-mariasql/) - bindings to libmariasql. One of the fastest clients
   - [node-libmysqlclident](https://github.com/Sannis/node-mysql-libmysqlclient) - bindings to libmysqlclient
-  - [mysql-co](https://github.com/sidorares/mysql-co) - wrappers to use mysql2 with generators and [co library](https://github.com/visionmedia/co)
-  - [mysql-utilities](https://github.com/tshemsedinov/node-mysql-utilities) - useful utilities on top of mysql connection
+  - [go-mysql](https://github.com/siddontang/go-mysql) - Mysql Go client (prepared statements, binlog protocol, server)
 
 ## Contributing
 
