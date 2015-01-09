@@ -1,4 +1,4 @@
-0.15.0 - ( https://github.com/sidorares/node-mysql2/milestones/0.15.0 )
+0.15.0 - 1/10/2015
  - connection.threadId
  - connection.changeUser()                                   #63
  - named placeholders                                        #117
