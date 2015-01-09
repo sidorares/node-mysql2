@@ -26,6 +26,17 @@ connection.query('select user()', function(err, rows) {
   assert.deepEqual(rows, [ { 'user()': 'changeuser2@localhost' } ]);
 });
 
+connection.changeUser({
+  user: 'changeuser1',
+  passwordSha1: new Buffer('f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd', 'hex') // sha1(changeuser1pass)
+});
+connection.query('select user()', function(err, rows) {
+  if (err) throw err;
+  assert.deepEqual(rows, [ { 'user()': 'changeuser1@localhost' } ]);
+});
+
+connection.end();
+
 // from felixge/node-mysql/test/unit/connection/test-change-database-fatal-error.js:
 // This test verifies that changeUser errors are treated as fatal errors.  The
 // rationale for that is that a failure to execute a changeUser sequence may
