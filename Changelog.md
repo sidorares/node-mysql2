@@ -1,12 +1,11 @@
 0.15.0 - ( https://github.com/sidorares/node-mysql2/milestones/0.15.0 )
- ( marked with + are in master, other wip )
  - connection.threadId
- - connection.changeUser()                                   +#63
+ - connection.changeUser()                                   #63
  - named placeholders                                        #117
- - new prepared statements api                               +#132 #139
- - support LOAD INFILE                                       +#64 +#142
- - refactored faster packet parser                           +#140
- - lazy parse rarely used column definition fields           +#137
+ - new prepared statements api                               #132 #139
+ - support LOAD INFILE                                       #64 #142
+ - refactored faster packet parser                           #140
+ - lazy parse rarely used column definition fields           #137
 
 0.14.1 - 9/12/2014
  - stream connection option now can be a function            #80
