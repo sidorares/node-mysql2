@@ -25,6 +25,7 @@
   "dependencies": {
     "bn.js": "0.16.0",
     "cardinal": "0.4.4",
+    "named-placeholders": "0.1.2",
     "double-ended-queue": "2.0.0-0"
   },
   "devDependencies": {
