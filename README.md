@@ -20,6 +20,10 @@ Mysql client for node.js. Written in native JavaScript and aims to be mostly api
 
 ## Documentation
 
+See [node-mysql](https://github.com/felixge/node-mysql) documentation. If you see api incompatibilities, please report via github issue.
+
+Below is a list of extensions not supported by node-mysql:
+
 ### Named placeholders
 
 You can use named placeholders for parameters by setting `namedPlaceholders` config value or query/execute time option. Named placeholders are converted to unnamed `?` on the client (mysql protocol does not support named parameters). If you reference parameter multiple times under the same name it is sent to server multiple times.
@@ -40,7 +44,101 @@ You can use named placeholders for parameters by setting `namedPlaceholders` con
    });
 ```
 
-See [node-mysql](https://github.com/felixge/node-mysql) documentation. If you see api incompatibilities, please report via github issue.
+### Prepared statements
+
+#### Automatic creation, cached and re-used by connection
+
+Similar to `connection.query()`. 
+
+```js
+connection.execute('select 1 + ? + ? as result', [5, 6], function(err, rows) {
+  // rows: [ { result: 12 } ]
+  // internally 'select 1 + ? + ? as result' is prepared first. On subsequent calls cached statement is re-used
+});
+
+// close cached statement for 'select 1 + ? + ? as result'. noop if not in cache
+connection.unprepare('select 1 + ? + ? as result');
+```
+
+#### Manual prepare / execute
+
+```js
+connection.prepare('select ? + ? as tests', function(err, statement) {
+   // statement.parameters - array of column definitions, length === number of params, here 2
+   // statement.columns - array of result column definitions. Can be empty if result schema is dynamic / not known
+   // statement.id
+   // statement.query
+
+   statement.execute([1, 2], function(err, rows, columns) {
+    // -> [ { tests: 3 } ]
+   });
+   
+   // note that there is no callback here. There is no statement close ack at protocol level.
+   statement.close();
+});
+```
+Note that you should not use statement after connection reset (`changeUser()` or disconnect). Statement scope is connection, you need to prepare statement for each new connection in order to use it.
+
+### Receiving rows as array of columns instead of hash with column name as key:
+
+```js
+var options = {sql: 'select A,B,C,D from foo', rowsAsArray: true};
+connection.query(options, function(err, results) {
+  /* results will be an array of arrays like this now:
+  [[
+     'field A value',
+     'field B value',
+     'field C value',
+     'field D value',
+  ], ...]
+  */
+});
+```
+
+### Sending tabular data with 'load infile' and local stream:
+
+In addition to sending local fs files you can send any stream using `infileStreamFactory` query option. If set, it has to be a function that return a readable stream. It gets file path from query as a parameter.
+
+```js
+// local file
+connection.query('LOAD DATA LOCAL INFILE "/tmp/data.csv" INTO TABLE test FIELDS TERMINATED BY ? (id, title)', onInserted1);
+// local stream
+var sql = 'LOAD DATA LOCAL INFILE "mystream" INTO TABLE test FIELDS TERMINATED BY ? (id, title)';
+connection.query({
+  sql: sql,
+  infileStreamFactory: function(path) { return getStream(); }
+}, onInserted2);
+```
+
+### Connecting using custom stream:
+
+```js
+var net        = require('net');
+var mysql      = require('mysql2');
+var shape      = require('shaper');
+var connection = mysql.createConnection({
+   user: 'test',
+   database: 'test',
+   stream: net.connect('/tmp/mysql.sock').pipe(shape(10)) // emulate 10 bytes/sec link
+});
+connection.query('SELECT 1+1 as test1', console.log);
+```
+`stream` also can be a function. In that case function result has to be duplex stream, and it is used for connection transport. This is required if you connect pool using custom transport as new pooled connection needs new stream. [Example](https://github.com/sidorares/node-mysql2/issues/80) connecting over socks5 proxy:
+
+```js
+var mysql      = require('mysql2');
+var SocksConnection = require('socksjs');
+var pool = mysql.createPool({
+  database: 'test',
+  user: 'foo',
+  password: 'bar'
+  stream: function(cb) {
+    cb(null, new SocksConnection({ host: 'remote.host', port: 3306}, { host: 'localhost', port: 1080 }));
+  }
+ });
+```
+
+In addition to password `createConnection()`, `createPool()` and `changeUser()` accept `passwordSha1` option. This is useful when implementing proxies as plaintext password might be not available. 
 
 ## Known incompatibilities with node-mysql
 
@@ -48,10 +146,6 @@ All numeric types converted to numbers. In contrast to node-mysql `zeroFill` fla
 You need to check corresponding field zeroFill flag and convert to string manually if this is of importance to you.
 
 DECIMAL and NEWDECIMAL types always returned as string
-
-## Known not yet supported features
-
-`client.changeUser()`
 
 ## Examples
 
@@ -95,7 +189,7 @@ connection.query('SELECT 1+1 as test1', console.log);
 
 You can use 'Amazon RDS' string as value to ssl property to connect to Amazon RDS mysql over ssl (in that case http://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used)
 
-```
+```js
 var mysql      = require('mysql2');
 var connection = mysql.createConnection({
    user: 'foo',
@@ -109,49 +203,7 @@ conn.query('show status like \'Ssl_cipher\'', function(err, res) {
   conn.end();
 });
 ```
-Receiving rows as array of columns instead of hash with column name as key:
 
-```js
-var options = {sql: 'select A,B,C,D from foo', rowsAsArray: true};
-connection.query(options, function(err, results) {
-  /* results will be an array of arrays like this now:
-  [[
-     'field A value',
-     'field B value',
-     'field C value',
-     'field D value',
-  ], ...]
-  */
-});
-
-Sending tabular data with 'load infile' and local stream:
-
-In addition to sending local fs files you can send any stream using `infileStreamFactory` query option. If set, it has to be a function that return a readable stream. It gets file path from query as a parameter.
-
-```
-// local file
-connection.query('LOAD DATA LOCAL INFILE "/tmp/data.csv" INTO TABLE test FIELDS TERMINATED BY ? (id, title)', onInserted1);
-// local stream
-var sql = 'LOAD DATA LOCAL INFILE "mystream" INTO TABLE test FIELDS TERMINATED BY ? (id, title)';
-connection.query({
-  sql: sql,
-  infileStreamFactory: function(path) { return getStream(); }
-}, onInserted2);
-```
-
-Connecting using custom stream:
-
-```js
-var net        = require('net');
-var mysql      = require('mysql2');
-var shape      = require('shaper');
-var connection = mysql.createConnection({
-   user: 'test',
-   database: 'test',
-   stream: net.connect('/tmp/mysql.sock').pipe(shape(10)) // emulate 10 bytes/sec link
-});
-connection.query('SELECT 1+1 as test1', console.log);
-```
 
 Simple mysql proxy server:
 
