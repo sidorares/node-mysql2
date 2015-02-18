@@ -336,3 +336,5 @@ TODO in order of importance:
 [travis-url]: https://travis-ci.org/sidorares/node-mysql2
 [appveyor-image]: https://img.shields.io/appveyor/ci/sidorares/node-mysql2/master.svg?label=windows
 [appveyor-url]: https://ci.appveyor.com/project/sidorares/node-mysql2
+[downloads-image]: https://img.shields.io/npm/dm/mysql2.svg
+[downloads-url]: https://npmjs.org/package/mysql2
