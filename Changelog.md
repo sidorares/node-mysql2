@@ -1,3 +1,7 @@
+HEAD
+ - add io.js to build matrix
+ - add windows CI using Appveyor                             #151 #152
+
 0.15.0 - 1/10/2015
  - connection.threadId
  - connection.changeUser()                                   #63
