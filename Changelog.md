@@ -1,4 +1,4 @@
-HEAD
+0.15.1 - 18/02/2015
  - add io.js to build matrix
  - add windows CI using Appveyor                             #151 #152
 
