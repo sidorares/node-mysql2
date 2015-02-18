@@ -44,7 +44,7 @@ var nr_fields = [{
   name: "test",
   orgName: "test",
   orgTable: "no_rows",
-  schema: "test",
+  schema: mysql.config.database,
   table: "no_rows"
 }];
 var sr_fields = clone(nr_fields);
@@ -107,6 +107,7 @@ function do_test(testIndex) {
       return c.inspect();
     };
     assert.deepEqual(expectation, [_rows, arrOrColumn(_columns), _numResults]);
+
     var q = mysql.query(sql);
     var resIndex = 0;
     var rowIndex = 0;

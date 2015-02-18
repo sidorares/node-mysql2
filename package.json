@@ -7,7 +7,7 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "./test/run.js",
+    "test": "node ./test/run.js",
     "benchmark": "./benchmarks/run-unit.js",
     "benchmarks": "./benchmarks/run-unit.js"
   },
