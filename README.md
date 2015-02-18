@@ -1,7 +1,10 @@
 #node-mysql2
 
-[![Build Status](https://travis-ci.org/sidorares/node-mysql2.svg?branch=master)](https://travis-ci.org/sidorares/node-mysql2) [![](https://gemnasium.com/sidorares/node-mysql2.png)](https://gemnasium.com/npms/mysql2) [TODO](https://github.com/cainus/node-coveralls): [![](https://coveralls.io/repos/sidorares/node-mysql2/badge.png)](https://coveralls.io/r/sidorares/node-mysql2)
-
+[![NPM Version][npm-image]][npm-url]
+[![NPM Downloads][downloads-image]][downloads-url]
+[![Node.js Version][node-version-image]][node-version-url]
+[![Linux Build][travis-image]][travis-url]
+[![Windows Build][appveyor-image]][appveyor-url]
 
 Mysql client for node.js. Written in native JavaScript and aims to be mostly api compatible with [node-mysql](https://github.com/felixge/node-mysql)
 
@@ -48,7 +51,7 @@ You can use named placeholders for parameters by setting `namedPlaceholders` con
 
 #### Automatic creation, cached and re-used by connection
 
-Similar to `connection.query()`. 
+Similar to `connection.query()`.
 
 ```js
 connection.execute('select 1 + ? + ? as result', [5, 6], function(err, rows) {
@@ -72,7 +75,7 @@ connection.prepare('select ? + ? as tests', function(err, statement) {
    statement.execute([1, 2], function(err, rows, columns) {
     // -> [ { tests: 3 } ]
    });
-   
+
    // note that there is no callback here. There is no statement close ack at protocol level.
    statement.close();
 });
@@ -138,7 +141,7 @@ var pool = mysql.createPool({
  });
 ```
 
-In addition to password `createConnection()`, `createPool()` and `changeUser()` accept `passwordSha1` option. This is useful when implementing proxies as plaintext password might be not available. 
+In addition to password `createConnection()`, `createPool()` and `changeUser()` accept `passwordSha1` option. This is useful when implementing proxies as plaintext password might be not available.
 
 ## Known incompatibilities with node-mysql
 
@@ -325,6 +328,11 @@ TODO in order of importance:
   - performance improvements
   - features
 
-## Features TODO
-  - more server side commands support (binary protocol, etc)
-  - named parameters interpolarion into unnamed parameters translation for prepared statements
+[npm-image]: https://img.shields.io/npm/v/mysql2.svg
+[npm-url]: https://npmjs.org/package/mysql2
+[node-version-image]: http://img.shields.io/node/v/mysql2.svg
+[node-version-url]: http://nodejs.org/download/
+[travis-image]: https://img.shields.io/travis/sidorares/node-mysql2/master.svg?label=linux
+[travis-url]: https://travis-ci.org/sidorares/node-mysql2
+[appveyor-image]: https://img.shields.io/appveyor/ci/sidorares/node-mysql2/master.svg?label=windows
+[appveyor-url]: https://ci.appveyor.com/project/sidorares/node-mysql2
