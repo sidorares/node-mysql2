@@ -1,5 +1,10 @@
+0.15.2 - 24/02/2015
+ - update Amazon RDS certifivcates                           #154
+ - add io.js 1.3 to CI matrix
+ - fix packet parser bug                                     #155
+
 0.15.1 - 18/02/2015
- - add io.js to build matrix
+ - add io.js 1.0 - 1.2 to build matrix
  - add windows CI using Appveyor                             #151 #152
 
 0.15.0 - 1/10/2015
