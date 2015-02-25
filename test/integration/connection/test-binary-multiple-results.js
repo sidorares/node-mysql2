@@ -46,7 +46,7 @@ var nr_fields = [{
   name: "test",
   orgName: "test",
   orgTable: "no_rows",
-  schema: "test",
+  schema: mysql.config.database,
   table: "no_rows"
 }];
 
