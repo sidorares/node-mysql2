@@ -1,3 +1,7 @@
+0.15.3 - 24/02/2015
+ - multiple results support in binary protocol               #157 #26 #27
+ - add io.js 1.4 to CI matrix
+
 0.15.2 - 24/02/2015
  - update Amazon RDS certifivcates                           #154
  - add io.js 1.3 to CI matrix
