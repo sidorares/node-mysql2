@@ -1,14 +1,13 @@
 var common     = require('../../common');
 var assert     = require('assert');
 
-var rows = undefined;
-var fields = undefined;
+var rows;
+var fields;
 var err;
-var server; 
+var server;
 
 function test() {
   var connection = common.createConnection({port: 3307});
-  //var connection = require('mysql').createConnection({port: 3307});
   connection.query('SELECT 123', function(err, _rows, _fields) {
     if (err) throw err;
 
@@ -17,20 +16,30 @@ function test() {
     connection.on('error', function(_err) {
       err = _err;
     });
-    server.connections.forEach(function(conn) { conn.stream.end() } );
+    server.connections.forEach(function(conn) { conn.stream.end(); } );
     server._server.close(function() {
-      assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST'); 
+      assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     });
-
-    // TODO: tests for 'commands after close' behavior
-    //  connection.query('SELECT 123', function(err, a, b) {
-    //    console.log(err, a, b);
-    //  });
   });
-
   // TODO: test connection.end() etc where we expect disconnect to happen
 }
-server = common.createServer(test);
+
+function serverHandler(conn) {
+  conn.on('query', function(q) {
+    conn.writeTextResult([ { '1': '1' } ], [ { catalog: 'def',
+     schema: '',
+     table: '',
+     orgTable: '',
+     name: '1',
+     orgName: '',
+     characterSet: 63,
+     columnLength: 1,
+     columnType: 8,
+     flags: 129,
+     decimals: 0 } ]);
+  });
+}
+server = common.createServer(test, serverHandler);
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{1: 1}]);

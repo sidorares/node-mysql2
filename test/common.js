@@ -4,7 +4,7 @@ var config = {
   password: process.env.CI ? process.env.MYSQL_PASSWORD : '',
   database: process.env.MYSQL_DATABASE || 'test',
   port: process.env.MYSQL_PORT || 3306
-}
+};
 
 module.exports.SqlString = require('../lib/sql_string.js');
 
@@ -37,7 +37,7 @@ module.exports.createConnection = function(args, callback) {
       var rows = [];
       var q = c.oldQuery(sql);
       q.on('result', function(res) {
-        res.on('row', function(row) { rows.push(row) });
+        res.on('row', function(row) { rows.push(row); });
         res.on('end', function() {
           callback(null, rows);
         });
@@ -77,7 +77,7 @@ module.exports.createTemplate = function() {
   return jade.compile(template);
 };
 
-module.exports.createServer = function(cb) {
+module.exports.createServer = function(onListening, handler) {
   var server = require('../index.js').createServer();
   server.on('connection', function(conn) {
     conn.on('error', function() {
@@ -91,29 +91,13 @@ module.exports.createServer = function(cb) {
       characterSet: 8,
       capabilityFlags: 0xffffff
     });
-    conn.on('query', function(sql) {
-      conn.writeTextResult([ { '1': '1' } ], [ { catalog: 'def',
-       schema: '',
-       table: '',
-       orgTable: '',
-       name: '1',
-       orgName: '',
-       characterSet: 63,
-       columnLength: 1,
-       columnType: 8,
-       flags: 129,
-       decimals: 0 } ]);
-    });
-    //conn.on('end', );
+    if (handler)
+      handler(conn);
   });
-  server.listen(3307, cb);
+  server.listen(3307, onListening);
   return server;
-}
+};
 
 module.exports.useTestDb = function(cb) {
   // no-op in my setup, need it for compatibility with node-mysql tests
-}
-
-module.exports.hrdiff = function(t1, t2) {
-  return t2[1] - t1[1] + (t2[0] - t1[0])*1e9;
 };
