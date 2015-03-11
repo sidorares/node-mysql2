@@ -1,9 +1,15 @@
+0.15.4 - 11/03/2015
+- added COM_QUIT command, sent from conn.end()               #163, #150
+- io.js 1.5
+- don't crash on unexpected protocol packets, emit           #164, #160
+  connection error event instead
+
 0.15.3 - 24/02/2015
  - multiple results support in binary protocol               #157 #26 #27
  - add io.js 1.4 to CI matrix
 
 0.15.2 - 24/02/2015
- - update Amazon RDS certifivcates                           #154
+ - update Amazon RDS certificates                           #154
  - add io.js 1.3 to CI matrix
  - fix packet parser bug                                     #155
 
