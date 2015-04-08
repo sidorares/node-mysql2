@@ -1,3 +1,7 @@
+0.15.5 - 08/04/2015
+- fix broken 'stream rows' functionality                     #165, #166
+- add io.js 1.6 to build matrix
+
 0.15.4 - 11/03/2015
 - added COM_QUIT command, sent from conn.end()               #163, #150
 - io.js 1.5
