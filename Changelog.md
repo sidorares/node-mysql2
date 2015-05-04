@@ -1,3 +1,9 @@
+0.15.6 - 04/06/2015
+- Include errno in error object                              #168
+- server: fix fields in OK and column header packets
+  (fix errors when connecting with node-mysql)
+- build: add iojs 1.8.x to matrix
+
 0.15.5 - 08/04/2015
 - fix broken 'stream rows' functionality                     #165, #166
 - add io.js 1.6 to build matrix
