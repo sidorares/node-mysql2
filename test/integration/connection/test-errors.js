@@ -10,6 +10,8 @@ var onExecuteErrorEvent1 = undefined;
 var onQueryErrorEvent1 = undefined;
 
 connection.execute('error in execute', [], function(err, _rows, _fields) {
+  assert.equal(err.errno, 1064);
+  assert.equal(err.code, 'ER_PARSE_ERROR');
   if (err) {
     onExecuteResultError = true;
   }
@@ -17,6 +19,8 @@ connection.execute('error in execute', [], function(err, _rows, _fields) {
   onExecuteErrorEvent = true;
 });
 connection.query('error in query', [], function(err, _rows, _fields) {
+  assert.equal(err.errno, 1064);
+  assert.equal(err.code, 'ER_PARSE_ERROR');
   if (err) {
     onQueryResultError = true;
   }
