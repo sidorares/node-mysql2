@@ -1,5 +1,3 @@
-
-
 0.15.8 - 22/06/2015
 - Add .escapeId() to Connection and Pool                     #180
 - Build: iojs 2.2.1 & 2.3.0
