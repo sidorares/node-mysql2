@@ -145,7 +145,7 @@ In addition to password `createConnection()`, `createPool()` and `changeUser()` 
 
 ## Known incompatibilities with node-mysql
 
-All numeric types converted to numbers. In contrast to node-mysql `zeroFill` flag is ignored in type conversion
+In contrast to node-mysql, `zeroFill` flag is ignored in type conversion.
 You need to check corresponding field zeroFill flag and convert to string manually if this is of importance to you.
 
 DECIMAL and NEWDECIMAL types always returned as string
