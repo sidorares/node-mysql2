@@ -59,6 +59,8 @@ module.exports.createConnection = function(args, callback) {
     multipleStatements: args ? args.multipleStatements : false,
     port: (args && args.port) || config.port,
     debug: process.env.DEBUG,
+    supportBigNumbers: args && args.supportBigNumbers,
+    bigNumberStrings: args && args.bigNumberStrings,
     dateStrings: args && args.dateStrings
   });
 };
