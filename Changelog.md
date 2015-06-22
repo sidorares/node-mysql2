@@ -1,8 +1,12 @@
-0.15.7 - 22/06/2015
+
+
+0.15.8 - 22/06/2015
 - Add .escapeId() to Connection and Pool                     #180
 - Build: iojs 2.2.1 & 2.3.0
 - Binary protocol: fix crash when server return null
   for 'NOT NULL' column                                      #178
+
+0.15.7 - ?
 
 0.15.6 - 04/06/2015
 - Include errno in error object                              #168
