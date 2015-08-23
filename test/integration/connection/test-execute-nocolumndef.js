@@ -23,7 +23,12 @@ var expectedFields;
 process.on('exit', function() {
   assert.deepEqual(rows, expectedRows);
   var fi = fields.map(function(c) { return c.inspect() });
-  assert.deepEqual(fi, expectedFields);
+  for (var i; i < expectedFields.length; i++) {
+    assert.deepEqual(Object.keys(fi[i]).sort(), Object.keys(expectedFields[i]).sort());
+    expectedFields[i].map(function (key) {
+      assert.deepEqual(expectedFields[i][key], fi[i][key]);
+    });
+  }
 });
 
 expectedFields = [{ catalog: 'def',
