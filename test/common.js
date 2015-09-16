@@ -63,6 +63,7 @@ module.exports.createConnection = function(args, callback) {
     supportBigNumbers: args && args.supportBigNumbers,
     bigNumberStrings: args && args.bigNumberStrings,
     compress: (args && args.compress) || config.compress,
+    decimalNumbers: args && args.decimalNumbers,
     dateStrings: args && args.dateStrings
   });
 };
