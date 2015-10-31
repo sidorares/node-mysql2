@@ -30,7 +30,7 @@
     "cardinal": "0.5.0",
     "double-ended-queue": "2.1.0-0",
     "named-placeholders": "1.1.0",
-    "readable-stream": "2.0.2"
+    "readable-stream": "2.0.3"
   },
   "devDependencies": {
     "progress": "1.1.8",
