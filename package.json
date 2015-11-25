@@ -29,7 +29,7 @@
     "bn.js": "4.3.0",
     "cardinal": "0.5.0",
     "double-ended-queue": "2.1.0-0",
-    "named-placeholders": "1.1.0",
+    "named-placeholders": "1.1.1",
     "readable-stream": "2.0.4"
   },
   "devDependencies": {
