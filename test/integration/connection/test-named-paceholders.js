@@ -35,7 +35,7 @@ var qCmd = connection.query('SELECT * from test_table where num1 < :numParam and
   assert.deepEqual(rows, [ { id: 4, num1: -5, num2: 8000000 } ]);
 });
 assert.equal(qCmd.sql, 'SELECT * from test_table where num1 < 2 and num2 > 100');
-assert.equal(typeof qCmd.values, 'undefined');
+assert.deepEqual(qCmd.values, [2, 100]);
 
 connection.query('SELECT :a + :a as sum', {a: 2}, function(err, rows, fields) {
   if (err) throw err;
