@@ -8,16 +8,19 @@ var rows, rows1, rows2, rows3, rows4, rows5;
 var date = new Date('1990-01-01 08:15:11 UTC');
 var date1 = new Date('2000-03-03 08:15:11 UTC');
 var date2 = '2010-12-10 14:12:09.019473';
+var date3 = null;
+
 connection.query('CREATE TEMPORARY TABLE t (d1 DATE)');
 connection.query('INSERT INTO t set d1=?', [date]);
 
-connection1.query('CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME)');
-connection1.query('INSERT INTO t set d1=?, d2=?, d3=?', [date, date1, date2]);
+connection1.query('CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME)');
+connection1.query('INSERT INTO t set d1=?, d2=?, d3=?, d4=?', [date, date1, date2, date3]);
 
 var dateAsStringExpected = [
      { d1: '1990-01-01',
        d2: '2000-03-03 08:15:11',
-       d3: '2010-12-10 14:12:09' } ];
+       d3: '2010-12-10 14:12:09',
+       d4: null }];
 
 
 connection.execute('select from_unixtime(?) t', [(+date).valueOf()/1000], function(err, _rows, _fields) {
