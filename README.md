@@ -305,6 +305,7 @@ events:
   - [Mysql-pg-proxy](https://github.com/sidorares/mysql-pg-proxy)  - mysql to postgres proxy server.
   - [Mysqlite.js](https://github.com/sidorares/mysqlite.js) - mysql server with JS-only (emscripten compiled) sqlite backend.
   - [sql-engine](https://github.com/eugeneware/sql-engine) - mysql server with leveldb backend.
+  - [mysql-osquery-proxy](https://github.com/sidorares/mysql-osquery-proxy) - connect to [facebook osquery](https://osquery.io/) using mysql client
 
 ## See also:
 
