@@ -3,6 +3,7 @@ var config = {
   user: process.env.MYSQL_USER || 'root',
   password: process.env.CI ? process.env.MYSQL_PASSWORD : '',
   database: process.env.MYSQL_DATABASE || 'test',
+  compress: process.env.COMPRESS,
   port: process.env.MYSQL_PORT || 3306
 };
 
@@ -61,6 +62,7 @@ module.exports.createConnection = function(args, callback) {
     debug: process.env.DEBUG,
     supportBigNumbers: args && args.supportBigNumbers,
     bigNumberStrings: args && args.bigNumberStrings,
+    compress: (args && args.compress) || config.compress,
     dateStrings: args && args.dateStrings
   });
 };
