@@ -81,19 +81,24 @@ module.exports.createTemplate = function() {
   return jade.compile(template);
 };
 
+var ClientFlags = require('../lib/constants/client.js');
+
 module.exports.createServer = function(onListening, handler) {
   var server = require('../index.js').createServer();
   server.on('connection', function(conn) {
     conn.on('error', function() {
       // we are here when client drops connection
     });
+    var flags = 0xffffff;
+    flags = flags ^ ClientFlags.COMPRESS;
+
     conn.serverHandshake({
       protocolVersion: 10,
       serverVersion: 'node.js rocks',
       connectionId: 1234,
       statusFlags: 2,
       characterSet: 8,
-      capabilityFlags: 0xffffff
+      capabilityFlags: flags
     });
     if (handler)
       handler(conn);
