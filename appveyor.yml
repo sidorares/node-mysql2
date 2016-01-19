@@ -29,6 +29,8 @@ test_script:
   - mysql --version
   - node --version
   - npm --version
-  - npm test
+  - node test/run.js
+  - SET MYSQL_USE_COMPRESSION=1
+  - node test/run.js
 
 version: "{build}"
