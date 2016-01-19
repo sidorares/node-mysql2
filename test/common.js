@@ -3,7 +3,7 @@ var config = {
   user: process.env.MYSQL_USER || 'root',
   password: process.env.CI ? process.env.MYSQL_PASSWORD : '',
   database: process.env.MYSQL_DATABASE || 'test',
-  compress: process.env.COMPRESS,
+  compress: process.env.MYSQL_USE_COMPRESSION,
   port: process.env.MYSQL_PORT || 3306
 };
 
