@@ -14,19 +14,13 @@ matrix:
     include:
         - addons:
              mariadb: 5.5
-          node_js: '2.3'
-        - addons:
-             mariadb: 10.0
-          node_js: '2.3'
+          node_js: '4.2'
         - addons:
              mariadb: 10.1
-          node_js: '2.3'
+          node_js: '4.2'
         - addons:
              mariadb: 5.5
-          node_js: '1.0'
-        - addons:
-             mariadb: 10.0
-          node_js: '1.0'
+          node_js: '5.4'
         - addons:
              mariadb: 10.1
-          node_js: '1.0'
+          node_js: '5.4'
