@@ -1,5 +1,5 @@
 var common     = require('../../common');
-var connection = common.createConnection();
+//var connection = common.createConnection();
 var assert     = require('assert');
 
 var rows = undefined;
@@ -9,7 +9,7 @@ Date = function() {
   function CustomDate(str) {
     return new NativeDate(str);
   }
-  CustomDate.prototype.now = Date.now;
+  CustomDate.now = Date.now;
   return CustomDate;
 }();
 
