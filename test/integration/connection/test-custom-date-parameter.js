@@ -9,6 +9,7 @@ Date = function() {
   function CustomDate(str) {
     return new NativeDate(str);
   }
+  CustomDate.now = Date.now;
   return CustomDate;
 }();
 

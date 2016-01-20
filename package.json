@@ -7,7 +7,7 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "node ./test/run.js",
+    "test": "node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
     "benchmark": "./benchmarks/run-unit.js",
     "benchmarks": "./benchmarks/run-unit.js"
   },
@@ -30,7 +30,8 @@
     "cardinal": "0.5.0",
     "double-ended-queue": "2.1.0-0",
     "named-placeholders": "1.1.1",
-    "readable-stream": "2.0.5"
+    "readable-stream": "2.0.5",
+    "seq-queue": "0.0.5"
   },
   "devDependencies": {
     "progress": "1.1.8",
