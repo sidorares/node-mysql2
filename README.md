@@ -148,7 +148,13 @@ In addition to password `createConnection()`, `createPool()` and `changeUser()` 
 In contrast to node-mysql, `zeroFill` flag is ignored in type conversion.
 You need to check corresponding field zeroFill flag and convert to string manually if this is of importance to you.
 
-DECIMAL and NEWDECIMAL types always returned as string
+DECIMAL and NEWDECIMAL types always returned as string unless you pass this config option:
+```javascript
+{
+  decimalNumbers: true
+}
+```
+**_Warning this option could lose precision on the number as Javascript Number is a Float!_**
 
 ## Examples
 
