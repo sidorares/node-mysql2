@@ -42,5 +42,5 @@ process.on('exit', function() {
   assert.deepEqual(rows[1], rows1[1]);
   assert.deepEqual(fields[0].inspect(), fields1[0].inspect());
 
-  assert(rows2[0].f instanceof Date);
+  assert(rows2[0].t11 instanceof Date);
 });
