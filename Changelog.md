@@ -1,3 +1,31 @@
+1.0.0-rc.1 (17/02/2016)
+
+- (semver-major) remove 'number of statements'
+   from callback parameter                                   #192, #266, #45, #46
+- fix in deserealisation of binary datetime packet           #260
+- return null date as null, not INVALID_DATE.                #244, #247
+- fix incorrect name for flag ( binary protocol )            #245, #246
+- completely refactored compression protocol support         #252, #173
+- server: add serailisation of NULL strings                  #232
+- security: SSL does not verify remote certificate           #103, #171
+- Allow parameters in query(options) object                  #216, #230
+- Pool query now returns query reference                     #183 #230
+- perf: use double-ended queue in the pool instead of arrays #227 #228 #156
+- JSON type support                                          #207 #208
+- build: add node 4.2 and 5.1 to matrix
+- Make SSL ciphers configurable                              #190 #103
+- Emit enqueue event if conn is queued                       #177 #189
+- call command callback if stream was disconnected mid
+  command                                                    #202, 204
+- use correct variable in error reporting                    #197
+- build: add mariadb to tests.                               #191
+- add support for named placeholders for field & tables      #176, 205
+- update error codes from node-mysql                         #201 209
+- bump named-placeholders to 1.0.0, fixes problems with
+  placeholders inside quotation ( https://github.com/sidorares/named-placeholders/issues/2 )
+- catch exceptions during named placeholders processing      #187
+
+
 0.15.8 - 22/06/2015
 - Add .escapeId() to Connection and Pool                     #180
 - Build: iojs 2.2.1 & 2.3.0
