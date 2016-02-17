@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-var options = {};
+var options = {
+  verbose: true
+};
 
 if (process.env.FILTER) {
     options.include = new RegExp(process.env.FILTER + '.*\\.js$');

@@ -106,14 +106,19 @@ function do_test(testIndex) {
 
       return c.inspect();
     };
+
     assert.deepEqual(expectation, [_rows, arrOrColumn(_columns), _numResults]);
 
     var q = mysql.query(sql);
     var resIndex = 0;
     var rowIndex = 0;
-    function checkRow(row, index) {
+
+    var fieldIndex = -1;
+
+    function checkRow(row) {
+      var index = fieldIndex;
       if (_numResults == 1) {
-        assert.equal(index, 0);
+        assert.equal(fieldIndex, 0);
         if (row.constructor.name == 'ResultSetHeader')
           assert.deepEqual(_rows, row);
         else
@@ -130,14 +135,15 @@ function do_test(testIndex) {
       }
       rowIndex++;
     }
-    function checkFields(fields, index) {
+
+    function checkFields(fields) {
+      fieldIndex++;
       if (_numResults == 1) {
-       assert.equal(index, 0);
-       debugger
+       assert.equal(fieldIndex, 0);
        assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
       }
       else
-        assert.deepEqual(arrOrColumn(_columns[index]), arrOrColumn(fields));
+        assert.deepEqual(arrOrColumn(_columns[fieldIndex]), arrOrColumn(fields));
     }
     q.on('result', checkRow);
     q.on('fields', checkFields);

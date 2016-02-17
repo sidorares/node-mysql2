@@ -102,7 +102,8 @@ function do_test(testIndex) {
     if (err)
         throw(err);
     sql = "CALL _as_sp_call()"; // this call is allowed with prepared statements, and result contain multiple statements
-    mysql.query(sql, function(err, _rows, _columns, _numResults) {
+    var _numResults = 0;
+    var textCmd = mysql.query(sql, function(err, _rows, _columns) {
       if (err)
         throw err;
 
@@ -118,13 +119,14 @@ function do_test(testIndex) {
 
       assert.deepEqual(expectation[0], _rows);
       assert.deepEqual(expectation[1], arrOrColumn(_columns));
-      assert.deepEqual(expectation[2], _numResults);
 
       var q = mysql.execute(sql);
       var resIndex = 0;
       var rowIndex = 0;
-      function checkRow(row, index) {
+      var fieldIndex = -1;
 
+      function checkRow(row) {
+        var index = fieldIndex;
         if (_numResults == 1) {
           assert.equal(index, 0);
           if (row.constructor.name == 'ResultSetHeader')
@@ -143,7 +145,10 @@ function do_test(testIndex) {
         }
         rowIndex++;
       }
-      function checkFields(fields, index) {
+
+      function checkFields(fields) {
+        fieldIndex++;
+        var index = fieldIndex;
         if (_numResults == 1) {
           assert.equal(index, 0);
           assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
@@ -151,10 +156,16 @@ function do_test(testIndex) {
         else
           assert.deepEqual(arrOrColumn(_columns[index]), arrOrColumn(fields));
       }
+
       q.on('result', checkRow);
       q.on('fields', checkFields);
       q.on('end', next);
     });
+
+    textCmd.on('fields', function() {
+      _numResults++;
+    });
+
   });
 }
 do_test(0);
