@@ -10,6 +10,13 @@ node_js:
   - '4.3'
   - '5.6'
 
+before_install:
+  - "test $TRAVIS_NODE_VERSION = '4.3' || npm rm --save-dev eslint"
+
+script:
+  - "test -z $(npm -ps ls eslint) || npm run lint"
+  - "npm test"
+
 matrix:
     include:
         - addons:
