@@ -28,7 +28,7 @@ module.exports.createServer = function () {
 
 exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
-exports.format   = SqlString.format;
+exports.format = SqlString.format;
 
 exports.__defineGetter__('createConnectionPromise', function() {
   return require('./promise.js').createConnection;
@@ -43,3 +43,4 @@ exports.__defineGetter__('createPoolClusterPromise', function() {
 });
 
 module.exports.Types = require('./lib/constants/types.js');
+
