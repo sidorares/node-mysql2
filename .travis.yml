@@ -4,11 +4,11 @@ language: node_js
 before_script:
   - mysql -e 'create database /*M!50701 IF NOT EXISTS */ test;'
 node_js:
-  - '0.8'
   - '0.10'
   - '0.12'
-  - '4.3'
-  - '5.6'
+  - '4.4'
+  - '5.9'
+  - '6.1'
 
 before_install:
   - "test $TRAVIS_NODE_VERSION = '4.3' || npm rm --save-dev eslint"
@@ -21,16 +21,13 @@ matrix:
     include:
         - addons:
              mariadb: 5.5
-          node_js: '4.2'
+          node_js: '4.4'
         - addons:
              mariadb: 10.1
-          node_js: '4.2'
+          node_js: '4.4'
         - addons:
              mariadb: 5.5
-          node_js: '5.4'
+          node_js: '6.1'
         - addons:
              mariadb: 10.1
-          node_js: '5.4'
-
-notifications:
-    email: false
+          node_js: '6.1'
