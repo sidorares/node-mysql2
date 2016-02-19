@@ -14,7 +14,7 @@ before_install:
   - "test $TRAVIS_NODE_VERSION = '4.3' || npm rm --save-dev eslint"
 
 script:
-  - "test -z $(npm -ps ls eslint) || npm run lint"
+  - "test -z $(npm -ps ls eslint) || npm run-script lint"
   - "npm test"
 
 matrix:
