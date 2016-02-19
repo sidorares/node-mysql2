@@ -7,7 +7,8 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
+    "lint": "eslint lib/**/*.js index.js test/**/*.js",
+    "test": "npm run lint && node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
     "benchmark": "./benchmarks/run-unit.js",
     "benchmarks": "./benchmarks/run-unit.js"
   },
@@ -34,6 +35,7 @@
     "seq-queue": "0.0.5"
   },
   "devDependencies": {
+    "eslint": "^2.1.0",
     "progress": "1.1.8",
     "urun": "0.0.8",
     "utest": "0.0.8"

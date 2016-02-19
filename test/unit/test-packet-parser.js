@@ -11,11 +11,11 @@ function reset() {
 }
 var handler = function(p) {
   packets.push(p);
-}
+};
 
 function execute(str, verify) {
   reset();
-  var buffers = str.split('|').map(function(sb) { return sb.split(',').map(Number) });
+  var buffers = str.split('|').map(function(sb) { return sb.split(',').map(Number); });
   for(var i=0; i < buffers.length; ++i)
     pp.execute(new Buffer(buffers[i]));
   verify();
@@ -28,7 +28,7 @@ function p123() {
 }
 
 function p120_121() {
-  packets.forEach(function(p) { p.dump });
+  packets.forEach(function(p) { p.dump; });
   assert(packets.length === 2);
   assert(packets[0].length() === 4);
   assert(packets[0].sequenceId === 120);
@@ -67,7 +67,7 @@ var p122_123 = function() {
   assert(packets[0].sequenceId === 122);
   assert(packets[1].length() === 10);
   assert(packets[1].sequenceId === 123);
-}
+};
 // two non-zero length packets
 execute("5,0,0,122,1,2,3,4,5,6,0,0,123,1,2,3,4,5,6", p122_123);
 execute("5,0,0,122,1,2,3,4,5|6,0,0,123,1,2,3,4,5,6", p122_123);
@@ -82,7 +82,7 @@ execute("5,0,0,122,1,2,3,4,5,6,0,0,123,1|2,3|4,5,6", p122_123);
 // test packet > 65536 lengt
 // TODO combine with "execute" function
 
-var length = 123000
+var length = 123000;
 var pbuff = new Buffer(length+4);
 pbuff[4] = 123;
 pbuff[5] = 124;
@@ -120,7 +120,7 @@ function assert2FullPackets(packets) {
 testBigPackets( [ pbuff, pbuff ], assert2FullPackets);
 
 testBigPackets( [ pbuff.slice(0, 120000), pbuff.slice(120000, 123004), pbuff ], assert2FullPackets);
-var frameEnd = 120000
+var frameEnd = 120000;
 testBigPackets( [ pbuff.slice(0, frameEnd), Buffer.concat([pbuff.slice(frameEnd, 123004), pbuff]) ], assert2FullPackets);
 for(var frameStart=1; frameStart < 100; frameStart++) {
   testBigPackets([ Buffer.concat([pbuff, pbuff.slice(0, frameStart)]), pbuff.slice(frameStart, 123004) ], assert2FullPackets);
