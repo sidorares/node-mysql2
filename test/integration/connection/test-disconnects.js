@@ -6,6 +6,8 @@ var fields;
 var err;
 var server;
 
+var connections = [];
+
 function test() {
   var connection = common.createConnection({port: 3307});
   connection.query('SELECT 123', function(err, _rows, _fields) {
@@ -16,7 +18,8 @@ function test() {
     connection.on('error', function(_err) {
       err = _err;
     });
-    server.connections.forEach(function(conn) { conn.stream.end(); } );
+
+    connections.forEach(function(conn) { conn.stream.end(); });
     server._server.close(function() {
       assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     });
@@ -25,6 +28,7 @@ function test() {
 }
 
 function serverHandler(conn) {
+  connections.push(conn);
   conn.on('query', function(q) {
     conn.writeTextResult([ { '1': '1' } ], [ { catalog: 'def',
      schema: '',
