@@ -16,7 +16,7 @@ function test() {
     connection.on('error', function(_err) {
       err = _err;
     });
-    server.connections.forEach(function(conn) { conn.stream.end(); } );
+
     server._server.close(function() {
       assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     });
