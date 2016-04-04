@@ -1,5 +1,6 @@
 var common     = require('../../common');
 var connection = common.createConnection();
+var pool       = common.createPool();
 var assert     = require('assert');
 
 
@@ -46,3 +47,11 @@ var sql = connection.format('SELECT * from test_table where num1 < :numParam and
 assert.equal(sql, 'SELECT * from test_table where num1 < 2 and num2 > 100');
 
 connection.end();
+
+pool.config.namedPlaceholders = true;
+pool.query('SELECT :a + :a as sum', {a: 2}, function(err, rows, fields) {
+  if (err) throw err;
+  assert.deepEqual(rows, [{"sum":4}]);
+  pool.end();
+});
+
