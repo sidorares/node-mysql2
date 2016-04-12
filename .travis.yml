@@ -7,8 +7,9 @@ node_js:
   - '0.10'
   - '0.12'
   - '4.4'
-  - '5.9'
+  - '5.11'
   - '6.1'
+
 
 before_install:
   - "test $TRAVIS_NODE_VERSION = '4.3' || npm rm --save-dev eslint"
@@ -27,7 +28,7 @@ matrix:
           node_js: '4.4'
         - addons:
              mariadb: 5.5
-          node_js: '6.1'
+          node_js: '5.11'
         - addons:
              mariadb: 10.1
-          node_js: '6.1'
+          node_js: '5.11'
