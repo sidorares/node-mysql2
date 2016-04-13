@@ -1,8 +1,8 @@
 sudo: false
 language: node_js
 # IF NOT EXISTS is mariadb-10+ only - https://mariadb.com/kb/en/mariadb/comment-syntax/
-before_script:
-  - mysql -e 'create database /*M!50701 IF NOT EXISTS */ test;'
+#before_script:
+#  - mysql -e 'create database /*M!50701 IF NOT EXISTS */ test;'
 node_js:
   - '0.8'
   - '0.10'

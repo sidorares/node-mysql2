@@ -52,7 +52,7 @@ module.exports.createConnection = function(args, callback) {
   if (process.env.BENCHMARK_MYSQL1)
     driver = require('mysql');
 
-  return driver.createConnection({
+  var conn = driver.createConnection({
     host: config.host,
     user: (args && args.user) || config.user,
     password: (args && args.password) || config.password,
@@ -66,6 +66,13 @@ module.exports.createConnection = function(args, callback) {
     decimalNumbers: args && args.decimalNumbers,
     dateStrings: args && args.dateStrings
   });
+
+  conn.query('create database IF NOT EXISTS test', function(err) {
+    if (err) {
+      console.log('error during "create database IF NOT EXISTS test"', err);
+    }
+  });
+  return conn;
 };
 
 module.exports.createPool = function(callback) {
