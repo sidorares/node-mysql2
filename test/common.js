@@ -2,7 +2,7 @@ var config = {
   host: process.env.MYSQL_HOST || '127.0.0.1',
   user: process.env.MYSQL_USER || 'root',
   password: process.env.CI ? process.env.MYSQL_PASSWORD : '',
-  database: process.env.MYSQL_DATABASE || 'test',
+//  database: process.env.MYSQL_DATABASE || 'test',
   compress: process.env.MYSQL_USE_COMPRESSION,
   port: process.env.MYSQL_PORT || 3306
 };
@@ -70,6 +70,11 @@ module.exports.createConnection = function(args, callback) {
   conn.query('create database IF NOT EXISTS test', function(err) {
     if (err) {
       console.log('error during "create database IF NOT EXISTS test"', err);
+    }
+  });
+  conn.query('use test', function(err) {
+    if (err) {
+      console.log('error during "use test"', err);
     }
   });
   return conn;
