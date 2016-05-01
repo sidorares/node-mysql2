@@ -285,7 +285,19 @@ events:
 
 events:
 
-   *  **query(sql)** - query from client
+Every command packet received by the server will be emitted as a **packet** event with the parameters:
+
+  * packet: Packet - The packet itself
+  * knownCommand: boolean - is this command known to the server
+  * commandCode: number - the parsed command code (first byte)
+
+In addition special events are emitted for [commands](https://dev.mysql.com/doc/internals/en/text-protocol.html) received from the client. If no listener is present a fallback behavior will be invoked.
+
+  *  **quit** - Default: close the connection
+  *  **init_db**(schemaName: string) - Default: return OK
+  *  **query**(sql: string) - Please attach a listener to this. Default: return HA_ERR_INTERNAL_ERROR
+  *  **field_list**(table: string, fields: string) - Default: return ER_WARN_DEPRECATED_SYNTAX
+  *  **ping**() - Default: return OK
 
 
 ## License
