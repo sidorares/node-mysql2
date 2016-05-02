@@ -20,7 +20,7 @@ var packet = ColumnDefinition.toPacket({
 }, sequenceId);
 assert.equal(
   packet.buffer.toString('hex', 4),
-  '0364656607736f6d655f646208736f6d655f74626c08736f6d655f74626c08736f6d655f636f6c08736f6d655f636f6c0c2100f401000008808001'
+  '0364656607736f6d655f646208736f6d655f74626c08736f6d655f74626c08736f6d655f636f6c08736f6d655f636f6c0c2100f4010000088080010000'
 );
 
 // Russian
@@ -40,5 +40,5 @@ var packet = ColumnDefinition.toPacket({
 }, sequenceId);
 assert.equal(
   packet.buffer.toString('hex', 4),
-  '036465660e735fd0bfd0bed0b3d0bed0b4d0b80e745fd0bfd0bed0b3d0bed0b4d0b80f6f745fd0bfd0bed0b3d0bed0b4d0b80e6e5fd0bfd0bed0b3d0bed0b4d0b80f6f6e5fd0bfd0bed0b3d0bed0b4d0b80c2100f401000008808001'
+  '036465660e735fd0bfd0bed0b3d0bed0b4d0b80e745fd0bfd0bed0b3d0bed0b4d0b80f6f745fd0bfd0bed0b3d0bed0b4d0b80e6e5fd0bfd0bed0b3d0bed0b4d0b80f6f6e5fd0bfd0bed0b3d0bed0b4d0b80c2100f4010000088080010000'
 );
