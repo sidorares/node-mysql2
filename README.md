@@ -280,7 +280,7 @@ events:
   *  **writeEof(warnings, statusFlags)** - send EOF packet
   *  **writeTextResult(rows, fields)** - write query result to client. Rows and fields are in the same format as in `connection.query` callback.
   *  **writeColumns(fields)** - write fields + EOF packets.
-  *  **writeTextRow(row)**  - write array (not hash!) ov values as result row
+  *  **writeTextRow(row)**  - write array (not hash!) of values as result row
   *  TODO: binary protocol
 
 events:
