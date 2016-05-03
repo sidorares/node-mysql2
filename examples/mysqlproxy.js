@@ -1,4 +1,5 @@
 var mysql = require('../index.js');
+var ClientFlags = require('../lib/constants/client.js');
 
 var server = mysql.createServer();
 server.listen(3307);
@@ -11,7 +12,7 @@ server.on('connection', function(conn) {
     connectionId: 1234,
     statusFlags: 2,
     characterSet: 8,
-    capabilityFlags: 0xffffff
+    capabilityFlags: 0xffffff ^ ClientFlags.COMPRESS
   });
 
   conn.on('field_list', function(table, fields) {
@@ -23,7 +24,7 @@ server.on('connection', function(conn) {
 
   conn.on('query', function(sql) {
     console.log('proxying query:' + sql);
-    remote.query(sql, function(err) { // overloaded args, either (err, result :object) 
+    remote.query(sql, function(err) { // overloaded args, either (err, result :object)
                                       // or (err, rows :array, columns :array)
       if (Array.isArray(arguments[1])) {
         // response to a 'select', 'show' or similar
@@ -32,7 +33,7 @@ server.on('connection', function(conn) {
         console.log('columns', columns);
         conn.writeTextResult(rows, columns);
       } else {
-        // response to an 'insert', 'update' or 'delete' 
+        // response to an 'insert', 'update' or 'delete'
         var result = arguments[1];
         console.log('result', result);
         conn.writeOk(result);
