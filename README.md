@@ -299,6 +299,29 @@ In addition special events are emitted for [commands](https://dev.mysql.com/doc/
   *  **field_list**(table: string, fields: string) - Default: return ER_WARN_DEPRECATED_SYNTAX
   *  **ping**() - Default: return OK
 
+## Running Tests
+
+Running the tests requires MySQL server and an empty database.
+
+```sh
+# Run once to setup the local environment variables.
+export CI=1;
+export MYSQL_HOST='127.0.0.1';
+export MYSQL_USER='root';
+export MYSQL_PASSWORD='root';
+export MYSQL_DATABASE='test';
+
+# If test user has no password, unset the `CI` variable.
+
+# Run the test suite
+npm run test
+```
+
+Use `FILTER` environment variable to run a subset of tests with matching names, e.g.
+
+```sh
+FILTER='test-timestamp' npm run test
+```
 
 ## License
 
@@ -324,7 +347,7 @@ In addition special events are emitted for [commands](https://dev.mysql.com/doc/
   - [Mysqlite.js](https://github.com/sidorares/mysqlite.js) - mysql server with JS-only (emscripten compiled) sqlite backend.
   - [sql-engine](https://github.com/eugeneware/sql-engine) - mysql server with LevelDB backend.
   - [mysql-osquery-proxy](https://github.com/sidorares/mysql-osquery-proxy) - connect to [facebook osquery](https://osquery.io/) using MySQL client
-  - [PlyQL](https://github.com/implydata/plyql) - connect to [Druid](http://druid.io/) using MySQL client 
+  - [PlyQL](https://github.com/implydata/plyql) - connect to [Druid](http://druid.io/) using MySQL client
 
 ## See also:
 
