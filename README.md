@@ -293,7 +293,7 @@ Every command packet received by the server will be emitted as a **packet** even
 
 In addition special events are emitted for [commands](https://dev.mysql.com/doc/internals/en/text-protocol.html) received from the client. If no listener is present a fallback behavior will be invoked.
 
-  *  **quit** - Default: close the connection
+  *  **quit**() - Default: close the connection
   *  **init_db**(schemaName: string) - Default: return OK
   *  **query**(sql: string) - Please attach a listener to this. Default: return HA_ERR_INTERNAL_ERROR
   *  **field_list**(table: string, fields: string) - Default: return ER_WARN_DEPRECATED_SYNTAX
@@ -322,8 +322,9 @@ In addition special events are emitted for [commands](https://dev.mysql.com/doc/
 
   - [Mysql-pg-proxy](https://github.com/sidorares/mysql-pg-proxy)  - mysql to postgres proxy server.
   - [Mysqlite.js](https://github.com/sidorares/mysqlite.js) - mysql server with JS-only (emscripten compiled) sqlite backend.
-  - [sql-engine](https://github.com/eugeneware/sql-engine) - mysql server with leveldb backend.
-  - [mysql-osquery-proxy](https://github.com/sidorares/mysql-osquery-proxy) - connect to [facebook osquery](https://osquery.io/) using mysql client
+  - [sql-engine](https://github.com/eugeneware/sql-engine) - mysql server with LevelDB backend.
+  - [mysql-osquery-proxy](https://github.com/sidorares/mysql-osquery-proxy) - connect to [facebook osquery](https://osquery.io/) using MySQL client
+  - [PlyQL](https://github.com/implydata/plyql) - connect to [Druid](http://druid.io/) using MySQL client 
 
 ## See also:
 
