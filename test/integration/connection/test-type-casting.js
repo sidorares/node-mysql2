@@ -23,7 +23,7 @@ tests.forEach(function(test, index) {
 var createTable = [
   'CREATE TEMPORARY TABLE `' + table + '` (',
   '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,'
-  ].concat(schema).concat([
+].concat(schema).concat([
   'PRIMARY KEY (`id`)',
   ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
 ]).join('\n');
@@ -34,7 +34,9 @@ connection.query('INSERT INTO ' + table + ' SET' + inserts.join(',\n'));
 
 var row;
 connection.query('SELECT * FROM type_casting', function(err, rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   row = rows[0];
   connection.end();

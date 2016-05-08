@@ -13,7 +13,9 @@ d1.run(function() {
 
   d2.run(function() {
     connection.query('SELECT 1', function(err, _rows, _fields) {
-      if (err) throw err;
+      if (err) {
+        throw err;
+      }
       throw new Error('inside domain 2');
     });
   });
@@ -21,15 +23,17 @@ d1.run(function() {
   d3.run(function() {
     connection.execute('SELECT 1', function(err, _rows, _fields) {
       connection.end();
-      if (err) throw err;
+      if (err) {
+        throw err;
+      }
       throw new Error('inside domain 3');
     });
   });
 
   d4.run(function() {
-   connection.ping(function() {
-     throw new Error('inside domain 4');
-   });
+    connection.ping(function() {
+      throw new Error('inside domain 4');
+    });
   });
 
   setTimeout(function() {

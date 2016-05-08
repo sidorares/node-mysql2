@@ -9,7 +9,9 @@ connection.query('INSERT INTO signed_ints values (-3, -120, 500)');
 connection.query('INSERT INTO signed_ints values (3,  -110, -500)');
 
 connection.execute('SELECT * from signed_ints', [5], function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   connection.end();
 });

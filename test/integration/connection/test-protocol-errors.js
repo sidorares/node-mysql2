@@ -23,7 +23,9 @@ var query = 'SELECT 1';
 function serverReady() {
   var connection = common.createConnection({ port: 3307 });
   connection.query(query, function(err, _rows, _fields) {
-    if (err) throw err;
+    if (err) {
+      throw err;
+    }
     rows = _rows;
     fields = _fields;
   });

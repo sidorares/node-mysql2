@@ -17,7 +17,9 @@ connection.query([
 
 var result, result2;
 connection.query('INSERT INTO ' + table + ' SET title="' + text + '"', function(err, _result) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   result = _result;
   connection.query('SELECT * FROM ' + table + ' WHERE id = ' + result.insertId, function(err, _result2) {
     result2 = _result2;

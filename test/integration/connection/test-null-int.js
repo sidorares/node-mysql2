@@ -9,7 +9,9 @@ connection.query('INSERT INTO t VALUES(null)');
 connection.query('INSERT INTO t VALUES(123)');
 
 connection.query('SELECT * from t', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   connection.end();
 });

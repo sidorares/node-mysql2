@@ -15,7 +15,9 @@ connection.query([
 var result, result2;
 connection.query("INSERT INTO bigs SET title='test', id=123");
 connection.query("INSERT INTO bigs SET title='test1'", function(err, result) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   assert.strictEqual(result.insertId, 124);
   // > 24 bits
   connection.query("INSERT INTO bigs SET title='test', id=123456789");

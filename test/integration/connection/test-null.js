@@ -8,12 +8,16 @@ var fields, fields1;
 connection.query('CREATE TEMPORARY TABLE t (i int)');
 connection.query('INSERT INTO t VALUES(null)');
 connection.query('SELECT cast(NULL AS CHAR)', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   fields = _fields;
 });
 connection.query('SELECT * from t', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows1 = _rows;
   fields1 = _fields;
   connection.end();

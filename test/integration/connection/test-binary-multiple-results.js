@@ -78,16 +78,16 @@ function procedurise(sql) {
     'DROP PROCEDURE IF EXISTS _as_sp_call;',
     'CREATE PROCEDURE _as_sp_call()',
     'BEGIN',
-     sql + ';',
+    sql + ';',
     'END'
   ].join('\n');
 }
 
 function do_test(testIndex) {
   var next = function() {
-    if (testIndex + 1 < tests.length)
+    if (testIndex + 1 < tests.length) {
       do_test(testIndex + 1);
-    else {
+    } else {
       mysql.end();
     }
   };
@@ -99,20 +99,25 @@ function do_test(testIndex) {
   // prepared statements do not support multiple statements itself, we need to wrap quey in a stored procedure
   var sp = procedurise(sql);
   mysql.query(sp, function(err) {
-    if (err)
-        throw(err);
+    if (err) {
+      throw(err);
+    }
+
     sql = "CALL _as_sp_call()"; // this call is allowed with prepared statements, and result contain multiple statements
     var _numResults = 0;
     var textCmd = mysql.query(sql, function(err, _rows, _columns) {
-      if (err)
+      if (err) {
         throw err;
+      }
 
       var arrOrColumn = function (c) {
-        if (Array.isArray(c))
+        if (Array.isArray(c)) {
           return c.map(arrOrColumn);
+        }
 
-        if (typeof c == 'undefined')
+        if (typeof c == 'undefined') {
           return void(0);
+        }
 
         return c.inspect();
       };
@@ -129,19 +134,21 @@ function do_test(testIndex) {
         var index = fieldIndex;
         if (_numResults == 1) {
           assert.equal(index, 0);
-          if (row.constructor.name == 'ResultSetHeader')
+          if (row.constructor.name == 'ResultSetHeader') {
             assert.deepEqual(_rows, row);
-          else
+          } else {
             assert.deepEqual(_rows[rowIndex], row);
+          }
         } else {
           if (resIndex != index) {
             rowIndex = 0;
             resIndex = index;
           }
-          if (row.constructor.name == 'ResultSetHeader')
+          if (row.constructor.name == 'ResultSetHeader') {
             assert.deepEqual(_rows[index], row);
-          else
+          } else {
             assert.deepEqual(_rows[index][rowIndex], row);
+          }
         }
         rowIndex++;
       }
@@ -152,9 +159,9 @@ function do_test(testIndex) {
         if (_numResults == 1) {
           assert.equal(index, 0);
           assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
-        }
-        else
+        } else {
           assert.deepEqual(arrOrColumn(_columns[index]), arrOrColumn(fields));
+        }
       }
 
       q.on('result', checkRow);

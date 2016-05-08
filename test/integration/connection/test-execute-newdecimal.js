@@ -7,7 +7,9 @@ connection.query('INSERT INTO t VALUES(12345.67)');
 
 var rows, fields;
 connection.execute('SELECT f FROM t', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   fields = _fields;
   connection.end();

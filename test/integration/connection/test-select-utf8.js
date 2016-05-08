@@ -6,7 +6,9 @@ var rows = undefined;
 var fields = undefined;
 var multibyteText = '本日は晴天なり';
 connection.query("SELECT '" + multibyteText + "'", function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   fields = _fields;
   connection.end();

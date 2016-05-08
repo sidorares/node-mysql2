@@ -80,29 +80,32 @@ function do_test(testIndex) {
   var expectation = entry[1];
   mysql.query(sql, function(err, _rows, _columns) {
     var _numResults = 0;
-    if (_rows.constructor.name == 'ResultSetHeader')
+    if (_rows.constructor.name == 'ResultSetHeader') {
       _numResults = 1;
-    else if (_rows.length === 0) {
+    } else if (_rows.length === 0) {
       // empty select
       _numResults = 1;
-    }
-    else if (_rows.length > 0) {
-      if (_rows.constructor.name == 'Array' && _rows[0].constructor.name == 'TextRow')
+    } else if (_rows.length > 0) {
+      if (_rows.constructor.name == 'Array' && _rows[0].constructor.name == 'TextRow') {
         _numResults = 1;
-      if (_rows.constructor.name == 'Array' &&
-        (_rows[0].constructor.name == 'Array' || _rows[0].constructor.name =='ResultSetHeader'))
+      }
+
+      if (_rows.constructor.name == 'Array' && (_rows[0].constructor.name == 'Array' || _rows[0].constructor.name =='ResultSetHeader')) {
         _numResults = _rows.length;
+      }
     }
     if (err) {
       console.log(err);
       process.exit(-1);
     }
     var arrOrColumn = function (c) {
-      if (Array.isArray(c))
+      if (Array.isArray(c)) {
         return c.map(arrOrColumn);
+      }
 
-      if (typeof c == 'undefined')
+      if (typeof c == 'undefined') {
         return void(0);
+      }
 
       return c.inspect();
     };
@@ -119,19 +122,21 @@ function do_test(testIndex) {
       var index = fieldIndex;
       if (_numResults == 1) {
         assert.equal(fieldIndex, 0);
-        if (row.constructor.name == 'ResultSetHeader')
+        if (row.constructor.name == 'ResultSetHeader'){
           assert.deepEqual(_rows, row);
-        else
+        } else {
           assert.deepEqual(_rows[rowIndex], row);
+        }
       } else {
         if (resIndex != index) {
           rowIndex = 0;
           resIndex = index;
         }
-        if (row.constructor.name == 'ResultSetHeader')
+        if (row.constructor.name == 'ResultSetHeader') {
           assert.deepEqual(_rows[index], row);
-        else
+        } else {
           assert.deepEqual(_rows[index][rowIndex], row);
+        }
       }
       rowIndex++;
     }
@@ -139,18 +144,18 @@ function do_test(testIndex) {
     function checkFields(fields) {
       fieldIndex++;
       if (_numResults == 1) {
-       assert.equal(fieldIndex, 0);
-       assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
-      }
-      else
+        assert.equal(fieldIndex, 0);
+        assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
+      } else {
         assert.deepEqual(arrOrColumn(_columns[fieldIndex]), arrOrColumn(fields));
+      }
     }
     q.on('result', checkRow);
     q.on('fields', checkFields);
     q.on('end', function() {
-      if (testIndex + 1 < tests.length)
+      if (testIndex + 1 < tests.length) {
         do_test(testIndex + 1);
-      else {
+      } else {
         mysql.end();
       }
     });

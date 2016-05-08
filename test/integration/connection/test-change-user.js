@@ -12,7 +12,9 @@ connection.changeUser({
   password: 'changeuser1pass'
 });
 connection.query('select user()', function(err, rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   assert.deepEqual(rows, [ { 'user()': 'changeuser1@localhost' } ]);
 });
 
@@ -22,7 +24,9 @@ connection.changeUser({
 });
 
 connection.query('select user()', function(err, rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   assert.deepEqual(rows, [ { 'user()': 'changeuser2@localhost' } ]);
 });
 
@@ -31,7 +35,9 @@ connection.changeUser({
   passwordSha1: new Buffer('f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd', 'hex') // sha1(changeuser1pass)
 });
 connection.query('select user()', function(err, rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   assert.deepEqual(rows, [ { 'user()': 'changeuser1@localhost' } ]);
 });
 

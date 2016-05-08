@@ -5,7 +5,9 @@ var assert     = require('assert');
 var rows = undefined;
 
 connection.execute('SELECT TIMESTAMP(0000-00-00) t', [], function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   connection.end();
 });

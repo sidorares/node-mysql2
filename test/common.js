@@ -11,13 +11,14 @@ module.exports.SqlString = require('../lib/sql_string.js');
 
 module.exports.createConnection = function(args, callback) {
   // hrtime polyfill for old node versions:
-  if (!process.hrtime)
+  if (!process.hrtime) {
     process.hrtime = function(start) {
       start = [0, 0] || start;
       var timestamp = Date.now();
       var seconds = Math.ceil(timestamp/1000);
       return [seconds - start[0], (timestamp-seconds*1000)*1000 - start[1]];
     };
+  }
 
   if (process.env.BENCHMARK_MARIA) {
     var Client = require('mariasql');
@@ -32,25 +33,26 @@ module.exports.createConnection = function(args, callback) {
     //
     //});
     setTimeout( function() {
-    console.log('altering client...');
-    c.oldQuery = c.query;
-    c.query = function(sql, callback) {
-      var rows = [];
-      var q = c.oldQuery(sql);
-      q.on('result', function(res) {
-        res.on('row', function(row) { rows.push(row); });
-        res.on('end', function() {
-          callback(null, rows);
+      console.log('altering client...');
+      c.oldQuery = c.query;
+      c.query = function(sql, callback) {
+        var rows = [];
+        var q = c.oldQuery(sql);
+        q.on('result', function(res) {
+          res.on('row', function(row) { rows.push(row); });
+          res.on('end', function() {
+            callback(null, rows);
+          });
         });
-      });
-    };
+      };
     }, 1000);
     return c;
   }
 
   var driver = require('../index.js');
-  if (process.env.BENCHMARK_MYSQL1)
+  if (process.env.BENCHMARK_MYSQL1) {
     driver = require('mysql');
+  }
 
   var conn = driver.createConnection({
     host: config.host,
@@ -82,8 +84,9 @@ module.exports.createConnection = function(args, callback) {
 
 module.exports.createPool = function(callback) {
   var driver = require('../index.js');
-  if (process.env.BENCHMARK_MYSQL1)
+  if (process.env.BENCHMARK_MYSQL1) {
     driver = require('mysql');
+  }
 
   return driver.createPool(config);
 };
@@ -113,8 +116,9 @@ module.exports.createServer = function(onListening, handler) {
       characterSet: 8,
       capabilityFlags: flags
     });
-    if (handler)
+    if (handler) {
       handler(conn);
+    }
   });
   server.listen(3307, onListening);
   return server;

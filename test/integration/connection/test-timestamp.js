@@ -11,19 +11,25 @@ var rows, fields;
 var rows1, fields1;
 var rows2, fields2;
 connection.query('SELECT f FROM t', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   fields = _fields;
 });
 connection.execute('SELECT f FROM t', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows1 = _rows;
   fields1 = _fields;
 });
 
 // test 11-byte timestamp - https://github.com/sidorares/node-mysql2/issues/254
 connection.execute('SELECT CURRENT_TIMESTAMP(6) as t11', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows2 = _rows;
   fields2 = _fields;
   connection.end();
