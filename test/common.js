@@ -32,7 +32,7 @@ module.exports.createConnection = function (args, callback) {
     //c.on('connect', function() {
     //
     //});
-    setTimeout( function () {
+    setTimeout(function () {
       console.log('altering client...');
       c.oldQuery = c.query;
       c.query = function (sql, callback) {
