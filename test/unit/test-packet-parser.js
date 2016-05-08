@@ -118,11 +118,11 @@ function assert2FullPackets (packets) {
 }
 
 // 2 full packets in 2 chunks
-testBigPackets( [pbuff, pbuff], assert2FullPackets);
+testBigPackets([pbuff, pbuff], assert2FullPackets);
 
-testBigPackets( [pbuff.slice(0, 120000), pbuff.slice(120000, 123004), pbuff], assert2FullPackets);
+testBigPackets([pbuff.slice(0, 120000), pbuff.slice(120000, 123004), pbuff], assert2FullPackets);
 var frameEnd = 120000;
-testBigPackets( [pbuff.slice(0, frameEnd), Buffer.concat([pbuff.slice(frameEnd, 123004), pbuff])], assert2FullPackets);
+testBigPackets([pbuff.slice(0, frameEnd), Buffer.concat([pbuff.slice(frameEnd, 123004), pbuff])], assert2FullPackets);
 for (var frameStart=1; frameStart < 100; frameStart++) {
   testBigPackets([Buffer.concat([pbuff, pbuff.slice(0, frameStart)]), pbuff.slice(frameStart, 123004)], assert2FullPackets);
 }
