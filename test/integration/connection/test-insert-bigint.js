@@ -1,7 +1,7 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
-var bn         = require('bn.js');
+var assert = require('assert');
+var bn = require('bn.js');
 
 var table = 'insert_test';
 connection.query([

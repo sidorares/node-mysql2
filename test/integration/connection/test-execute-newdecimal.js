@@ -1,6 +1,6 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
 connection.query('CREATE TEMPORARY TABLE t (f DECIMAL(19,4))');
 connection.query('INSERT INTO t VALUES(12345.67)');

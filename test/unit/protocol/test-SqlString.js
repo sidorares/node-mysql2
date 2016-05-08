@@ -1,6 +1,6 @@
-var common    = require('../../common');
-var test      = require('utest');
-var assert    = require('assert');
+var common = require('../../common');
+var test = require('utest');
+var assert = require('assert');
 var SqlString = common.SqlString;
 
 test('SqlString.escapeId', {
@@ -112,8 +112,8 @@ test('SqlString.escape', {
 
   'dates are converted to YYYY-MM-DD HH:II:SS.sss': function() {
     var expected = '2012-05-07 11:42:03.002';
-    var date     = new Date(2012, 4, 7, 11, 42, 3, 2);
-    var string   = SqlString.escape(date);
+    var date = new Date(2012, 4, 7, 11, 42, 3, 2);
+    var string = SqlString.escape(date);
 
     assert.strictEqual(string, "'" + expected + "'");
   },

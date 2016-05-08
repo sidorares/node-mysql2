@@ -1,7 +1,7 @@
-var common      = require('../../common');
-var connection  = common.createConnection();
+var common = require('../../common');
+var connection = common.createConnection();
 var connection1 = common.createConnection({ dateStrings: true });
-var assert      = require('assert');
+var assert = require('assert');
 
 var rows, rows1, rows2, rows3, rows4, rows5;
 

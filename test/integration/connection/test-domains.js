@@ -7,9 +7,9 @@ var d4 = domain.create();
 var err1, err2, err3, err4;
 
 d1.run(function() {
-  var common     = require('../../common');
+  var common = require('../../common');
   var connection = common.createConnection();
-  var assert     = require('assert');
+  var assert = require('assert');
 
   d2.run(function() {
     connection.query('SELECT 1', function(err, _rows, _fields) {

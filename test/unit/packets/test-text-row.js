@@ -1,5 +1,5 @@
-var assert     = require('assert');
-var TextRow    = require('../../../lib/packets/text_row.js');
+var assert = require('assert');
+var TextRow = require('../../../lib/packets/text_row.js');
 
 // simple
 var packet = TextRow.toPacket(['Hello', 'World']);
