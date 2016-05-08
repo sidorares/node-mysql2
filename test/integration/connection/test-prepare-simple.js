@@ -1,6 +1,6 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
 var _stmt1, _stmt2, _stmt3;
 var query1 = 'select 1 + ? + ? as test';

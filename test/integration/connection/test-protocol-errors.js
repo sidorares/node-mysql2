@@ -1,6 +1,6 @@
-var assert     = require('assert');
-var common     = require('../../common');
-var server       = common.createServer(serverReady, function(conn) {
+var assert = require('assert');
+var common = require('../../common');
+var server = common.createServer(serverReady, function(conn) {
   conn.on('query', function(q) {
     conn.writeTextResult([ { '1': '1' } ], [ { catalog: 'def',
      schema: '',

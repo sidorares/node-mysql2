@@ -1,8 +1,8 @@
-var assert     = require('assert');
-var common     = require('../../common');
+var assert = require('assert');
+var common = require('../../common');
 var quitReceived = false;
-var queryCli     = 'SELECT 1';
-var server       = common.createServer(serverReady, function(conn) {
+var queryCli = 'SELECT 1';
+var server = common.createServer(serverReady, function(conn) {
   conn.on('quit', function() {
     // COM_QUIT
     quitReceived = true;
@@ -12,7 +12,7 @@ var server       = common.createServer(serverReady, function(conn) {
   });
 
   conn.on('query', function(q) {
-    queryServ =  q;
+    queryServ = q;
     conn.writeTextResult([ { '1': '1' } ], [ { catalog: 'def',
      schema: '',
      table: '',

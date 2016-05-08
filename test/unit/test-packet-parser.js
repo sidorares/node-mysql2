@@ -1,5 +1,5 @@
 var PacketParser = require('../../lib/packet_parser.js');
-var Packet       = require('../../lib/packets/packet.js');
+var Packet = require('../../lib/packets/packet.js');
 
 var assert = require('assert');
 

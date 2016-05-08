@@ -1,11 +1,11 @@
-var assert     = require('assert');
-var common     = require('../../common');
+var assert = require('assert');
+var common = require('../../common');
 
 var clientConnection;
 var err = new Error('This socket has been ended by the other party');
 err.code = 'EPIPE';
 
-var server     = common.createServer(serverReady, function(conn) {
+var server = common.createServer(serverReady, function(conn) {
   conn.on('query', function(q) {
     conn.writeColumns([ { catalog: 'def',
       schema: '',

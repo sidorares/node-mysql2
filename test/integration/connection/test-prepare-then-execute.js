@@ -1,10 +1,10 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
-var _stmt    = null;
+var _stmt = null;
 var _columns = null;
-var _rows    = null;
+var _rows = null;
 
 connection.prepare('select 1 + ? + ? as test', function(err, stmt) {
   if (err) {

@@ -1,6 +1,6 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
 var table = 'load_data_test';
 connection.query([
@@ -38,7 +38,7 @@ var loadResult;
 var badPath = '/does_not_exist.csv';
 
 connection.query(sql, [badPath, ','], function(err, result) {
-  loadErr    = err;
+  loadErr = err;
   loadResult = result;
 });
 

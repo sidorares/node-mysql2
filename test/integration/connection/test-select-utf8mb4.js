@@ -1,6 +1,6 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection({charset: 'UTF8MB4_GENERAL_CI'});
-var assert     = require('assert');
+var assert = require('assert');
 
 var rows = undefined;
 var fields = undefined;

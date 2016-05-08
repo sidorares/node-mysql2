@@ -1,8 +1,8 @@
 var assert = require('assert');
 
 var FieldFlags = require('../../../lib/constants/field_flags.js');
-var common     = require('../../common');
-var conn       = common.createConnection();
+var common = require('../../common');
+var conn = common.createConnection();
 
 // it's possible to receive null values for columns marked with NOT_NULL flag
 // see https://github.com/sidorares/node-mysql2/issues/178 for info

@@ -1,6 +1,6 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
 //common.useTestDb(connection);
 

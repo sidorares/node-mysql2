@@ -1,6 +1,6 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
 connection.query('SET SQL_MODE="ALLOW_INVALID_DATES";');
 connection.query('CREATE TEMPORARY TABLE t (f TIMESTAMP)');

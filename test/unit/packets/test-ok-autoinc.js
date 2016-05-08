@@ -1,5 +1,5 @@
-var assert     = require('assert');
-var packets    = require('../../../lib/packets/index.js');
+var assert = require('assert');
+var packets = require('../../../lib/packets/index.js');
 
 var packet = packets.OK.toPacket({affectedRows: 0, insertId: 1});
 

@@ -1,4 +1,4 @@
-var assert           = require('assert');
+var assert = require('assert');
 var ColumnDefinition = require('../../../lib/packets/column_definition.js');
 
 var sequenceId = 5;
