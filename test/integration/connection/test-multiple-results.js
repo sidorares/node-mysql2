@@ -6,7 +6,7 @@ mysql.query('INSERT INTO some_rows values(0)');
 mysql.query('INSERT INTO some_rows values(42)');
 mysql.query('INSERT INTO some_rows values(314149)');
 
-var clone = function(obj) { return JSON.parse(JSON.stringify(obj)); };
+var clone = function (obj) { return JSON.parse(JSON.stringify(obj)); };
 
 var rs1 = {
   affectedRows: 0,
@@ -74,11 +74,11 @@ var tests = [
 // TODO: tests with error in the query with different index
 // TODO: multiple results from single query
 
-function do_test(testIndex) {
+function do_test (testIndex) {
   var entry = tests[testIndex];
   var sql = entry[0];
   var expectation = entry[1];
-  mysql.query(sql, function(err, _rows, _columns) {
+  mysql.query(sql, function (err, _rows, _columns) {
     var _numResults = 0;
     if (_rows.constructor.name == 'ResultSetHeader') {
       _numResults = 1;
@@ -118,7 +118,7 @@ function do_test(testIndex) {
 
     var fieldIndex = -1;
 
-    function checkRow(row) {
+    function checkRow (row) {
       var index = fieldIndex;
       if (_numResults == 1) {
         assert.equal(fieldIndex, 0);
@@ -141,7 +141,7 @@ function do_test(testIndex) {
       rowIndex++;
     }
 
-    function checkFields(fields) {
+    function checkFields (fields) {
       fieldIndex++;
       if (_numResults == 1) {
         assert.equal(fieldIndex, 0);
@@ -152,7 +152,7 @@ function do_test(testIndex) {
     }
     q.on('result', checkRow);
     q.on('fields', checkFields);
-    q.on('end', function() {
+    q.on('end', function () {
       if (testIndex + 1 < tests.length) {
         do_test(testIndex + 1);
       } else {

@@ -5,8 +5,8 @@ var clientConnection;
 var err = new Error('This socket has been ended by the other party');
 err.code = 'EPIPE';
 
-var server = common.createServer(serverReady, function(conn) {
-  conn.on('query', function(q) {
+var server = common.createServer(serverReady, function (conn) {
+  conn.on('query', function (q) {
     conn.writeColumns([{catalog: 'def',
       schema: '',
       table: '',
@@ -28,20 +28,20 @@ var server = common.createServer(serverReady, function(conn) {
 
 var receivedError1, receivedError2, receivedError3;
 var query = 'SELECT 1';
-function serverReady() {
+function serverReady () {
   clientConnection = common.createConnection({port: 3307});
-  clientConnection.query(query, function(err, _rows, _fields) {
+  clientConnection.query(query, function (err, _rows, _fields) {
     receivedError1 = err;
   });
-  clientConnection.query('second query, should not be executed', function(err, rows) {
+  clientConnection.query('second query, should not be executed', function (err, rows) {
     receivedError2 = err;
-    clientConnection.query('trying to enqueue command to a connection which is already in error state', function(err1) {
+    clientConnection.query('trying to enqueue command to a connection which is already in error state', function (err1) {
       receivedError3 = err1;
     });
   });
 }
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.equal(receivedError1.fatal, true);
   assert.equal(receivedError1.code, err.code);
   assert.equal(receivedError2.fatal, true);

@@ -11,7 +11,7 @@ var table = 'type_casting';
 var schema = [];
 var inserts = [];
 
-tests.forEach(function(test, index) {
+tests.forEach(function (test, index) {
   var escaped = test.insertRaw || connection.escape(test.insert);
 
   test.columnName = test.type + '_' + index;
@@ -33,7 +33,7 @@ connection.query(createTable);
 connection.query('INSERT INTO ' + table + ' SET' + inserts.join(',\n'));
 
 var row;
-connection.query('SELECT * FROM type_casting', function(err, rows) {
+connection.query('SELECT * FROM type_casting', function (err, rows) {
   if (err) {
     throw err;
   }
@@ -43,8 +43,8 @@ connection.query('SELECT * FROM type_casting', function(err, rows) {
 });
 
 
-process.on('exit', function() {
-  tests.forEach(function(test) {
+process.on('exit', function () {
+  tests.forEach(function (test) {
     var expected = test.expect || test.insert;
     var got = row[test.columnName];
     var message;

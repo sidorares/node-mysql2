@@ -23,28 +23,28 @@ var dateAsStringExpected = [
        d4: null}];
 
 
-connection.execute('select from_unixtime(?) t', [(+date).valueOf()/1000], function(err, _rows, _fields) {
+connection.execute('select from_unixtime(?) t', [(+date).valueOf()/1000], function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
   rows = _rows;
 });
 
-connection.query('select from_unixtime(631152000) t', function(err, _rows, _fields) {
+connection.query('select from_unixtime(631152000) t', function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
   rows1 = _rows;
 });
 
-connection.query('select * from t', function(err, _rows, _fields) {
+connection.query('select * from t', function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
   rows2 = _rows;
 });
 
-connection.execute('select * from t', function(err, _rows, _fields) {
+connection.execute('select * from t', function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -52,7 +52,7 @@ connection.execute('select * from t', function(err, _rows, _fields) {
   connection.end();
 });
 
-connection1.query('select * from t', function(err, _rows, _fields) {
+connection1.query('select * from t', function (err, _rows, _fields) {
   console.log(_rows);
   if (err) {
     throw err;
@@ -60,7 +60,7 @@ connection1.query('select * from t', function(err, _rows, _fields) {
   rows4 = _rows;
 });
 
-connection1.execute('select * from t', function(err, _rows, _fields) {
+connection1.execute('select * from t', function (err, _rows, _fields) {
   console.log(_rows);
   if (err) {
     throw err;
@@ -69,7 +69,7 @@ connection1.execute('select * from t', function(err, _rows, _fields) {
   connection1.end();
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.equal(rows[0].t.constructor, Date);
   assert.equal(rows[0].t.getDate(), date.getDate());
   assert.equal(rows[0].t.getHours(), date.getHours());

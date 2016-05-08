@@ -6,7 +6,7 @@ mysql.query('INSERT INTO some_rows values(0)');
 mysql.query('INSERT INTO some_rows values(42)');
 mysql.query('INSERT INTO some_rows values(314149)');
 
-var clone = function(obj) { return JSON.parse(JSON.stringify(obj)); };
+var clone = function (obj) { return JSON.parse(JSON.stringify(obj)); };
 
 var rs1 = {
   affectedRows: 0,
@@ -73,7 +73,7 @@ var tests = [
   ['select * from some_rows; set @a = 1', [[select3, rs3], [sr_fields, undefined], 2]] //  select 3 rows + insert
 ];
 
-function procedurise(sql) {
+function procedurise (sql) {
   return [
     'DROP PROCEDURE IF EXISTS _as_sp_call;',
     'CREATE PROCEDURE _as_sp_call()',
@@ -83,8 +83,8 @@ function procedurise(sql) {
   ].join('\n');
 }
 
-function do_test(testIndex) {
-  var next = function() {
+function do_test (testIndex) {
+  var next = function () {
     if (testIndex + 1 < tests.length) {
       do_test(testIndex + 1);
     } else {
@@ -98,14 +98,14 @@ function do_test(testIndex) {
   var expectation = entry[1];
   // prepared statements do not support multiple statements itself, we need to wrap quey in a stored procedure
   var sp = procedurise(sql);
-  mysql.query(sp, function(err) {
+  mysql.query(sp, function (err) {
     if (err) {
       throw (err);
     }
 
     sql = 'CALL _as_sp_call()'; // this call is allowed with prepared statements, and result contain multiple statements
     var _numResults = 0;
-    var textCmd = mysql.query(sql, function(err, _rows, _columns) {
+    var textCmd = mysql.query(sql, function (err, _rows, _columns) {
       if (err) {
         throw err;
       }
@@ -130,7 +130,7 @@ function do_test(testIndex) {
       var rowIndex = 0;
       var fieldIndex = -1;
 
-      function checkRow(row) {
+      function checkRow (row) {
         var index = fieldIndex;
         if (_numResults == 1) {
           assert.equal(index, 0);
@@ -153,7 +153,7 @@ function do_test(testIndex) {
         rowIndex++;
       }
 
-      function checkFields(fields) {
+      function checkFields (fields) {
         fieldIndex++;
         var index = fieldIndex;
         if (_numResults == 1) {
@@ -169,7 +169,7 @@ function do_test(testIndex) {
       q.on('end', next);
     });
 
-    textCmd.on('fields', function() {
+    textCmd.on('fields', function () {
       _numResults++;
     });
 

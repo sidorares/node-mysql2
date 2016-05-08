@@ -4,16 +4,16 @@ var assert = require('assert');
 
 var rows = undefined;
 
-Date = function() {
+Date = function () {
   var NativeDate = Date;
-  function CustomDate(str) {
+  function CustomDate (str) {
     return new NativeDate(str);
   }
   CustomDate.now = Date.now;
   return CustomDate;
 }();
 
-connection.execute('SELECT UNIX_TIMESTAMP(?) t', [new Date('1990-08-08 UTC')], function(err, _rows, _fields) {
+connection.execute('SELECT UNIX_TIMESTAMP(?) t', [new Date('1990-08-08 UTC')], function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -23,6 +23,6 @@ connection.execute('SELECT UNIX_TIMESTAMP(?) t', [new Date('1990-08-08 UTC')], f
 });
 
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.deepEqual(rows, [{t: 650073600}]);
 });

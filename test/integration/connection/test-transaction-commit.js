@@ -21,13 +21,13 @@ connection.beginTransaction(function (err) {
     title: 'Test row'
   };
 
-  connection.query('INSERT INTO ' + table + ' SET ?', row, function(err) {
+  connection.query('INSERT INTO ' + table + ' SET ?', row, function (err) {
     assert.ifError(err);
 
-    connection.commit(function(err) {
+    connection.commit(function (err) {
       assert.ifError(err);
 
-      connection.query('SELECT * FROM ' + table, function(err, rows) {
+      connection.query('SELECT * FROM ' + table, function (err, rows) {
         assert.ifError(err);
         connection.end();
         assert.equal(rows.length, 1);
