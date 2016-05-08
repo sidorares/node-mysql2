@@ -36,13 +36,13 @@ conn.query('CREATE TEMPORARY TABLE `tmp_account_session` ( ' +
 conn.query('INSERT INTO `tmp_account_session` VALUES (\'1\', \'::1\', \'75efb145482ce22f4544390cad233c749c1b43e4\', \'1\')');
 
 
-conn.connect(function(err) {
+conn.connect(function (err) {
   if (err) {
     console.error(err);
     return;
   }
 
-  conn.execute('SELECT `ac`.`username`, CONCAT(\'[\', GROUP_CONCAT(DISTINCT `acf`.`flag` SEPARATOR \',\'), \']\') flags FROM tmp_account ac LEFT JOIN tmp_account_flags acf ON `acf`.account = `ac`.id LEFT JOIN tmp_account_session acs ON `acs`.account = `ac`.id WHERE `acs`.`session`=?', ['asid=75efb145482ce22f4544390cad233c749c1b43e4'], function(err, rows, fields) {
+  conn.execute('SELECT `ac`.`username`, CONCAT(\'[\', GROUP_CONCAT(DISTINCT `acf`.`flag` SEPARATOR \',\'), \']\') flags FROM tmp_account ac LEFT JOIN tmp_account_flags acf ON `acf`.account = `ac`.id LEFT JOIN tmp_account_session acs ON `acs`.account = `ac`.id WHERE `acs`.`session`=?', ['asid=75efb145482ce22f4544390cad233c749c1b43e4'], function (err, rows, fields) {
     var flagNotNull = fields[0].flags & FieldFlags.NOT_NULL;
     var valueIsNull = rows[0][fields[0].name] === null;
     assert( flagNotNull && valueIsNull );

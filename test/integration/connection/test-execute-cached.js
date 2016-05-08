@@ -9,17 +9,17 @@ var rows3 = undefined;
 var q = 'select 1 + ? as test';
 var key = 'undefined/undefined/undefined' + q;
 
-connection.execute(q, [123], function(err, _rows, _fields) {
+connection.execute(q, [123], function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
   rows = _rows;
-  connection.execute(q, [124], function(err, _rows, _fields) {
+  connection.execute(q, [124], function (err, _rows, _fields) {
     if (err) {
       throw err;
     }
     rows1 = _rows;
-    connection.execute(q, [125], function(err, _rows, _fields) {
+    connection.execute(q, [125], function (err, _rows, _fields) {
       if (err) {
         throw err;
       }
@@ -33,7 +33,7 @@ connection.execute(q, [123], function(err, _rows, _fields) {
 });
 
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.deepEqual(rows, [{'test': 124}]);
   assert.deepEqual(rows1, [{'test': 125}]);
   assert.deepEqual(rows2, [{'test': 126}]);

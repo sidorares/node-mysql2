@@ -19,7 +19,7 @@ var fields5 = undefined;
 var query = 'SELECT x\'010203\'';
 var query1 = 'SELECT \'010203\'';
 
-connection.query(query, function(err, _rows, _fields) {
+connection.query(query, function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -27,7 +27,7 @@ connection.query(query, function(err, _rows, _fields) {
   fields = _fields;
 });
 
-connection.query(query, function(err, _rows, _fields) {
+connection.query(query, function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -35,7 +35,7 @@ connection.query(query, function(err, _rows, _fields) {
   fields5 = _fields;
 });
 
-connection.query(query1, function(err, _rows, _fields) {
+connection.query(query1, function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -43,7 +43,7 @@ connection.query(query1, function(err, _rows, _fields) {
   fields1 = _fields;
 });
 
-connection.execute(query, [], function(err, _rows, _fields) {
+connection.execute(query, [], function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -52,7 +52,7 @@ connection.execute(query, [], function(err, _rows, _fields) {
 });
 
 // repeat same query - test cached fields and parser
-connection.execute(query, [], function(err, _rows, _fields) {
+connection.execute(query, [], function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -60,7 +60,7 @@ connection.execute(query, [], function(err, _rows, _fields) {
   fields4 = _fields;
 });
 
-connection.execute(query1, [], function(err, _rows, _fields) {
+connection.execute(query1, [], function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -70,7 +70,7 @@ connection.execute(query1, [], function(err, _rows, _fields) {
 });
 
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.deepEqual(rows, [{'x\'010203\'': Buffer([1, 2, 3])}]);
   assert.equal(fields[0].name, 'x\'010203\'');
   assert.deepEqual(rows1, [{'010203': '010203'}]);

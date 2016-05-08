@@ -2,8 +2,8 @@ var assert = require('assert');
 var common = require('../../common');
 var quitReceived = false;
 var queryCli = 'SELECT 1';
-var server = common.createServer(serverReady, function(conn) {
-  conn.on('quit', function() {
+var server = common.createServer(serverReady, function (conn) {
+  conn.on('quit', function () {
     // COM_QUIT
     quitReceived = true;
     conn.stream.end();
@@ -11,7 +11,7 @@ var server = common.createServer(serverReady, function(conn) {
     console.log('quit!!!');
   });
 
-  conn.on('query', function(q) {
+  conn.on('query', function (q) {
     queryServ = q;
     conn.writeTextResult([{'1': '1'}], [{catalog: 'def',
      schema: '',
@@ -27,10 +27,10 @@ var server = common.createServer(serverReady, function(conn) {
   });
 });
 
-function serverReady() {
+function serverReady () {
   var connection = common.createConnection({port: 3307});
 
-  connection.query(queryCli, function(err, _rows, _fields) {
+  connection.query(queryCli, function (err, _rows, _fields) {
     if (err) {
       throw err;
     }
@@ -41,7 +41,7 @@ function serverReady() {
   });
 }
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.deepEqual(rows, [{1: 1}]);
   assert.equal(fields[0].name, '1');
   assert.equal(quitReceived, true);

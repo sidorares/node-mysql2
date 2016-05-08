@@ -18,7 +18,7 @@ connection.query('insert into test_table(num,l) values(?, 3)', [1]);
 connection.query('insert into test_table(num,l) values(3-?, -10)', [5]);
 connection.query('insert into test_table(num,l) values(4+?, 4000000-?)', [-5, 8000000]);
 
-connection.execute('SELECT * from test_table', [], function(err, _rows, _fields) {
+connection.execute('SELECT * from test_table', [], function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -28,6 +28,6 @@ connection.execute('SELECT * from test_table', [], function(err, _rows, _fields)
 });
 
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.deepEqual(rows, [{'id':1, 'num':1, 'l': 3}, {'id':2, 'num':-2, 'l':-10}, {'id':3, 'num':-1, 'l':-4000000}]);
 });

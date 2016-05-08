@@ -1,4 +1,4 @@
-module.exports = function(connection) {
+module.exports = function (connection) {
   return [
     {type: 'decimal(4,3)', insert: '1.234'},
 //  {type: 'decimal(3,3)', insert: 0.33},
@@ -33,7 +33,7 @@ module.exports = function(connection) {
     {type: 'longtext', insert: 'Hello World'},
     {type: 'text', insert: 'Hello World'},
     {type: 'point', insertRaw: 'POINT(1.2,-3.4)', expect: {x:1.2, y:-3.4}, deep: true},
-    {type: 'point', insertRaw: (function() {
+    {type: 'point', insertRaw: (function () {
       var buffer = new Buffer(21);
       buffer.writeUInt8(1, 0);
       buffer.writeUInt32LE(1, 1);

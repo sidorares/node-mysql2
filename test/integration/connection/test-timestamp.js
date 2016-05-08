@@ -10,14 +10,14 @@ connection.query('INSERT INTO t VALUES(\'2013-01-22 01:02:03\')');
 var rows, fields;
 var rows1, fields1;
 var rows2, fields2;
-connection.query('SELECT f FROM t', function(err, _rows, _fields) {
+connection.query('SELECT f FROM t', function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
   rows = _rows;
   fields = _fields;
 });
-connection.execute('SELECT f FROM t', function(err, _rows, _fields) {
+connection.execute('SELECT f FROM t', function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -26,7 +26,7 @@ connection.execute('SELECT f FROM t', function(err, _rows, _fields) {
 });
 
 // test 11-byte timestamp - https://github.com/sidorares/node-mysql2/issues/254
-connection.execute('SELECT CURRENT_TIMESTAMP(6) as t11', function(err, _rows, _fields) {
+connection.execute('SELECT CURRENT_TIMESTAMP(6) as t11', function (err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -35,7 +35,7 @@ connection.execute('SELECT CURRENT_TIMESTAMP(6) as t11', function(err, _rows, _f
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.deepEqual(rows[0].f.toString(), 'Invalid Date');
   assert(rows[0].f instanceof Date);
   assert(rows[1].f instanceof Date);

@@ -4,8 +4,8 @@ var assert = require('assert');
 
 var max = 500;
 var start = process.hrtime();
-function prepare(i) {
-  connection.prepare('select 1+' + i, function(err, stmt) {
+function prepare (i) {
+  connection.prepare('select 1+' + i, function (err, stmt) {
     stmt.close();
     if (!err) {
       if (i > max) {
@@ -15,13 +15,13 @@ function prepare(i) {
         connection.end();
         return;
       }
-      setTimeout(function() { prepare(i+1); }, 2);
+      setTimeout(function () { prepare(i+1); }, 2);
       return;
     }
     assert(0, 'Error in prepare!');
   });
 }
-connection.query('SET GLOBAL max_prepared_stmt_count=10', function(err) {
+connection.query('SET GLOBAL max_prepared_stmt_count=10', function (err) {
   if (err) {
     throw err;
   }
