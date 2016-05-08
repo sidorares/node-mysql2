@@ -100,7 +100,7 @@ function do_test(testIndex) {
   var sp = procedurise(sql);
   mysql.query(sp, function(err) {
     if (err) {
-      throw(err);
+      throw (err);
     }
 
     sql = "CALL _as_sp_call()"; // this call is allowed with prepared statements, and result contain multiple statements
