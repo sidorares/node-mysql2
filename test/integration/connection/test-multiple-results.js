@@ -104,7 +104,7 @@ function do_test (testIndex) {
       }
 
       if (typeof c == 'undefined') {
-        return void(0);
+        return void (0);
       }
 
       return c.inspect();

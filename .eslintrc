@@ -86,6 +86,13 @@
         2,
         "never"
     ],
-    "space-infix-ops": 2
+    "space-infix-ops": 2,
+    "space-unary-ops": [
+        2,
+        {
+            "nonwords": false,
+            "words": true
+        }
+    ]
   }
 }
