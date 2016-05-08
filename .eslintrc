@@ -34,6 +34,7 @@
     "valid-typeof": 2,
     "curly": 2,
     "indent": [2, 2],
-    "no-multi-spaces": 2
+    "no-multi-spaces": 2,
+    "no-mixed-spaces-and-tabs": 2
   }
 }
