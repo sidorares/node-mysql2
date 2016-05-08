@@ -14,7 +14,7 @@ function exec (i) {
     if (i > max) {
       connection.end();
     } else {
-      exec(i+1);
+      exec(i + 1);
     }
   });
 }

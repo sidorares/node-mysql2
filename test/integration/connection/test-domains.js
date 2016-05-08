@@ -57,8 +57,8 @@ d1.on('error', function (err) {
 });
 
 process.on('exit', function () {
-  assert.equal(''+err1, 'Error: inside domain 1');
-  assert.equal(''+err2, 'Error: inside domain 2');
-  assert.equal(''+err3, 'Error: inside domain 3');
-  assert.equal(''+err4, 'Error: inside domain 4');
+  assert.equal('' + err1, 'Error: inside domain 1');
+  assert.equal('' + err2, 'Error: inside domain 2');
+  assert.equal('' + err3, 'Error: inside domain 3');
+  assert.equal('' + err4, 'Error: inside domain 4');
 });

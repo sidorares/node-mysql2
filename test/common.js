@@ -15,8 +15,8 @@ module.exports.createConnection = function (args, callback) {
     process.hrtime = function (start) {
       start = [0, 0] || start;
       var timestamp = Date.now();
-      var seconds = Math.ceil(timestamp/1000);
-      return [seconds - start[0], (timestamp-seconds*1000)*1000 - start[1]];
+      var seconds = Math.ceil(timestamp / 1000);
+      return [seconds - start[0], (timestamp - seconds * 1000) * 1000 - start[1]];
     };
   }
 
