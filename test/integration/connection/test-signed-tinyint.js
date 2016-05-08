@@ -18,5 +18,5 @@ connection.execute('SELECT * from signed_ints', [5], function(err, _rows, _field
 
 
 process.on('exit', function() {
-  assert.deepEqual(rows, [{"b11":-3, "b12":-120, "b21":500}, {"b11":3, "b12":-110, "b21":-500}]);
+  assert.deepEqual(rows, [{'b11':-3, 'b12':-120, 'b21':500}, {'b11':3, 'b12':-110, 'b21':-500}]);
 });

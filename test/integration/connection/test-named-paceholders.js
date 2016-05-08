@@ -31,7 +31,7 @@ connection.execute('SELECT :a + :a as sum', {a: 2}, function(err, rows, fields) 
   if (err) {
     throw err;
   }
-  assert.deepEqual(rows, [{"sum":4}]);
+  assert.deepEqual(rows, [{'sum':4}]);
 });
 
 var qCmd = connection.query('SELECT * from test_table where num1 < :numParam and num2 > :lParam', {lParam: 100, numParam: 2}, function(err, rows, fields) {
@@ -47,7 +47,7 @@ connection.query('SELECT :a + :a as sum', {a: 2}, function(err, rows, fields) {
   if (err) {
     throw err;
   }
-  assert.deepEqual(rows, [{"sum":4}]);
+  assert.deepEqual(rows, [{'sum':4}]);
 });
 
 var sql = connection.format('SELECT * from test_table where num1 < :numParam and num2 > :lParam', {lParam: 100, numParam: 2});

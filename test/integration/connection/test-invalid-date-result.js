@@ -17,6 +17,6 @@ function isInvalidTime(t) {
 }
 
 process.on('exit', function() {
-  assert.deepEqual(Object.prototype.toString.call(rows[0].t), "[object Date]");
+  assert.deepEqual(Object.prototype.toString.call(rows[0].t), '[object Date]');
   assert.deepEqual(isInvalidTime(rows[0].t), true);
 });
