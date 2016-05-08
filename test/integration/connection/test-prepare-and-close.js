@@ -15,7 +15,7 @@ function prepare(i) {
         connection.end();
         return;
       }
-      setTimeout(function() {prepare(i+1);}, 2);
+      setTimeout(function() { prepare(i+1); }, 2);
       return;
     }
     assert(0, 'Error in prepare!');
