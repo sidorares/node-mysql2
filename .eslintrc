@@ -85,6 +85,7 @@
     "space-in-parens": [
         2,
         "never"
-    ]
+    ],
+    "space-infix-ops": 2
   }
 }

@@ -90,7 +90,7 @@ function do_test (testIndex) {
         _numResults = 1;
       }
 
-      if (_rows.constructor.name == 'Array' && (_rows[0].constructor.name == 'Array' || _rows[0].constructor.name =='ResultSetHeader')) {
+      if (_rows.constructor.name == 'Array' && (_rows[0].constructor.name == 'Array' || _rows[0].constructor.name == 'ResultSetHeader')) {
         _numResults = _rows.length;
       }
     }

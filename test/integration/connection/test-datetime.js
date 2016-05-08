@@ -23,7 +23,7 @@ var dateAsStringExpected = [
        d4: null}];
 
 
-connection.execute('select from_unixtime(?) t', [(+date).valueOf()/1000], function (err, _rows, _fields) {
+connection.execute('select from_unixtime(?) t', [(+date).valueOf() / 1000], function (err, _rows, _fields) {
   if (err) {
     throw err;
   }

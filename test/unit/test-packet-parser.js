@@ -16,7 +16,7 @@ var handler = function (p) {
 function execute (str, verify) {
   reset();
   var buffers = str.split('|').map(function (sb) { return sb.split(',').map(Number); });
-  for (var i=0; i < buffers.length; ++i) {
+  for (var i = 0; i < buffers.length; ++i) {
     pp.execute(new Buffer(buffers[i]));
   }
   verify();
@@ -84,7 +84,7 @@ execute('5,0,0,122,1,2,3,4,5,6,0,0,123,1|2,3|4,5,6', p122_123);
 // TODO combine with "execute" function
 
 var length = 123000;
-var pbuff = new Buffer(length+4);
+var pbuff = new Buffer(length + 4);
 pbuff[4] = 123;
 pbuff[5] = 124;
 pbuff[6] = 125;
@@ -123,6 +123,6 @@ testBigPackets([pbuff, pbuff], assert2FullPackets);
 testBigPackets([pbuff.slice(0, 120000), pbuff.slice(120000, 123004), pbuff], assert2FullPackets);
 var frameEnd = 120000;
 testBigPackets([pbuff.slice(0, frameEnd), Buffer.concat([pbuff.slice(frameEnd, 123004), pbuff])], assert2FullPackets);
-for (var frameStart=1; frameStart < 100; frameStart++) {
+for (var frameStart = 1; frameStart < 100; frameStart++) {
   testBigPackets([Buffer.concat([pbuff, pbuff.slice(0, frameStart)]), pbuff.slice(frameStart, 123004)], assert2FullPackets);
 }

@@ -9,7 +9,7 @@ function dotest () {
   connection.execute(query + ' as t', params, function (err, _rows, _fields) {
     assert.equal(err, null);
     if (params.length < 50) {
-      assert.equal(_rows[0].t, params.reduce(function (x, y) { return x+y; }));
+      assert.equal(_rows[0].t, params.reduce(function (x, y) { return x + y; }));
       query += ' + ?';
       params.push(params.length);
       dotest();
