@@ -55,6 +55,13 @@
         2,
         "never"
     ],
-    "eol-last": 2
+    "eol-last": 2,
+    "keyword-spacing": [
+        2,
+        {
+            "after": true,
+            "before": true
+        }
+    ]
   }
 }

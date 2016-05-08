@@ -16,7 +16,7 @@ var handler = function(p) {
 function execute(str, verify) {
   reset();
   var buffers = str.split('|').map(function(sb) { return sb.split(',').map(Number); });
-  for(var i=0; i < buffers.length; ++i) {
+  for (var i=0; i < buffers.length; ++i) {
     pp.execute(new Buffer(buffers[i]));
   }
   verify();
@@ -123,6 +123,6 @@ testBigPackets( [pbuff, pbuff], assert2FullPackets);
 testBigPackets( [pbuff.slice(0, 120000), pbuff.slice(120000, 123004), pbuff], assert2FullPackets);
 var frameEnd = 120000;
 testBigPackets( [pbuff.slice(0, frameEnd), Buffer.concat([pbuff.slice(frameEnd, 123004), pbuff])], assert2FullPackets);
-for(var frameStart=1; frameStart < 100; frameStart++) {
+for (var frameStart=1; frameStart < 100; frameStart++) {
   testBigPackets([Buffer.concat([pbuff, pbuff.slice(0, frameStart)]), pbuff.slice(frameStart, 123004)], assert2FullPackets);
 }
