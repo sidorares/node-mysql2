@@ -66,6 +66,7 @@
     "linebreak-style": [
         2,
         "unix"
-    ]
+    ],
+    "no-spaced-func": 2
   }
 }
