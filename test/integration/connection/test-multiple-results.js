@@ -19,56 +19,56 @@ var rs2 = clone(rs1);
 rs2.serverStatus = 2;
 
 var twoInsertResult = [[rs1, rs2], [undefined, undefined], 2];
-var select1 = [{"1":"1"}];
-var select2 = [{"2":"2"}];
+var select1 = [{'1':'1'}];
+var select2 = [{'2':'2'}];
 var fields1 = [{
-  catalog: "def",
+  catalog: 'def',
   characterSet: 63,
   columnLength: 1,
   columnType: 8,
   decimals: 0,
   flags: 129,
-  name: "1",
-  orgName: "",
-  orgTable: "",
-  schema: "",
-  table: ""
+  name: '1',
+  orgName: '',
+  orgTable: '',
+  schema: '',
+  table: ''
 }];
 var nr_fields = [{
-  catalog: "def",
+  catalog: 'def',
   characterSet: 63,
   columnLength: 11,
   columnType: 3,
   decimals: 0,
   flags: 0,
-  name: "test",
-  orgName: "test",
-  orgTable: "no_rows",
+  name: 'test',
+  orgName: 'test',
+  orgTable: 'no_rows',
   schema: mysql.config.database,
-  table: "no_rows"
+  table: 'no_rows'
 }];
 var sr_fields = clone(nr_fields);
-sr_fields[0].orgTable = "some_rows";
-sr_fields[0].table = "some_rows";
-var select3 = [{"test":0}, {"test":42}, {"test":314149}];
+sr_fields[0].orgTable = 'some_rows';
+sr_fields[0].table = 'some_rows';
+var select3 = [{'test':0}, {'test':42}, {'test':314149}];
 
 var fields2 = clone(fields1);
-fields2[0].name = "2";
+fields2[0].name = '2';
 
 var tests = [
-  ["select * from some_rows", [select3, sr_fields, 1]], //  select 3 rows
-  ["SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT; SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS;", twoInsertResult],
-  ["/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;", twoInsertResult], // issue #26
-  ["set @a = 1", [rs2, undefined, 1]],  // one insert result
-  ["set @a = 1; set @b = 2", twoInsertResult],
-  ["select 1; select 2", [[select1, select2], [fields1, fields2], 2]],
-  ["set @a = 1; select 1", [[rs1, select1], [undefined, fields1], 2]],
-  ["select 1; set @a = 1", [[select1, rs2], [fields1, undefined], 2]],
-  ["select * from no_rows", [[], nr_fields, 1]],    // select 0 rows"
-  ["set @a = 1; select * from no_rows", [[rs1, []], [undefined, nr_fields], 2]], // insert + select 0 rows
-  ["select * from no_rows; set @a = 1", [[[], rs2], [nr_fields, undefined], 2]], //  select 0 rows + insert
-  ["set @a = 1; select * from some_rows", [[rs1, select3], [undefined, sr_fields], 2]], // insert + select 3 rows
-  ["select * from some_rows; set @a = 1", [[select3, rs2], [sr_fields, undefined], 2]] //  select 3 rows + insert
+  ['select * from some_rows', [select3, sr_fields, 1]], //  select 3 rows
+  ['SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT; SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS;', twoInsertResult],
+  ['/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;', twoInsertResult], // issue #26
+  ['set @a = 1', [rs2, undefined, 1]],  // one insert result
+  ['set @a = 1; set @b = 2', twoInsertResult],
+  ['select 1; select 2', [[select1, select2], [fields1, fields2], 2]],
+  ['set @a = 1; select 1', [[rs1, select1], [undefined, fields1], 2]],
+  ['select 1; set @a = 1', [[select1, rs2], [fields1, undefined], 2]],
+  ['select * from no_rows', [[], nr_fields, 1]],    // select 0 rows"
+  ['set @a = 1; select * from no_rows', [[rs1, []], [undefined, nr_fields], 2]], // insert + select 0 rows
+  ['select * from no_rows; set @a = 1', [[[], rs2], [nr_fields, undefined], 2]], //  select 0 rows + insert
+  ['set @a = 1; select * from some_rows', [[rs1, select3], [undefined, sr_fields], 2]], // insert + select 3 rows
+  ['select * from some_rows; set @a = 1', [[select3, rs2], [sr_fields, undefined], 2]] //  select 3 rows + insert
 ];
 
 // TODO: tests with error in the query with different index

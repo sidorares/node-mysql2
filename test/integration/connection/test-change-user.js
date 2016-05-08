@@ -3,8 +3,8 @@ var common = require('../../common');
 var connection = common.createConnection();
 
 // create test user first
-connection.query("GRANT ALL ON *.* TO 'changeuser1'@'localhost' IDENTIFIED BY 'changeuser1pass'");
-connection.query("GRANT ALL ON *.* TO 'changeuser2'@'localhost' IDENTIFIED BY 'changeuser2pass'");
+connection.query('GRANT ALL ON *.* TO \'changeuser1\'@\'localhost\' IDENTIFIED BY \'changeuser1pass\'');
+connection.query('GRANT ALL ON *.* TO \'changeuser2\'@\'localhost\' IDENTIFIED BY \'changeuser2pass\'');
 connection.query('FLUSH PRIVILEGES');
 
 connection.changeUser({

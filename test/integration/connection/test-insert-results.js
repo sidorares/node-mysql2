@@ -6,7 +6,7 @@ var assert = require('assert');
 
 var table = 'insert_test';
 //var text = "本日は晴天なり";
-var text = " test test test ";
+var text = ' test test test ';
 connection.query([
   'CREATE TEMPORARY TABLE `' + table + '` (',
   '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',

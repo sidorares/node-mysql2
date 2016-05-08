@@ -16,8 +16,8 @@ var fields4 = undefined;
 var rows5 = undefined;
 var fields5 = undefined;
 
-var query = "SELECT x'010203'";
-var query1 = "SELECT '010203'";
+var query = 'SELECT x\'010203\'';
+var query1 = 'SELECT \'010203\'';
 
 connection.query(query, function(err, _rows, _fields) {
   if (err) {
@@ -71,17 +71,17 @@ connection.execute(query1, [], function(err, _rows, _fields) {
 
 
 process.on('exit', function() {
-  assert.deepEqual(rows, [{"x'010203'": Buffer([1, 2, 3])}]);
-  assert.equal(fields[0].name, "x'010203'");
+  assert.deepEqual(rows, [{'x\'010203\'': Buffer([1, 2, 3])}]);
+  assert.equal(fields[0].name, 'x\'010203\'');
   assert.deepEqual(rows1, [{'010203': '010203'}]);
-  assert.equal(fields1[0].name, "010203");
-  assert.deepEqual(rows2, [{"x'010203'": Buffer([1, 2, 3])}]);
-  assert.equal(fields2[0].name, "x'010203'");
+  assert.equal(fields1[0].name, '010203');
+  assert.deepEqual(rows2, [{'x\'010203\'': Buffer([1, 2, 3])}]);
+  assert.equal(fields2[0].name, 'x\'010203\'');
   assert.deepEqual(rows3, [{'010203': '010203'}]);
-  assert.equal(fields3[0].name, "010203");
+  assert.equal(fields3[0].name, '010203');
 
-  assert.deepEqual(rows4, [{"x'010203'": Buffer([1, 2, 3])}]);
-  assert.equal(fields4[0].name, "x'010203'");
-  assert.deepEqual(rows5, [{"x'010203'": Buffer([1, 2, 3])}]);
-  assert.equal(fields5[0].name, "x'010203'");
+  assert.deepEqual(rows4, [{'x\'010203\'': Buffer([1, 2, 3])}]);
+  assert.equal(fields4[0].name, 'x\'010203\'');
+  assert.deepEqual(rows5, [{'x\'010203\'': Buffer([1, 2, 3])}]);
+  assert.equal(fields5[0].name, 'x\'010203\'');
 });

@@ -5,7 +5,7 @@ var assert = require('assert');
 var rows = undefined;
 var fields = undefined;
 var multibyteText = '本日は晴天なり';
-connection.query("SELECT '" + multibyteText + "'", function(err, _rows, _fields) {
+connection.query('SELECT \'' + multibyteText + '\'', function(err, _rows, _fields) {
   if (err) {
     throw err;
   }

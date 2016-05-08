@@ -21,56 +21,56 @@ var rs3 = clone(rs1);
 rs3.serverStatus = 34;
 
 var twoInsertResult = [[rs1, rs2], [undefined, undefined], 2];
-var select1 = [{"1":"1"}];
-var select2 = [{"2":"2"}];
+var select1 = [{'1':'1'}];
+var select2 = [{'2':'2'}];
 var fields1 = [{
-  catalog: "def",
+  catalog: 'def',
   characterSet: 63,
   columnLength: 1,
   columnType: 8,
   decimals: 0,
   flags: 129,
-  name: "1",
-  orgName: "",
-  orgTable: "",
-  schema: "",
-  table: ""
+  name: '1',
+  orgName: '',
+  orgTable: '',
+  schema: '',
+  table: ''
 }];
 var nr_fields = [{
-  catalog: "def",
+  catalog: 'def',
   characterSet: 63,
   columnLength: 11,
   columnType: 3,
   decimals: 0,
   flags: 0,
-  name: "test",
-  orgName: "test",
-  orgTable: "no_rows",
+  name: 'test',
+  orgName: 'test',
+  orgTable: 'no_rows',
   schema: mysql.config.database,
-  table: "no_rows"
+  table: 'no_rows'
 }];
 
 var sr_fields = clone(nr_fields);
-sr_fields[0].orgTable = "some_rows";
-sr_fields[0].table = "some_rows";
-var select3 = [{"test":0}, {"test":42}, {"test":314149}];
+sr_fields[0].orgTable = 'some_rows';
+sr_fields[0].table = 'some_rows';
+var select3 = [{'test':0}, {'test':42}, {'test':314149}];
 
 var fields2 = clone(fields1);
-fields2[0].name = "2";
+fields2[0].name = '2';
 
 var tests = [
-  ["select * from some_rows", [[select3, rs3], [sr_fields, undefined], 2]], //  select 3 rows
-  ["SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT; SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS", [rs2, undefined, 1]],
-  ["set @a = 1", [rs2, undefined, 1]],
-  ["set @a = 1; set @b = 2", [rs2, undefined, 1]],
-  ["select 1; select 2", [[select1, select2, rs2], [fields1, fields2, undefined], 3]],
-  ["set @a = 1; select 1", [[select1, rs2], [fields1, undefined], 2]],
-  ["select 1; set @a = 1", [[select1, rs2], [fields1, undefined], 2]],
-  ["select * from no_rows", [[[], rs3], [nr_fields, undefined], 2]],    // select 0 rows"
-  ["set @a = 1; select * from no_rows", [[[], rs3], [nr_fields, undefined], 2]], // insert + select 0 rows
-  ["select * from no_rows; set @a = 1", [[[], rs3], [nr_fields, undefined], 2]], //  select 0 rows + insert
-  ["set @a = 1; select * from some_rows", [[select3, rs3], [sr_fields, undefined], 2]], // insert + select 3 rows
-  ["select * from some_rows; set @a = 1", [[select3, rs3], [sr_fields, undefined], 2]] //  select 3 rows + insert
+  ['select * from some_rows', [[select3, rs3], [sr_fields, undefined], 2]], //  select 3 rows
+  ['SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT; SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS', [rs2, undefined, 1]],
+  ['set @a = 1', [rs2, undefined, 1]],
+  ['set @a = 1; set @b = 2', [rs2, undefined, 1]],
+  ['select 1; select 2', [[select1, select2, rs2], [fields1, fields2, undefined], 3]],
+  ['set @a = 1; select 1', [[select1, rs2], [fields1, undefined], 2]],
+  ['select 1; set @a = 1', [[select1, rs2], [fields1, undefined], 2]],
+  ['select * from no_rows', [[[], rs3], [nr_fields, undefined], 2]],    // select 0 rows"
+  ['set @a = 1; select * from no_rows', [[[], rs3], [nr_fields, undefined], 2]], // insert + select 0 rows
+  ['select * from no_rows; set @a = 1', [[[], rs3], [nr_fields, undefined], 2]], //  select 0 rows + insert
+  ['set @a = 1; select * from some_rows', [[select3, rs3], [sr_fields, undefined], 2]], // insert + select 3 rows
+  ['select * from some_rows; set @a = 1', [[select3, rs3], [sr_fields, undefined], 2]] //  select 3 rows + insert
 ];
 
 function procedurise(sql) {
@@ -103,7 +103,7 @@ function do_test(testIndex) {
       throw (err);
     }
 
-    sql = "CALL _as_sp_call()"; // this call is allowed with prepared statements, and result contain multiple statements
+    sql = 'CALL _as_sp_call()'; // this call is allowed with prepared statements, and result contain multiple statements
     var _numResults = 0;
     var textCmd = mysql.query(sql, function(err, _rows, _columns) {
       if (err) {

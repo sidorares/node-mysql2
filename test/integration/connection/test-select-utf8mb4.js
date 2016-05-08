@@ -5,7 +5,7 @@ var assert = require('assert');
 var rows = undefined;
 var fields = undefined;
 var multibyteText = '𠜎 𠜱 𠝹 𠱓 𠱸 𠲖 𠳏 𠳕 𠴕 𠵼 𠵿 𠸎 𠸏 𠹷 𠺝 𠺢 ';
-connection.query("SELECT '" + multibyteText + "'", function(err, _rows, _fields) {
+connection.query('SELECT \'' + multibyteText + '\'', function(err, _rows, _fields) {
   if (err) {
     throw err;
   }
