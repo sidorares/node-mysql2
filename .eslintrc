@@ -67,6 +67,7 @@
         2,
         "unix"
     ],
-    "no-spaced-func": 2
+    "no-spaced-func": 2,
+    "no-whitespace-before-property": 2
   }
 }
