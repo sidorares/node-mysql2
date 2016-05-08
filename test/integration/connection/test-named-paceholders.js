@@ -22,7 +22,7 @@ var cmd = connection.execute('SELECT * from test_table where num1 < :numParam an
   if (err) {
     throw err;
   }
-  assert.deepEqual(rows, [ { id: 4, num1: -5, num2: 8000000 } ]);
+  assert.deepEqual(rows, [{ id: 4, num1: -5, num2: 8000000 }]);
 });
 assert.equal(cmd.sql, 'SELECT * from test_table where num1 < ? and num2 > ?');
 assert.deepEqual(cmd.values, [2, 100]);
@@ -38,7 +38,7 @@ var qCmd = connection.query('SELECT * from test_table where num1 < :numParam and
   if (err) {
     throw err;
   }
-  assert.deepEqual(rows, [ { id: 4, num1: -5, num2: 8000000 } ]);
+  assert.deepEqual(rows, [{ id: 4, num1: -5, num2: 8000000 }]);
 });
 assert.equal(qCmd.sql, 'SELECT * from test_table where num1 < 2 and num2 > 100');
 assert.deepEqual(qCmd.values, [2, 100]);

@@ -144,7 +144,7 @@ expectedFields = [{ catalog: 'def',
     flags: 1,
     decimals: 31 }];
 
-expectedRows = [ {id: 1,
+expectedRows = [{id: 1,
     select_type: 'SIMPLE',
     table: null,
     type: null,
