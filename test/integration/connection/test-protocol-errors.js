@@ -2,7 +2,7 @@ var assert = require('assert');
 var common = require('../../common');
 var server = common.createServer(serverReady, function(conn) {
   conn.on('query', function(q) {
-    conn.writeTextResult([{ '1': '1' }], [{ catalog: 'def',
+    conn.writeTextResult([{'1': '1'}], [{catalog: 'def',
      schema: '',
      table: '',
      orgTable: '',
@@ -12,7 +12,7 @@ var server = common.createServer(serverReady, function(conn) {
      columnLength: 1,
      columnType: 8,
      flags: 129,
-     decimals: 0 }]);
+     decimals: 0}]);
     // this is extra (incorrect) packet - client should emit error on receiving it
     conn.writeOk();
   });
@@ -21,7 +21,7 @@ var server = common.createServer(serverReady, function(conn) {
 var fields, error;
 var query = 'SELECT 1';
 function serverReady() {
-  var connection = common.createConnection({ port: 3307 });
+  var connection = common.createConnection({port: 3307});
   connection.query(query, function(err, _rows, _fields) {
     if (err) {
       throw err;

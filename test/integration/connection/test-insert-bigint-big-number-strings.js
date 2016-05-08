@@ -1,5 +1,5 @@
 var common = require('../../common');
-var connection = common.createConnection({ supportBigNumbers: true, bigNumberStrings: true });
+var connection = common.createConnection({supportBigNumbers: true, bigNumberStrings: true});
 var assert = require('assert');
 
 connection.query([

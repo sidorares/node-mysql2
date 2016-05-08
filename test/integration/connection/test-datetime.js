@@ -1,6 +1,6 @@
 var common = require('../../common');
 var connection = common.createConnection();
-var connection1 = common.createConnection({ dateStrings: true });
+var connection1 = common.createConnection({dateStrings: true});
 var assert = require('assert');
 
 var rows, rows1, rows2, rows3, rows4, rows5;
@@ -17,10 +17,10 @@ connection1.query('CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME,
 connection1.query('INSERT INTO t set d1=?, d2=?, d3=?, d4=?', [date, date1, date2, date3]);
 
 var dateAsStringExpected = [
-     { d1: '1990-01-01',
+     {d1: '1990-01-01',
        d2: '2000-03-03 08:15:11',
        d3: '2010-12-10 14:12:09',
-       d4: null }];
+       d4: null}];
 
 
 connection.execute('select from_unixtime(?) t', [(+date).valueOf()/1000], function(err, _rows, _fields) {

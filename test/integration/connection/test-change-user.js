@@ -15,7 +15,7 @@ connection.query('select user()', function(err, rows) {
   if (err) {
     throw err;
   }
-  assert.deepEqual(rows, [{ 'user()': 'changeuser1@localhost' }]);
+  assert.deepEqual(rows, [{'user()': 'changeuser1@localhost'}]);
 });
 
 connection.changeUser({
@@ -27,7 +27,7 @@ connection.query('select user()', function(err, rows) {
   if (err) {
     throw err;
   }
-  assert.deepEqual(rows, [{ 'user()': 'changeuser2@localhost' }]);
+  assert.deepEqual(rows, [{'user()': 'changeuser2@localhost'}]);
 });
 
 connection.changeUser({
@@ -38,7 +38,7 @@ connection.query('select user()', function(err, rows) {
   if (err) {
     throw err;
   }
-  assert.deepEqual(rows, [{ 'user()': 'changeuser1@localhost' }]);
+  assert.deepEqual(rows, [{'user()': 'changeuser1@localhost'}]);
 });
 
 connection.end();
