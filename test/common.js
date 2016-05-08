@@ -29,9 +29,9 @@ module.exports.createConnection = function (args, callback) {
       password: config.password,
       db: config.database
     });
-    //c.on('connect', function() {
+    // c.on('connect', function() {
     //
-    //});
+    // });
     setTimeout(function () {
       console.log('altering client...');
       c.oldQuery = c.query;

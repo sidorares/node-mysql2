@@ -93,6 +93,10 @@
             "nonwords": false,
             "words": true
         }
+    ],
+    "spaced-comment": [
+        2,
+        "always"
     ]
   }
 }

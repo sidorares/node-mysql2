@@ -19,7 +19,7 @@ var server = common.createServer(serverReady, function (conn) {
       flags: 129,
       decimals: 0}]
     );
-    //emulate  stream error here
+    // emulate  stream error here
     clientConnection.stream.emit('error', err);
     clientConnection.stream.end();
     server.close();

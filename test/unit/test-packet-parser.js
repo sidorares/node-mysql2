@@ -110,8 +110,8 @@ function assert2FullPackets (packets) {
     assert.equal(p.readInt8(), 124);
     assert.equal(p.readInt8(), 125);
   }
-  //assert.equal(packets[0].buffer.slice(0, 8).toString('hex'), expectation);
-  //assert.equal(packets[1].buffer.slice(0, 8).toString('hex'), expectation);
+  // assert.equal(packets[0].buffer.slice(0, 8).toString('hex'), expectation);
+  // assert.equal(packets[1].buffer.slice(0, 8).toString('hex'), expectation);
   assert.equal(packets.length, 2);
   assertPacket(packets[0]);
   assertPacket(packets[1]);
