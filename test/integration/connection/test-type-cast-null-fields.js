@@ -16,7 +16,7 @@ connection.query([
 
 connection.query('INSERT INTO ' + table + ' SET ?', {
   date   : null,
-  number : null,
+  number : null
 });
 
 var results;

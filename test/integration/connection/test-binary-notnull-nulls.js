@@ -23,7 +23,7 @@ conn.query('CREATE TEMPORARY TABLE `tmp_account_flags` ( ' +
   ' PRIMARY KEY (`account`,`flag`) ' +
   ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8');
 
-conn.query("INSERT INTO `tmp_account_flags` VALUES ('1', '100')")
+conn.query("INSERT INTO `tmp_account_flags` VALUES ('1', '100')");
 
 conn.query('CREATE TEMPORARY TABLE `tmp_account_session` ( ' +
   ' `account` int(11) NOT NULL, ' +
@@ -33,7 +33,7 @@ conn.query('CREATE TEMPORARY TABLE `tmp_account_session` ( ' +
   ' PRIMARY KEY (`account`,`ip`) ' +
   ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8');
 
-conn.query("INSERT INTO `tmp_account_session` VALUES ('1', '::1', '75efb145482ce22f4544390cad233c749c1b43e4', '1')")
+conn.query("INSERT INTO `tmp_account_session` VALUES ('1', '::1', '75efb145482ce22f4544390cad233c749c1b43e4', '1')");
 
 
 conn.connect(function(err) {

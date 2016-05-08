@@ -12,7 +12,7 @@ var fields;
 connection.execute('explain SELECT 1', function(err, _rows, _fields) {
   if (err) throw err;
 
-  rows = _rows
+  rows = _rows;
   fields = _fields;
   connection.end();
 });
@@ -22,7 +22,7 @@ var expectedFields;
 
 process.on('exit', function() {
   assert.deepEqual(rows, expectedRows);
-  var fi = fields.map(function(c) { return c.inspect() });
+  var fi = fields.map(function(c) { return c.inspect(); });
   for (var i; i < expectedFields.length; i++) {
     assert.deepEqual(Object.keys(fi[i]).sort(), Object.keys(expectedFields[i]).sort());
     expectedFields[i].map(function (key) {

@@ -15,7 +15,7 @@ connection.query([
 
 connection.beginTransaction(function (err) {
   assert.ifError(err);
-  
+
   var row = {
     id: 1,
     title: 'Test row'
