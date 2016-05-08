@@ -31,3 +31,6 @@ matrix:
         - addons:
              mariadb: 10.1
           node_js: '5.10'
+
+notifications:
+    email: false
