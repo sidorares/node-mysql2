@@ -12,9 +12,10 @@ function prepare(i) {
         var end = process.hrtime(start);
         var ns = end[0]*1e9+end[1];
         console.log(max*1e9/ns + ' prepares/sec');
-        return connection.end();
+        connection.end();
+        return;
       }
-      setTimeout(function() {prepare(i+1)}, 2);
+      setTimeout(function() {prepare(i+1);}, 2);
       return;
     }
     assert(0, 'Error in prepare!');

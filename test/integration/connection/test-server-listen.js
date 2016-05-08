@@ -1,5 +1,5 @@
 var assert = require('assert');
-var mysql = require('../../../index.js')
+var mysql = require('../../../index.js');
 
 // Verifies that the Server.listen can be called with any combination of
 // pararameters valid for net.Server.listen.

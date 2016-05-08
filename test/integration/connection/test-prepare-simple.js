@@ -5,7 +5,7 @@ var assert     = require('assert');
 var _stmt1, _stmt2, _stmt3;
 var query1 = 'select 1 + ? + ? as test';
 var query2 = 'select 1 + 1';  // no parameters
-var query3 = 'create temporary table aaa(i int);' // no parameters, no result columns
+var query3 = 'create temporary table aaa(i int);'; // no parameters, no result columns
 
 connection.prepare(query1, function(err1, stmt1) {
   _stmt1 = stmt1;
@@ -15,7 +15,7 @@ connection.prepare(query1, function(err1, stmt1) {
     connection.prepare(query3, function(err3, stmt3) {
       _stmt3 = stmt3;
       _stmt2.close();
-      _stmt3.close()
+      _stmt3.close();
       connection.end();
     });
   });

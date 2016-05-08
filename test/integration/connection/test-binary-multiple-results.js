@@ -79,7 +79,7 @@ function procedurise(sql) {
     'CREATE PROCEDURE _as_sp_call()',
     'BEGIN',
      sql + ';',
-    'END',
+    'END'
   ].join('\n');
 }
 

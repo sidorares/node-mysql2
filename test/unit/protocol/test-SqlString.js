@@ -25,7 +25,7 @@ test('SqlString.escapeId', {
 
   'nested arrays are flattened': function() {
     assert.equal(SqlString.escapeId(['a', ['b', ['t.c']]]), "`a`, `b`, `t`.`c`");
-  },
+  }
 });
 
 test('SqlString.escape', {
@@ -156,20 +156,20 @@ test('SqlString.format', {
   },
 
   'undefined is ignored': function () {
-    var sql = SqlString.format('?', undefined, false)
-    assert.equal(sql, '?')
+    var sql = SqlString.format('?', undefined, false);
+    assert.equal(sql, '?');
   },
 
   'objects is converted to values': function () {
-    var sql = SqlString.format('?', { 'hello': 'world' }, false)
-    assert.equal(sql, "`hello` = 'world'")
+    var sql = SqlString.format('?', { 'hello': 'world' }, false);
+    assert.equal(sql, "`hello` = 'world'");
   },
 
   'objects is not converted to values': function () {
-    var sql = SqlString.format('?', { 'hello': 'world' }, true)
-    assert.equal(sql, "'[object Object]'")
+    var sql = SqlString.format('?', { 'hello': 'world' }, true);
+    assert.equal(sql, "'[object Object]'");
 
-    var sql = SqlString.format('?', { toString: function () { return 'hello' } }, true)
-    assert.equal(sql, "'hello'")
+    var sql = SqlString.format('?', { toString: function () { return 'hello'; } }, true);
+    assert.equal(sql, "'hello'");
   }
 });

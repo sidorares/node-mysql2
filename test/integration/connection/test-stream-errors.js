@@ -41,7 +41,7 @@ function serverReady() {
   });
 }
 
-process.on('exit', function() {;
+process.on('exit', function() {
   assert.equal(receivedError1.fatal, true);
   assert.equal(receivedError1.code, err.code);
   assert.equal(receivedError2.fatal, true);
