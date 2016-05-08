@@ -43,6 +43,13 @@
     "block-spacing": [
         2,
         "always"
+    ],
+    "comma-spacing": [
+        2,
+        {
+            "after": true,
+            "before": false
+        }
     ]
   }
 }
