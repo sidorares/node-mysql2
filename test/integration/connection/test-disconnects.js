@@ -32,7 +32,7 @@ function test() {
 function serverHandler(conn) {
   connections.push(conn);
   conn.on('query', function(q) {
-    conn.writeTextResult([ { '1': '1' } ], [ { catalog: 'def',
+    conn.writeTextResult([{ '1': '1' }], [{ catalog: 'def',
      schema: '',
      table: '',
      orgTable: '',
@@ -42,7 +42,7 @@ function serverHandler(conn) {
      columnLength: 1,
      columnType: 8,
      flags: 129,
-     decimals: 0 } ]);
+     decimals: 0 }]);
   });
 }
 server = common.createServer(test, serverHandler);

@@ -35,6 +35,10 @@
     "curly": 2,
     "indent": [2, 2],
     "no-multi-spaces": 2,
-    "no-mixed-spaces-and-tabs": 2
+    "no-mixed-spaces-and-tabs": 2,
+    "array-bracket-spacing": [
+        2,
+        "never"
+    ]
   }
 }

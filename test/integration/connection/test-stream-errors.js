@@ -7,7 +7,7 @@ err.code = 'EPIPE';
 
 var server = common.createServer(serverReady, function(conn) {
   conn.on('query', function(q) {
-    conn.writeColumns([ { catalog: 'def',
+    conn.writeColumns([{ catalog: 'def',
       schema: '',
       table: '',
       orgTable: '',
@@ -17,7 +17,7 @@ var server = common.createServer(serverReady, function(conn) {
       columnLength: 1,
       columnType: 8,
       flags: 129,
-      decimals: 0 } ]
+      decimals: 0 }]
     );
     //emulate  stream error here
     clientConnection.stream.emit('error', err);
