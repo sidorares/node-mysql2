@@ -1,4 +1,4 @@
-module.exports = function(connection){
+module.exports = function(connection) {
   return [
     {type: 'decimal(4,3)', insert: '1.234'},
 //  {type: 'decimal(3,3)', insert: 0.33},

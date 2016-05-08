@@ -122,7 +122,7 @@ function do_test(testIndex) {
       var index = fieldIndex;
       if (_numResults == 1) {
         assert.equal(fieldIndex, 0);
-        if (row.constructor.name == 'ResultSetHeader'){
+        if (row.constructor.name == 'ResultSetHeader') {
           assert.deepEqual(_rows, row);
         } else {
           assert.deepEqual(_rows[rowIndex], row);
