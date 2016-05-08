@@ -25,6 +25,6 @@ connection.prepare('select 1 + ? + ? as test', function(err, stmt) {
 process.on('exit', function() {
   assert.equal(_stmt.columns.length, 1);
   assert.equal(_stmt.parameters.length, 2);
-  assert.deepEqual(_rows, [{ test: 235 }]);
+  assert.deepEqual(_rows, [{test: 235}]);
   assert.equal(_columns[0].name, 'test');
 });

@@ -68,6 +68,7 @@
         "unix"
     ],
     "no-spaced-func": 2,
-    "no-whitespace-before-property": 2
+    "no-whitespace-before-property": 2,
+    "object-curly-spacing": 2
   }
 }

@@ -161,15 +161,15 @@ test('SqlString.format', {
   },
 
   'objects is converted to values': function () {
-    var sql = SqlString.format('?', { 'hello': 'world' }, false);
+    var sql = SqlString.format('?', {'hello': 'world'}, false);
     assert.equal(sql, "`hello` = 'world'");
   },
 
   'objects is not converted to values': function () {
-    var sql = SqlString.format('?', { 'hello': 'world' }, true);
+    var sql = SqlString.format('?', {'hello': 'world'}, true);
     assert.equal(sql, "'[object Object]'");
 
-    var sql = SqlString.format('?', { toString: function () { return 'hello'; } }, true);
+    var sql = SqlString.format('?', {toString: function () { return 'hello'; }}, true);
     assert.equal(sql, "'hello'");
   }
 });
