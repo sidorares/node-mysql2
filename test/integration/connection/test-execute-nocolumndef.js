@@ -1,6 +1,6 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
 // https://github.com/sidorares/node-mysql2/issues/130
 // https://github.com/sidorares/node-mysql2/issues/37
@@ -9,10 +9,12 @@ var assert     = require('assert');
 var rows;
 var fields;
 
-connection.execute('explain SELECT 1', function(err, _rows, _fields) {
-  if (err) throw err;
+connection.execute('explain SELECT 1', function (err, _rows, _fields) {
+  if (err) {
+    throw err;
+  }
 
-  rows = _rows
+  rows = _rows;
   fields = _fields;
   connection.end();
 });
@@ -20,9 +22,9 @@ connection.execute('explain SELECT 1', function(err, _rows, _fields) {
 var expectedRows;
 var expectedFields;
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.deepEqual(rows, expectedRows);
-  var fi = fields.map(function(c) { return c.inspect() });
+  var fi = fields.map(function (c) { return c.inspect(); });
   for (var i; i < expectedFields.length; i++) {
     assert.deepEqual(Object.keys(fi[i]).sort(), Object.keys(expectedFields[i]).sort());
     expectedFields[i].map(function (key) {
@@ -31,7 +33,7 @@ process.on('exit', function() {
   }
 });
 
-expectedFields = [{ catalog: 'def',
+expectedFields = [{catalog: 'def',
     schema: '',
     table: '',
     orgTable: '',
@@ -41,8 +43,8 @@ expectedFields = [{ catalog: 'def',
     columnLength: 3,
     columnType: 8,
     flags: 161,
-    decimals: 0 },
-  { catalog: 'def',
+    decimals: 0},
+  {catalog: 'def',
     schema: '',
     table: '',
     orgTable: '',
@@ -52,8 +54,8 @@ expectedFields = [{ catalog: 'def',
     columnLength: 57,
     columnType: 253,
     flags: 1,
-    decimals: 31 },
-  { catalog: 'def',
+    decimals: 31},
+  {catalog: 'def',
     schema: '',
     table: '',
     orgTable: '',
@@ -63,8 +65,8 @@ expectedFields = [{ catalog: 'def',
     columnLength: 192,
     columnType: 253,
     flags: 0,
-    decimals: 31 },
-  { catalog: 'def',
+    decimals: 31},
+  {catalog: 'def',
     schema: '',
     table: '',
     orgTable: '',
@@ -74,8 +76,8 @@ expectedFields = [{ catalog: 'def',
     columnLength: 30,
     columnType: 253,
     flags: 0,
-    decimals: 31 },
-  { catalog: 'def',
+    decimals: 31},
+  {catalog: 'def',
     schema: '',
     table: '',
     orgTable: '',
@@ -85,8 +87,8 @@ expectedFields = [{ catalog: 'def',
     columnLength: 12288,
     columnType: 253,
     flags: 0,
-    decimals: 31 },
-  { catalog: 'def',
+    decimals: 31},
+  {catalog: 'def',
     schema: '',
     table: '',
     orgTable: '',
@@ -96,8 +98,8 @@ expectedFields = [{ catalog: 'def',
     columnLength: 192,
     columnType: 253,
     flags: 0,
-    decimals: 31 },
-  { catalog: 'def',
+    decimals: 31},
+  {catalog: 'def',
     schema: '',
     table: '',
     orgTable: '',
@@ -107,8 +109,8 @@ expectedFields = [{ catalog: 'def',
     columnLength: 12288,
     columnType: 253,
     flags: 0,
-    decimals: 31 },
-  { catalog: 'def',
+    decimals: 31},
+  {catalog: 'def',
     schema: '',
     table: '',
     orgTable: '',
@@ -118,8 +120,8 @@ expectedFields = [{ catalog: 'def',
     columnLength: 3072,
     columnType: 253,
     flags: 0,
-    decimals: 31 },
-  { catalog: 'def',
+    decimals: 31},
+  {catalog: 'def',
     schema: '',
     table: '',
     orgTable: '',
@@ -129,8 +131,8 @@ expectedFields = [{ catalog: 'def',
     columnLength: 10,
     columnType: 8,
     flags: 160,
-    decimals: 0 },
-  { catalog: 'def',
+    decimals: 0},
+  {catalog: 'def',
     schema: '',
     table: '',
     orgTable: '',
@@ -140,9 +142,9 @@ expectedFields = [{ catalog: 'def',
     columnLength: 765,
     columnType: 253,
     flags: 1,
-    decimals: 31 }];
+    decimals: 31}];
 
-expectedRows = [ {id: 1,
+expectedRows = [{id: 1,
     select_type: 'SIMPLE',
     table: null,
     type: null,
@@ -151,4 +153,4 @@ expectedRows = [ {id: 1,
     key_len: null,
     ref: null,
     rows: null,
-    Extra: 'No tables used' }];
+    Extra: 'No tables used'}];

@@ -1,6 +1,6 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
 common.useTestDb(connection);
 
@@ -16,19 +16,21 @@ connection.query([
 
 connection.query('INSERT INTO ' + table + ' SET ?', {
   date   : null,
-  number : null,
+  number : null
 });
 
 var results;
-connection.query('SELECT * FROM ' + table, function(err, _results) {
-  if (err) throw err;
+connection.query('SELECT * FROM ' + table, function (err, _results) {
+  if (err) {
+    throw err;
+  }
 
   results = _results;
   connection.end();
 });
 
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.strictEqual(results[0].date, null);
   assert.strictEqual(results[0].number, null);
 });

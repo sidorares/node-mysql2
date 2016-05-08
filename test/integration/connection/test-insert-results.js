@@ -1,12 +1,12 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
-//common.useTestDb(connection);
+// common.useTestDb(connection);
 
 var table = 'insert_test';
-//var text = "本日は晴天なり";
-var text = " test test test ";
+// var text = "本日は晴天なり";
+var text = ' test test test ';
 connection.query([
   'CREATE TEMPORARY TABLE `' + table + '` (',
   '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
@@ -16,16 +16,18 @@ connection.query([
 ].join('\n'));
 
 var result, result2;
-connection.query('INSERT INTO ' + table + ' SET title="' + text + '"', function(err, _result) {
-  if (err) throw err;
+connection.query('INSERT INTO ' + table + ' SET title="' + text + '"', function (err, _result) {
+  if (err) {
+    throw err;
+  }
   result = _result;
-  connection.query('SELECT * FROM ' + table + ' WHERE id = ' + result.insertId, function(err, _result2) {
+  connection.query('SELECT * FROM ' + table + ' WHERE id = ' + result.insertId, function (err, _result2) {
     result2 = _result2;
     connection.end();
   });
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.strictEqual(result.insertId, 1);
   assert.strictEqual(result2.length, 1);
   // TODO: type conversions
