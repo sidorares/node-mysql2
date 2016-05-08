@@ -2,6 +2,7 @@ var common     = require('../../common');
 var connection = common.createConnection();
 var assert     = require('assert');
 
+connection.query('SET SQL_MODE="ALLOW_INVALID_DATES";');
 connection.query('CREATE TEMPORARY TABLE t (f TIMESTAMP)');
 connection.query('INSERT INTO t VALUES(\'0000-00-00 00:00:00\')');
 connection.query('INSERT INTO t VALUES(\'2013-01-22 01:02:03\')');
