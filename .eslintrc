@@ -54,6 +54,7 @@
     "computed-property-spacing": [
         2,
         "never"
-    ]
+    ],
+    "eol-last": 2
   }
 }
