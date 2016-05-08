@@ -16,8 +16,9 @@ var handler = function(p) {
 function execute(str, verify) {
   reset();
   var buffers = str.split('|').map(function(sb) { return sb.split(',').map(Number); });
-  for(var i=0; i < buffers.length; ++i)
+  for(var i=0; i < buffers.length; ++i) {
     pp.execute(new Buffer(buffers[i]));
+  }
   verify();
 }
 

@@ -8,13 +8,17 @@ var fields = undefined;
 var fields1 = undefined;
 
 connection.execute('SELECT -1 v', [], function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   fields = _fields;
 });
 
 connection.query('SELECT -1 v', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows1 = _rows;
   fields1 = _fields;
   connection.end();

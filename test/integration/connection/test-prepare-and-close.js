@@ -22,6 +22,8 @@ function prepare(i) {
   });
 }
 connection.query('SET GLOBAL max_prepared_stmt_count=10', function(err) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   prepare(1);
 });

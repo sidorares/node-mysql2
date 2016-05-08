@@ -18,13 +18,17 @@ var sql =
 
 var ok;
 connection.query(sql, [path, ','], function(err, _ok) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   ok = _ok;
 });
 
 var rows;
 connection.query('SELECT * FROM ' + table, function(err, _rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
 });
 
@@ -45,13 +49,15 @@ var myStream = new Stream();
 var createMyStream = function(path) { return myStream; };
 var streamResult;
 connection.query({
-    sql: sql,
-    values: [badPath, ','],
-    infileStreamFactory: createMyStream
-  }, function(err, result) {
-    if (err) throw err;
-    streamResult = result;
+  sql: sql,
+  values: [badPath, ','],
+  infileStreamFactory: createMyStream
+}, function(err, result) {
+  if (err) {
+    throw err;
   }
+  streamResult = result;
+}
 );
 myStream.write('11,Hello World\n');
 myStream.write('21,One ');

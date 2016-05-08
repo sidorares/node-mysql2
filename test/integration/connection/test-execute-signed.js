@@ -19,7 +19,9 @@ connection.query('insert into test_table(num,l) values(3-?, -10)', [5]);
 connection.query('insert into test_table(num,l) values(4+?, 4000000-?)', [-5, 8000000]);
 
 connection.execute('SELECT * from test_table', [], function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   fields = _fields;
   connection.end();

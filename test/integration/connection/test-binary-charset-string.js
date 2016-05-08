@@ -20,38 +20,50 @@ var query = "SELECT x'010203'";
 var query1 = "SELECT '010203'";
 
 connection.query(query, function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   fields = _fields;
 });
 
 connection.query(query, function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows5 = _rows;
   fields5 = _fields;
 });
 
 connection.query(query1, function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows1 = _rows;
   fields1 = _fields;
 });
 
 connection.execute(query, [], function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows2 = _rows;
   fields2 = _fields;
 });
 
 // repeat same query - test cached fields and parser
 connection.execute(query, [], function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows4 = _rows;
   fields4 = _fields;
 });
 
 connection.execute(query1, [], function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows3 = _rows;
   fields3 = _fields;
   connection.end();

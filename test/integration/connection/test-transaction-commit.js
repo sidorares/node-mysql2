@@ -6,12 +6,12 @@ common.useTestDb(connection);
 
 var table = 'transaction_test';
 connection.query([
-                   'CREATE TEMPORARY TABLE `' + table + '` (',
-                   '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
-                   '`title` varchar(255),',
-                   'PRIMARY KEY (`id`)',
-                   ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
-                 ].join('\n'));
+  'CREATE TEMPORARY TABLE `' + table + '` (',
+  '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
+  '`title` varchar(255),',
+  'PRIMARY KEY (`id`)',
+  ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
+].join('\n'));
 
 connection.beginTransaction(function (err) {
   assert.ifError(err);

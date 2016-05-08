@@ -11,7 +11,9 @@ var connections = [];
 function test() {
   var connection = common.createConnection({port: 3307});
   connection.query('SELECT 123', function(err, _rows, _fields) {
-    if (err) throw err;
+    if (err) {
+      throw err;
+    }
 
     rows = _rows;
     fields = _fields;

@@ -7,10 +7,14 @@ var _columns = null;
 var _rows    = null;
 
 connection.prepare('select 1 + ? + ? as test', function(err, stmt) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   _stmt = stmt;
   stmt.execute([111, 123], function(err, rows, columns) {
-    if (err) throw err;
+    if (err) {
+      throw err;
+    }
     _columns = columns;
     _rows = rows;
     connection.end();

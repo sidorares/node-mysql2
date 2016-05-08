@@ -10,7 +10,9 @@ var rows;
 var fields;
 
 connection.execute('explain SELECT 1', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   rows = _rows;
   fields = _fields;

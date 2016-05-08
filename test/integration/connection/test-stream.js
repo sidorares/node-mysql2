@@ -14,14 +14,20 @@ connection.query([
   'PRIMARY KEY (`id`)',
   ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
 ].join('\n'), function(err) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 });
 
 connection.execute('INSERT INTO announcements(title, text) VALUES(?, ?)', ['Есть место, где заканчивается тротуар', 'Расти борода, расти'], function(err) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 });
 connection.execute('INSERT INTO announcements(title, text) VALUES(?, ?)', ['Граждане Российской Федерации имеют право собираться мирно без оружия', 'проводить собрания, митинги и демонстрации, шествия и пикетирование'], function(err) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 });
 connection.execute('SELECT * FROM announcements', function(err, _rows, cols) {
   rows = _rows;

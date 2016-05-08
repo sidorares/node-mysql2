@@ -10,13 +10,19 @@ var q = 'select 1 + ? as test';
 var key = 'undefined/undefined/undefined' + q;
 
 connection.execute(q, [123], function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
   connection.execute(q, [124], function(err, _rows, _fields) {
-    if (err) throw err;
+    if (err) {
+      throw err;
+    }
     rows1 = _rows;
     connection.execute(q, [125], function(err, _rows, _fields) {
-      if (err) throw err;
+      if (err) {
+        throw err;
+      }
       rows2 = _rows;
       assert(Object.keys(connection._statements).length == 1);
       assert(connection._statements[key].query == q);

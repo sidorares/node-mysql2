@@ -14,30 +14,43 @@ connection.query([
   'PRIMARY KEY (`id`)',
   ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
 ].join('\n'), function(err) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 });
 
 connection.execute('SELECT 1+? as test', [123], function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   rows = _rows;
   fields = _fields;
 });
 connection.execute('SELECT 1 as test', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   rows1 = _rows;
   fields = _fields;
 });
 
 connection.execute('INSERT INTO announcements(title, text) VALUES(?, ?)', ['Есть место, где заканчивается тротуар', 'Расти борода, расти'], function(err) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 });
 connection.execute('INSERT INTO announcements(title, text) VALUES(?, ?)', ['Граждане Российской Федерации имеют право собираться мирно без оружия', 'проводить собрания, митинги и демонстрации, шествия и пикетирование'], function(err) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 });
 connection.execute('SELECT * FROM announcements', function (err, rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
+
   assert.equal(rows.length, 2);
   assert.equal(rows[0].title, 'Есть место, где заканчивается тротуар');
   assert.equal(rows[0].text, 'Расти борода, расти');

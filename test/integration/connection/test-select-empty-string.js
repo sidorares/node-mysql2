@@ -4,7 +4,9 @@ var assert     = require('assert');
 
 var rows;
 connection.query('SELECT ""', function(err, _rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   rows = _rows;
   connection.end();

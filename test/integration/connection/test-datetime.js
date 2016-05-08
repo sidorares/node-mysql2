@@ -24,35 +24,47 @@ var dateAsStringExpected = [
 
 
 connection.execute('select from_unixtime(?) t', [(+date).valueOf()/1000], function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows = _rows;
 });
 
 connection.query('select from_unixtime(631152000) t', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows1 = _rows;
 });
 
 connection.query('select * from t', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows2 = _rows;
 });
 
 connection.execute('select * from t', function(err, _rows, _fields) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows3 = _rows;
   connection.end();
 });
 
 connection1.query('select * from t', function(err, _rows, _fields) {
   console.log(_rows);
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows4 = _rows;
 });
 
 connection1.execute('select * from t', function(err, _rows, _fields) {
   console.log(_rows);
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   rows5 = _rows;
   connection1.end();
 });

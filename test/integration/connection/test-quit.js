@@ -31,7 +31,9 @@ function serverReady() {
   var connection = common.createConnection({ port: 3307 });
 
   connection.query(queryCli, function(err, _rows, _fields) {
-    if (err) throw err;
+    if (err) {
+      throw err;
+    }
     rows = _rows;
     fields = _fields;
 

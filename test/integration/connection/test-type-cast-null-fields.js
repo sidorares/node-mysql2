@@ -21,7 +21,9 @@ connection.query('INSERT INTO ' + table + ' SET ?', {
 
 var results;
 connection.query('SELECT * FROM ' + table, function(err, _results) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   results = _results;
   connection.end();

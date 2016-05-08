@@ -30,37 +30,49 @@ var options3 = {
 var rows1, rows2, rows3, rows1e, rows2e, rows3e;
 
 connection.query(options1, function(err, _rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   rows1 = _rows;
 });
 
 connection.query(options2, function(err, _rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   rows2 = _rows;
 });
 
 connection.query(options3, function(err, _rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   rows3 = _rows;
 });
 
 connection.execute(options1, function(err, _rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   rows1e = _rows;
 });
 
 connection.execute(options2, function(err, _rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   rows2e = _rows;
 });
 
 connection.execute(options3, function(err, _rows) {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   rows3e = _rows;
   connection.end();
