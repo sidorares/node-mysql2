@@ -2,10 +2,10 @@ var common = require('../../common');
 var connection = common.createConnection();
 var assert = require('assert');
 
-//common.useTestDb(connection);
+// common.useTestDb(connection);
 
 var table = 'insert_test';
-//var text = "本日は晴天なり";
+// var text = "本日は晴天なり";
 var text = ' test test test ';
 connection.query([
   'CREATE TEMPORARY TABLE `' + table + '` (',
