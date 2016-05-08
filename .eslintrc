@@ -50,6 +50,10 @@
             "after": true,
             "before": false
         }
+    ],
+    "computed-property-spacing": [
+        2,
+        "never"
     ]
   }
 }
