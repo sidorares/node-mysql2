@@ -18,17 +18,17 @@ script:
   - "test -z $(npm -ps ls eslint) || npm run-script lint"
   - "npm test"
 
-matrix:
-    include:
-        - addons:
-             mariadb: 5.5
-          node_js: '4.4'
-        - addons:
-             mariadb: 10.1
-          node_js: '4.4'
-        - addons:
-             mariadb: 5.5
-          node_js: '5.11'
-        - addons:
-             mariadb: 10.1
-          node_js: '5.11'
+#matrix:
+#    include:
+#        - addons:
+#             mariadb: 5.5
+#          node_js: '4.4'
+#        - addons:
+#             mariadb: 10.1
+#          node_js: '4.4'
+#        - addons:
+#             mariadb: 5.5
+#          node_js: '5.11'
+#        - addons:
+#             mariadb: 10.1
+#          node_js: '5.11'
