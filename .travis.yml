@@ -1,8 +1,8 @@
 sudo: false
 language: node_js
 # IF NOT EXISTS is mariadb-10+ only - https://mariadb.com/kb/en/mariadb/comment-syntax/
-#before_script:
-#  - mysql -e 'create database /*M!50701 IF NOT EXISTS */ test;'
+before_script:
+  - mysql -e 'create database /*M!50701 IF NOT EXISTS */ test;'
 node_js:
   - '0.10'
   - '0.12'
@@ -10,9 +10,6 @@ node_js:
   - '5.11'
   - '6.1'
 
-
-before_install:
-  - "test $TRAVIS_NODE_VERSION = '4.3' || npm rm --save-dev eslint"
 
 script:
   - "test -z $(npm -ps ls eslint) || npm run-script lint"
