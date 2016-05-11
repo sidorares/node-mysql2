@@ -8,7 +8,6 @@ var server = common.createServer(serverReady, function (conn) {
     quitReceived = true;
     conn.stream.end();
     server.close();
-    console.log('quit!!!');
   });
 
   conn.on('query', function (q) {
