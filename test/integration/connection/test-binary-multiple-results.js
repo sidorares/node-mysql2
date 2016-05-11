@@ -1,5 +1,5 @@
 var mysql = require('../../common.js').createConnection({multipleStatements: true});
-var assert = require('assert');
+var assert = require('assert-diff');
 mysql.query('CREATE TEMPORARY TABLE no_rows (test int)');
 mysql.query('CREATE TEMPORARY TABLE some_rows (test int)');
 mysql.query('INSERT INTO some_rows values(0)');

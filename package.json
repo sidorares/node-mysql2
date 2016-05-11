@@ -36,6 +36,7 @@
     "seq-queue": "0.0.5"
   },
   "devDependencies": {
+    "assert-diff": "^1.0.1",
     "eslint": "^2.9.0",
     "progress": "1.1.8",
     "urun": "0.0.8",

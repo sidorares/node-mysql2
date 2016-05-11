@@ -1,6 +1,6 @@
 var common = require('../../common');
 var connection = common.createConnection();
-var assert = require('assert');
+var assert = require('assert-diff');
 
 // https://github.com/sidorares/node-mysql2/issues/130
 // https://github.com/sidorares/node-mysql2/issues/37

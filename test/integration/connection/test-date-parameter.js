@@ -9,7 +9,6 @@ connection.execute('SELECT UNIX_TIMESTAMP(?) t', [new Date('1990-01-01 UTC')], f
     throw err;
   }
   rows = _rows;
-  console.log(_rows, _fields);
   connection.end();
 });
 
