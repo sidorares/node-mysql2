@@ -32,7 +32,9 @@ function serverReady () {
 
   connection.on('error', function (err) {
     error = err;
-    server.close();
+    if (server._server._handle) {
+      server.close();
+    }
   });
 }
 
