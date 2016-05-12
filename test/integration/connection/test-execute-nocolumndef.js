@@ -157,6 +157,7 @@ expectedRows = [{id: 1,
 
 // mysql 5.7 has extra fields. Add them based on version to allow to run tests in 5.7 and pre 5.7
 connection.on('connect', function(handshake) {
+  console.log('==== server version: ' + handshake.serverVersion);
   if (handshake.serverVersion.slice(0,3) === '5.7') {
     expectedRows.partitions = null;
     expectedRows.filtered = null;
