@@ -1,5 +1,5 @@
-var assert     = require('assert');
-var packets    = require('../../../lib/packets/index.js');
+var assert = require('assert');
+var packets = require('../../../lib/packets/index.js');
 
 var buf = new Buffer('0a000004000007dd070116010203', 'hex');
 

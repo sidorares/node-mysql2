@@ -4,26 +4,28 @@ language: node_js
 before_script:
   - mysql -e 'create database /*M!50701 IF NOT EXISTS */ test;'
 node_js:
-  - '0.8'
   - '0.10'
   - '0.12'
-  - '4.3'
-  - '5.6'
+  - '4.4'
+  - '5.11'
+  - '6.1'
 
-matrix:
-    include:
-        - addons:
-             mariadb: 5.5
-          node_js: '4.2'
-        - addons:
-             mariadb: 10.1
-          node_js: '4.2'
-        - addons:
-             mariadb: 5.5
-          node_js: '5.4'
-        - addons:
-             mariadb: 10.1
-          node_js: '5.4'
 
-notifications:
-    email: false
+script:
+  - "test -z $(npm -ps ls eslint) || npm run-script lint"
+  - "npm test"
+
+#matrix:
+#    include:
+#        - addons:
+#             mariadb: 5.5
+#          node_js: '4.4'
+#        - addons:
+#             mariadb: 10.1
+#          node_js: '4.4'
+#        - addons:
+#             mariadb: 5.5
+#          node_js: '5.11'
+#        - addons:
+#             mariadb: 10.1
+#          node_js: '5.11'
