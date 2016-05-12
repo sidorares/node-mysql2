@@ -1,5 +1,5 @@
 environment:
-  MYSQL_DATABASE: node_mysql
+  MYSQL_DATABASE: test
   MYSQL_HOST: localhost
   MYSQL_USER: root
   MYSQL_PASSWORD: Password12!
