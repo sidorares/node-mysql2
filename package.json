@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "assert-diff": "^1.0.1",
-    "eslint": "^2.9.0",
+    "eslint": "^2.10.0",
     "progress": "1.1.8",
     "urun": "0.0.8",
     "utest": "0.0.8"
