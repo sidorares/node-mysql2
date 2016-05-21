@@ -7,9 +7,11 @@
     "example": "examples"
   },
   "scripts": {
+    "lint": "eslint lib/**/*.js index.js test/**/*.js",
     "test": "node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
     "benchmark": "./benchmarks/run-unit.js",
-    "benchmarks": "./benchmarks/run-unit.js"
+    "benchmarks": "./benchmarks/run-unit.js",
+    "format-eslintrc": "jsonlint --sort-keys --in-place --indent '  ' ./.eslintrc"
   },
   "repository": {
     "type": "git",
@@ -26,14 +28,16 @@
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "bn.js": "4.11.1",
+    "bn.js": "4.11.3",
     "cardinal": "0.7.0",
     "double-ended-queue": "2.1.0-0",
     "named-placeholders": "1.1.1",
-    "readable-stream": "2.0.6",
+    "readable-stream": "2.1.4",
     "seq-queue": "0.0.5"
   },
   "devDependencies": {
+    "assert-diff": "^1.0.1",
+    "eslint": "^2.10.0",
     "progress": "1.1.8",
     "urun": "0.0.8",
     "utest": "0.0.8"

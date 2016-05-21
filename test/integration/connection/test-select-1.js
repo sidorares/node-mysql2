@@ -1,18 +1,20 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
 var rows = undefined;
 var fields = undefined;
-connection.query('SELECT 1', function(err, _rows, _fields) {
-  if (err) throw err;
+connection.query('SELECT 1', function (err, _rows, _fields) {
+  if (err) {
+    throw err;
+  }
 
   rows = _rows;
   fields = _fields;
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.deepEqual(rows, [{1: 1}]);
   assert.equal(fields[0].name, '1');
 });

@@ -1,6 +1,6 @@
-var common     = require('../../common');
+var common = require('../../common');
 var connection = common.createConnection();
-var assert     = require('assert');
+var assert = require('assert');
 
 common.useTestDb(connection);
 
@@ -29,44 +29,56 @@ var options3 = {
 };
 var rows1, rows2, rows3, rows1e, rows2e, rows3e;
 
-connection.query(options1, function(err, _rows) {
-  if (err) throw err;
+connection.query(options1, function (err, _rows) {
+  if (err) {
+    throw err;
+  }
 
   rows1 = _rows;
 });
 
-connection.query(options2, function(err, _rows) {
-  if (err) throw err;
+connection.query(options2, function (err, _rows) {
+  if (err) {
+    throw err;
+  }
 
   rows2 = _rows;
 });
 
-connection.query(options3, function(err, _rows) {
-  if (err) throw err;
+connection.query(options3, function (err, _rows) {
+  if (err) {
+    throw err;
+  }
 
   rows3 = _rows;
 });
 
-connection.execute(options1, function(err, _rows) {
-  if (err) throw err;
+connection.execute(options1, function (err, _rows) {
+  if (err) {
+    throw err;
+  }
 
   rows1e = _rows;
 });
 
-connection.execute(options2, function(err, _rows) {
-  if (err) throw err;
+connection.execute(options2, function (err, _rows) {
+  if (err) {
+    throw err;
+  }
 
   rows2e = _rows;
 });
 
-connection.execute(options3, function(err, _rows) {
-  if (err) throw err;
+connection.execute(options3, function (err, _rows) {
+  if (err) {
+    throw err;
+  }
 
   rows3e = _rows;
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.equal(rows1.length, 1);
   assert.equal(rows1[0].nested_test.id, 1);
   assert.equal(rows1[0].nested_test.title, 'test');

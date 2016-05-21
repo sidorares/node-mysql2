@@ -18,15 +18,19 @@ connection1.query('INSERT INTO t1 set d1=?', [largeDecimal]);
 connection2.query('CREATE TEMPORARY TABLE t2 (d1 DECIMAL(14, 2))');
 connection2.query('INSERT INTO t2 set d1=?', [largeMoneyValue]);
 
-connection1.execute('select d1 from t1', function(err, _rows, _fields) {
-  if (err) throw err;
+connection1.execute('select d1 from t1', function (err, _rows, _fields) {
+  if (err) {
+    throw err;
+  }
   assert.equal(_rows[0].d1.constructor, String);
   assert.equal(_rows[0].d1, largeDecimalExpected);
   connection1.end();
 });
 
-connection2.query('select d1 from t2', function(err, _rows, _fields) {
-  if (err) throw err;
+connection2.query('select d1 from t2', function (err, _rows, _fields) {
+  if (err) {
+    throw err;
+  }
   assert.equal(_rows[0].d1.constructor, Number);
   assert.equal(_rows[0].d1, largeMoneyValue);
   connection2.end();
