@@ -30,15 +30,15 @@ exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
 exports.format = SqlString.format;
 
-exports.__defineGetter__('createConnectionPromise', function() {
+exports.__defineGetter__('createConnectionPromise', function () {
   return require('./promise.js').createConnection;
 });
 
-exports.__defineGetter__('createPoolPromise', function() {
+exports.__defineGetter__('createPoolPromise', function () {
   return require('./promise.js').createPool;
 });
 
-exports.__defineGetter__('createPoolClusterPromise', function() {
+exports.__defineGetter__('createPoolClusterPromise', function () {
   return require('./promise.js').createPoolCluster;
 });
 
