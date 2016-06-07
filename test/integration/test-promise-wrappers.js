@@ -10,36 +10,36 @@ assert.equal(mainExport, createConnection);
 var doneCalled = false;
 var exceptionCaught = false;
 
-function testBasic() {
+function testBasic () {
   var connResolved;
-  var connPromise = createConnection(config).then(function(conn) {
+  var connPromise = createConnection(config).then(function (conn) {
     connResolved = conn;
     return conn.query('select 1+2 as ttt');
-  }).then(function(result1) {
+  }).then(function (result1) {
     assert.equal(result1[0][0].ttt, 3);
     return connResolved.query('select 2+2 as qqq');
-  }).then(function(result2) {
-    assert.equal(result2[0][0].qqq, 4)
+  }).then(function (result2) {
+    assert.equal(result2[0][0].qqq, 4);
     return connResolved.end();
-  }).then(function() {
+  }).then(function () {
     doneCalled = true;
-  }).catch(function(err) {
+  }).catch(function (err) {
     throw err;
   });
 }
 
-function testErrors() {
+function testErrors () {
   var connResolved;
-  var connPromise = createConnection(config).then(function(conn) {
+  var connPromise = createConnection(config).then(function (conn) {
     connResolved = conn;
     return conn.query('select 1+2 as ttt');
-  }).then(function(result1) {
+  }).then(function (result1) {
     assert.equal(result1[0][0].ttt, 3);
     return connResolved.query('bad sql');
-  }).then(function(result2) {
+  }).then(function (result2) {
     assert.equal(result1[0][0].ttt, 3);
     return connResolved.query('select 2+2 as qqq');
-  }).catch(function(err) {
+  }).catch(function (err) {
     exceptionCaught = true;
     return connResolved.end();
   });
@@ -48,7 +48,7 @@ function testErrors() {
 testBasic();
 testErrors();
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.equal(doneCalled, true);
   assert.equal(exceptionCaught, true);
 });
