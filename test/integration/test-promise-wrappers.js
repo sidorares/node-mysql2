@@ -1,7 +1,7 @@
 var config = require('../common.js').config;
 
 var skipTest = false;
-if (!Promise) {
+if (typeof Promise == 'undefined') {
   console.log('no Promise support, skipping test');
   skipTest = true;
   return;
