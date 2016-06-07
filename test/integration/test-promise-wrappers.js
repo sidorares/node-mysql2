@@ -1,7 +1,5 @@
 var config = require('../common.js').config;
 
-console.log('========', config);
-
 var assert = require('assert');
 
 var createConnection = require('../../promise.js').createConnection;

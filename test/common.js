@@ -8,6 +8,7 @@ var config = {
 };
 
 module.exports.SqlString = require('sqlstring');
+module.exports.config = config;
 
 module.exports.createConnection = function (args, callback) {
   // hrtime polyfill for old node versions:

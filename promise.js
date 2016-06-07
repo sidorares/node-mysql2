@@ -2,7 +2,12 @@ var core = require('./index.js');
 
 function createConnection(opts) {
   var coreConnection = core.createConnection(opts);
-  var Promise = opts.Promise || global.Promise || require('es6-promise')
+  var Promise = opts.Promise || global.Promise;
+  if (!Promise) {
+    throw new Error('no Promise implementation available.' +
+      'Use promise-enabled node version or pass userland Promise' +
+      ' implementation as parameter, for example: { Promise: require(\'es6-promise\').Promise }');
+  }
   return new Promise(function(resolve, reject) {
     coreConnection.once('connect', function(connectParams) {
       resolve(new PromiseConnection(coreConnection, Promise));
@@ -97,7 +102,7 @@ function createPool(opts) {
           if (err)
             reject(err);
           else
-            resolve();          
+            resolve();
         })
       });
     }
