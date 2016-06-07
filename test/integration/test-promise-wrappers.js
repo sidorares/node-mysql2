@@ -1,5 +1,12 @@
 var config = require('../common.js').config;
 
+var skipTest = false;
+if (!Promise) {
+  console.log('no Promise support, skipping test');
+  skipTest = true;
+  return;
+}
+
 var assert = require('assert');
 
 var createConnection = require('../../promise.js').createConnection;
@@ -49,6 +56,9 @@ testBasic();
 testErrors();
 
 process.on('exit', function () {
+  if (skipTest) {
+    return;
+  }
   assert.equal(doneCalled, true);
   assert.equal(exceptionCaught, true);
 });
