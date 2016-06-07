@@ -7,7 +7,7 @@ var config = {
   port: process.env.MYSQL_PORT || 3306
 };
 
-//module.exports.SqlString = require('sqlstring');
+module.exports.SqlString = require('sqlstring');
 
 module.exports.createConnection = function (args, callback) {
   // hrtime polyfill for old node versions:
