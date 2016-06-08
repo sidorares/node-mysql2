@@ -11,6 +11,9 @@ module.exports.SqlString = require('sqlstring');
 module.exports.config = config;
 
 module.exports.createConnection = function (args, callback) {
+  if (!args) {
+    args = {};
+  }
   // hrtime polyfill for old node versions:
   if (!process.hrtime) {
     process.hrtime = function (start) {
