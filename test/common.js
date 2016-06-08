@@ -8,8 +8,12 @@ var config = {
 };
 
 module.exports.SqlString = require('sqlstring');
+module.exports.config = config;
 
 module.exports.createConnection = function (args, callback) {
+  if (!args) {
+    args = {};
+  }
   // hrtime polyfill for old node versions:
   if (!process.hrtime) {
     process.hrtime = function (start) {
@@ -56,6 +60,7 @@ module.exports.createConnection = function (args, callback) {
 
   var conn = driver.createConnection({
     host: config.host,
+    rowsAsArray: args.rowsAsArray,
     user: (args && args.user) || config.user,
     password: (args && args.password) || config.password,
     database: (args && args.database) || config.database,
