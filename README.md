@@ -65,6 +65,21 @@ es7 async/await:
    await conn.end();
 ```
 
+[co](https://github.com/tj/co) library:
+
+```js
+var mysql = require('mysql2');
+var co = require('co')
+co(function * () {
+  var c = yield mysql.createConnectionPromise({ user: 'root', namedPlaceholders: true });
+  var rows = yield c.query('show databases');
+  console.log(rows)
+  console.log( yield c.execute('select 1+:toAdd as qqq', {toAdd: 10}) );
+  yield c.end();
+})
+```
+see examples in [/examples/promise-co-await](/tree/master/examples/promise-co-await)
+
 ### Named placeholders
 
 You can use named placeholders for parameters by setting `namedPlaceholders` config value or query/execute time option. Named placeholders are converted to unnamed `?` on the client (mysql protocol does not support named parameters). If you reference parameter multiple times under the same name it is sent to server multiple times.
