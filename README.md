@@ -78,7 +78,7 @@ co(function * () {
   yield c.end();
 })
 ```
-see examples in [/examples/promise-co-await](/tree/master/examples/promise-co-await)
+see examples in [/examples/promise-co-await](/examples/promise-co-await)
 
 ### Named placeholders
 
