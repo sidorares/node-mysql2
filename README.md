@@ -35,7 +35,7 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
    var mysql = require('mysql2/promise'); // or require('mysql2').createConnectionPromise
    mysql.createConnection({ /* same parameters as for non-promise createConnection */ })
      .then((conn) => conn.query('select foo from bar'))
-     .then([rows, fields]) => console.log(rows[0].foo))
+     .then(([rows, fields]) => console.log(rows[0].foo))
 
    // pool:
    var pool = require('mysql2/promise').createPool({}); // or mysql.createPoolPromise({})

@@ -57,6 +57,7 @@ module.exports.createConnection = function (args, callback) {
 
   var conn = driver.createConnection({
     host: config.host,
+    rowsAsArray: args.rowsAsArray,
     user: (args && args.user) || config.user,
     password: (args && args.password) || config.password,
     database: (args && args.database) || config.database,
