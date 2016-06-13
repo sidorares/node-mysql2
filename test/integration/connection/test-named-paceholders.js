@@ -59,7 +59,6 @@ connection.end();
 var pool = common.createPool();
 pool.config.namedPlaceholders = true;
 pool.query('SELECT :a + :a as sum', {a: 2}, function (err, rows, fields) {
-  pool.end();
   if (err) {
     throw err;
   }
