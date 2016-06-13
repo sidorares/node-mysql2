@@ -1,3 +1,6 @@
+1.0.0-rc.4 ( 14/06/2016 )
+ - fix double-interpolation in pool.query                    #323, #324
+
 1.0.0-rc.3 ( 08/06/2016 )
  - switch to external sqlstring labrary, same
    as used by node-mysql                                     6b559c565f88cf471e52c4e6bbb9ebd631673cb8
@@ -9,10 +12,10 @@
  - add eslintrc                                              #268
  - callbacks on pool.query are never called                  #281 #182 #218
  - allow namedParameters for queries on pool as well         #281
- - server: pass handshake packet in 'connect' event
-   instead of 'true'                                         2c066aca203785bb92ebc3381289813de464e144
+ - (semver-major) server: pass handshake packet in
+   'connect' event instead of 'true'                         2c066aca203785bb92ebc3381289813de464e144
  - server: fix packet length calculation for
-   multibyte chars input                                     #295
+   multibyte characters input                                #295
 
 1.0.0-rc.1 (17/02/2016)
 
