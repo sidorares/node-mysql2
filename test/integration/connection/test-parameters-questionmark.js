@@ -11,12 +11,8 @@ pool.query([
   'PRIMARY KEY (`id`)',
   ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
 ].join('\n'));
-connection.query('insert into test_table(str) values(?)', ['abc?']);
-pool.query('UPDATE test_table SET str = ? WHERE id = ?', ['should not change ?', 1], function (err, rows, fields) {
-  if (err) {
-    throw err;
-  }
-});
+pool.query('insert into test_table(str) values(?)', ['abc?']);
+pool.query('UPDATE test_table SET str = ? WHERE id = ?', ['should not change ?', 1]);
 pool.query('SELECT str FROM test_table WHERE id = ?', [1], function (err, rows, fields) {
   pool.end();
   if (err) {
