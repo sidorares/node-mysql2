@@ -13,7 +13,7 @@ connection.query([
   ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
 ].join('\n'));
 
-connection.query('insert into test_table(num1,num2) values(?, 3, \'str?1\')', [1]);
+connection.query('insert into test_table(num1,num2) values(?, 3, \'str\?1\')', [1]);
 connection.query('insert into test_table(num1,num2) values(3-?, -10, \'str2\')', [5]);
 connection.query('insert into test_table(num1,num2) values(4+?, 4000000-?, ?)', [-5, 8000000, 'str3']);
 connection.query('insert into test_table(num1,num2) values(?, ?, ?)', [-5, 8000000, 'str?4']);
