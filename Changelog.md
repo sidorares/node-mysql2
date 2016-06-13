@@ -1,5 +1,18 @@
-1.0.0-rc.2 (19/02/2016)
- - add eslintrc
+1.0.0-rc.3 ( 08/06/2016 )
+ - switch to external sqlstring labrary, same
+   as used by node-mysql                                     6b559c565f88cf471e52c4e6bbb9ebd631673cb8
+ - new built-in Promise api                                  #269
+ - server: allow to listen to all packets via 'packet' event #297
+ - fix broken rowAsArray flag                                05585aa2420327e5cdbb4d160a22fba30f8a4a39
+
+1.0.0-rc.2 (02/06/2016)
+ - add eslintrc                                              #268
+ - callbacks on pool.query are never called                  #281 #182 #218
+ - allow namedParameters for queries on pool as well         #281
+ - server: pass handshake packet in 'connect' event
+   instead of 'true'                                         2c066aca203785bb92ebc3381289813de464e144
+ - server: fix packet length calculation for
+   multibyte chars input                                     #295
 
 1.0.0-rc.1 (17/02/2016)
 
