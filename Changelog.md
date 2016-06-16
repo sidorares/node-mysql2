@@ -1,3 +1,7 @@
+1.0.0-rc-5 ( 16/06/2016 )
+ - Fix incorrect releasing of dead pool connections          #326, #325
+ - Allow pool options to be specified as URL params          #327
+
 1.0.0-rc.4 ( 14/06/2016 )
  - fix double-interpolation in pool.query                    #323, #324
 
