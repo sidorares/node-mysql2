@@ -58,7 +58,7 @@ module.exports.createConnection = function (args, callback) {
     driver = require('mysql');
   }
 
-  var conn = driver.createConnection({
+  var params = {
     host: config.host,
     rowsAsArray: args.rowsAsArray,
     user: (args && args.user) || config.user,
@@ -73,8 +73,12 @@ module.exports.createConnection = function (args, callback) {
     decimalNumbers: args && args.decimalNumbers,
     dateStrings: args && args.dateStrings,
     authSwitchHandler: args && args.authSwitchHandler
-  });
+  };
 
+  //console.log('cc params', params);
+  var conn = driver.createConnection(params);
+
+  /*
   conn.query('create database IF NOT EXISTS test', function (err) {
     if (err) {
       console.log('error during "create database IF NOT EXISTS test"', err);
@@ -85,6 +89,7 @@ module.exports.createConnection = function (args, callback) {
       console.log('error during "use test"', err);
     }
   });
+  */
   return conn;
 };
 

@@ -53,7 +53,6 @@ connection.execute('select * from t', function (err, _rows, _fields) {
 });
 
 connection1.query('select * from t', function (err, _rows, _fields) {
-  console.log(_rows);
   if (err) {
     throw err;
   }
@@ -61,7 +60,6 @@ connection1.query('select * from t', function (err, _rows, _fields) {
 });
 
 connection1.execute('select * from t', function (err, _rows, _fields) {
-  console.log(_rows);
   if (err) {
     throw err;
   }
