@@ -35,7 +35,7 @@ TestAuthSwitchHandshake.prototype.readClientReply = function (packet, connection
 
   assert.equal(clientHelloReply.user, 'test_user');
   assert.equal(clientHelloReply.database, 'test_database');
-  assert.equal(clientHelloReply.authPluginName, 'mysql_native_auth');
+  assert.equal(clientHelloReply.authPluginName, 'mysql_native_password');
   assert.deepEqual(clientHelloReply.connectAttributes, connectAttributes);
 
   var asr = new Packets.AuthSwitchRequest(this.args);
