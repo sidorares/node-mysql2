@@ -71,7 +71,8 @@ module.exports.createConnection = function (args, callback) {
     bigNumberStrings: args && args.bigNumberStrings,
     compress: (args && args.compress) || config.compress,
     decimalNumbers: args && args.decimalNumbers,
-    dateStrings: args && args.dateStrings
+    dateStrings: args && args.dateStrings,
+    authSwitchHandler: args && args.authSwitchHandler
   });
 
   conn.query('create database IF NOT EXISTS test', function (err) {
