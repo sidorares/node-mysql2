@@ -12,7 +12,7 @@ function TestAuthSwitchHandshake (args)
 }
 util.inherits(TestAuthSwitchHandshake, Command);
 
-var connectAttributes = { foo: 'bar', baz: 'foo' };
+var connectAttributes = {foo: 'bar', baz: 'foo'};
 
 TestAuthSwitchHandshake.prototype.start = function (packet, connection) {
   var serverHelloPacket = new Packets.Handshake({
@@ -47,7 +47,6 @@ var count = 0;
 
 TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse = function (packet, connection) {
   var authSwitchResponse = new Packets.AuthSwitchResponse.fromPacket(packet);
-  //var pluginData = authSwitchResponse.data.toString();
 
   count++;
   if (count < 10) {
@@ -58,7 +57,7 @@ TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse = function (packe
     connection.writeOk();
     return TestAuthSwitchHandshake.prototype.dispatchCommands;
   }
-}
+};
 
 TestAuthSwitchHandshake.prototype.dispatchCommands = function (packet, connection) {
   // Quit command here
@@ -67,7 +66,7 @@ TestAuthSwitchHandshake.prototype.dispatchCommands = function (packet, connectio
   return TestAuthSwitchHandshake.prototype.dispatchCommands;
 };
 
-var server = mysql.createServer(function(conn) {
+var server = mysql.createServer(function (conn) {
   conn.addCommand(new TestAuthSwitchHandshake({
     pluginName: 'auth_test_plugin',
     pluginData: Buffer('f\{tU-{K@BhfHt/-4^Z,')
@@ -79,9 +78,9 @@ var fullAuthExchangeDone = false;
 var portfinder = require('portfinder');
 portfinder.getPort(function (err, port) {
 
-  var makeSwitchHandler = function() {
+  var makeSwitchHandler = function () {
     var count = 0;
-    return function(data, cb) {
+    return function (data, cb) {
       if (count == 0) {
         assert.equal(data.pluginName, 'auth_test_plugin');
       } else {
@@ -92,9 +91,9 @@ portfinder.getPort(function (err, port) {
         fullAuthExchangeDone = true;
       }
       count++;
-      cb(null, "some data back" + count);
+      cb(null, 'some data back' + count);
     };
-  }
+  };
 
   server.listen(port);
   var conn = mysql.createConnection({
@@ -104,9 +103,9 @@ portfinder.getPort(function (err, port) {
     port: port,
     authSwitchHandler: makeSwitchHandler(),
     connectAttributes: connectAttributes
-  })
+  });
 
-  conn.on('connect', function(data) {
+  conn.on('connect', function (data) {
     assert.equal(data.serverVersion, 'node.js rocks');
     assert.equal(data.connectionId, 1234);
 
