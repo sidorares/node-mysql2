@@ -66,7 +66,7 @@ module.exports.createConnection = function (args, callback) {
     database: (args && args.database) || config.database,
     multipleStatements: args ? args.multipleStatements : false,
     port: (args && args.port) || config.port,
-    debug: process.env.DEBUG,
+    debug: process.env.DEBUG || (args && args.debug),
     supportBigNumbers: args && args.supportBigNumbers,
     bigNumberStrings: args && args.bigNumberStrings,
     compress: (args && args.compress) || config.compress,
