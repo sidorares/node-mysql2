@@ -13,6 +13,9 @@ connection.query('GRANT ALL ON *.* TO \'changeuser1\'@\'localhost\' IDENTIFIED B
 connection.query('GRANT ALL ON *.* TO \'changeuser2\'@\'localhost\' IDENTIFIED BY \'changeuser2pass\'');
 connection.query('FLUSH PRIVILEGES');
 
+connection.end();
+
+/*
 connection.changeUser({
   user: 'changeuser1',
   password: 'changeuser1pass'
@@ -47,7 +50,7 @@ connection.changeUser({
     });
   });
 });
-
+*/
 
 /*
 var beforeChange = 1;
