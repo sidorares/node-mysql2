@@ -110,6 +110,7 @@ module.exports.createTemplate = function () {
 
 var ClientFlags = require('../lib/constants/client.js');
 
+var portfinder = require('portfinder');
 module.exports.createServer = function (onListening, handler) {
   var server = require('../index.js').createServer();
   server.on('connection', function (conn) {
@@ -131,7 +132,9 @@ module.exports.createServer = function (onListening, handler) {
       handler(conn);
     }
   });
-  server.listen(3307, onListening);
+  portfinder.getPort(function (err, port) {
+    server.listen(port, onListening);
+  });
   return server;
 };
 
