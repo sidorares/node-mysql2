@@ -11,6 +11,9 @@ function authenticate (params, cb) {
   cb(null);
 }
 
+var _1_2 = false;
+var _1_3 = false;
+
 var queryCalls = 0;
 
 var portfinder = require('portfinder');
@@ -50,9 +53,6 @@ var server = mysql.createServer();
     assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     server._server.close();
   });
-
-  var _1_2 = false;
-  var _1_3 = false;
 
   connection.query('select 1+2', function (err) {
     assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
