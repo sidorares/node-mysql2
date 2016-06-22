@@ -17,9 +17,9 @@ connection.changeUser({
   user: 'changeuser1',
   password: 'changeuser1pass'
 }, function(err, res) {
-  asert.ifError(err);
+  assert.ifError(err);
   connection.query('select user()', function (err, rows) {
-    asert.ifError(err);
+    assert.ifError(err);
     assert.deepEqual(rows, [{'user()': 'changeuser1@localhost'}]);
 
     connection.changeUser({
@@ -27,10 +27,10 @@ connection.changeUser({
       password: 'changeuser2pass'
     }, function(err, res) {
 
-      asert.ifError(err);
+      assert.ifError(err);
 
       connection.query('select user()', function (err, rows) {
-        asert.ifError(err);
+        assert.ifError(err);
         assert.deepEqual(rows, [{'user()': 'changeuser2@localhost'}]);
 
         connection.changeUser({
