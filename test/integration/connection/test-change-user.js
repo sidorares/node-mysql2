@@ -3,10 +3,18 @@ var common = require('../../common');
 var connection = common.createConnection();
 
 // create test user first
-connection.query('GRANT ALL ON *.* TO \'changeuser1\'@\'localhost\' IDENTIFIED BY \'changeuser1pass\'');
-connection.query('GRANT ALL ON *.* TO \'changeuser2\'@\'localhost\' IDENTIFIED BY \'changeuser2pass\'');
-connection.query('FLUSH PRIVILEGES');
+connection.query('GRANT ALL ON *.* TO \'changeuser1\'@\'localhost\' IDENTIFIED BY \'changeuser1pass\'', function(err) {
+  assert.ifError(err);
+});
+connection.query('GRANT ALL ON *.* TO \'changeuser2\'@\'localhost\' IDENTIFIED BY \'changeuser2pass\'', function(err) {
+  assert.ifError(err);
+});
+connection.query('FLUSH PRIVILEGES', function(err) {
+  assert.ifError(err);
+});
 
+connection.end();
+/*
 connection.changeUser({
   user: 'changeuser1',
   password: 'changeuser1pass'
@@ -43,7 +51,6 @@ connection.query('select user()', function (err, rows) {
 
 connection.end();
 
-/*
 
 // from felixge/node-mysql/test/unit/connection/test-change-database-fatal-error.js:
 // This test verifies that changeUser errors are treated as fatal errors.  The
