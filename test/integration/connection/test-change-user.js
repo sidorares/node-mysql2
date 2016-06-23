@@ -43,6 +43,8 @@ connection.query('select user()', function (err, rows) {
 
 connection.end();
 
+/*
+
 // from felixge/node-mysql/test/unit/connection/test-change-database-fatal-error.js:
 // This test verifies that changeUser errors are treated as fatal errors.  The
 // rationale for that is that a failure to execute a changeUser sequence may
@@ -61,3 +63,4 @@ connection.on('error', function (err) {
   assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
   assert.equal(beforeChange, 1);
 });
+*/
