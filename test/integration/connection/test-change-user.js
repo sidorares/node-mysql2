@@ -1,6 +1,6 @@
 var assert = require('assert');
 var common = require('../../common');
-var connection = common.createConnection();
+var connection = common.createConnection({debug : 1});
 
 // create test user first
 connection.query('GRANT ALL ON *.* TO \'changeuser1\'@\'localhost\' IDENTIFIED BY \'changeuser1pass\'', function(err) {
