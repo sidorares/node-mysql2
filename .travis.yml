@@ -4,10 +4,10 @@ language: node_js
 before_script:
   - mysql -e 'create database /*M!50701 IF NOT EXISTS */ test;'
 node_js:
-  - '0.10'
-  - '0.12'
-  - '4.4'
-  - '5.11'
+#  - '0.10'
+#  - '0.12'
+#  - '4.4'
+#  - '5.11'
   - '6.2'
 
 

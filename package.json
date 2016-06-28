@@ -8,7 +8,7 @@
   },
   "scripts": {
     "lint": "eslint lib/**/*.js index.js test/**/*.js",
-    "test": "node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
+    "test": "node test/integration/connection/test-change-user-plugin-auth.js",
     "benchmark": "./benchmarks/run-unit.js",
     "benchmarks": "./benchmarks/run-unit.js",
     "format-eslintrc": "jsonlint --sort-keys --in-place --indent '  ' ./.eslintrc"
