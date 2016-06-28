@@ -7,10 +7,6 @@ var connection = common.createConnection({
   }
 });
 
-connection.on('connect', function(hello) {
-  console.log(JSON.stringify(hello, null, 4));
-});
-
 // create test user first
 connection.query('GRANT ALL ON *.* TO \'changeuser1\'@\'localhost\' IDENTIFIED BY \'changeuser1pass\'');
 connection.query('GRANT ALL ON *.* TO \'changeuser2\'@\'localhost\' IDENTIFIED BY \'changeuser2pass\'');
@@ -41,9 +37,10 @@ connection.changeUser({
           passwordSha1: new Buffer('f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd', 'hex') // sha1(changeuser1pass)
         }, function(err, res) {
           connection.query('select user()', function (err, rows) {
-            assert.iferror(err);
+            assert.ifError(err);
             assert.deepEqual(rows, [{'user()': 'changeuser1@localhost'}]);
-            connection.end();
+
+            testIncorrectDb();
           });
         });
       });
@@ -51,17 +48,19 @@ connection.changeUser({
   });
 });
 
-/*
-var beforeChange = 1;
-connection.changeUser({database: 'does-not-exist'}, function (err) {
-  assert.ok(err, 'got error');
-  assert.equal(err.code, 'ER_BAD_DB_ERROR');
-  assert.equal(err.fatal, true);
-});
-
-connection.on('error', function (err) {
-  assert.ok(err, 'got disconnect');
-  assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
-  assert.equal(beforeChange, 1);
-});
-*/
+function testIncorrectDb() {
+  connection.end();
+  // TODO figure out if stuff below is still relevant
+  /*
+  connection.on('error', function (err) {
+    assert.ok(err, 'got disconnect');
+    assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+  });
+  connection.changeUser({database: 'does-not-exist', }, function (err) {
+    assert.ok(err, 'got error');
+    assert.equal(err.code, 'ER_BAD_DB_ERROR');
+    assert.equal(err.fatal, true);
+  });
+  connection.end();
+  */
+}
