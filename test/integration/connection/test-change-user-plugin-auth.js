@@ -7,6 +7,10 @@ var connection = common.createConnection({
   }
 });
 
+connection.on('connect', function(hello) {
+  console.log(JSON.stringify(hello, null, 4));
+});
+
 // create test user first
 connection.query('GRANT ALL ON *.* TO \'changeuser1\'@\'localhost\' IDENTIFIED BY \'changeuser1pass\'');
 connection.query('GRANT ALL ON *.* TO \'changeuser2\'@\'localhost\' IDENTIFIED BY \'changeuser2pass\'');
