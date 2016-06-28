@@ -46,7 +46,6 @@ connection.changeUser({
     });
   });
 });
-*/
 
 /*
 var beforeChange = 1;
