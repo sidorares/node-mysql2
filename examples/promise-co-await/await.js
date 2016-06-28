@@ -1,7 +1,7 @@
 var mysql = require('../../promise.js');
 
 async function test() {
-  const c = await mysql.createConnection({ port: 3306, user: 'mycause_dev', namedPlaceholders: true, password: 'mycause' });
+  const c = await mysql.createConnection({ port: 3306, user: 'testuser', namedPlaceholders: true, password: 'testpassword' });
   console.log('connected!');
   const [rows, fields] = await c.query('show databases');
   console.log(rows);
