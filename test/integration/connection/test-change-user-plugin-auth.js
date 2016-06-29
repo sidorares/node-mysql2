@@ -1,14 +1,11 @@
 var assert = require('assert');
 var common = require('../../common');
 var connection = common.createConnection({
-  debug: 1,
   authSwitchHandler: function () {
     throw new Error('should not be called - we expect mysql_native_password '
       + 'plugin switch request to be handled by internal handler');
   }
 });
-
-console.log(process.env);
 
 // create test user first
 connection.query('GRANT ALL ON *.* TO \'changeuser1\'@\'localhost\' IDENTIFIED BY \'changeuser1pass\'');
