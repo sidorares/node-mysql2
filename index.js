@@ -21,9 +21,13 @@ exports.createPoolCluster = function (config) {
   return new PoolCluster(config);
 };
 
-module.exports.createServer = function () {
+module.exports.createServer = function (handler) {
   var Server = require('./lib/server.js');
-  return new Server();
+  var s = new Server();
+  if (handler) {
+    s.on('connection', handler);
+  }
+  return s;
 };
 
 exports.escape = SqlString.escape;
@@ -43,4 +47,3 @@ exports.__defineGetter__('createPoolClusterPromise', function () {
 });
 
 module.exports.Types = require('./lib/constants/types.js');
-

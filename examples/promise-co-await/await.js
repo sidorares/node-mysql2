@@ -1,7 +1,7 @@
 var mysql = require('../../promise.js');
 
 async function test() {
-  const c = await mysql.createConnection({ port: 3306, user: 'mycause_dev', namedPlaceholders: true, password: 'mycause' });
+  const c = await mysql.createConnection({ port: 3306, user: 'testuser', namedPlaceholders: true, password: 'testpassword' });
   console.log('connected!');
   const [rows, fields] = await c.query('show databases');
   console.log(rows);
@@ -24,7 +24,7 @@ async function test() {
   console.log(end - start);
   await c.end();
 
-  const p  = mysql.createPool({ port: 3306, user: 'mycause_dev', namedPlaceholders: true, password: 'mycause' });
+  const p  = mysql.createPool({ port: 3306, user: 'testuser', namedPlaceholders: true, password: 'testpassword' });
   console.log( await p.execute('select sleep(0.5)') );
   console.log('after first pool sleep');
   var start = +new Date()

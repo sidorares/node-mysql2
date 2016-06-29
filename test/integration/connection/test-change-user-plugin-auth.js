@@ -1,6 +1,11 @@
 var assert = require('assert');
 var common = require('../../common');
-var connection = common.createConnection();
+var connection = common.createConnection({
+  authSwitchHandler: function () {
+    throw new Error('should not be called - we expect mysql_native_password '
+      + 'plugin switch request to be handled by internal handler');
+  }
+});
 
 // create test user first
 connection.query('GRANT ALL ON *.* TO \'changeuser1\'@\'localhost\' IDENTIFIED BY \'changeuser1pass\'');
@@ -34,6 +39,7 @@ connection.changeUser({
           connection.query('select user()', function (err, rows) {
             assert.ifError(err);
             assert.deepEqual(rows, [{'user()': 'changeuser1@localhost'}]);
+
             testIncorrectDb();
           });
         });

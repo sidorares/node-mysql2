@@ -1,3 +1,7 @@
+1.0.0-rc-6 ( 29/06/2016 )
+ - AuthSwitch support and partial support for
+   plugin-based authentication                               #331
+
 1.0.0-rc-5 ( 16/06/2016 )
  - Fix incorrect releasing of dead pool connections          #326, #325
  - Allow pool options to be specified as URL params          #327

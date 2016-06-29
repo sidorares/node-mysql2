@@ -58,7 +58,7 @@ module.exports.createConnection = function (args, callback) {
     driver = require('mysql');
   }
 
-  var conn = driver.createConnection({
+  var params = {
     host: config.host,
     rowsAsArray: args.rowsAsArray,
     user: (args && args.user) || config.user,
@@ -66,14 +66,19 @@ module.exports.createConnection = function (args, callback) {
     database: (args && args.database) || config.database,
     multipleStatements: args ? args.multipleStatements : false,
     port: (args && args.port) || config.port,
-    debug: process.env.DEBUG,
+    debug: process.env.DEBUG || (args && args.debug),
     supportBigNumbers: args && args.supportBigNumbers,
     bigNumberStrings: args && args.bigNumberStrings,
     compress: (args && args.compress) || config.compress,
     decimalNumbers: args && args.decimalNumbers,
-    dateStrings: args && args.dateStrings
-  });
+    dateStrings: args && args.dateStrings,
+    authSwitchHandler: args && args.authSwitchHandler
+  };
 
+  //console.log('cc params', params);
+  var conn = driver.createConnection(params);
+
+  /*
   conn.query('create database IF NOT EXISTS test', function (err) {
     if (err) {
       console.log('error during "create database IF NOT EXISTS test"', err);
@@ -84,6 +89,7 @@ module.exports.createConnection = function (args, callback) {
       console.log('error during "use test"', err);
     }
   });
+  */
   return conn;
 };
 
@@ -104,6 +110,7 @@ module.exports.createTemplate = function () {
 
 var ClientFlags = require('../lib/constants/client.js');
 
+var portfinder = require('portfinder');
 module.exports.createServer = function (onListening, handler) {
   var server = require('../index.js').createServer();
   server.on('connection', function (conn) {
@@ -125,7 +132,9 @@ module.exports.createServer = function (onListening, handler) {
       handler(conn);
     }
   });
-  server.listen(3307, onListening);
+  portfinder.getPort(function (err, port) {
+    server.listen(port, onListening);
+  });
   return server;
 };
 

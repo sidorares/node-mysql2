@@ -7,6 +7,8 @@ var conn = common.createConnection();
 // it's possible to receive null values for columns marked with NOT_NULL flag
 // see https://github.com/sidorares/node-mysql2/issues/178 for info
 
+conn.query('set sql_mode=""');
+
 conn.query('CREATE TEMPORARY TABLE `tmp_account` ( ' +
   ' `id` int(11) NOT NULL AUTO_INCREMENT, ' +
   ' `username` varchar(64) NOT NULL, ' +
