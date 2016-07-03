@@ -1,3 +1,7 @@
+1.0.0-rc-7 ( 03/07/2016 )
+ - fix incorrect MockBuffer property assignment             #333
+ - implement typeCast option                                #338
+
 1.0.0-rc-6 ( 29/06/2016 )
  - AuthSwitch support and partial support for
    plugin-based authentication                               #331
