@@ -1,7 +1,7 @@
 var common = require('../../common');
 var connection = common.createConnection();
 var assert = require('assert');
-var bn = require('bn.js');
+var Long = require('long');
 
 var table = 'insert_test';
 connection.query([
@@ -26,10 +26,10 @@ connection.query('INSERT INTO bigs SET title=\'test1\'', function (err, result) 
     // big int
     connection.query('INSERT INTO bigs SET title=\'test\', id=9007199254740992');
     connection.query('INSERT INTO bigs SET title=\'test3\'', function (err, result) {
-      assert.strictEqual((new bn('9007199254740993')).cmp(result.insertId), 0);
+      assert.strictEqual((Long.fromString('9007199254740993')).compare(result.insertId), 0);
       connection.query('INSERT INTO bigs SET title=\'test\', id=90071992547409924');
       connection.query('INSERT INTO bigs SET title=\'test4\'', function (err, result) {
-        assert.strictEqual((new bn('90071992547409925')).cmp(result.insertId), 0);
+        assert.strictEqual((Long.fromString('90071992547409925')).compare(result.insertId), 0);
         connection.query('select * from bigs', function (err, result) {
           assert.strictEqual(result[0].id, 123);
           assert.strictEqual(result[1].id, 124);
