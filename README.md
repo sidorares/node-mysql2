@@ -36,8 +36,9 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
    mysql.createConnection({ /* same parameters as for non-promise createConnection */ })
      .then((conn) => conn.query('select foo from bar'))
      .then(([rows, fields]) => console.log(rows[0].foo))
+```
 
-   // pool:
+```js
    var pool = require('mysql2/promise').createPool({}); // or mysql.createPoolPromise({})
    pool.getConnection()
      .then((conn) => {
@@ -57,7 +58,11 @@ es7 async/await:
    let mysql = require('mysql2/promise');
    let conn = await mysql.createConnection({ database: test });
    let [rows, fields] = await conn.execute('select ?+? as sum', [2, 2]);
-   let pool = mysql.createPool(conn);
+```
+
+```js
+   let mysql = require('mysql2/promise');
+   let pool = mysql.createPool({ database: test });
    // execute in parallel, next console.log in 3 seconds
    await Promise.all([pool.query('select sleep(2)'), pool.query('select sleep(3)')]);
    console.log('3 seconds after');
