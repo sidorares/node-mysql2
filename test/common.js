@@ -72,7 +72,8 @@ module.exports.createConnection = function (args, callback) {
     compress: (args && args.compress) || config.compress,
     decimalNumbers: args && args.decimalNumbers,
     dateStrings: args && args.dateStrings,
-    authSwitchHandler: args && args.authSwitchHandler
+    authSwitchHandler: args && args.authSwitchHandler,
+    typeCast: args && args.typeCast
   };
 
   //console.log('cc params', params);
