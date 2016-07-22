@@ -1,3 +1,9 @@
+1.0.0-rc-8 ( 22/07/2016 )
+ - enabled use of global typeCast                           #347, #351
+ - custom typeCast: fix incorrect buffer() and geometry()   #349
+   functions
+ - documentation: fix async/await example                   #342
+
 1.0.0-rc-7 ( 03/07/2016 )
  - fix incorrect MockBuffer property assignment             #333
  - implement typeCast option                                #338
