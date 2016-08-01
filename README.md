@@ -6,7 +6,7 @@
 [![Linux Build][travis-image]][travis-url]
 [![Windows Build][appveyor-image]][appveyor-url]
 
-Mysql client for node.js. Written in native JavaScript and aims to be mostly api compatible with [node-mysql](https://github.com/felixge/node-mysql)
+MySql client for node.js. Written in native JavaScript and aims to be mostly api compatible with [node-mysql](https://github.com/felixge/node-mysql)
 
 [![NPM](https://nodei.co/npm/mysql2.png?downloads=true&stars=true)](https://nodei.co/npm/mysql2/)
 [![NPM](https://nodei.co/npm-dl/mysql2.png?months=6)](https://nodei.co/npm/mysql2/)
@@ -15,11 +15,11 @@ Mysql client for node.js. Written in native JavaScript and aims to be mostly api
 
  In addition to client-side query/escape and connection pooling
 
-  - [fast](https://gist.github.com/sidorares/ffe9ee9c423f763e3b6b)
+  - [Fast](https://gist.github.com/sidorares/ffe9ee9c423f763e3b6b)
   - MySQL server API for proxies and mocks
   - SSL and compression
-  - prepared statements
-  - binlog protocol client
+  - Prepared statements
+  - Binary log protocol client
 
 ## Documentation
 
@@ -391,30 +391,6 @@ In addition special events are emitted for [commands](https://dev.mysql.com/doc/
   *  **field_list**(table: string, fields: string) - Default: return ER_WARN_DEPRECATED_SYNTAX
   *  **ping**() - Default: return OK
 
-## Running Tests
-
-Running the tests requires MySQL server and an empty database.
-
-```sh
-# Run once to setup the local environment variables.
-export CI=1;
-export MYSQL_HOST='127.0.0.1';
-export MYSQL_USER='root';
-export MYSQL_PASSWORD='root';
-export MYSQL_DATABASE='test';
-
-# If test user has no password, unset the `CI` variable.
-
-# Run the test suite
-npm run test
-```
-
-Use `FILTER` environment variable to run a subset of tests with matching names, e.g.
-
-```sh
-FILTER='test-timestamp' npm run test
-```
-
 ## License
 
  MIT
@@ -451,17 +427,8 @@ FILTER='test-timestamp' npm run test
 
 ## Contributing
 
-Feel free to create pull requests.
-TODO in order of importance:
+Want to improve something in `node-mysql2`. Please check [Contributing.md](https://github.com/sidorares/node-mysql2/blob/master/Contributing.md) for detailed instruction on how to get started.
 
-  - node-mysql api incompatibility fixes
-  - documentation
-  - tests
-  - benchmarks
-  - bug fixes
-  - TODOs in source code
-  - performance improvements
-  - features
 
 [npm-image]: https://img.shields.io/npm/v/mysql2.svg
 [npm-url]: https://npmjs.org/package/mysql2
