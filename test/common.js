@@ -76,7 +76,7 @@ module.exports.createConnection = function (args, callback) {
     typeCast: args && args.typeCast
   };
 
-  //console.log('cc params', params);
+  // console.log('cc params', params);
   var conn = driver.createConnection(params);
 
   /*
