@@ -1,3 +1,8 @@
+1.0.0-rc-9 ( 1/08/2016 )
+ - remember and send credentials for initial
+   AuthSwitch request                                       #331, #357
+ - fix re-emitting error event during initial handshake     #356
+
 1.0.0-rc-8 ( 22/07/2016 )
  - enabled use of global typeCast                           #347, #351
  - custom typeCast: fix incorrect buffer() and geometry()   #349
