@@ -23,7 +23,7 @@ Please contact project maintainers privately before opening a security issue on 
 
 ## New Features
 
-Its better to discuss an API before actaully start implementing it. You can open an issue on Github. We can discuss design of API and implementation ideas.
+Its better to discuss an API before actually start implementing it. You can open an issue on Github. We can discuss design of API and implementation ideas.
 
 ## Development
 
