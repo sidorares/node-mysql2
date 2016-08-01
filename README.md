@@ -427,7 +427,7 @@ In addition special events are emitted for [commands](https://dev.mysql.com/doc/
 
 ## Contributing
 
-Want to improve something in `node-mysql2`. Please check [Contributing.md](https://github.com/sidorares/node-mysql2/blob/master/Changelog.md) for detailed instruction on how to get started.
+Want to improve something in `node-mysql2`. Please check [Contributing.md](https://github.com/sidorares/node-mysql2/blob/master/Contributing.md) for detailed instruction on how to get started.
 
 
 [npm-image]: https://img.shields.io/npm/v/mysql2.svg
