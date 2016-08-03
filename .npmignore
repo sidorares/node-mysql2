@@ -1,0 +1,16 @@
+documentation
+examples
+test
+fixtures
+benchmarks
+
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+.DS_Store
+.idea/
