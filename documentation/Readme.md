@@ -1,4 +1,4 @@
-### Documentation
+# Documentation
 
 `Node-MySQL2` is aims to be a drop in replacement for [node-mysql](https://github.com/felixge/node-mysql). Please check `node-mysql` for full documentation.
 
@@ -6,9 +6,8 @@
 
 Not only `Node-MySQL2` offer a better performance over `node-mysql`, we also support these features.
 
-- [Prepared Statements]()
-- [Promise Wrapper]()
-- [Authentication Switch]()
-- [Named Placeholders]()
+- [Prepared Statements](https://github.com/sidorares/node-mysql2/tree/master/documentation/Prepared-Statements.md)
+- [Promise Wrapper](https://github.com/sidorares/node-mysql2/tree/master/documentation/Promise-Wrapper.md)
+- [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/Authentication-Switch.md)
 - [MySQL Server]()
 - [Other Features]()
