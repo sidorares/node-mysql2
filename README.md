@@ -23,9 +23,7 @@ MySql client for node.js. Written in native JavaScript and aims to be mostly api
 
 ## Documentation
 
-See [node-mysql](https://github.com/felixge/node-mysql) documentation. If you see api incompatibilities, please report via github issue.
 
-Below is a list of extensions not supported by node-mysql:
 
 ### Promise wrappers
 
