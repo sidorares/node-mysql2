@@ -1,11 +1,11 @@
-#node-mysql2
+# Node MySQL 2
 
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Node.js Version][node-version-image]][node-version-url]
 [![Linux Build][travis-image]][travis-url]
 [![Windows Build][appveyor-image]][appveyor-url]
-[![License][license-link]][license-url]
+[![License][license-image]][license-url]
 
 MySql client for node.js. Written in native JavaScript and aims to be mostly api compatible with [node-mysql](https://github.com/felixge/node-mysql)
 
@@ -28,7 +28,7 @@ Please check [documentation](https://github.com/sidorares/node-mysql2/tree/maste
 
 ## Acknowledgements
 
-  - Internal protocol is written by @sidorares [MySQL-native](https://github.com/sidorares/nodejs-mysql-native)
+  - Internal protocol is written by @sidorares [MySQL-Native](https://github.com/sidorares/nodejs-mysql-native)
   - Constants, SQL parameters interpolation, Pooling, `ConnectionConfig` class taken from [node-mysql](https://github.com/felixge/node-mysql)
   - SSL upgrade code based on @TooTallNate [code](https://gist.github.com/TooTallNate/848444)
   - Secure connection / compressed connection api flags compatible to [MariaSQL](https://github.com/mscdex/node-mariasql/) client.
@@ -49,5 +49,5 @@ Want to improve something in `node-mysql2`. Please check [Contributing.md](https
 [appveyor-url]: https://ci.appveyor.com/project/sidorares/node-mysql2
 [downloads-image]: https://img.shields.io/npm/dm/mysql2.svg
 [downloads-url]: https://npmjs.org/package/mysql2
-[license-link]: https://github.com/sidorares/node-mysql2/blob/master/License
+[license-url]: https://github.com/sidorares/node-mysql2/blob/master/License
 [license-image]: https://img.shields.io/npm/l/mysql2.svg?maxAge=2592000
