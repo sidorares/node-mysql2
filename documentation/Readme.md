@@ -2,7 +2,7 @@
 
 ## Introduction
 
-`Node-MySQL2` is aims to be a drop in replacement for [node-mysql](https://github.com/felixge/node-mysql). Please check `node-mysql` for full documentation.
+`Node-MySQL2` aims to be a drop in replacement for [node-mysql](https://github.com/mysqljs/node-mysql). Please check `node-mysql` for full documentation.
 
 **Note :** *If you see any API incompatibilities with `node-mysql`, please report via github issue.*
 
@@ -39,7 +39,7 @@ You need to check corresponding field's zeroFill flag and convert to string manu
 ## Other Resources
 
   - [Wire protocol documentation](http://dev.mysql.com/doc/internals/en/client-server-protocol.html)
-  - [node-mysql](https://github.com/felixge/node-mysql) - Most popular node.js mysql client library
+  - [node-mysql](https://github.com/mysqljs/node-mysql) - Most popular node.js mysql client library
   - [node-mariasql](https://github.com/mscdex/node-mariasql/) - Bindings to libmariasql. One of the fastest clients
   - [node-libmysqlclident](https://github.com/Sannis/node-mysql-libmysqlclient) - Bindings to libmysqlclient
   - [go-mysql](https://github.com/siddontang/go-mysql) - MySQL Go client (prepared statements, binlog protocol, server)
