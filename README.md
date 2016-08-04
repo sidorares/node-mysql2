@@ -7,7 +7,7 @@
 [![Windows Build][appveyor-image]][appveyor-url]
 [![License][license-image]][license-url]
 
-MySql client for node.js. Written in native JavaScript and aims to be mostly api compatible with [node-mysql](https://github.com/mysqljs/node-mysql)
+MySql client for node.js. Written in native JavaScript and aims to be mostly api compatible with [node-mysql](https://github.com/mysqljs/mysql)
 
 [![NPM](https://nodei.co/npm/mysql2.png?downloads=true&stars=true)](https://nodei.co/npm/mysql2/)
 [![NPM](https://nodei.co/npm-dl/mysql2.png?months=6)](https://nodei.co/npm/mysql2/)
@@ -29,7 +29,7 @@ Please check [documentation](https://github.com/sidorares/node-mysql2/tree/maste
 ## Acknowledgements
 
   - Internal protocol is written by @sidorares [MySQL-Native](https://github.com/sidorares/nodejs-mysql-native)
-  - Constants, SQL parameters interpolation, Pooling, `ConnectionConfig` class taken from [node-mysql](https://github.com/mysqljs/node-mysql)
+  - Constants, SQL parameters interpolation, Pooling, `ConnectionConfig` class taken from [node-mysql](https://github.com/mysqljs/mysql)
   - SSL upgrade code based on @TooTallNate [code](https://gist.github.com/TooTallNate/848444)
   - Secure connection / compressed connection api flags compatible to [MariaSQL](https://github.com/mscdex/node-mariasql/) client.
   - [Contributors](https://github.com/sidorares/node-mysql2/graphs/contributors)
