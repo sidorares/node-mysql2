@@ -30,7 +30,11 @@ connection.query('INSERT INTO bigs SET title=\'test1\'', function (err, result) 
       connection.query('INSERT INTO bigs SET title=\'test\', id=90071992547409924');
       connection.query('INSERT INTO bigs SET title=\'test4\'', function (err, result) {
         assert.strictEqual((Long.fromString('90071992547409925')).compare(result.insertId), 0);
-        connection.query('select * from bigs', function (err, result) {
+        connection.query({
+          sql: 'select * from bigs',
+          supportBigNumbers: true,
+          bigNumberString: false,
+        }, function (err, result) {
           assert.strictEqual(result[0].id, 123);
           assert.strictEqual(result[1].id, 124);
           assert.strictEqual(result[2].id, 123456789);
