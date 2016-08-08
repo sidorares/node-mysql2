@@ -1,17 +1,8 @@
 var assert = require('assert');
 
 var FieldFlags = require('../../../lib/constants/field_flags.js');
-//var common = require('../../common');
-var mysql = require('../../../index.js')
-//var conn = common.createConnection();
-var conn = mysql.createConnection({
-  password: 'mycause',
-  user: 'mycause_dev',
-  //supportBigNumbers: true,
-  //bigNumberStrings: true,
-  database: 'test',
-  //debug: 1
-});
+var common = require('../../common');
+var conn = common.createConnection();
 
 conn.query('CREATE TEMPORARY TABLE `tmp_longlong` ( ' +
   ' `id` int(11) NOT NULL AUTO_INCREMENT, ' +
