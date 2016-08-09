@@ -1,4 +1,31 @@
-1.0.0-rc-9 ( 1/08/2016 )
+1.0.0-rc-10 ( 09/08/2016 )
+ - ssl: do not use deprecated tls.createSecurePair
+   if TLSSocket is avaiable                                #367, 363
+
+ - use supportBigNumbers and bigNumberStrings flags in
+   parser
+ - pass supportBigNumbers and bigNumberStrings from
+   `query({sql, ...opts})` and `execute({sql, ...opts})`
+   type of calls
+ - use supportBigNumbers and bigNumberStrings as part of
+   parser key
+ - binary protocol: use long.js to calculate resulting
+   number from two 32 byte valuse
+ - text protocol: fix in detecting potentially big number.
+   Split parseLong* into functions with and without big
+   number checks, use no check version if type is < long    #366
+
+   documentation:
+ - Split documentation into `/documentation` folder with sub
+   docs inside this folder
+ - Use badge for license
+ - Added `.npmignore`                                       #365
+
+ - handle correctly negative insert IDs                     #364, #341, #336
+ - build: add v6.3 to matrix
+ - docs: add CONTRIBUTING.md                                #138, #359
+
+1.0.0-rc-9 ( 01/08/2016 )
  - remember and send credentials for initial
    AuthSwitch request                                       #331, #357
  - fix re-emitting error event during initial handshake     #356
