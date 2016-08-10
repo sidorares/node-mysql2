@@ -19,29 +19,50 @@ while(1) {
 
 var PP = require('../../lib/packet_parser.js');
 
-var count = 0;
-var cc = 0;
-
-function handler(packet) {
-  //console.log(packet.length(), packet.sequenceId);
-  cc += packet.sequenceId
-  count++;
-}
-
 var chunks = [];
-var csize = parseInt(process.argv[2]);
-for (var o=0; o + csize < p.length; o += csize) {
-  chunks.push(p.slice(o, o+csize));
-}
+function benchmarkPackets() {
 
-var start = process.hrtime();
-for (var i=0; i < 50; ++i) {
+  if (chunks.length === 0) {
+    for (var csize = 1; csize < plen; ++csize) {
+      for (var o=0; o + csize < p.length; o += csize) {
+         chunks.push(p.slice(o, o+csize));
+      }
+    }
+  }
+
+  console.log(chunks);
+
+  var count = 0;
+  var cc = 0;
+
+  function handler(packet) {
+    //console.log(packet.length(), packet.sequenceId);
+    cc += packet.sequenceId
+    count++;
+  }
+
+  var start = process.hrtime();
   var packetParser = new PP(handler);
   for (var j=0; j < chunks.length; ++j) {
     packetParser.execute(chunks[j]);
   }
+  return count;
 }
-var end = process.hrtime(start);
-var dur = end[0]*1e9 + end[1];
 
-console.log(1e9*count/dur, count, cc);
+module.exports = function(next) {
+  /*
+  var c = benchmarkPackets();
+  */
+  next();
+}
+
+module.exports.comment = 'WIP - not implemented yet | packet_parser.execute() in chunks of length 1..packet_length x 156035 packets';
+module.exports.toSpeed = function(time, timeError) {
+  console.log('packet_parser.execute() toSpeed()', time, timeError);
+  var value = 1e9*5*156975 / time;
+  return {
+    value: value,
+    error: value*(timeError/time),
+    units: 'packets/second'
+  };
+};
