@@ -8,13 +8,13 @@ var assert = require('assert');
 var server = mysql.createServer(function (conn) {
   conn.serverHandshake({
     protocolVersion: 10,
-    serverVersion: '5.6.10', //'node.js rocks',
+    serverVersion: '5.6.10',
     connectionId: 1234,
     statusFlags: 2,
     characterSet: 8,
     capabilityFlags: 0xffffff,
-    authCallback: function(params, cb) {
-      cb(null, { message: 'too many connections', code: 1040});
+    authCallback: function (params, cb) {
+      cb(null, {message: 'too many connections', code: 1040});
     }
   });
 });
@@ -50,7 +50,7 @@ portfinder.getPort(function (err, port) {
 
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.equal(err1.errno, 1040);
   assert.equal(err2.errno, 1040);
 });
