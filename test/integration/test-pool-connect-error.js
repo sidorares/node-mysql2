@@ -32,7 +32,7 @@ portfinder.getPort(function (err, port) {
     port: port
   });
   conn.on('error', function (err) {
-    err1 = err
+    err1 = err;
   });
 
   var pool = mysql.createPool({
@@ -44,6 +44,8 @@ portfinder.getPort(function (err, port) {
 
   pool.query('test sql', function (err, res, rows) {
     err2 = err;
+    pool.end();
+    server.close();
   });
 
 });
