@@ -1,3 +1,11 @@
+1.0.0-rc-11 ( 14/08/2016 )
+ - pool: support namedPlaceholder flag in `pool.query`
+   and `pool.execute` helpers                              #369
+ - pool: do not emit error on query command if callback    #372
+   was passed
+ - pool: propagate connection time error back
+   to .getConnection()                                     #372
+
 1.0.0-rc-10 ( 09/08/2016 )
  - ssl: do not use deprecated tls.createSecurePair
    if TLSSocket is avaiable                                #367, 363
