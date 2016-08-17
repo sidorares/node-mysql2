@@ -5,6 +5,7 @@ var assert = require('assert');
 // test data stores
 var testData = [
   'ютф восемь',
+  'Experimental',
   'परीक्षण',
   'test тест テスト փորձաsրկում পরীক্ষা kiểm tra',
   'ტესტი પરીક્ષણ  מבחן פּרובירן اختبار'
@@ -12,7 +13,7 @@ var testData = [
 
 var resultData = null;
 
-// tests
+// test inserting of non latin data if we are able to parse it
 
 var testEncoding = function (err) {
   assert.ifError(err);
@@ -35,13 +36,15 @@ var testEncoding = function (err) {
 
 // init test sequence
 (function () {
-  connection.query(
-    'CREATE TABLE IF NOT EXISTS `test-charset-encoding` ' +
-    '( `field` VARCHAR(1000) CHARACTER SET latin1 COLLATE latin1_danish_ci)',
-    function (err) {
-      assert.ifError(err);
-      connection.query('DELETE from `test-charset-encoding`', testEncoding);
-    });
+  connection.query('DROP TABLE IF EXISTS `test-charset-encoding`', function (err) {
+    connection.query(
+      'CREATE TABLE IF NOT EXISTS `test-charset-encoding` ' +
+      '( `field` VARCHAR(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci)',
+      function (err) {
+        assert.ifError(err);
+        connection.query('DELETE from `test-charset-encoding`', testEncoding);
+      });
+  });
 })();
 
 process.on('exit', function () {
