@@ -19,7 +19,7 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
         conn.release();
         return res;
      }).then( (result) => {
-       console.log(res[0][0].foo);
+       console.log(result[0][0].foo);
      }).catch( (err) => {
        console.log(err); // any of connection time or query time errors from above
      });
