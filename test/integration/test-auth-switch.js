@@ -3,6 +3,7 @@ var mysql = require('../../index.js');
 var Command = require('../../lib/commands/command.js');
 var Packets = require('../../lib/packets/index.js');
 
+var Buffer = require('safe-buffer').Buffer
 var assert = require('assert');
 
 function TestAuthSwitchHandshake (args)
@@ -50,7 +51,7 @@ TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse = function (packe
 
   count++;
   if (count < 10) {
-    var asrmd = new Packets.AuthSwitchRequestMoreData(Buffer('hahaha ' + count));
+    var asrmd = new Packets.AuthSwitchRequestMoreData(Buffer.from('hahaha ' + count));
     connection.writePacket(asrmd.toPacket());
     return TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse;
   } else {
@@ -69,7 +70,7 @@ TestAuthSwitchHandshake.prototype.dispatchCommands = function (packet, connectio
 var server = mysql.createServer(function (conn) {
   conn.addCommand(new TestAuthSwitchHandshake({
     pluginName: 'auth_test_plugin',
-    pluginData: Buffer('f\{tU-{K@BhfHt/-4^Z,')
+    pluginData: Buffer.from('f\{tU-{K@BhfHt/-4^Z,')
   }));
 });
 

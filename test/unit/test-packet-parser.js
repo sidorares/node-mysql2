@@ -1,3 +1,5 @@
+var Buffer = require('safe-buffer').Buffer;
+
 var PacketParser = require('../../lib/packet_parser.js');
 var Packet = require('../../lib/packets/packet.js');
 
@@ -17,7 +19,7 @@ function execute (str, verify) {
   reset();
   var buffers = str.split('|').map(function (sb) { return sb.split(',').map(Number); });
   for (var i = 0; i < buffers.length; ++i) {
-    pp.execute(new Buffer(buffers[i]));
+    pp.execute(Buffer.from(buffers[i]));
   }
   verify();
 }
@@ -84,7 +86,7 @@ execute('5,0,0,122,1,2,3,4,5,6,0,0,123,1|2,3|4,5,6', p122_123);
 // TODO combine with "execute" function
 
 var length = 123000;
-var pbuff = new Buffer(length + 4);
+var pbuff = Buffer.alloc(length + 4);
 pbuff[4] = 123;
 pbuff[5] = 124;
 pbuff[6] = 125;
