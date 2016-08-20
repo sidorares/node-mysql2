@@ -1,3 +1,5 @@
+var Buffer = require('safe-buffer').Buffer;
+
 module.exports = function (connection) {
   return [
     {type: 'decimal(4,3)', insert: '1.234'},
@@ -18,13 +20,13 @@ module.exports = function (connection) {
     {type: 'time', insert: '-13:13:23'},
     {type: 'time', insert: '413:13:23'},
     {type: 'time', insert: '-413:13:23'},
-    {type: 'binary(4)', insert: new Buffer([0, 1, 254, 255])},
-    {type: 'varbinary(4)', insert: new Buffer([0, 1, 254, 255])},
-    {type: 'tinyblob', insert: new Buffer([0, 1, 254, 255])},
-    {type: 'mediumblob', insert: new Buffer([0, 1, 254, 255])},
-    {type: 'longblob', insert: new Buffer([0, 1, 254, 255])},
-    {type: 'blob', insert: new Buffer([0, 1, 254, 255])},
-    {type: 'bit(32)', insert: new Buffer([0, 1, 254, 255])},
+    {type: 'binary(4)', insert: Buffer.from([0, 1, 254, 255])},
+    {type: 'varbinary(4)', insert: Buffer.from([0, 1, 254, 255])},
+    {type: 'tinyblob', insert: Buffer.from([0, 1, 254, 255])},
+    {type: 'mediumblob', insert: Buffer.from([0, 1, 254, 255])},
+    {type: 'longblob', insert: Buffer.from([0, 1, 254, 255])},
+    {type: 'blob', insert: Buffer.from([0, 1, 254, 255])},
+    {type: 'bit(32)', insert: Buffer.from([0, 1, 254, 255])},
     {type: 'char(5)', insert: 'Hello'},
     {type: 'varchar(5)', insert: 'Hello'},
     {type: 'varchar(3) character set utf8 collate utf8_bin', insert: 'bin'},
@@ -34,7 +36,7 @@ module.exports = function (connection) {
     {type: 'text', insert: 'Hello World'},
     {type: 'point', insertRaw: 'POINT(1.2,-3.4)', expect: {x:1.2, y:-3.4}, deep: true},
     {type: 'point', insertRaw: (function () {
-      var buffer = new Buffer(21);
+      var buffer = Buffer.alloc(21);
       buffer.writeUInt8(1, 0);
       buffer.writeUInt32LE(1, 1);
       buffer.writeDoubleLE(-5.6, 5);

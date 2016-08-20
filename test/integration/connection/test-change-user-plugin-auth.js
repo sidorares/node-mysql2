@@ -1,3 +1,5 @@
+var Buffer = require('safe-buffer').Buffer;
+
 var assert = require('assert');
 var common = require('../../common');
 var connection = common.createConnection({
@@ -34,7 +36,7 @@ connection.changeUser({
 
         connection.changeUser({
           user: 'changeuser1',
-          passwordSha1: new Buffer('f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd', 'hex') // sha1(changeuser1pass)
+          passwordSha1: Buffer.from('f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd', 'hex') // sha1(changeuser1pass)
         }, function(err, res) {
           connection.query('select user()', function (err, rows) {
             assert.ifError(err);
