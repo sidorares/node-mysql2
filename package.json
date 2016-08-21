@@ -32,7 +32,8 @@
     "double-ended-queue": "2.1.0-0",
     "long": "^3.2.0",
     "named-placeholders": "1.1.1",
-    "readable-stream": "2.1.4",
+    "readable-stream": "2.1.5",
+    "safe-buffer": "^5.0.1",
     "seq-queue": "0.0.5",
     "sqlstring": "^2.0.1"
   },

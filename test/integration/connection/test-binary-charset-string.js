@@ -1,6 +1,7 @@
 var common = require('../../common');
 var connection = common.createConnection();
 var assert = require('assert');
+var Buffer = require('safe-buffer').Buffer
 
 var rows = undefined;
 var fields = undefined;
@@ -71,17 +72,17 @@ connection.execute(query1, [], function (err, _rows, _fields) {
 
 
 process.on('exit', function () {
-  assert.deepEqual(rows, [{'x\'010203\'': Buffer([1, 2, 3])}]);
+  assert.deepEqual(rows, [{'x\'010203\'': Buffer.from([1, 2, 3])}]);
   assert.equal(fields[0].name, 'x\'010203\'');
   assert.deepEqual(rows1, [{'010203': '010203'}]);
   assert.equal(fields1[0].name, '010203');
-  assert.deepEqual(rows2, [{'x\'010203\'': Buffer([1, 2, 3])}]);
+  assert.deepEqual(rows2, [{'x\'010203\'': Buffer.from([1, 2, 3])}]);
   assert.equal(fields2[0].name, 'x\'010203\'');
   assert.deepEqual(rows3, [{'010203': '010203'}]);
   assert.equal(fields3[0].name, '010203');
 
-  assert.deepEqual(rows4, [{'x\'010203\'': Buffer([1, 2, 3])}]);
+  assert.deepEqual(rows4, [{'x\'010203\'': Buffer.from([1, 2, 3])}]);
   assert.equal(fields4[0].name, 'x\'010203\'');
-  assert.deepEqual(rows5, [{'x\'010203\'': Buffer([1, 2, 3])}]);
+  assert.deepEqual(rows5, [{'x\'010203\'': Buffer.from([1, 2, 3])}]);
   assert.equal(fields5[0].name, 'x\'010203\'');
 });
