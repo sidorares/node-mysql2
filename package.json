@@ -28,7 +28,7 @@
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "cardinal": "0.7.0",
+    "cardinal": "1.0.0",
     "double-ended-queue": "2.1.0-0",
     "long": "^3.2.0",
     "named-placeholders": "1.1.1",
