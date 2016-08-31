@@ -68,6 +68,8 @@ TestAuthSwitchHandshake.prototype.dispatchCommands = function (packet, connectio
 };
 
 var server = mysql.createServer(function (conn) {
+  conn.serverConfig = {};
+  conn.serverConfig.encoding = 'cesu8';
   conn.addCommand(new TestAuthSwitchHandshake({
     pluginName: 'auth_test_plugin',
     pluginData: Buffer.from('f\{tU-{K@BhfHt/-4^Z,')
