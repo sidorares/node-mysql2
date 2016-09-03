@@ -16,7 +16,7 @@ var charsets = []
 
 var mysql2iconv = {
   utf8: 'cesu8',
-  utf8mb4: 'cesu8',
+  utf8mb4: 'utf8',
   // need to check that this is correct mapping
   macce: 'macintosh', // Mac Central European
   eucjpms: 'eucjp'    // UJIS for Windows Japanese
@@ -34,7 +34,10 @@ conn.query('show collation', function(err, res) {
     charsets[r.Id] = iconvCharset;
   });
   //console.log(JSON.stringify(missing, 4, null));
-  console.log(JSON.stringify(charsets, 4, null));
+  //console.log(JSON.stringify(charsets, 4, null));
+  for (var i=0; i < charsets.length; i+=8) {
+    console.log("  '" + charsets.slice(i, i+8).join("', '") + "',");
+  }
 });
 
 conn.end();
