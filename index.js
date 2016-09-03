@@ -46,4 +46,14 @@ exports.__defineGetter__('createPoolClusterPromise', function () {
   return require('./promise.js').createPoolCluster;
 });
 
-module.exports.Types = require('./lib/constants/types.js');
+exports.__defineGetter__('Types', function () {
+  return require('./lib/constants/types.js');
+});
+
+exports.__defineGetter__('Charsets', function () {
+  return require('./lib/constants/charsets.js');
+});
+
+exports.__defineGetter__('CharsetToEncoding', function () {
+  return require('./lib/constants/charset_encodings.js');
+});
