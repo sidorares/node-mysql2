@@ -20,7 +20,7 @@ function tryEncoding (encoding, cb) {
 tryEncoding('cp1251', function () {
   tryEncoding('koi8r', function () {
     tryEncoding('cp866', function () {
-      tryEncoding('utf8mb4', function () {
+      tryEncoding('utf8', function () {
         connection.end();
       });
     });
