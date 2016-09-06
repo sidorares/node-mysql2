@@ -1,3 +1,10 @@
+1.0.0-rc-12 ( 06/09/2016 )
+ - support for non-utf9 server, results, and client
+   encodings                                               #302, #374
+ - replace deprecated Buffer APIs with Buffer.from
+   and Buffer.allocUnsafe                                  #381, #380
+ - build: bump to node v6.5
+
 1.0.0-rc-11 ( 14/08/2016 )
  - pool: support namedPlaceholder flag in `pool.query`
    and `pool.execute` helpers                              #369
