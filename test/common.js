@@ -71,6 +71,7 @@ module.exports.createConnection = function (args, callback) {
     bigNumberStrings: args && args.bigNumberStrings,
     compress: (args && args.compress) || config.compress,
     decimalNumbers: args && args.decimalNumbers,
+    charset: args && args.charset,
     dateStrings: args && args.dateStrings,
     authSwitchHandler: args && args.authSwitchHandler,
     typeCast: args && args.typeCast

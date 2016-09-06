@@ -14,11 +14,11 @@ buf = Buffer.from('18000006000004666f6f310be00702090f01095d7f06000462617231', 'h
 packet = new packets.Packet(6, buf, 0, buf.length);
 
 i = packet.readInt16();
-var s = packet.readLengthCodedString();
+var s = packet.readLengthCodedString('cesu8');
 assert.equal(s, 'foo1');
 d = packet.readDateTime();
 assert.equal(+d, 1455030494821);
 
-var s1 = packet.readLengthCodedString();
+var s1 = packet.readLengthCodedString('cesu8');
 assert.equal(s1, 'bar1');
 assert.equal(packet.offset, packet.end);

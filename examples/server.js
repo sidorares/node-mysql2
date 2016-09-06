@@ -26,7 +26,9 @@ server.on('connection', function(conn) {
     connectionId: 1234,
     statusFlags: 2,
     characterSet: 8,
-    capabilityFlags: 0xffffff,
+    //capabilityFlags: 0xffffff,
+    //capabilityFlags: -2113931265,
+    capabilityFlags: 2181036031,
     authCallback: authenticate
   });
 
