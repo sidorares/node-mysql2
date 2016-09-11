@@ -33,6 +33,7 @@
     "iconv-lite": "^0.4.13",
     "long": "^3.2.0",
     "named-placeholders": "1.1.1",
+    "object-assign": "^4.1.0",
     "readable-stream": "2.1.5",
     "safe-buffer": "^5.0.1",
     "seq-queue": "0.0.5",
