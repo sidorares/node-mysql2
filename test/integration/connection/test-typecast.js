@@ -10,16 +10,16 @@ connection.query({
     }
     return next();
   }
-}, function(err, res) {
+}, function (err, res) {
   assert.ifError(err);
-  assert.equal(res[0].foo, 'FOO UPPERCASE')
+  assert.equal(res[0].foo, 'FOO UPPERCASE');
 });
 
 
 connection.query({
   sql: 'select "foobar" as foo',
   typeCast: false
-}, function(err, res) {
+}, function (err, res) {
   assert.ifError(err);
   assert(Buffer.isBuffer(res[0].foo));
   assert.equal(res[0].foo.toString('utf8'), 'foobar');
