@@ -2,8 +2,9 @@ var mysql = require('../../../../index.js');
 var common = require('../../../common');
 var assert = require('assert');
 
-var connection = common.createConnection({charset: 'UTF8_GENERAL_CI'});
-connection.query('create table if not exists __test_client_encodings (name VARCHAR(200))', function(err) {
+var connection = common.createConnection({charset: 'UTF8MB4_GENERAL_CI'});
+connection.query('drop table __test_client_encodings');
+connection.query('create table if not exists __test_client_encodings (name VARCHAR(200)) CHARACTER SET=utf8mb4', function(err) {
   assert.ifError(err);
   connection.query('delete from __test_client_encodings', function(err) {
     assert.ifError(err);
