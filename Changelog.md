@@ -1,3 +1,8 @@
+1.0.0-rc-13 ( 14/09/2016 )
+ - fix a bug that prevented row parser cache from being
+   used                                                    #397
+ - add "files" section to package.json                     #398
+
 1.0.0-rc-12 ( 06/09/2016 )
  - support for non-utf8 server, results, and client
    encodings                                               #302, #374
