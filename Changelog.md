@@ -1,3 +1,13 @@
+1.0.0 ( 16/09/2016 )
+ - set default server encoding so that strings from server
+   can be decoded before initiol connection handshake packet
+   is sent
+ - add files section to package.json                      #398
+
+1.0.0-rc.13 ( 14/09/2016 )
+ - text protocol: fix a bug the prevented row parser
+   from being used                                        #397
+
 1.0.0-rc-12 ( 06/09/2016 )
  - support for non-utf8 server, results, and client
    encodings                                               #302, #374
