@@ -22,6 +22,11 @@
     "client",
     "server"
   ],
+  "files": [
+    "lib",
+    "index.js",
+    "promise.js"
+  ],
   "engines": {
     "node": ">= 0.8"
   },
