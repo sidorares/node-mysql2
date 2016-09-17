@@ -32,3 +32,7 @@ connection.prepare('select ? + ? as tests', function(err, statement) {
 });
 ```
 Note that you should not use statement after connection reset (`changeUser()` or disconnect). Statement scope is connection, you need to prepare statement for each new connection in order to use it.
+
+# Configuration
+
+`maxPreparedStatements` : We keep the cached statements in a [lru-cache](https://github.com/isaacs/node-lru-cache). Default size is `16000` but you can use this option to override it. Any statements that are dropped from cache will be `closed`.
