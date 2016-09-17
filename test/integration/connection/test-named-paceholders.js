@@ -48,12 +48,12 @@ connection.query('SELECT :a + :a as sum', {a: 2}, function (err, rows, fields) {
     throw err;
   }
   assert.deepEqual(rows, [{'sum':4}]);
+  connection.end();
 });
 
 var sql = connection.format('SELECT * from test_table where num1 < :numParam and num2 > :lParam', {lParam: 100, numParam: 2});
 assert.equal(sql, 'SELECT * from test_table where num1 < 2 and num2 > 100');
 
-connection.end();
 
 var pool = common.createPool();
 pool.config.connectionConfig.namedPlaceholders = true;
