@@ -1,4 +1,7 @@
 {
+  "plugins": [
+      "markdown"
+  ],
   "env": {
     "node": true
   },

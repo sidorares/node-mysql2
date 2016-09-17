@@ -7,11 +7,11 @@
     "example": "examples"
   },
   "scripts": {
-    "lint": "eslint lib/**/*.js index.js promise.js test/**/*.js",
+    "lint": "npm run lint:docs && npm run lint:code",
+    "lint:code": "eslint index.js promise.js lib/**/*.js test/**/*.js",
+    "lint:docs": "eslint documentation/**/*.md examples/**/*.md",
     "test": "npm run lint && node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
-    "benchmark": "./benchmarks/run-unit.js",
-    "benchmarks": "./benchmarks/run-unit.js",
-    "format-eslintrc": "jsonlint --sort-keys --in-place --indent '  ' ./.eslintrc"
+    "benchmark": "./benchmarks/run-unit.js"
   },
   "repository": {
     "type": "git",
@@ -48,6 +48,7 @@
   "devDependencies": {
     "assert-diff": "^1.0.1",
     "eslint": "3.0.0",
+    "eslint-plugin-markdown": "^1.0.0-beta.2",
     "portfinder": "^1.0.3",
     "progress": "1.1.8",
     "urun": "0.0.8",
