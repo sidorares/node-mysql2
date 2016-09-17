@@ -17,7 +17,7 @@ connection.query('FLUSH PRIVILEGES');
 connection.changeUser({
   user: 'changeuser1',
   password: 'changeuser1pass'
-}, function(err, res) {
+}, function (err, res) {
   assert.ifError(err);
   connection.query('select user()', function (err, rows) {
     assert.ifError(err);
@@ -26,7 +26,7 @@ connection.changeUser({
     connection.changeUser({
       user: 'changeuser2',
       password: 'changeuser2pass'
-    }, function(err, res) {
+    }, function (err, res) {
 
       assert.ifError(err);
 
@@ -37,7 +37,7 @@ connection.changeUser({
         connection.changeUser({
           user: 'changeuser1',
           passwordSha1: Buffer.from('f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd', 'hex') // sha1(changeuser1pass)
-        }, function(err, res) {
+        }, function (err, res) {
           connection.query('select user()', function (err, rows) {
             assert.ifError(err);
             assert.deepEqual(rows, [{'user()': 'changeuser1@localhost'}]);
@@ -50,7 +50,7 @@ connection.changeUser({
   });
 });
 
-function testIncorrectDb() {
+function testIncorrectDb () {
   connection.end();
   // TODO figure out if stuff below is still relevant
   /*

@@ -19,8 +19,7 @@ var queryCalls = 0;
 
 var portfinder = require('portfinder');
 portfinder.getPort(function (err, port) {
-
-var server = mysql.createServer();
+  var server = mysql.createServer();
   server.listen(port);
   server.on('connection', function (conn) {
     conn.serverHandshake({

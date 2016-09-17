@@ -11,7 +11,7 @@ var date2 = '2010-12-10 14:12:09.019473';
 var date3 = null;
 
 connection.query('CREATE TEMPORARY TABLE t (d1 DATE)');
-connection.query("set time_zone = '+00:00'");
+connection.query('set time_zone = \'+00:00\'');
 connection.query('INSERT INTO t set d1=?', [date]);
 
 connection1.query('CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME)');
