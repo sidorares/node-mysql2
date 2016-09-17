@@ -8,11 +8,10 @@ node_js:
   - '0.12'
   - '4.5'
   - '5.12'
-  - '6.5'
+  - '6.6'
 
 
 script:
-  - "test -z $(npm -ps ls eslint) || npm run-script lint"
   - "npm test"
 
 #matrix:
