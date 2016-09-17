@@ -74,5 +74,5 @@ Use `FILTER` environment variable to run a subset of tests with matching names, 
 ```sh
 FILTER='test-timestamp' npm run test
 # or
-FILTER='timout' npm run test:raw
+FILTER='timeout' npm run test:raw
 ```

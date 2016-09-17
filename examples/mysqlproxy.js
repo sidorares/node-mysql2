@@ -3,7 +3,7 @@ var ClientFlags = require('../lib/constants/client.js');
 
 var server = mysql.createServer();
 server.listen(3307);
-server.on('connection', function(conn) {
+server.on('connection', function (conn) {
   console.log('connection');
 
   conn.serverHandshake({
@@ -15,16 +15,16 @@ server.on('connection', function(conn) {
     capabilityFlags: 0xffffff ^ ClientFlags.COMPRESS
   });
 
-  conn.on('field_list', function(table, fields) {
+  conn.on('field_list', function (table, fields) {
     console.log('field list:', table, fields);
     conn.writeEof();
   });
 
   var remote = mysql.createConnection({user: 'root', database: 'dbname', host:'server.example.com', password: 'secret'});
 
-  conn.on('query', function(sql) {
+  conn.on('query', function (sql) {
     console.log('proxying query:' + sql);
-    remote.query(sql, function(err) { // overloaded args, either (err, result :object)
+    remote.query(sql, function (err) { // overloaded args, either (err, result :object)
                                       // or (err, rows :array, columns :array)
       if (Array.isArray(arguments[1])) {
         // response to a 'select', 'show' or similar
@@ -43,4 +43,3 @@ server.on('connection', function(conn) {
 
   conn.on('end', remote.end.bind(remote));
 });
-
