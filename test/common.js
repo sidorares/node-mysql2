@@ -59,7 +59,7 @@ module.exports.createConnection = function (args, callback) {
   }
 
   var params = {
-    host: config.host,
+    host: args.host || config.host,
     rowsAsArray: args.rowsAsArray,
     user: (args && args.user) || config.user,
     password: (args && args.password) || config.password,
