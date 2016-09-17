@@ -37,6 +37,7 @@
     "double-ended-queue": "2.1.0-0",
     "iconv-lite": "^0.4.13",
     "long": "^3.2.0",
+    "lru-cache": "^4.0.1",
     "named-placeholders": "1.1.1",
     "object-assign": "^4.1.0",
     "readable-stream": "2.1.5",
