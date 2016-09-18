@@ -1,4 +1,4 @@
-# Node MySQL 2
+## Node MySQL 2
 
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
@@ -7,24 +7,134 @@
 [![Windows Build][appveyor-image]][appveyor-url]
 [![License][license-image]][license-url]
 
-MySql client for node.js. Written in native JavaScript and aims to be mostly api compatible with [node-mysql](https://github.com/mysqljs/mysql)
+> Fast MySQL client with better performance, prepared statements, encoding support, binary log protocol, compression and [much more](https://github.com/sidorares/node-mysql2/tree/master/documentation)
 
 [![NPM](https://nodei.co/npm/mysql2.png?downloads=true&stars=true)](https://nodei.co/npm/mysql2/)
 [![NPM](https://nodei.co/npm-dl/mysql2.png?months=6)](https://nodei.co/npm/mysql2/)
 
-## Features and Documentation
+__ Table of contents __
 
-  - [Fast](https://gist.github.com/sidorares/ffe9ee9c423f763e3b6b)
-  - Prepared Statements
-  - Promise Wrapper
-  - Authentication Switch
-  - MySQL Server (API and Mocks)
-  - Pooling
-  - SSL
-  - MySQL Compression
-  - Binary Log Protocol Client
+  - [History and Why MySQL2](#history-and-why-mysql2)
+  - [Installation](#installation)
+  - [First Query](#first-query)
+  - [Using Prepared Statements](#using-prepared-statements)
+  - [Using Promise Wrapper](#using-promise-wrapper)
+  - [API and Configuration](#api-and-configuration)
+  - [Documentation](#documentation)
+  - [Acknowledgements](#acknowledgements)
+  - [Contributing](#contributing)
 
-Please check [documentation](https://github.com/sidorares/node-mysql2/tree/master/documentation) to get started.
+## History and Why MySQL2
+
+MySQL2 project is a continuation of [MySQL-Native][mysql-native], which was started in early 2010. After introduction of Buffer Class and to shed native compilation, this project was started and built with pure JavaScript.
+
+MySQL2 is mostly API compatible with [Node MySQL][node-mysql] and supports majority of features. MySQL2 also offers some cool additional features
+
+ - Faster and Better Performance
+ - Prepared Statements
+ - MySQL Binary Log Protocol
+ - Extended support for Encoding and Collation
+ - Promise Wrapper
+ - Compression
+ - SSL and Authentication Switch
+ - Custom Streams
+ - Pooling
+
+## Installation
+
+MySQL2 is free from native bindings and can be installed on Linux, Mac OS or Windows without any issues.
+
+```bash
+  npm install --save mysql2
+```
+
+## First Query
+
+```js
+// get the client
+var mysql = require('mysql');
+
+// create the connection to database
+var connection = mysql.createConnection({host:'localhost', user: 'root', database: 'test'});
+
+// simple query
+connection.query('SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45', function (err, results, fields) {
+  console.log(results); // results contains rows returned by server
+  console.log(fields); // fields contains extra meta data about results, if available
+});
+
+// with placeholder
+connection.query('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Page', 45], function (err, results) {
+  console.log(results);
+});
+```
+
+## Using Prepared Statements
+
+With MySQL2 you also get the prepared statements. With prepared statements MySQL doesn't have to prepare plan for same query everytime, this results in better performance. If you don't know why they are important, please check these discussions
+
+- [How prepared statements can protect from SQL Injection attacks](http://stackoverflow.com/questions/8263371/how-can-prepared-statements-protect-from-sql-injection-attacks)
+
+MySQL provides `execute` method which will prepare and query the statement. You can also manually prepare / unprepare statement with `prepare` / `unprepare` helpers.
+
+```js
+// get the client
+var mysql = require('mysql');
+
+// create the connection to database
+var connection = mysql.createConnection({host:'localhost', user: 'root', database: 'test'});
+
+// execute will internally call prepare and query
+connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Rick C-137', 53], function (err, results, fields) {
+  console.log(results); // results contains rows returned by server
+  console.log(fields); // fields contains extra meta data about results, if available
+
+  // If you execute same statement again, it will be picked form a LRU cache
+  // which will save query preparation time and give better performance
+});
+```
+## Using Promise Wrapper
+
+MySQL2 also support Promise API. Which works very well with ES7 async await.
+
+<!--eslint-disable-next-block-->
+```js
+// get the client
+let mysql = require('mysql2/promise');
+
+// create the connection
+let connection = await mysql.createConnection({host:'localhost', user: 'root', database: 'test'});
+
+// query database
+let [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+```
+
+MySQL2 use default `Promise` object available in scope. But you can choose which `Promise` implementation you want to use
+
+<!--eslint-disable-next-block-->
+```js
+// get the client
+let mysql = require('mysql2/promise');
+
+// get the promise implementation, we will use bluebird
+let bluebird = require('bluebird');
+
+// create the connection, specify bluebird as Promise
+let connection = await mysql.createConnection({host:'localhost', user: 'root', database: 'test', Promise: bluebird});
+
+// query database
+let [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+```
+
+## API and Configuration
+
+MySQL2 is mostly API compatible with [Node MySQL][node-mysql]. You should check their API documentation to see all available API options.
+
+If you find any incompatibility with [Node MySQL][node-mysql], Please report via Issue tracker. We will fix reported incompatibility on priority basis.
+
+## Documentation
+
+You can find more detailed documentation [here](https://github.com/sidorares/node-mysql2/tree/master/documentation). You should also check various code [examples](https://github.com/sidorares/node-mysql2/tree/master/examples) to understand advance concepts.
 
 ## Acknowledgements
 
@@ -51,3 +161,5 @@ Want to improve something in `node-mysql2`. Please check [Contributing.md](https
 [downloads-url]: https://npmjs.org/package/mysql2
 [license-url]: https://github.com/sidorares/node-mysql2/blob/master/License
 [license-image]: https://img.shields.io/npm/l/mysql2.svg?maxAge=2592000
+[node-mysql]: https://github.com/mysqljs/mysql
+[mysql-native]: https://github.com/sidorares/nodejs-mysql-native
