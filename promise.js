@@ -25,29 +25,40 @@ PromiseConnection.prototype.release = function () {
   this.connection.release();
 };
 
-PromiseConnection.prototype.query = function (sql, values) {
+
+PromiseConnection.prototype.query = function (query, params) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    c.query(sql, values, function (err, rows, fields) {
+    var done = function (err, rows, fields) {
       if (err) {
         reject(err);
       } else {
         resolve([rows, fields]);
       }
-    });
+    };
+    if (params) {
+      c.query(query, params, done);
+    } else {
+      c.query(query, done);
+    }
   });
 };
 
 PromiseConnection.prototype.execute = function (query, params) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    c.execute(query, params, function (err, rows, fields) {
+    var done = function (err, rows, fields) {
       if (err) {
         reject(err);
       } else {
         resolve([rows, fields]);
       }
-    });
+    };
+    if (params) {
+      c.execute(query, params, done);
+    } else {
+      c.execute(query, done);
+    }
   });
 };
 

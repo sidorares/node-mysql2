@@ -52,8 +52,31 @@ function testErrors () {
   });
 }
 
+function testObjParams () {
+  var connResolved;
+  var connPromise = createConnection(config).then(function (conn) {
+    connResolved = conn;
+    return conn.query({
+      sql: 'select ?-? as ttt',
+      values: [5, 2]
+    });
+  }).then(function (result1) {
+    assert.equal(result1[0][0].ttt, 3);
+    return connResolved.execute({
+      sql: 'select ?-? as ttt',
+      values: [8, 5]
+    });
+  }).then(function (result2) {
+    assert.equal(result2[0][0].ttt, 3);
+    return connResolved.end();
+  }).catch(function (err) {
+    console.log(err);
+  });
+}
+
 testBasic();
 testErrors();
+testObjParams();
 
 process.on('exit', function () {
   if (skipTest) {
