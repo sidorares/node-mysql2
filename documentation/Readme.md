@@ -29,7 +29,7 @@ Please check these [examples](https://github.com/sidorares/node-mysql2/tree/mast
 You need to check corresponding field's zeroFill flag and convert to string manually if this is of importance to you.
 
 - `DECIMAL` and `NEWDECIMAL` types always returned as `string` unless you pass this config option:
-```js
+```
 {
   decimalNumbers: true
 }

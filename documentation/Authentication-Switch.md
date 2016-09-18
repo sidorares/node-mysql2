@@ -16,14 +16,14 @@ var conn = mysql.createConnection({
   user: 'test_user',
   password: 'test',
   database: 'test_database',
-  authSwitchHandler: function(data, cb) {
+  authSwitchHandler: function (data, cb) {
     if (data.pluginName === 'ssh-key-auth') {
-      getPrivateKey((key) => {
+      getPrivateKey(function (key) {
         var response = encrypt(key, data.pluginData);
         // continue handshake by sending response data
         // respond with error to propagate error to connect/changeUser handlers
         cb(null, response);
-      })
+      });
     }
   }
 });

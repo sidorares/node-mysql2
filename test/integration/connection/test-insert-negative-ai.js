@@ -23,20 +23,17 @@ var testNegativeAI = function (err) {
     'INSERT INTO `' + testTable + '`' +
     ' (id, title) values (-999, "' + testData + '")'
     , function (err, result) {
+    assert.ifError(err);
+    insertResult = result;
 
-      assert.ifError(err);
-      insertResult = result;
-
-      // select the row with negative AI
-      connection.query('SELECT * FROM `' + testTable + '`' +
+    // select the row with negative AI
+    connection.query('SELECT * FROM `' + testTable + '`' +
       ' WHERE id = ' + result.insertId
-      ,function (err, result_) {
-
-        assert.ifError(err);
-        selectResult = result_;
-
-        connection.end();
-      });
+      , function (err, result_) {
+      assert.ifError(err);
+      selectResult = result_;
+      connection.end();
+    });
   });
 };
 

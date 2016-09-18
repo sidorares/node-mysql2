@@ -33,7 +33,7 @@ connection.query('INSERT INTO bigs SET title=\'test1\'', function (err, result) 
         connection.query({
           sql: 'select * from bigs',
           supportBigNumbers: true,
-          bigNumberString: false,
+          bigNumberString: false
         }, function (err, result) {
           assert.strictEqual(result[0].id, 123);
           assert.strictEqual(result[1].id, 124);
