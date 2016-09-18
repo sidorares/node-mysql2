@@ -43,10 +43,18 @@ connection.query(sql, [badPath, ','], function (err, result) {
 });
 
 // test path mapping
-var Stream = require('readable-stream').PassThrough;
-var myStream = new Stream();
+var createMyStream = function (path) {
+  var Stream = require('readable-stream').PassThrough;
+  var myStream = new Stream();
+  setTimeout(function () {
+    myStream.write('11,Hello World\n');
+    myStream.write('21,One ');
+    myStream.write('more row\n');
+    myStream.end();
+  }, 1000);
+  return myStream;
+};
 
-var createMyStream = function (path) { return myStream; };
 var streamResult;
 connection.query({
   sql: sql,
@@ -57,14 +65,8 @@ connection.query({
     throw err;
   }
   streamResult = result;
-}
-);
-myStream.write('11,Hello World\n');
-myStream.write('21,One ');
-myStream.write('more row\n');
-myStream.end();
-
-connection.end();
+  connection.end();
+});
 
 process.on('exit', function () {
   assert.equal(ok.affectedRows, 4);
