@@ -12,7 +12,7 @@
 [![NPM](https://nodei.co/npm/mysql2.png?downloads=true&stars=true)](https://nodei.co/npm/mysql2/)
 [![NPM](https://nodei.co/npm-dl/mysql2.png?months=6)](https://nodei.co/npm/mysql2/)
 
-__ Table of contents __
+__Table of contents__
 
   - [History and Why MySQL2](#history-and-why-mysql2)
   - [Installation](#installation)
@@ -45,7 +45,7 @@ MySQL2 is mostly API compatible with [Node MySQL][node-mysql] and supports major
 MySQL2 is free from native bindings and can be installed on Linux, Mac OS or Windows without any issues.
 
 ```bash
-  npm install --save mysql2
+npm install --save mysql2
 ```
 
 ## First Query
