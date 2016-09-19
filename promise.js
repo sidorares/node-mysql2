@@ -90,25 +90,35 @@ function createPool (opts) {
 
     query: function (sql, args) {
       return new Promise(function (resolve, reject) {
-        corePool.query(sql, args, function (err, rows, fields) {
+        var done = function (err, rows, fields) {
           if (err) {
             reject(err);
           } else {
             resolve([rows, fields]);
           }
-        });
+        };
+        if (args) {
+          corePool.query(sql, args, done);
+        } else {
+          corePool.query(sql, done);
+        }
       });
     },
 
     execute: function (sql, args) {
       return new Promise(function (resolve, reject) {
-        corePool.execute(sql, args, function (err, rows, fields) {
+        var done = function (err, rows, fields) {
           if (err) {
             reject(err);
           } else {
             resolve([rows, fields]);
           }
-        });
+        };
+        if (args) {
+          corePool.execute(sql, args, done);
+        } else {
+          corePool.execute(sql, done);
+        }
       });
     },
 
