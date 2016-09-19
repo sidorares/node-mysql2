@@ -25,29 +25,37 @@ PromiseConnection.prototype.release = function () {
   this.connection.release();
 };
 
-PromiseConnection.prototype.query = function (sql, values) {
+function makeDoneCb (resolve, reject) {
+  return function (err, rows, fields) {
+    if (err) {
+      reject(err);
+    } else {
+      resolve([rows, fields]);
+    }
+  };
+}
+
+PromiseConnection.prototype.query = function (query, params) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    c.query(sql, values, function (err, rows, fields) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve([rows, fields]);
-      }
-    });
+    var done = makeDoneCb(resolve, reject);
+    if (params) {
+      c.query(query, params, done);
+    } else {
+      c.query(query, done);
+    }
   });
 };
 
 PromiseConnection.prototype.execute = function (query, params) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    c.execute(query, params, function (err, rows, fields) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve([rows, fields]);
-      }
-    });
+    var done = makeDoneCb(resolve, reject);
+    if (params) {
+      c.execute(query, params, done);
+    } else {
+      c.execute(query, done);
+    }
   });
 };
 
@@ -79,25 +87,23 @@ function createPool (opts) {
 
     query: function (sql, args) {
       return new Promise(function (resolve, reject) {
-        corePool.query(sql, args, function (err, rows, fields) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve([rows, fields]);
-          }
-        });
+        var done = makeDoneCb(resolve, reject);
+        if (args) {
+          corePool.query(sql, args, done);
+        } else {
+          corePool.query(sql, done);
+        }
       });
     },
 
     execute: function (sql, args) {
       return new Promise(function (resolve, reject) {
-        corePool.execute(sql, args, function (err, rows, fields) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve([rows, fields]);
-          }
-        });
+        var done = makeDoneCb(resolve, reject);
+        if (args) {
+          corePool.execute(sql, args, done);
+        } else {
+          corePool.execute(sql, done);
+        }
       });
     },
 
