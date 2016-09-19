@@ -25,7 +25,7 @@ PromiseConnection.prototype.release = function () {
   this.connection.release();
 };
 
-function queryDoneCb (resolve, reject) {
+function makeDoneCb (resolve, reject) {
   return function (err, rows, fields) {
     if (err) {
       reject(err);
@@ -38,7 +38,7 @@ function queryDoneCb (resolve, reject) {
 PromiseConnection.prototype.query = function (query, params) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    var done = doneCb(resolve, reject);
+    var done = makeDoneCb(resolve, reject);
     if (params) {
       c.query(query, params, done);
     } else {
@@ -50,7 +50,7 @@ PromiseConnection.prototype.query = function (query, params) {
 PromiseConnection.prototype.execute = function (query, params) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    var done = doneCb(resolve, reject);
+    var done = makeDoneCb(resolve, reject);
     if (params) {
       c.execute(query, params, done);
     } else {
@@ -87,7 +87,7 @@ function createPool (opts) {
 
     query: function (sql, args) {
       return new Promise(function (resolve, reject) {
-        var done = doneCb(resolve, reject);
+        var done = makeDoneCb(resolve, reject);
         if (args) {
           corePool.query(sql, args, done);
         } else {
@@ -98,7 +98,7 @@ function createPool (opts) {
 
     execute: function (sql, args) {
       return new Promise(function (resolve, reject) {
-        var done = doneCb(resolve, reject);
+        var done = makeDoneCb(resolve, reject);
         if (args) {
           corePool.execute(sql, args, done);
         } else {
