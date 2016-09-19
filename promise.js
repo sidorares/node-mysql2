@@ -25,17 +25,20 @@ PromiseConnection.prototype.release = function () {
   this.connection.release();
 };
 
+function queryDoneCb (resolve, reject) {
+  return function (err, rows, fields) {
+    if (err) {
+      reject(err);
+    } else {
+      resolve([rows, fields]);
+    }
+  };
+}
 
 PromiseConnection.prototype.query = function (query, params) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    var done = function (err, rows, fields) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve([rows, fields]);
-      }
-    };
+    var done = doneCb(resolve, reject);
     if (params) {
       c.query(query, params, done);
     } else {
@@ -47,13 +50,7 @@ PromiseConnection.prototype.query = function (query, params) {
 PromiseConnection.prototype.execute = function (query, params) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    var done = function (err, rows, fields) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve([rows, fields]);
-      }
-    };
+    var done = doneCb(resolve, reject);
     if (params) {
       c.execute(query, params, done);
     } else {
@@ -90,13 +87,7 @@ function createPool (opts) {
 
     query: function (sql, args) {
       return new Promise(function (resolve, reject) {
-        var done = function (err, rows, fields) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve([rows, fields]);
-          }
-        };
+        var done = doneCb(resolve, reject);
         if (args) {
           corePool.query(sql, args, done);
         } else {
@@ -107,13 +98,7 @@ function createPool (opts) {
 
     execute: function (sql, args) {
       return new Promise(function (resolve, reject) {
-        var done = function (err, rows, fields) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve([rows, fields]);
-          }
-        };
+        var done = doneCb(resolve, reject);
         if (args) {
           corePool.execute(sql, args, done);
         } else {
