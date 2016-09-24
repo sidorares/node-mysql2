@@ -7,7 +7,7 @@
 [![Windows Build][appveyor-image]][appveyor-url]
 [![License][license-image]][license-url]
 
-> Fast MySQL client with better performance, prepared statements, encoding support, binary log protocol, compression and [much more](https://github.com/sidorares/node-mysql2/tree/master/documentation)
+> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more](https://github.com/sidorares/node-mysql2/tree/master/documentation)
 
 [![NPM](https://nodei.co/npm/mysql2.png?downloads=true&stars=true)](https://nodei.co/npm/mysql2/)
 [![NPM](https://nodei.co/npm-dl/mysql2.png?months=6)](https://nodei.co/npm/mysql2/)
@@ -26,18 +26,19 @@ __Table of contents__
 
 ## History and Why MySQL2
 
-MySQL2 project is a continuation of [MySQL-Native][mysql-native], which was started in early 2010. After introduction of Buffer Class and to shed native compilation, this project was started and built with pure JavaScript.
+MySQL2 project is a continuation of [MySQL-Native][mysql-native]. Protocol parser code was rewritten from scratch and api changed to match popular [mysqljs/mysql][node-mysql]. MySQL2 team is working together with [mysqljs/mysql][node-mysql] team to factor out shared code and move it under [mysqljs][mysqljs] organisation.
 
-MySQL2 is mostly API compatible with [Node MySQL][node-mysql] and supports majority of features. MySQL2 also offers some cool additional features
+MySQL2 is mostly API compatible with [Node MySQL][node-mysql] and supports majority of features. MySQL2 also offers these additional features
 
- - Faster and Better Performance
- - Prepared Statements
+ - Faster / Better Performance
+ - [Prepared Statements](https://github.com/sidorares/node-mysql2/tree/master/documentation/Prepared-Statements.md)
  - MySQL Binary Log Protocol
+ - [MySQL Server](https://github.com/sidorares/node-mysql2/tree/master/documentation/MySQL-Server.md)
  - Extended support for Encoding and Collation
- - Promise Wrapper
+ - [Promise Wrapper](https://github.com/sidorares/node-mysql2/tree/master/documentation/Promise-Wrapper.md)
  - Compression
- - SSL and Authentication Switch
- - Custom Streams
+ - SSL and [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/Authentication-Switch.md)
+ - [Custom Streams](https://github.com/sidorares/node-mysql2/tree/master/documentation/Extras.md)
  - Pooling
 
 ## Installation
@@ -75,7 +76,7 @@ With MySQL2 you also get the prepared statements. With prepared statements MySQL
 
 - [How prepared statements can protect from SQL Injection attacks](http://stackoverflow.com/questions/8263371/how-can-prepared-statements-protect-from-sql-injection-attacks)
 
-MySQL provides `execute` method which will prepare and query the statement. You can also manually prepare / unprepare statement with `prepare` / `unprepare` helpers.
+MySQL provides `execute` helper which will prepare and query the statement. You can also manually prepare / unprepare statement with `prepare` / `unprepare` methods.
 
 ```js
 // get the client
