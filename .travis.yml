@@ -1,8 +1,10 @@
-sudo: false
+sudo: required
+services:
+  - docker
 language: node_js
 # IF NOT EXISTS is mariadb-10+ only - https://mariadb.com/kb/en/mariadb/comment-syntax/
-before_script:
-  - mysql -e 'create database /*M!50701 IF NOT EXISTS */ test;'
+before_install:
+  - docker --version
 node_js:
   - '0.10'
   - '0.12'
@@ -12,6 +14,8 @@ node_js:
 
 
 script:
+  - docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 3306:3306 mysql:5.7
+  - docker run --link mysql:db -e CHECK_PORT=3306 -e CHECK_HOST=db giorgos/takis
   - "npm test"
 
 #matrix:

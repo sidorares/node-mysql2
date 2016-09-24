@@ -2,7 +2,7 @@ var assert = require('assert');
 var mysql = require('../common');
 
 var pool = mysql.createPool();
-var conn = mysql.createConnection();
+var conn = mysql.createConnection({multipleStatements: true});
 pool.config.connectionLimit = 5;
 
 var numSelectToPerform = 10;
@@ -14,7 +14,9 @@ function kill () {
   setTimeout(function () {
     var id = tids.shift();
     if (typeof id != 'undefined') {
-      conn.query('kill ?', id, function (err, res) {
+      // sleep required to give mysql time to close connection,
+      // and callback called after connection with id is really closed
+      conn.query('kill ?; select sleep(0.001)', id, function (err, res) {
         assert.ifError(err);
         killCount++;
         assert.equal(pool._allConnections.length, tids.length);
