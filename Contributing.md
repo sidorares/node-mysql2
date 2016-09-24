@@ -55,7 +55,7 @@ echo "CREATE DATABASE test;" | mysql -uroot
 ```sh
 # Run once to setup the local environment variables.
 export CI=1;
-export MYSQL_HOST='127.0.0.1';
+export MYSQL_HOST='0.0.0.0';
 export MYSQL_USER='root';
 export MYSQL_PASSWORD='root';
 export MYSQL_DATABASE='test';
