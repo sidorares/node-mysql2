@@ -8,6 +8,7 @@ var connection = common.createConnection({
       + 'plugin switch request to be handled by internal handler');
   }
 });
+var onlyUsername = function (name) { return name.substring(0, name.indexOf('@')); };
 
 // create test user first
 connection.query('GRANT ALL ON *.* TO \'changeuser1\'@\'%\' IDENTIFIED BY \'changeuser1pass\'');
@@ -21,7 +22,7 @@ connection.changeUser({
   assert.ifError(err);
   connection.query('select current_user()', function (err, rows) {
     assert.ifError(err);
-    assert.deepEqual(rows, [{'current_user()': 'changeuser1@%'}]);
+    assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
 
     connection.changeUser({
       user: 'changeuser2',
@@ -32,7 +33,7 @@ connection.changeUser({
 
       connection.query('select current_user()', function (err, rows) {
         assert.ifError(err);
-        assert.deepEqual(rows, [{'current_user()': 'changeuser2@%'}]);
+        assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser2');
 
         connection.changeUser({
           user: 'changeuser1',
@@ -40,8 +41,7 @@ connection.changeUser({
         }, function (err, res) {
           connection.query('select current_user()', function (err, rows) {
             assert.ifError(err);
-            assert.deepEqual(rows, [{'current_user()': 'changeuser1@%'}]);
-
+            assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
             testIncorrectDb();
           });
         });
