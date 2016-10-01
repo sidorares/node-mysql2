@@ -1,17 +1,18 @@
 {
   "name": "mysql2",
-  "version": "1.0.0-rc.11",
+  "version": "1.1.0",
   "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
-    "lint": "eslint lib/**/*.js index.js test/**/*.js",
-    "test": "node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
-    "benchmark": "./benchmarks/run-unit.js",
-    "benchmarks": "./benchmarks/run-unit.js",
-    "format-eslintrc": "jsonlint --sort-keys --in-place --indent '  ' ./.eslintrc"
+    "lint": "npm run lint:docs && npm run lint:code",
+    "lint:code": "eslint index.js promise.js 'lib/**/*.js' 'test/**/*.js'",
+    "lint:docs": "eslint README.md Contributing.md 'documentation/**/*.md' examples/*.js",
+    "test": "npm run lint && npm run test:raw",
+    "test:raw": "node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
+    "benchmark": "./benchmarks/run-unit.js"
   },
   "repository": {
     "type": "git",
@@ -22,23 +23,34 @@
     "client",
     "server"
   ],
+  "files": [
+    "lib",
+    "index.js",
+    "promise.js"
+  ],
   "engines": {
-    "node": ">= 0.8"
+    "node": ">= 0.10"
   },
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "cardinal": "0.7.0",
+    "cardinal": "1.0.0",
     "double-ended-queue": "2.1.0-0",
+    "generate-function": "^2.0.0",
+    "iconv-lite": "^0.4.13",
     "long": "^3.2.0",
+    "lru-cache": "^4.0.1",
     "named-placeholders": "1.1.1",
+    "object-assign": "^4.1.0",
     "readable-stream": "2.1.5",
+    "safe-buffer": "^5.0.1",
     "seq-queue": "0.0.5",
     "sqlstring": "^2.0.1"
   },
   "devDependencies": {
     "assert-diff": "^1.0.1",
     "eslint": "3.0.0",
+    "eslint-plugin-markdown": "^1.0.0-beta.2",
     "portfinder": "^1.0.3",
     "progress": "1.1.8",
     "urun": "0.0.8",

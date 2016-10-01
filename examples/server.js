@@ -1,41 +1,44 @@
 var mysql = require('../index.js');
 var flags = require('../lib/constants/client.js');
-var auth  = require('../lib/auth_41.js');
+var auth = require('../lib/auth_41.js');
 
-function authenticate(params, cb) {
+function authenticate (params, cb) {
   console.log(params);
   var doubleSha = auth.doubleSha1('pass123');
   var isValid = auth.verifyToken(params.authPluginData1, params.authPluginData2, params.authToken, doubleSha);
-  if (isValid)
+  if (isValid) {
     cb(null);
-  else
+  } else {
     // for list of codes lib/constants/errors.js
-    cb(null, { message: 'wrong password dude', code: 1045});
+    cb(null, {message: 'wrong password dude', code: 1045});
+  }
 }
 
 var server = mysql.createServer();
 server.listen(3333);
-server.on('connection', function(conn) {
+server.on('connection', function (conn) {
 
   // we can deny connection here:
   // conn.writeError({ message: 'secret', code: 123 });
   // conn.close();
   conn.serverHandshake({
     protocolVersion: 10,
-    serverVersion: '5.6.10', //'node.js rocks',
+    serverVersion: '5.6.10', // 'node.js rocks',
     connectionId: 1234,
     statusFlags: 2,
     characterSet: 8,
-    capabilityFlags: 0xffffff,
+    // capabilityFlags: 0xffffff,
+    // capabilityFlags: -2113931265,
+    capabilityFlags: 2181036031,
     authCallback: authenticate
   });
 
-  conn.on('field_list', function(table, fields) {
+  conn.on('field_list', function (table, fields) {
     console.log('FIELD LIST:', table, fields);
     conn.writeEof();
   });
 
-  conn.on('query', function(query) {
+  conn.on('query', function (query) {
     conn.writeColumns([{
       catalog: 'def',
       schema: 'test',

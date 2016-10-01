@@ -7,10 +7,10 @@ var binlogStream = mysql.createBinlogStream({
   masterId: 0,
   filename: 'mysql-bin.000007',
   binlogPos: 120,
-  flags: 1, // 1 = "non-blocking mode"
+  flags: 1 // 1 = "non-blocking mode"
 });
 
-binlogStream.pipe(through2.obj(function(obj, enc, next) {
+binlogStream.pipe(through2.obj(function (obj, enc, next) {
   console.log(obj);
   next();
 }));

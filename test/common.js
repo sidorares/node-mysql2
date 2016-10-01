@@ -1,5 +1,5 @@
 var config = {
-  host: process.env.MYSQL_HOST || '127.0.0.1',
+  host: process.env.MYSQL_HOST || '0.0.0.0',
   user: process.env.MYSQL_USER || 'root',
   password: process.env.CI ? process.env.MYSQL_PASSWORD : '',
   database: process.env.MYSQL_DATABASE || 'test',
@@ -59,7 +59,7 @@ module.exports.createConnection = function (args, callback) {
   }
 
   var params = {
-    host: config.host,
+    host: args.host || config.host,
     rowsAsArray: args.rowsAsArray,
     user: (args && args.user) || config.user,
     password: (args && args.password) || config.password,
@@ -71,6 +71,7 @@ module.exports.createConnection = function (args, callback) {
     bigNumberStrings: args && args.bigNumberStrings,
     compress: (args && args.compress) || config.compress,
     decimalNumbers: args && args.decimalNumbers,
+    charset: args && args.charset,
     dateStrings: args && args.dateStrings,
     authSwitchHandler: args && args.authSwitchHandler,
     typeCast: args && args.typeCast

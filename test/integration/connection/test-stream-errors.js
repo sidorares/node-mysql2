@@ -47,5 +47,5 @@ process.on('exit', function () {
   assert.equal(receivedError2.fatal, true);
   assert.equal(receivedError2.code, err.code);
   assert.equal(receivedError3.fatal, true);
-  assert.equal(receivedError3.code, err.code);
+  assert.equal(receivedError3.message, 'Can\'t add new command when connection is in closed state');
 });

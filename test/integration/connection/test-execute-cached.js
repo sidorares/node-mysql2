@@ -24,9 +24,9 @@ connection.execute(q, [123], function (err, _rows, _fields) {
         throw err;
       }
       rows2 = _rows;
-      assert(Object.keys(connection._statements).length == 1);
-      assert(connection._statements[key].query == q);
-      assert(connection._statements[key].parameters.length == 1);
+      assert(connection._statements.length == 1);
+      assert(connection._statements.get(key).query == q);
+      assert(connection._statements.get(key).parameters.length == 1);
       connection.end();
     });
   });
@@ -38,4 +38,3 @@ process.on('exit', function () {
   assert.deepEqual(rows1, [{'test': 125}]);
   assert.deepEqual(rows2, [{'test': 126}]);
 });
-

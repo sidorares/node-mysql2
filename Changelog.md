@@ -1,3 +1,39 @@
+1.1.0 ( 20/09/2016 )
+ - promise wrappers: fix object form parameters being
+   ignored                                                #405
+ - listen for errors in socket.write, prevent from crash
+   when server disconnects mid query. In LOAD INFILE
+   command disconnect from input stream when there is
+   error                                                  #404 #289 #57 #38
+ - ensure prepare+execute commands are enqueued one after
+   another (previously execute was appended at the end
+   of the queue)                                          #404
+ - add linting to readme and docs code                    #403 405
+ - build: bump to node 6.6
+ - (SEMVER MINOR) use LRU cache to store prepared
+   statements add maxPreparedStatements options parameter #401
+ - (SEMVER MINOR) support connectTimeout option           #396 #376
+ - (SEMVER MINOR) support changedRows in insert results   #400 #299
+ - (SEMVER MINOR) allow to use nestTables as connection
+   options in addition to query/execute option            #399
+
+1.0.0 ( 16/09/2016 )
+ - set default server encoding so that strings from server
+   can be decoded before initiol connection handshake packet
+   is sent
+ - add files section to package.json                      #398
+
+1.0.0-rc.13 ( 14/09/2016 )
+ - text protocol: fix a bug the prevented row parser
+   from being used                                        #397
+
+1.0.0-rc-12 ( 06/09/2016 )
+ - support for non-utf8 server, results, and client
+   encodings                                               #302, #374
+ - replace deprecated Buffer APIs with Buffer.from
+   and Buffer.allocUnsafe                                  #381, #380
+ - build: bump to node v6.5
+
 1.0.0-rc-11 ( 14/08/2016 )
  - pool: support namedPlaceholder flag in `pool.query`
    and `pool.execute` helpers                              #369

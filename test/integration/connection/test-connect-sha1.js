@@ -1,6 +1,7 @@
 var mysql = require('../../../index.js');
 var auth = require('../../../lib/auth_41.js');
 var assert = require('assert');
+var Buffer = require('safe-buffer').Buffer;
 
 var server;
 
@@ -18,8 +19,7 @@ var queryCalls = 0;
 
 var portfinder = require('portfinder');
 portfinder.getPort(function (err, port) {
-
-var server = mysql.createServer();
+  var server = mysql.createServer();
   server.listen(port);
   server.on('connection', function (conn) {
     conn.serverHandshake({
@@ -42,7 +42,7 @@ var server = mysql.createServer();
     port: port,
     user: 'testuser',
     database: 'testdatabase',
-    passwordSha1: Buffer('8bb6118f8fd6935ad0876a3be34a717d32708ffd', 'hex')
+    passwordSha1: Buffer.from('8bb6118f8fd6935ad0876a3be34a717d32708ffd', 'hex')
   });
 
   connection.on('error', function (err) {

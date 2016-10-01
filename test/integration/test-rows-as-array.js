@@ -21,6 +21,7 @@ c.execute('select 1+1 as a', function (err, rows, fields) {
 c.execute({sql: 'select 1+2 as a', rowsAsArray: false}, function (err, rows, fields) {
   assert.ifError(err);
   assert.equal(rows[0].a, 3);
+  c.end();
 });
 
 // disabled in initial config, enable in some tets
@@ -42,9 +43,8 @@ c1.execute('select 1+1 as a', function (err, rows, fields) {
 
 c1.execute({sql: 'select 1+2 as a', rowsAsArray: true}, function (err, rows, fields) {
   assert.ifError(err);
-  assert.equal(rows[0][1], 3);
+  assert.equal(rows[0][0], 3);
+  c1.end();
 });
 
 
-c.end();
-c1.end();

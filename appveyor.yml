@@ -10,7 +10,7 @@ environment:
     - nodejs_version: "0.12"
     - nodejs_version: "4.4"
     - nodejs_version: "5.12"
-    - nodejs_version: "6.3"
+    - nodejs_version: "6.6"
 
 
 services:
@@ -33,6 +33,7 @@ test_script:
   - mysql --version
   - node --version
   - npm --version
+  - npm run lint
   - node test/run.js
   - SET MYSQL_USE_COMPRESSION=1
   - node test/run.js

@@ -18,15 +18,15 @@ var assert = require('assert');
 connection.query({
   sql: 'select "FOOBAR" as foo',
   typeCast: typeCastWrapper('toLowerCase')
-}, function(err, res) {
+}, function (err, res) {
   assert.ifError(err);
-  assert.equal(res[0].foo, 'foobar')
+  assert.equal(res[0].foo, 'foobar');
 });
 
 // global typecast works
 connection.query({
-  sql: 'select "foobar" as foo',
-}, function(err, res) {
+  sql: 'select "foobar" as foo'
+}, function (err, res) {
   assert.ifError(err);
   assert.equal(res[0].foo, 'FOOBAR');
 });
