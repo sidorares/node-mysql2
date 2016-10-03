@@ -25,7 +25,6 @@ connection.query('INSERT INTO ' + table + ' (content) VALUES(?)', [content], fun
   result = _result;
   connection.query('SELECT * FROM ' + table + ' WHERE id = ' + result.insertId, function (err, _result2) {
     result2 = _result2;
-    debugger;
     connection.end();
   });
 });
