@@ -1,4 +1,4 @@
-var mysql = require('../../promise.js');
+var mysql = require('mysql/promise');
 var co = require('co')
 
 co(function * () {
