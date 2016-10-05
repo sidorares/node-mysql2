@@ -1,3 +1,20 @@
+1.1.1 ( 06/10/2016 )
+ - (fix) do not crash when result of execute().stream()
+   is paused                                             #174, #424
+ - (fix) do not call .destroy() on stream when connect timeout
+   is fired (destroy() method exist only on Net stream
+   but not on custom streams)                             #417, #414
+ - (internal) parser generator now uses generate-function
+   package to prepare dynamically generated parser func   #412, #167
+ - (docs) fix readme test/code errors                     #413
+ - (tests) use docker+mysql 5.7 on travis                 #410
+ - (fix) use correct encoding for JSON type (despite
+   reported by server BINARY enc utf8 should be used
+   instead)                                               #410
+ - (docs) refactor readmy to be more firendly for first
+   time readers
+
+
 1.1.0 ( 20/09/2016 )
  - promise wrappers: fix object form parameters being
    ignored                                                #405
