@@ -10,7 +10,7 @@
  - (tests) use docker+mysql 5.7 on travis                 #410
  - (fix) use correct encoding for JSON type (despite
    reported by server BINARY enc utf8 should be used
-   instead)                                               #410
+   instead)                                               #410, #409
  - (docs) refactor readmy to be more firendly for first
    time readers
 
