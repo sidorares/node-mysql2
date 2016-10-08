@@ -45,7 +45,7 @@
     "readable-stream": "2.1.5",
     "safe-buffer": "^5.0.1",
     "seq-queue": "0.0.5",
-    "sqlstring": "^2.0.1"
+    "sqlstring": "^2.1.0"
   },
   "devDependencies": {
     "assert-diff": "^1.0.1",
