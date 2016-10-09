@@ -17,7 +17,7 @@ connection.query([
   ' `' + testFields[1] + '` varchar(255) NOT NULL,',
   ' `' + testFields[2] + '` int(11) NOT NULL,',
   ' `' + testFields[3] + '` int(11) NOT NULL,',
-  ' PRIMARY KEY (`商品类型`)',
+  ' PRIMARY KEY (`' + testFields[0] + '`)',
   ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
 ].join(' '), function (err) {
   assert.ifError(err);
