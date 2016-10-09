@@ -1,4 +1,4 @@
-var mysql = require('../test/common').createConnection();
+var mysql = require('mysql2');
 var through2 = require('through2');
 
 var binlogStream = mysql.createBinlogStream({

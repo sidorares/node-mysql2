@@ -1,4 +1,9 @@
-var pool = require('../test/common').createPool();
+var pool = require('mysql2').createPool({
+  host:'localhost',
+  user: 'root',
+  database: 'test',
+  password: 'root'
+});
 
 setInterval(function () {
   for (var i = 0; i < 5; ++i) {

@@ -1,6 +1,6 @@
-var mysql = require('../index.js');
-var flags = require('../lib/constants/client.js');
-var auth = require('../lib/auth_41.js');
+var mysql = require('mysql2');
+var flags = require('mysql2/lib/constants/client.js');
+var auth = require('mysql2/lib/auth_41.js');
 
 function authenticate (params, cb) {
   console.log(params);

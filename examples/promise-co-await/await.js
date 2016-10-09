@@ -1,4 +1,4 @@
-var mysql = require('../../promise.js');
+var mysql = require('mysql2/promise');
 
 async function test() {
   const c = await mysql.createConnection({ port: 3306, user: 'testuser', namedPlaceholders: true, password: 'testpassword' });
@@ -35,9 +35,11 @@ async function test() {
   await p.end();
 }
 
-test().then(() => {
-  console.log('done');
-}, (err) => {
-  console.log('error!', err);
-  throw err;
-});
+test()
+  .then(() => {
+    console.log('done');
+  })
+  .catch((err) => {
+    console.log('error!', err);
+    throw err;
+  });

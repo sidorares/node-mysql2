@@ -1,5 +1,6 @@
 var fs = require('fs');
-var mysql = require('../../index.js');
+var mysql = require('mysql2');
+
 var conn = mysql.createConnection({
   user: 'root',
   password: '',
