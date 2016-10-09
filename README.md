@@ -53,7 +53,7 @@ npm install --save mysql2
 
 ```js
 // get the client
-var mysql = require('mysql');
+var mysql = require('mysql2');
 
 // create the connection to database
 var connection = mysql.createConnection({host:'localhost', user: 'root', database: 'test'});
@@ -80,7 +80,7 @@ MySQL provides `execute` helper which will prepare and query the statement. You 
 
 ```js
 // get the client
-var mysql = require('mysql');
+var mysql = require('mysql2');
 
 // create the connection to database
 var connection = mysql.createConnection({host:'localhost', user: 'root', database: 'test'});

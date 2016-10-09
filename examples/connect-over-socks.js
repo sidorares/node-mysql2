@@ -1,5 +1,5 @@
+var mysql = require('mysql2');
 var SocksConnection = require('socksjs');
-var mysql = require('../index.js');
 
 // var socksProxy = new SocksConnection({ port: 3306 });
 // var conn = mysql.createConnection({

@@ -1,8 +1,9 @@
-var mysql = require('../index.js');
-var ClientFlags = require('../lib/constants/client.js');
+var mysql = require('mysql2');
+var ClientFlags = require('mysql2/lib/constants/client.js');
 
 var server = mysql.createServer();
 server.listen(3307);
+
 server.on('connection', function (conn) {
   console.log('connection');
 
