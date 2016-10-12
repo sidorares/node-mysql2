@@ -13,7 +13,8 @@ var rs1 = {
   fieldCount: 0,
   insertId: 0,
   serverStatus: 10,
-  warningStatus: 0
+  warningStatus: 0,
+  info: ''
 };
 var rs2 = clone(rs1);
 rs2.serverStatus = 2;
