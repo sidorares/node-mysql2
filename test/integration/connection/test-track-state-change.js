@@ -6,8 +6,8 @@ var result1, resul2;
 
 
 connection.query('SET NAMES koi8r', function (err, _ok) {
-   assert.ifError(err);
-   result1 = _ok;
+  assert.ifError(err);
+  result1 = _ok;
 });
 
 connection.query('USE mysql', function (err, _ok) {
