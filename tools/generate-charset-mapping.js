@@ -1,6 +1,8 @@
 var mysql = require('../index.js');
 
 var conn = mysql.createConnection({
+  user: 'mycause_dev',
+  password: 'mycause'
 });
 
 var iconv = require('iconv-lite');
@@ -25,6 +27,7 @@ var mysql2iconv = {
 var missing = {};
 
 conn.query('show collation', function(err, res) {
+  console.log(res);
   res.forEach( r => {
     var charset = r.Charset;
     var iconvCharset = mysql2iconv[charset] || charset; // if there is manuall mapping, override
@@ -41,4 +44,3 @@ conn.query('show collation', function(err, res) {
 });
 
 conn.end();
-
