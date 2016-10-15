@@ -16,7 +16,7 @@ connection.query([
 ].join('\n'));
 
 var result, result2;
-connection.query('SET GLOBAL max_allowed_packet=56777216', function(err, res) {
+connection.query('SET GLOBAL max_allowed_packet=56777216', function (err, res) {
   assert.ifError(err);
   connection.query('INSERT INTO ' + table + ' (content) VALUES(?)', [content], function (err, _result) {
     assert.ifError(err);
