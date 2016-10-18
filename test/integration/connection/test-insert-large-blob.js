@@ -20,7 +20,7 @@ var result, result2;
 connection.query('SET GLOBAL max_allowed_packet=156777216', function (err, res) {
   assert.ifError(err);
   console.log('SET GLOBAL max_allowed_packet=56777216 OK');
-  connection.query('show variables like max_allowed_packet', function (err, res) {
+  connection.query('show variables like "max_allowed_packet"', function (err, res) {
     console.log(err, res);
 
   connection.query('INSERT INTO ' + table + ' (content) VALUES(?)', [content], function (err, _result) {
