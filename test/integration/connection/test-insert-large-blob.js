@@ -8,30 +8,24 @@ var content = Buffer.allocUnsafe(19777216); // > 16 megabytes
 content.fill('x', 0, 100000);
 content.fill('o', 100000);
 
-connection.query([
-  'CREATE TEMPORARY TABLE `' + table + '` (',
-  '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
-  '`content` longblob NOT NULL,',
-  'PRIMARY KEY (`id`)',
-  ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
-].join('\n'));
-
 var result, result2;
-connection.query('SET GLOBAL max_allowed_packet=156777216', function (err, res) {
+connection.query('SET GLOBAL max_allowed_packet=56777216', function (err, res) {
   assert.ifError(err);
-  console.log('SET GLOBAL max_allowed_packet=56777216 OK');
-  connection.query('show variables like "max_allowed_packet"', function (err, res) {
-    console.log(err, res);
-
-  connection.query('INSERT INTO ' + table + ' (content) VALUES(?)', [content], function (err, _result) {
-    console.log('INSERT OK');
+  connection.end()
+  var connection2 = common.createConnection();
+  connection2.query([
+    'CREATE TEMPORARY TABLE `' + table + '` (',
+    '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
+    '`content` longblob NOT NULL,',
+    'PRIMARY KEY (`id`)',
+    ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
+  ].join('\n'));
+  connection2.query('INSERT INTO ' + table + ' (content) VALUES(?)', [content], function (err, _result) {
     assert.ifError(err);
     result = _result;
-    connection.query('SELECT * FROM ' + table + ' WHERE id = ' + result.insertId, function (err, _result2) {
+    connection2.query('SELECT * FROM ' + table + ' WHERE id = ' + result.insertId, function (err, _result2) {
       result2 = _result2;
-      connection.end();
-    });
-
+      connection2.end();
     });
   });
 });
@@ -40,4 +34,3 @@ process.on('exit', function () {
   assert.equal(result2[0].id, String(result.insertId));
   assert.equal(result2[0].content.toString(), content.toString());
 });
-
