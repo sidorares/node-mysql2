@@ -1,6 +1,7 @@
 var common = require('../../common');
 var connection = common.createConnection({debug: true});
 var assert = require('assert');
+var Buffer = require('safe-buffer').Buffer;
 
 var table = 'insert_large_test';
 var content = Buffer.allocUnsafe(19777216); // > 16 megabytes
