@@ -1,5 +1,5 @@
 var common = require('../../common');
-var connection = common.createConnection({debug: true});
+var connection = common.createConnection();
 var assert = require('assert');
 var Buffer = require('safe-buffer').Buffer;
 
@@ -17,9 +17,12 @@ connection.query([
 ].join('\n'));
 
 var result, result2;
-connection.query('SET GLOBAL max_allowed_packet=56777216', function (err, res) {
+connection.query('SET GLOBAL max_allowed_packet=156777216', function (err, res) {
   assert.ifError(err);
   console.log('SET GLOBAL max_allowed_packet=56777216 OK');
+  connection.query('show variables like max_allowed_packet', function (err, res) {
+    console.log(err, res);
+
   connection.query('INSERT INTO ' + table + ' (content) VALUES(?)', [content], function (err, _result) {
     console.log('INSERT OK');
     assert.ifError(err);
@@ -27,6 +30,8 @@ connection.query('SET GLOBAL max_allowed_packet=56777216', function (err, res) {
     connection.query('SELECT * FROM ' + table + ' WHERE id = ' + result.insertId, function (err, _result2) {
       result2 = _result2;
       connection.end();
+    });
+
     });
   });
 });
