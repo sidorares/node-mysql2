@@ -1,5 +1,5 @@
 var common = require('../../common');
-var connection = common.createConnection();
+var connection = common.createConnection({debug: true});
 var assert = require('assert');
 
 var table = 'insert_large_test';
@@ -18,7 +18,9 @@ connection.query([
 var result, result2;
 connection.query('SET GLOBAL max_allowed_packet=56777216', function (err, res) {
   assert.ifError(err);
+  console.log('SET GLOBAL max_allowed_packet=56777216 OK');
   connection.query('INSERT INTO ' + table + ' (content) VALUES(?)', [content], function (err, _result) {
+    console.log('INSERT OK');
     assert.ifError(err);
     result = _result;
     connection.query('SELECT * FROM ' + table + ' WHERE id = ' + result.insertId, function (err, _result2) {
