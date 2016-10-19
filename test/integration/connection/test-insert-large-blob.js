@@ -4,17 +4,20 @@ var assert = require('assert');
 var Buffer = require('safe-buffer').Buffer;
 
 var table = 'insert_large_test';
-//var content = Buffer.allocUnsafe(19777216); // > 16 megabytes
-var content = Buffer.allocUnsafe(16777216); // > 16 megabytes
+var content = Buffer.allocUnsafe(16777416); // > 16 megabytes
+var content1 = Buffer.allocUnsafe(16777416); // > 16 megabytes
 
-//var content = Buffer.allocUnsafe(16); // > 16 megabytes
-//content.fill('x', 0, 100000);
-//content.fill('o', 100000);
+// this is to force compressed packed to be larger than uncompressed
 for(var i=0; i<content.length; ++i) {
   content[i] = Math.floor(Math.random()*256);
+  content1[i] = Math.floor(Math.random()*256);
+
+  // low entropy version, compressed < uncompressed
+  if (i < 10000)
+    content1[i] = 100;
 }
 
-var result, result2;
+var result, result2, result3, result4;
 connection.query('SET GLOBAL max_allowed_packet=56777216', function (err, res) {
   assert.ifError(err);
   connection.end()
@@ -26,22 +29,34 @@ connection.query('SET GLOBAL max_allowed_packet=56777216', function (err, res) {
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
   ].join('\n'));
-  //connection2.execute('INSERT INTO ' + table + ' (content) VALUES(?)', [content], function (err, _result) {
   connection2.query('INSERT INTO ' + table + ' (content) VALUES(?)', [content], function (err, _result) {
     assert.ifError(err);
     result = _result;
     connection2.query('SELECT * FROM ' + table + ' WHERE id = ' + result.insertId, function (err, _result2) {
       result2 = _result2;
-
-      console.log('ending in 3s');
-      setTimeout(() => {
-        connection2.end();
-      }, 3000);
+      connection2.query('INSERT INTO ' + table + ' (content) VALUES(?)', [content1], function (err, _result) {
+        assert.ifError(err);
+        result3 = _result;
+        connection2.query('SELECT * FROM ' + table + ' WHERE id = ' + result3.insertId, function (err, _result) {
+          assert.ifError(err);
+          result4 = _result;
+          connection2.end();
+        });
+      });
     });
   });
 });
 
 process.on('exit', function () {
   assert.equal(result2[0].id, String(result.insertId));
-  assert.equal(result2[0].content.toString(), content.toString());
+  assert.equal(result2[0].content.toString('hex'), content.toString('hex'));
+  assert.equal(result4[0].content.toString('hex'), content1.toString('hex'));
+
+  /*
+  for (var i=0; i < content.length; ++i) {
+    if (content[i] != result2[0].content[i]) {
+      console.log('=== ', i, content[i], result2[0].content[i]);
+    }
+  }
+  */
 });
