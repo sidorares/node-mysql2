@@ -8,11 +8,14 @@ var query2 = 'select 1 + 1';  // no parameters
 var query3 = 'create temporary table aaa(i int);'; // no parameters, no result columns
 
 connection.prepare(query1, function (err1, stmt1) {
+  assert.ifError(err1);
   _stmt1 = stmt1;
   _stmt1.close();
   connection.prepare(query2, function (err2, stmt2) {
+    assert.ifError(err2);
     _stmt2 = stmt2;
     connection.prepare(query3, function (err3, stmt3) {
+      assert.ifError(err3);
       _stmt3 = stmt3;
       _stmt2.close();
       _stmt3.close();

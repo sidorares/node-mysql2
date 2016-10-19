@@ -6,6 +6,7 @@ var max = 500;
 var start = process.hrtime();
 function prepare (i) {
   connection.prepare('select 1+' + i, function (err, stmt) {
+    assert.ifError(err);
     stmt.close();
     if (!err) {
       if (i > max) {
@@ -22,8 +23,6 @@ function prepare (i) {
   });
 }
 connection.query('SET GLOBAL max_prepared_stmt_count=10', function (err) {
-  if (err) {
-    throw err;
-  }
+  assert.ifError(err);
   prepare(1);
 });
