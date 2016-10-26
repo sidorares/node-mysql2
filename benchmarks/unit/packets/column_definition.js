@@ -6,10 +6,10 @@ var fixtureFile = __dirname + '/../fixtures/column_definition';
 function prepareFixture() {
   var Packets = require('../../../lib/packets/index.js');
   var packetInd = 0;
-  Packets.ColumnDefinition = function(packet) {
+  Packets.ColumnDefinition = function(packet, clientEncoding) {
     fs.writeFileSync(fixtureFile + packetInd, packet.buffer.slice(packet.start, packet.end));
     packetInd++;
-    var c = new ColumnDefinition(packet);
+    var c = new ColumnDefinition(packet, clientEncoding);
     //console.log('packet', c);
     return c;
   };
@@ -38,7 +38,7 @@ function bench(done) {
   for (var i=0; i < repeats; ++i) {
     for (var j=0; j < npackets; ++j) {
       packets[j].offset = 0;
-      c =new ColumnDefinition(packets[j]);
+      c =new ColumnDefinition(packets[j], 'utf8');
     }
   }
   done();
