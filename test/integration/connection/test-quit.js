@@ -13,16 +13,16 @@ var server = common.createServer(serverReady, function (conn) {
   conn.on('query', function (q) {
     queryServ = q;
     conn.writeTextResult([{'1': '1'}], [{catalog: 'def',
-     schema: '',
-     table: '',
-     orgTable: '',
-     name: '1',
-     orgName: '',
-     characterSet: 63,
-     columnLength: 1,
-     columnType: 8,
-     flags: 129,
-     decimals: 0}]);
+      schema: '',
+      table: '',
+      orgTable: '',
+      name: '1',
+      orgName: '',
+      characterSet: 63,
+      columnLength: 1,
+      columnType: 8,
+      flags: 129,
+      decimals: 0}]);
   });
 });
 
