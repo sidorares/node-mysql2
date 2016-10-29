@@ -13,10 +13,11 @@ matrix:
     env: LINT=0
   - node_js: "4.6"
     env: LINT=0
-  - node_js: "5.12"
+  - node_js: "6.9"
     env: LINT=0
-  - node_js: "6.7"
+  - node_js: "7.0"
     env: LINT=1
+
 
 script:
   - docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 3306:3306 mysql:5.7
