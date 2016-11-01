@@ -1,11 +1,22 @@
 var common = require('../../common');
 var connection = common.createConnection();
+
+/*
+  connection.query('SELECT repeat("a", 60000000) as qqq', function (err, res) {
+    console.log(err);
+    console.log(err, res[0].qqq.length);
+    connection.end();
+  });
+  return;
+*/
+
 var assert = require('assert');
 var Buffer = require('safe-buffer').Buffer;
 
 var table = 'insert_large_test';
-var content = Buffer.allocUnsafe(16777416); // > 16 megabytes
-var content1 = Buffer.allocUnsafe(16777416); // > 16 megabytes
+var length = 35777416;
+var content = Buffer.allocUnsafe(length); // > 16 megabytes
+var content1 = Buffer.allocUnsafe(length); // > 16 megabytes
 
 // this is to force compressed packed to be larger than uncompressed
 for (var i = 0; i < content.length; ++i) {
@@ -13,13 +24,14 @@ for (var i = 0; i < content.length; ++i) {
   content1[i] = Math.floor(Math.random() * 256);
 
   // low entropy version, compressed < uncompressed
-  if (i < 10000) {
+  if (i < length / 2) {
     content1[i] = 100;
   }
 }
 
 var result, result2, result3, result4;
-connection.query('SET GLOBAL max_allowed_packet=56777216', function (err, res) {
+
+connection.query('SET GLOBAL max_allowed_packet=' + (length * 2 + 2000), function (err, res) {
   assert.ifError(err);
   connection.end();
   var connection2 = common.createConnection();
@@ -52,11 +64,4 @@ process.on('exit', function () {
   assert.equal(result2[0].id, String(result.insertId));
   assert.equal(result2[0].content.toString('hex'), content.toString('hex'));
   assert.equal(result4[0].content.toString('hex'), content1.toString('hex'));
-  /*
-  for (var i=0; i < content.length; ++i) {
-    if (content[i] != result2[0].content[i]) {
-      console.log('=== ', i, content[i], result2[0].content[i]);
-    }
-  }
-  */
 });
