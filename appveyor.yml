@@ -10,10 +10,9 @@ environment:
     - nodejs_version: "0.10"
     - nodejs_version: "0.12"
     - nodejs_version: "4.6"
-    - nodejs_version: "5.12"
-    - nodejs_version: "6.7"
+    - nodejs_version: "6.9"
+    - nodejs_version: "7.0"
       LINT: 1
-
 
 services:
   - mysql
