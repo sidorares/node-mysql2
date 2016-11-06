@@ -21,7 +21,7 @@ var server = common.createServer(serverReady, function (conn) {
 var fields, error;
 var query = 'SELECT 1';
 function serverReady () {
-  var connection = common.createConnection({port: server._port});
+  var connection = common.createConnection({port: server._port, host: 'localhost'});
   connection.query(query, function (err, _rows, _fields) {
     if (err) {
       throw err;

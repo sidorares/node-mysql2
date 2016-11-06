@@ -29,7 +29,7 @@ var server = common.createServer(serverReady, function (conn) {
 var receivedError1, receivedError2, receivedError3;
 var query = 'SELECT 1';
 function serverReady () {
-  clientConnection = common.createConnection({port: server._port});
+  clientConnection = common.createConnection({port: server._port, host: 'localhost'});
   clientConnection.query(query, function (err, _rows, _fields) {
     receivedError1 = err;
   });

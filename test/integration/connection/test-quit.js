@@ -27,7 +27,7 @@ var server = common.createServer(serverReady, function (conn) {
 });
 
 function serverReady () {
-  var connection = common.createConnection({port: server._port});
+  var connection = common.createConnection({port: server._port, host: 'localhost'});
 
   connection.query(queryCli, function (err, _rows, _fields) {
     if (err) {
