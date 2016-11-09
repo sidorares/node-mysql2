@@ -9,7 +9,7 @@ var server;
 var connections = [];
 
 function test () {
-  var connection = common.createConnection({port: server._port});
+  var connection = common.createConnection({port: server._port, host: 'localhost'});
   connection.query('SELECT 123', function (err, _rows, _fields) {
     if (err) {
       throw err;

@@ -1,13 +1,14 @@
 var common = require('../../common');
 var connection = common.createConnection();
 var assert = require('assert');
+var Buffer = require('safe-buffer').Buffer;
 
 var rows = undefined;
 var rows1 = undefined;
 var fields = undefined;
 var fields1 = undefined;
 
-var buf = Buffer([0x80, 0x90, 1, 2, 3, 4, 5, 6, 7, 8, 9, 100, 100, 255, 255]);
+var buf = Buffer.from([0x80, 0x90, 1, 2, 3, 4, 5, 6, 7, 8, 9, 100, 100, 255, 255]);
 connection.execute('SELECT HEX(?) as buf', [buf], function (err, _rows, _fields) {
   if (err) {
     throw err;

@@ -1,3 +1,6 @@
+/* eslint-disable no-unreachable */
+return;
+
 var common = require('../../common');
 var connection = common.createConnection();
 
