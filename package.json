@@ -43,7 +43,7 @@
     "lru-cache": "^4.0.1",
     "named-placeholders": "1.1.1",
     "object-assign": "^4.1.0",
-    "readable-stream": "2.1.5",
+    "readable-stream": "2.2.0",
     "safe-buffer": "^5.0.1",
     "seq-queue": "0.0.5",
     "sqlstring": "^2.2.0"
