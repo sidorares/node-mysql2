@@ -96,14 +96,9 @@ function createPool (opts) {
       });
     },
 
-    execute: function (sql, args) {
+    execute: function (sql, values) {
       return new Promise(function (resolve, reject) {
-        var done = makeDoneCb(resolve, reject);
-        if (args) {
-          corePool.execute(sql, args, done);
-        } else {
-          corePool.execute(sql, done);
-        }
+        corePool.execute(sql, values, makeDoneCb(resolve, reject));
       });
     },
 
