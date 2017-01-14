@@ -12,11 +12,10 @@ var createPool = require('../../../promise.js').createPool;
 var PoolConnection = require('../../../lib/pool_connection.js');
 
 // stub
-var release = PoolConnection.prototype.release.bind(PoolConnection.prototype);
+var release = PoolConnection.prototype.release;
 var releaseCalls = 0;
 PoolConnection.prototype.release = function () {
   releaseCalls++;
-  release.call(this);
 };
 
 function testPoolPromiseExecuteLeak () {
@@ -36,7 +35,7 @@ function testPoolPromiseExecuteLeak () {
 testPoolPromiseExecuteLeak();
 
 process.on('exit', function () {
+  PoolConnection.prototype.release = release;
   if (skipTest) { return; }
-
   assert.equal(releaseCalls, 1, 'PoolConnection.release was not called');
 });
