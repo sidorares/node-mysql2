@@ -16,10 +16,11 @@ services:
 
 cache:
   - node_modules
+  - "%LOCALAPPDATA%/Yarn"
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install
+  - yarn install
 
 build: off
 
@@ -30,8 +31,8 @@ before_test:
 test_script:
   - mysql --version
   - node --version
-  - npm --version
-  - if "%LINT%"=="1" (npm run lint)
+  - yarn --version
+  - if "%LINT%"=="1" (yarn run lint)
   - node test/run.js
   - SET MYSQL_USE_COMPRESSION=1
   - node test/run.js
