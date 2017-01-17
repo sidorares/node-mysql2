@@ -14,6 +14,12 @@ matrix:
   - node_js: "7.4"
     env: LINT=1
 
+cache:
+  yarn: true
+  directories:
+  - node_modules
+  - $HOME/.yarn-cache
+
 notifications:
   email: false
 
@@ -21,6 +27,6 @@ script:
   - docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 33306:3306 mysql:5.7
   - docker run --link mysql:db -e CHECK_PORT=3306 -e CHECK_HOST=db giorgos/takis
   - node --version
-  - npm --version
-  - if [ "$LINT" = "1" ]; then npm run lint; fi
-  - MYSQL_PORT=33306 npm run test:raw
+  - yarn --version
+  - if [ "$LINT" = "1" ]; then yarn run lint; fi
+  - MYSQL_PORT=33306 yarn run test:raw
