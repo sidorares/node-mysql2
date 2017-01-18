@@ -68,6 +68,27 @@ PromiseConnection.prototype.end = function () {
   });
 };
 
+// patching PromiseConnection
+// create facade functions for prototype functions on "Connection" that are not yet
+// implemented with PromiseConnection
+for (var func in core.Connection.prototype) {
+
+  // omit private functions starting with "_"
+  if (
+    func[0] !== '_'
+    && typeof core.Connection.prototype[func] === 'function'
+    && PromiseConnection.prototype[func] === undefined
+  ) {
+    PromiseConnection.prototype[func] = (function factory (funcName, connection) {
+      return function () {
+        return core.Connection
+          .prototype[funcName].apply(this.connection, arguments);
+      };
+    }(func));
+  }
+}
+
+
 function createPool (opts) {
   var corePool = core.createPool(opts);
   var Promise = opts.Promise || global.Promise || require('es6-promise');
