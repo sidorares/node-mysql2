@@ -19,6 +19,7 @@ var charsets = []
 var mysql2iconv = {
   utf8: 'cesu8',
   utf8mb4: 'utf8',
+  utf16le: 'utf16-le',
   // need to check that this is correct mapping
   macce: 'macintosh', // Mac Central European
   eucjpms: 'eucjp'    // UJIS for Windows Japanese
