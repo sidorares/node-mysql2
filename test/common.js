@@ -1,5 +1,5 @@
 var config = {
-  host: process.env.MYSQL_HOST || '0.0.0.0',
+  host: process.env.MYSQL_HOST || 'localhost',
   user: process.env.MYSQL_USER || 'root',
   password: process.env.CI ? process.env.MYSQL_PASSWORD : '',
   database: process.env.MYSQL_DATABASE || 'test',

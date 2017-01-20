@@ -1,6 +1,6 @@
 {
   "name": "mysql2",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
   "directories": {
@@ -12,7 +12,8 @@
     "lint:docs": "eslint README.md Contributing.md 'documentation/**/*.md' examples/*.js",
     "test": "npm run lint && npm run test:raw",
     "test:raw": "node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
-    "benchmark": "./benchmarks/run-unit.js"
+    "benchmark": "./benchmarks/run-unit.js",
+    "precommit": "npm run lint"
   },
   "repository": {
     "type": "git",
@@ -35,23 +36,24 @@
   "license": "MIT",
   "dependencies": {
     "cardinal": "1.0.0",
-    "double-ended-queue": "2.1.0-0",
+    "denque": "^1.1.0",
     "generate-function": "^2.0.0",
     "iconv-lite": "^0.4.13",
     "long": "^3.2.0",
     "lru-cache": "^4.0.1",
     "named-placeholders": "1.1.1",
-    "object-assign": "^4.1.0",
-    "readable-stream": "2.1.5",
+    "object-assign": "^4.1.1",
+    "readable-stream": "2.2.2",
     "safe-buffer": "^5.0.1",
     "seq-queue": "0.0.5",
     "sqlstring": "github:yourwelcomeltd/sqlstring"
   },
   "devDependencies": {
     "assert-diff": "^1.0.1",
-    "eslint": "3.7.1",
+    "eslint": "3.13.0",
     "eslint-plugin-markdown": "^1.0.0-beta.2",
-    "portfinder": "^1.0.3",
+    "husky": "^0.12.0",
+    "portfinder": "^1.0.10",
     "progress": "1.1.8",
     "urun": "0.0.8",
     "utest": "0.0.8"

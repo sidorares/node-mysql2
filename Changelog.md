@@ -1,3 +1,13 @@
+1.1.2 ( 15/11/2016 )
+ - (fix) memory leak introduced with iconv
+   encoder/decoder cache                                 #459, #458
+ - remove use of domains                                 #451, #449
+ - (fix) handle correctly packets over 0xffffff bytes    
+   long + compressed protocol rewrite                    #421, #248, #419, #426
+ - (perf) replace double-ended-queue with denqueue       #444
+ - (feat) automatically track client encoding change     #437, #389
+ - (feat) add support for CLIENT_SESSION_TRACK info      #388, #436
+
 1.1.1 ( 06/10/2016 )
  - (fix) do not crash when result of execute().stream()
    is paused                                             #174, #424
