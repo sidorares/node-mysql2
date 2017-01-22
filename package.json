@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "assert-diff": "^1.0.1",
-    "eslint": "3.13.0",
+    "eslint": "3.14.0",
     "eslint-plugin-markdown": "^1.0.0-beta.2",
     "husky": "^0.13.0",
     "portfinder": "^1.0.10",
