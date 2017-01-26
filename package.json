@@ -36,7 +36,7 @@
   "license": "MIT",
   "dependencies": {
     "cardinal": "1.0.0",
-    "denque": "^1.1.0",
+    "denque": "^1.1.1",
     "generate-function": "^2.0.0",
     "iconv-lite": "^0.4.13",
     "long": "^3.2.0",
