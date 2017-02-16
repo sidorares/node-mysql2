@@ -1,3 +1,9 @@
+1.2.0 ( 17/02/2017 )
+ - add new MySQL 5.6/8.0 charsets                        #494
+ - build: drop support for node 0.10 and 0.12
+ - fix: Connection not released when Pool.Execute 
+   called without values                                 #509, #485, #488, #475
+
 1.1.2 ( 15/11/2016 )
  - (fix) memory leak introduced with iconv
    encoder/decoder cache                                 #459, #458
