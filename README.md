@@ -135,7 +135,7 @@ If you find any incompatibility with [Node MySQL][node-mysql], Please report via
 
 ## Documentation
 
-You can find more detailed documentation [here](https://github.com/sidorares/node-mysql2/tree/master/documentation). You should also check various code [examples](https://github.com/sidorares/node-mysql2/tree/master/examples) to understand advance concepts.
+You can find more detailed documentation [here](https://github.com/sidorares/node-mysql2/tree/master/documentation). You should also check various code [examples](https://github.com/sidorares/node-mysql2/tree/master/examples) to understand advanced concepts.
 
 ## Acknowledgements
 
