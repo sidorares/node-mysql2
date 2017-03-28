@@ -68,25 +68,108 @@ PromiseConnection.prototype.end = function () {
   });
 };
 
+PromiseConnection.prototype.beginTransaction = function () {
+  var c = this.connection;
+  return new this.Promise(function (resolve, reject) {
+    var done = makeDoneCb(resolve, reject);
+    c.beginTransaction(done);
+  });
+};
+
+PromiseConnection.prototype.commit = function () {
+  var c = this.connection;
+  return new this.Promise(function (resolve, reject) {
+    var done = makeDoneCb(resolve, reject);
+    c.commit(done);
+  });
+};
+
+PromiseConnection.prototype.rollback = function () {
+  var c = this.connection;
+  return new this.Promise(function (resolve, reject) {
+    var done = makeDoneCb(resolve, reject);
+    c.rollback(done);
+  });
+};
+
+PromiseConnection.prototype.ping = function () {
+  var c = this.connection;
+  return new this.Promise(function (resolve, reject) {
+    c.ping(resolve);
+  });
+};
+
+PromiseConnection.prototype.connect = function () {
+  var c = this.connection;
+  return new this.Promise(function (resolve, reject) {
+    c.connect(function (error, param) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(param);
+      }
+    });
+  });
+};
+
+PromiseConnection.prototype.prepare = function () {
+  var c = this.connection;
+  return new this.Promise(function (resolve, reject) {
+    c.prepare(function (error, statement) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(statement);
+      }
+    });
+  });
+};
+
+// note: the callback of "changeUser" is not called on success
+// hence there is no possibility to call "resolve"
+
 // patching PromiseConnection
 // create facade functions for prototype functions on "Connection" that are not yet
 // implemented with PromiseConnection
-for (var func in core.Connection.prototype) {
 
-  // omit private functions starting with "_"
-  if (
-    func[0] !== '_'
-    && typeof core.Connection.prototype[func] === 'function'
-    && PromiseConnection.prototype[func] === undefined
-  ) {
-    PromiseConnection.prototype[func] = (function factory (funcName, connection) {
-      return function () {
-        return core.Connection
-          .prototype[funcName].apply(this.connection, arguments);
-      };
-    }(func));
+// proxy synchronous functions only
+(function (functionsToWrap) {
+
+  for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
+    var func = functionsToWrap[i];
+
+    if (
+      typeof core.Connection.prototype[func] === 'function'
+      && PromiseConnection.prototype[func] === undefined
+    ) {
+      PromiseConnection.prototype[func] = (function factory (funcName) {
+        return function () {
+          return core.Connection
+            .prototype[funcName].apply(this.connection, arguments);
+        };
+      })(func);
+    }
   }
-}
+
+})([
+// synchronous functions
+  'addCommand',
+  'close',
+  'createBinlogStream',
+  'destroy',
+  'escape',
+  'escapeId',
+  'format',
+  'handlePacket',
+  'keyFromFields',
+  'pause',
+  'pipe',
+  'protocolError',
+  'resume',
+  'serverHandshake',
+  'unprepare',
+  'write'
+]);
 
 
 function createPool (opts) {
