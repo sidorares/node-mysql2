@@ -153,22 +153,16 @@ PromiseConnection.prototype.prepare = function () {
 
 })([
 // synchronous functions
-  'addCommand',
   'close',
   'createBinlogStream',
   'destroy',
   'escape',
   'escapeId',
   'format',
-  'handlePacket',
-  'keyFromFields',
   'pause',
   'pipe',
-  'protocolError',
   'resume',
-  'serverHandshake',
-  'unprepare',
-  'write'
+  'unprepare'
 ]);
 
 
