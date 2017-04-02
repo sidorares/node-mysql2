@@ -168,7 +168,12 @@ PromiseConnection.prototype.prepare = function () {
 
 function createPool (opts) {
   var corePool = core.createPool(opts);
-  var Promise = opts.Promise || global.Promise || require('bluebird');
+  var Promise = opts.Promise || global.Promise;
+  if (!Promise) {
+    throw new Error('no Promise implementation available.' +
+      'Use promise-enabled node version or pass userland Promise' +
+      ' implementation as parameter, for example: { Promise: require(\'bluebird\') }');
+  }
 
   var promisePool = {
     getConnection: function () {
