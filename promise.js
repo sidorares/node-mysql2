@@ -6,7 +6,7 @@ function createConnection (opts) {
   if (!Promise) {
     throw new Error('no Promise implementation available.' +
       'Use promise-enabled node version or pass userland Promise' +
-      ' implementation as parameter, for example: { Promise: require(\'es6-promise\').Promise }');
+      ' implementation as parameter, for example: { Promise: require(\'bluebird\') }');
   }
   return new Promise(function (resolve, reject) {
     coreConnection.once('connect', function (connectParams) {
@@ -168,7 +168,7 @@ PromiseConnection.prototype.prepare = function () {
 
 function createPool (opts) {
   var corePool = core.createPool(opts);
-  var Promise = opts.Promise || global.Promise || require('es6-promise');
+  var Promise = opts.Promise || global.Promise || require('bluebird');
 
   var promisePool = {
     getConnection: function () {
