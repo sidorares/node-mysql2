@@ -54,7 +54,7 @@
     "eslint-plugin-markdown": "^1.0.0-beta.2",
     "husky": "^0.13.3",
     "portfinder": "^1.0.10",
-    "progress": "1.1.8",
+    "progress": "2.0.0",
     "urun": "0.0.8",
     "utest": "0.0.8"
   }
