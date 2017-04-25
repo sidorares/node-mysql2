@@ -35,26 +35,32 @@ function makeDoneCb (resolve, reject) {
   };
 }
 
-PromiseConnection.prototype.query = function (query, params) {
+PromiseConnection.prototype.query = function (query, params, queryCb) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+    var done = makeDoneCb(resolve, reject), q;
     if (params) {
-      c.query(query, params, done);
+      q = c.query(query, params, done);
     } else {
-      c.query(query, done);
+      q = c.query(query, done);
+    }
+    if (queryCb) {
+      queryCb(q);
     }
   });
 };
 
-PromiseConnection.prototype.execute = function (query, params) {
+PromiseConnection.prototype.execute = function (query, params, execCb) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+    var done = makeDoneCb(resolve, reject), exec;
     if (params) {
-      c.execute(query, params, done);
+      exec = c.execute(query, params, done);
     } else {
-      c.execute(query, done);
+      exec = c.execute(query, done);
+    }
+    if (execCb) {
+      execCb(exec);
     }
   });
 };
