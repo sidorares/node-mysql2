@@ -40,7 +40,7 @@ function makeDoneCbWithExtras (resolve, reject, extras) {
     if (err) {
       reject(err);
     } else {
-      resolve([rows, fields, { sql: extras.data.sql }]);
+      resolve([rows, fields, {sql: extras.data.sql}]);
     }
   };
 }
