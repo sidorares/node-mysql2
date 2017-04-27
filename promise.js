@@ -35,32 +35,36 @@ function makeDoneCb (resolve, reject) {
   };
 }
 
-PromiseConnection.prototype.query = function (query, params, queryCb) {
+function makeDoneCbWithExtras (resolve, reject, extras) {
+  return function (err, rows, fields) {
+    if (err) {
+      reject(err);
+    } else {
+      resolve([rows, fields, { sql: extras.data.sql }]);
+    }
+  };
+}
+
+PromiseConnection.prototype.query = function (query, params) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    var done = makeDoneCb(resolve, reject), q;
+    var extras = {}, done = makeDoneCbWithExtras(resolve, reject, extras);
     if (params) {
-      q = c.query(query, params, done);
+      extras.data = c.query(query, params, done);
     } else {
-      q = c.query(query, done);
-    }
-    if (queryCb) {
-      queryCb(q);
+      extras.data = c.query(query, done);
     }
   });
 };
 
-PromiseConnection.prototype.execute = function (query, params, execCb) {
+PromiseConnection.prototype.execute = function (query, params) {
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
-    var done = makeDoneCb(resolve, reject), exec;
+    var extras = {}, done = makeDoneCbWithExtras(resolve, reject, extras);
     if (params) {
-      exec = c.execute(query, params, done);
+      extras.data = c.execute(query, params, done);
     } else {
-      exec = c.execute(query, done);
-    }
-    if (execCb) {
-      execCb(exec);
+      extras.data = c.execute(query, done);
     }
   });
 };
