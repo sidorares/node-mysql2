@@ -38,7 +38,7 @@
     "cardinal": "1.0.0",
     "denque": "^1.1.1",
     "generate-function": "^2.0.0",
-    "iconv-lite": "^0.4.16",
+    "iconv-lite": "^0.4.17",
     "long": "^3.2.0",
     "lru-cache": "^4.0.1",
     "named-placeholders": "1.1.1",
