@@ -16,14 +16,18 @@ var conn = mysql.createConnection({
   user: 'test_user',
   password: 'test',
   database: 'test_database',
-  authSwitchHandler: function (data, cb) {
-    if (data.pluginName === 'ssh-key-auth') {
+  authSwitchHandler: function ({pluginName, pluginData}, cb) {
+    if (pluginName === 'ssh-key-auth') {
       getPrivateKey(function (key) {
-        var response = encrypt(key, data.pluginData);
+        var response = encrypt(key, pluginData);
         // continue handshake by sending response data
         // respond with error to propagate error to connect/changeUser handlers
         cb(null, response);
       });
+    } else (
+      const err = new Error(`Unknown AuthSwitchRequest plugin name ${pluginName}`);
+      err.fatal = true;
+      cb(err)
     }
   }
 });
