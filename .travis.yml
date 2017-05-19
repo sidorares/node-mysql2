@@ -25,7 +25,9 @@ notifications:
 
 script:
   - docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 33306:3306 mysql:5.7
-  - docker run --link mysql:db -e CHECK_PORT=33306 -e CHECK_HOST=db giorgos/takis
+  - wget https://github.com/glogiotatidis/takis/raw/master/bin/takis
+  - chmod +x takis
+  - CHECK_PORT=33306 ./takis
   - node --version
   - yarn --version
   - if [ "$LINT" = "1" ]; then yarn run lint; fi
