@@ -4,7 +4,7 @@ var skipTest = false;
 if (typeof Promise == 'undefined') {
   console.log('no Promise support, skipping test');
   skipTest = true;
-  return;
+  process.exit(0);
 }
 
 var assert = require('assert');
@@ -22,109 +22,135 @@ var exceptionCaught = false;
 var doneCalledPool = false;
 var exceptionCaughtPool = false;
 
-function testBasic () {
+function testBasic() {
   var connResolved;
-  var connPromise = createConnection(config).then(function (conn) {
-    connResolved = conn;
-    return conn.query('select 1+2 as ttt');
-  }).then(function (result1) {
-    assert.equal(result1[0][0].ttt, 3);
-    return connResolved.query('select 2+2 as qqq');
-  }).then(function (result2) {
-    assert.equal(result2[0][0].qqq, 4);
-    return connResolved.end();
-  }).then(function () {
-    doneCalled = true;
-  }).catch(function (err) {
-    throw err;
-  });
+  var connPromise = createConnection(config)
+    .then(function(conn) {
+      connResolved = conn;
+      return conn.query('select 1+2 as ttt');
+    })
+    .then(function(result1) {
+      assert.equal(result1[0][0].ttt, 3);
+      return connResolved.query('select 2+2 as qqq');
+    })
+    .then(function(result2) {
+      assert.equal(result2[0][0].qqq, 4);
+      return connResolved.end();
+    })
+    .then(function() {
+      doneCalled = true;
+    })
+    .catch(function(err) {
+      throw err;
+    });
 }
 
-function testErrors () {
+function testErrors() {
   var connResolved;
-  var connPromise = createConnection(config).then(function (conn) {
-    connResolved = conn;
-    return conn.query('select 1+2 as ttt');
-  }).then(function (result1) {
-    assert.equal(result1[0][0].ttt, 3);
-    return connResolved.query('bad sql');
-  }).then(function (result2) {
-    assert.equal(result1[0][0].ttt, 3);
-    return connResolved.query('select 2+2 as qqq');
-  }).catch(function (err) {
-    exceptionCaught = true;
-    return connResolved.end();
-  });
+  var connPromise = createConnection(config)
+    .then(function(conn) {
+      connResolved = conn;
+      return conn.query('select 1+2 as ttt');
+    })
+    .then(function(result1) {
+      assert.equal(result1[0][0].ttt, 3);
+      return connResolved.query('bad sql');
+    })
+    .then(function(result2) {
+      assert.equal(result1[0][0].ttt, 3);
+      return connResolved.query('select 2+2 as qqq');
+    })
+    .catch(function(err) {
+      exceptionCaught = true;
+      return connResolved.end();
+    });
 }
 
-function testObjParams () {
+function testObjParams() {
   var connResolved;
-  var connPromise = createConnection(config).then(function (conn) {
-    connResolved = conn;
-    return conn.query({
+  var connPromise = createConnection(config)
+    .then(function(conn) {
+      connResolved = conn;
+      return conn.query({
+        sql: 'select ?-? as ttt',
+        values: [5, 2]
+      });
+    })
+    .then(function(result1) {
+      assert.equal(result1[0][0].ttt, 3);
+      return connResolved.execute({
+        sql: 'select ?-? as ttt',
+        values: [8, 5]
+      });
+    })
+    .then(function(result2) {
+      assert.equal(result2[0][0].ttt, 3);
+      return connResolved.end();
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
+
+function testBasicPool() {
+  var pool = createPool(config);
+  pool
+    .query('select 1+2 as ttt')
+    .then(function(result1) {
+      assert.equal(result1[0][0].ttt, 3);
+      return pool.query('select 2+2 as qqq');
+    })
+    .then(function(result2) {
+      assert.equal(result2[0][0].qqq, 4);
+      return pool.end();
+    })
+    .then(function() {
+      doneCalledPool = true;
+    })
+    .catch(function(err) {
+      throw err;
+    });
+}
+
+function testErrorsPool() {
+  var pool = createPool(config);
+  pool
+    .query('select 1+2 as ttt')
+    .then(function(result1) {
+      assert.equal(result1[0][0].ttt, 3);
+      return pool.query('bad sql');
+    })
+    .then(function(result2) {
+      assert.equal(result1[0][0].ttt, 3);
+      return pool.query('select 2+2 as qqq');
+    })
+    .catch(function(err) {
+      exceptionCaughtPool = true;
+      return pool.end();
+    });
+}
+
+function testObjParamsPool() {
+  var pool = createPool(config);
+  pool
+    .query({
       sql: 'select ?-? as ttt',
       values: [5, 2]
+    })
+    .then(function(result1) {
+      assert.equal(result1[0][0].ttt, 3);
+      return pool.execute({
+        sql: 'select ?-? as ttt',
+        values: [8, 5]
+      });
+    })
+    .then(function(result2) {
+      assert.equal(result2[0][0].ttt, 3);
+      return pool.end();
+    })
+    .catch(function(err) {
+      console.log(err);
     });
-  }).then(function (result1) {
-    assert.equal(result1[0][0].ttt, 3);
-    return connResolved.execute({
-      sql: 'select ?-? as ttt',
-      values: [8, 5]
-    });
-  }).then(function (result2) {
-    assert.equal(result2[0][0].ttt, 3);
-    return connResolved.end();
-  }).catch(function (err) {
-    console.log(err);
-  });
-}
-
-function testBasicPool () {
-  var pool = createPool(config);
-  pool.query('select 1+2 as ttt').then(function (result1) {
-    assert.equal(result1[0][0].ttt, 3);
-    return pool.query('select 2+2 as qqq');
-  }).then(function (result2) {
-    assert.equal(result2[0][0].qqq, 4);
-    return pool.end();
-  }).then(function () {
-    doneCalledPool = true;
-  }).catch(function (err) {
-    throw err;
-  });
-}
-
-function testErrorsPool () {
-  var pool = createPool(config);
-  pool.query('select 1+2 as ttt').then(function (result1) {
-    assert.equal(result1[0][0].ttt, 3);
-    return pool.query('bad sql');
-  }).then(function (result2) {
-    assert.equal(result1[0][0].ttt, 3);
-    return pool.query('select 2+2 as qqq');
-  }).catch(function (err) {
-    exceptionCaughtPool = true;
-    return pool.end();
-  });
-}
-
-function testObjParamsPool () {
-  var pool = createPool(config);
-  pool.query({
-    sql: 'select ?-? as ttt',
-    values: [5, 2]
-  }).then(function (result1) {
-    assert.equal(result1[0][0].ttt, 3);
-    return pool.execute({
-      sql: 'select ?-? as ttt',
-      values: [8, 5]
-    });
-  }).then(function (result2) {
-    assert.equal(result2[0][0].ttt, 3);
-    return pool.end();
-  }).catch(function (err) {
-    console.log(err);
-  });
 }
 
 testBasic();
@@ -134,8 +160,7 @@ testBasicPool();
 testErrorsPool();
 testObjParamsPool();
 
-
-process.on('exit', function () {
+process.on('exit', function() {
   if (skipTest) {
     return;
   }

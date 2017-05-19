@@ -7,7 +7,7 @@ var rows1 = undefined;
 var fields = undefined;
 var fields1 = undefined;
 
-connection.execute('SELECT -1 v', [], function (err, _rows, _fields) {
+connection.execute('SELECT -1 v', [], function(err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -15,7 +15,7 @@ connection.execute('SELECT -1 v', [], function (err, _rows, _fields) {
   fields = _fields;
 });
 
-connection.query('SELECT -1 v', function (err, _rows, _fields) {
+connection.query('SELECT -1 v', function(err, _rows, _fields) {
   if (err) {
     throw err;
   }
@@ -24,7 +24,7 @@ connection.query('SELECT -1 v', function (err, _rows, _fields) {
   connection.end();
 });
 
-process.on('exit', function () {
-  assert.deepEqual(rows, [{v: -1}]);
-  assert.deepEqual(rows1, [{v: -1}]);
+process.on('exit', function() {
+  assert.deepEqual(rows, [{ v: -1 }]);
+  assert.deepEqual(rows1, [{ v: -1 }]);
 });

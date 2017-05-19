@@ -10,7 +10,10 @@ var d = packet.readDateTime();
 
 assert.equal(+d, 1358816523000);
 
-buf = Buffer.from('18000006000004666f6f310be00702090f01095d7f06000462617231', 'hex');
+buf = Buffer.from(
+  '18000006000004666f6f310be00702090f01095d7f06000462617231',
+  'hex'
+);
 packet = new packets.Packet(6, buf, 0, buf.length);
 
 i = packet.readInt16();
