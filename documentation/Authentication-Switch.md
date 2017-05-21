@@ -12,7 +12,7 @@ The client respond with opaque blob matching requested plugin via `callback(null
 Example: (imaginary `ssh-key-auth` plugin) pseudo code
 
 ```js
-var conn = mysql.createConnection({
+const conn = mysql.createConnection({
   user: 'test_user',
   password: 'test',
   database: 'test_database',
@@ -24,10 +24,10 @@ var conn = mysql.createConnection({
         // respond with error to propagate error to connect/changeUser handlers
         cb(null, response);
       });
-    } else (
+    } else {
       const err = new Error(`Unknown AuthSwitchRequest plugin name ${pluginName}`);
       err.fatal = true;
-      cb(err)
+      cb(err);
     }
   }
 });
