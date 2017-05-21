@@ -169,3 +169,7 @@ process.on('exit', function() {
   assert.equal(doneCalledPool, true);
   assert.equal(exceptionCaughtPool, true);
 });
+
+process.on('unhandledRejection', function(err) {
+  console.log('AAA', err.stack);
+});

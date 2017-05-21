@@ -11,27 +11,24 @@ var numSelects = 0;
 var killCount = 0;
 
 function kill() {
-  setTimeout(
-    function() {
-      var id = tids.shift();
-      if (typeof id != 'undefined') {
-        // sleep required to give mysql time to close connection,
-        // and callback called after connection with id is really closed
-        conn.query('kill ?; select sleep(0.05)', id, function(err, res) {
-          assert.ifError(err);
-          killCount++;
-          // TODO: this assertion needs to be fixed, after kill
-          // connection is removed from _allConnections but not at a point this callback is called
-          //
-          // assert.equal(pool._allConnections.length, tids.length);
-        });
-      } else {
-        conn.end();
-        pool.end();
-      }
-    },
-    5
-  );
+  setTimeout(function() {
+    var id = tids.shift();
+    if (typeof id != 'undefined') {
+      // sleep required to give mysql time to close connection,
+      // and callback called after connection with id is really closed
+      conn.query('kill ?; select sleep(0.05)', id, function(err, res) {
+        assert.ifError(err);
+        killCount++;
+        // TODO: this assertion needs to be fixed, after kill
+        // connection is removed from _allConnections but not at a point this callback is called
+        //
+        // assert.equal(pool._allConnections.length, tids.length);
+      });
+    } else {
+      conn.end();
+      pool.end();
+    }
+  }, 5);
 }
 
 pool.on('connection', function(conn) {
