@@ -16,7 +16,8 @@
     "prettier": "prettier --single-quote --trailing-comma none --write \"{lib,examples,test}/**/*.js\"",
     "prettier:docs": "prettier-markdown README.md documentation/*",
     "precommit": "npm run prettier && npm run lint",
-    "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check"
+    "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check",
+    "wait-port": "wait-on"
   },
   "lint-staged": {
     "*.js": [

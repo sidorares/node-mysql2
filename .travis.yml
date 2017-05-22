@@ -25,7 +25,7 @@ notifications:
 
 script:
   - docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 33306:3306 mysql:5.7
-  - ./node-modules/.bin/wait-on tcp:33306
+  - npm run wait-port -- tcp:33306
   - node --version
   - yarn --version
   - if [ "$LINT" = "1" ]; then yarn run lint; fi
