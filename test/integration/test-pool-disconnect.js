@@ -1,44 +1,52 @@
-var assert = require('assert');
-var mysql = require('../common');
+const assert = require('assert');
+const mysql = require('../common');
 
-var pool = mysql.createPool();
-var conn = mysql.createConnection({ multipleStatements: true });
+const pool = mysql.createPool();
+const conn = mysql.createConnection({ multipleStatements: true });
 pool.config.connectionLimit = 5;
 
-var numSelectToPerform = 5;
-var tids = [];
-var numSelects = 0;
-var killCount = 0;
+const numSelectToPerform = 5;
+const tids = [];
+let numSelects = 0;
+let killCount = 0;
 
 function kill() {
-  setTimeout(function() {
-    var id = tids.shift();
-    if (typeof id != 'undefined') {
-      // sleep required to give mysql time to close connection,
-      // and callback called after connection with id is really closed
-      conn.query('kill ?; select sleep(0.05)', id, function(err, res) {
-        assert.ifError(err);
-        killCount++;
-        // TODO: this assertion needs to be fixed, after kill
-        // connection is removed from _allConnections but not at a point this callback is called
-        //
-        // assert.equal(pool._allConnections.length, tids.length);
-      });
-    } else {
-      conn.end();
-      pool.end();
-    }
-  }, 5);
+  setTimeout(
+    function() {
+      const id = tids.shift();
+      if (typeof id != 'undefined') {
+        // sleep required to give mysql time to close connection,
+        // and callback called after connection with id is really closed
+        conn.query('kill ?; select sleep(0.05)', id, function(err, res) {
+          assert.ifError(err);
+          killCount++;
+          // TODO: this assertion needs to be fixed, after kill
+          // connection is removed from _allConnections but not at a point this callback is called
+          //
+          // assert.equal(pool._allConnections.length, tids.length);
+        });
+      } else {
+        conn.end();
+        pool.end();
+      }
+    },
+    5
+  );
 }
 
-pool.on('connection', function(conn) {
+conn.on('error', function(err) {
+  console.log('Warning: killer connection is disconnected');
+  console.log(err);
+});
+
+pool.on('connection', function(poolConn) {
   tids.push(conn.threadId);
-  conn.on('error', function(err) {
+  poolConn.on('error', function(err) {
     setTimeout(kill, 5);
   });
 });
 
-for (var i = 0; i < numSelectToPerform; i++) {
+for (let i = 0; i < numSelectToPerform; i++) {
   pool.query('select 1 as value', function(err, rows) {
     numSelects++;
     assert.ifError(err);
