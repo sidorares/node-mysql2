@@ -15,12 +15,15 @@ module.exports.waitDatabaseReady = function(callback) {
     const conn = module.exports.createConnection();
     conn.query('select 1+1', (err, res) => {
       if (err) {
+        console.log('not ready, retrying');
         return setTimeout(tryConnect, 1000);
       }
+      console.log('ready!');
       conn.close();
       callback();
     });
   };
+  tryConnect();
 };
 
 module.exports.createConnection = function(args, callback) {
