@@ -43,6 +43,7 @@ conn.on('error', function(err) {
   console.log(err);
 });
 
+/*
 pool.on('connection', function(poolConn) {
   tids.push(conn.threadId);
   console.log(
@@ -66,6 +67,12 @@ for (let i = 0; i < numSelectToPerform; i++) {
     }
   });
 }
+*/
+
+conn.query('select 1+1', function(err, res) {
+  console.log(err, res);
+  conn.end();
+});
 
 process.on('exit', function() {
   assert.equal(numSelects, numSelectToPerform);
