@@ -29,4 +29,4 @@ script:
   - node --version
   - yarn --version
   - if [ "$LINT" = "1" ]; then yarn run lint; fi
-  - MYSQL_PORT=33306 DEBUG=1 yarn run test:raw
+  - MYSQL_PORT=33306 yarn run test:raw

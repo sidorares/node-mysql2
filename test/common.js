@@ -20,10 +20,7 @@ module.exports.createConnection = function(args, callback) {
       start = [0, 0] || start;
       var timestamp = Date.now();
       var seconds = Math.ceil(timestamp / 1000);
-      return [
-        seconds - start[0],
-        (timestamp - seconds * 1000) * 1000 - start[1]
-      ];
+      return [seconds - start[0], (timestamp - seconds * 1000) * 1000 - start[1]];
     };
   }
 
@@ -39,22 +36,25 @@ module.exports.createConnection = function(args, callback) {
     // c.on('connect', function() {
     //
     // });
-    setTimeout(function() {
-      console.log('altering client...');
-      c.oldQuery = c.query;
-      c.query = function(sql, callback) {
-        var rows = [];
-        var q = c.oldQuery(sql);
-        q.on('result', function(res) {
-          res.on('row', function(row) {
-            rows.push(row);
+    setTimeout(
+      function() {
+        console.log('altering client...');
+        c.oldQuery = c.query;
+        c.query = function(sql, callback) {
+          var rows = [];
+          var q = c.oldQuery(sql);
+          q.on('result', function(res) {
+            res.on('row', function(row) {
+              rows.push(row);
+            });
+            res.on('end', function() {
+              callback(null, rows);
+            });
           });
-          res.on('end', function() {
-            callback(null, rows);
-          });
-        });
-      };
-    }, 1000);
+        };
+      },
+      1000
+    );
     return c;
   }
 
@@ -101,6 +101,28 @@ module.exports.createConnection = function(args, callback) {
   return conn;
 };
 
+module.exports.getConfig = function(args) {
+  const params = {
+    host: args.host || config.host,
+    rowsAsArray: args.rowsAsArray,
+    user: (args && args.user) || config.user,
+    password: (args && args.password) || config.password,
+    database: (args && args.database) || config.database,
+    multipleStatements: args ? args.multipleStatements : false,
+    port: (args && args.port) || config.port,
+    debug: process.env.DEBUG || (args && args.debug),
+    supportBigNumbers: args && args.supportBigNumbers,
+    bigNumberStrings: args && args.bigNumberStrings,
+    compress: (args && args.compress) || config.compress,
+    decimalNumbers: args && args.decimalNumbers,
+    charset: args && args.charset,
+    dateStrings: args && args.dateStrings,
+    authSwitchHandler: args && args.authSwitchHandler,
+    typeCast: args && args.typeCast
+  };
+  return params;
+};
+
 module.exports.createPool = function(callback) {
   var driver = require('../index.js');
   if (process.env.BENCHMARK_MYSQL1) {
@@ -112,10 +134,7 @@ module.exports.createPool = function(callback) {
 
 module.exports.createTemplate = function() {
   var jade = require('jade');
-  var template = require('fs').readFileSync(
-    __dirname + '/template.jade',
-    'ascii'
-  );
+  var template = require('fs').readFileSync(__dirname + '/template.jade', 'ascii');
   return jade.compile(template);
 };
 
