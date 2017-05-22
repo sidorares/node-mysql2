@@ -50,7 +50,7 @@ pool.on('connection', function(poolConn) {
     poolConn.threadId
   );
   poolConn.on('error', function(err) {
-    setTimeout(kill, 5);
+    setTimeout(kill, 5000);
   });
 });
 
