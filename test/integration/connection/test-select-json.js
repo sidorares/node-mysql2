@@ -13,12 +13,12 @@ var face = '\uD83D\uDE02';
 
 connection.query('CREATE TEMPORARY TABLE json_test (json_test JSON)');
 connection.query('INSERT INTO json_test VALUES (?)', JSON.stringify(face));
-connection.query('SELECT * FROM json_test', function (err, _rows) {
+connection.query('SELECT * FROM json_test', function(err, _rows) {
   if (err) {
     throw err;
   }
   textFetchedRows = _rows;
-  connection.execute('SELECT * FROM json_test', function (err, _rows) {
+  connection.execute('SELECT * FROM json_test', function(err, _rows) {
     if (err) {
       throw err;
     }
@@ -27,8 +27,7 @@ connection.query('SELECT * FROM json_test', function (err, _rows) {
   });
 });
 
-
-process.on('exit', function () {
+process.on('exit', function() {
   assert.equal(textFetchedRows[0].json_test, face);
   assert.equal(binaryFetchedRows[0].json_test, face);
 });

@@ -5,9 +5,14 @@ var Buffer = require('safe-buffer').Buffer;
 
 var server;
 
-function authenticate (params, cb) {
+function authenticate(params, cb) {
   var doubleSha = auth.doubleSha1('testpassword');
-  var isValid = auth.verifyToken(params.authPluginData1, params.authPluginData2, params.authToken, doubleSha);
+  var isValid = auth.verifyToken(
+    params.authPluginData1,
+    params.authPluginData2,
+    params.authToken,
+    doubleSha
+  );
   assert(isValid);
   cb(null);
 }
@@ -18,10 +23,10 @@ var _1_3 = false;
 var queryCalls = 0;
 
 var portfinder = require('portfinder');
-portfinder.getPort(function (err, port) {
+portfinder.getPort(function(err, port) {
   var server = mysql.createServer();
   server.listen(port);
-  server.on('connection', function (conn) {
+  server.on('connection', function(conn) {
     conn.serverHandshake({
       protocolVersion: 10,
       serverVersion: 'node.js rocks',
@@ -31,7 +36,7 @@ portfinder.getPort(function (err, port) {
       capabilityFlags: 0xffffff,
       authCallback: authenticate
     });
-    conn.on('query', function (sql) {
+    conn.on('query', function(sql) {
       assert.equal(sql, 'select 1+1');
       queryCalls++;
       conn.close();
@@ -45,28 +50,27 @@ portfinder.getPort(function (err, port) {
     passwordSha1: Buffer.from('8bb6118f8fd6935ad0876a3be34a717d32708ffd', 'hex')
   });
 
-  connection.on('error', function (err) {
+  connection.on('error', function(err) {
     assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
   });
 
-  connection.query('select 1+1', function (err) {
+  connection.query('select 1+1', function(err) {
     assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     server._server.close();
   });
 
-  connection.query('select 1+2', function (err) {
+  connection.query('select 1+2', function(err) {
     assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     _1_2 = true;
   });
 
-  connection.query('select 1+3', function (err) {
+  connection.query('select 1+3', function(err) {
     assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     _1_3 = true;
   });
-
 });
 
-process.on('exit', function () {
+process.on('exit', function() {
   assert.equal(queryCalls, 1);
   assert.equal(_1_2, true);
   assert.equal(_1_3, true);
