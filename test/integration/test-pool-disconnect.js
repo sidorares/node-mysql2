@@ -1,64 +1,47 @@
-const assert = require('assert');
-const mysql = require('../../index.js');
-const config = require('../common.js').getConfig();
+var assert = require('assert');
+var mysql = require('../common');
 
-//const connParams = Object.assign(config, {}, { debug: true });
-const connParams = {
-  port: 33306,
-  database: 'test',
-  user: 'root'
-};
+var pool = mysql.createPool();
+var conn = mysql.createConnection({ multipleStatements: true });
+pool.config.connectionLimit = 5;
 
-//const pool = mysql.createPool(config);
-console.log(connParams);
-const conn = mysql.createConnection(connParams);
-//pool.config.connectionLimit = 10;
-
-const numSelectToPerform = 5;
-const tids = [];
-let numSelects = 0;
-let killCount = 0;
+var numSelectToPerform = 10;
+var tids = [];
+var numSelects = 0;
+var killCount = 0;
 
 function kill() {
-  setTimeout(function() {
-    const id = tids.shift();
-    if (typeof id != 'undefined') {
-      // sleep required to give mysql time to close connection,
-      // and callback called after connection with id is really closed
-      conn.query('kill ?', id, function(err, res) {
-        assert.ifError(err);
-        killCount++;
-        // TODO: this assertion needs to be fixed, after kill
-        // connection is removed from _allConnections but not at a point this callback is called
-        //
-        // assert.equal(pool._allConnections.length, tids.length);
-      });
-    } else {
-      conn.end();
-      pool.end();
-    }
-  }, 5);
+  setTimeout(
+    function() {
+      var id = tids.shift();
+      if (typeof id != 'undefined') {
+        // sleep required to give mysql time to close connection,
+        // and callback called after connection with id is really closed
+        conn.query('kill ?; select sleep(0.05)', id, function(err, res) {
+          assert.ifError(err);
+          killCount++;
+          // TODO: this assertion needs to be fixed, after kill
+          // connection is removed from _allConnections but not at a point this callback is called
+          //
+          // assert.equal(pool._allConnections.length, tids.length);
+        });
+      } else {
+        conn.end();
+        pool.end();
+      }
+    },
+    5
+  );
 }
 
-conn.on('error', function(err) {
-  console.log('Warning: killer connection is disconnected ', conn.threadId);
-  console.log('');
-  console.log(err);
-});
-
-/*
-pool.on('connection', function(poolConn) {
+pool.on('connection', function(conn) {
   tids.push(conn.threadId);
-  console.log(
-    'Test connection (supposed to be killed by killer connection)',
-    poolConn.threadId
-  );
-  poolConn.on('error', function(err) {
-    setTimeout(kill, 5000);
+  conn.on('error', function(err) {
+    setTimeout(kill, 5);
   });
 });
 
-for (let i = 0; i < numSelectToPerform; i++) {
+for (var i = 0; i < numSelectToPerform; i++) {
   pool.query('select 1 as value', function(err, rows) {
     numSelects++;
     assert.ifError(err);
@@ -70,12 +53,6 @@ for (let i = 0; i < numSelectToPerform; i++) {
     }
   });
 }
-*/
-
-conn.query('select 1+1', function(err, res) {
-  console.log(err, res);
-  conn.end();
-});
 
 process.on('exit', function() {
   assert.equal(numSelects, numSelectToPerform);

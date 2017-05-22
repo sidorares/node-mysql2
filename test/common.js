@@ -52,22 +52,25 @@ module.exports.createConnection = function(args, callback) {
     // c.on('connect', function() {
     //
     // });
-    setTimeout(function() {
-      console.log('altering client...');
-      c.oldQuery = c.query;
-      c.query = function(sql, callback) {
-        var rows = [];
-        var q = c.oldQuery(sql);
-        q.on('result', function(res) {
-          res.on('row', function(row) {
-            rows.push(row);
+    setTimeout(
+      function() {
+        console.log('altering client...');
+        c.oldQuery = c.query;
+        c.query = function(sql, callback) {
+          var rows = [];
+          var q = c.oldQuery(sql);
+          q.on('result', function(res) {
+            res.on('row', function(row) {
+              rows.push(row);
+            });
+            res.on('end', function() {
+              callback(null, rows);
+            });
           });
-          res.on('end', function() {
-            callback(null, rows);
-          });
-        });
-      };
-    }, 1000);
+        };
+      },
+      1000
+    );
     return c;
   }
 
@@ -96,7 +99,6 @@ module.exports.createConnection = function(args, callback) {
   };
 
   // console.log('cc params', params);
-  console.log('test::common::createConnection', params);
   var conn = driver.createConnection(params);
 
   /*
