@@ -66,8 +66,13 @@ function testErrors() {
       return connResolved.query('select 2+2 as qqq');
     })
     .catch(function(err) {
+      console.log(err);
       exceptionCaught = true;
-      connPromise.end();
+      if (connResolved) {
+        connResolved.end();
+      } else {
+        console.log('Warning: promise rejected before first query');
+      }
     });
 }
 

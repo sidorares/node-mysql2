@@ -35,12 +35,14 @@ function kill() {
 }
 
 conn.on('error', function(err) {
-  console.log('Warning: killer connection is disconnected');
+  console.log('Warning: killer connection is disconnected ', conn.threadId);
+  console.log('');
   console.log(err);
 });
 
 pool.on('connection', function(poolConn) {
   tids.push(conn.threadId);
+  console.log('Test connection (supposed to be killed by killer connection)', poolConn.threadId);
   poolConn.on('error', function(err) {
     setTimeout(kill, 5);
   });
