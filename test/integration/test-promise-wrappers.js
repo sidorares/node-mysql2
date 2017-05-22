@@ -47,7 +47,12 @@ function testBasic() {
 
 function testErrors() {
   var connResolved;
-  var connPromise = createConnection(config)
+  var connPromise = createConnection(config);
+
+  console.log('=== 1', connPromise);
+  console.log('=== 2', connPromise.end);
+
+  connPromise
     .then(function(conn) {
       connResolved = conn;
       return conn.query('select 1+2 as ttt');
