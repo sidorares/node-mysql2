@@ -20,7 +20,10 @@ module.exports.createConnection = function(args, callback) {
       start = [0, 0] || start;
       var timestamp = Date.now();
       var seconds = Math.ceil(timestamp / 1000);
-      return [seconds - start[0], (timestamp - seconds * 1000) * 1000 - start[1]];
+      return [
+        seconds - start[0],
+        (timestamp - seconds * 1000) * 1000 - start[1]
+      ];
     };
   }
 
@@ -36,25 +39,22 @@ module.exports.createConnection = function(args, callback) {
     // c.on('connect', function() {
     //
     // });
-    setTimeout(
-      function() {
-        console.log('altering client...');
-        c.oldQuery = c.query;
-        c.query = function(sql, callback) {
-          var rows = [];
-          var q = c.oldQuery(sql);
-          q.on('result', function(res) {
-            res.on('row', function(row) {
-              rows.push(row);
-            });
-            res.on('end', function() {
-              callback(null, rows);
-            });
+    setTimeout(function() {
+      console.log('altering client...');
+      c.oldQuery = c.query;
+      c.query = function(sql, callback) {
+        var rows = [];
+        var q = c.oldQuery(sql);
+        q.on('result', function(res) {
+          res.on('row', function(row) {
+            rows.push(row);
           });
-        };
-      },
-      1000
-    );
+          res.on('end', function() {
+            callback(null, rows);
+          });
+        });
+      };
+    }, 1000);
     return c;
   }
 
@@ -135,7 +135,10 @@ module.exports.createPool = function(callback) {
 
 module.exports.createTemplate = function() {
   var jade = require('jade');
-  var template = require('fs').readFileSync(__dirname + '/template.jade', 'ascii');
+  var template = require('fs').readFileSync(
+    __dirname + '/template.jade',
+    'ascii'
+  );
   return jade.compile(template);
 };
 
