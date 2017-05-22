@@ -2,7 +2,13 @@ const assert = require('assert');
 const mysql = require('../../index.js');
 const config = require('../common.js').getConfig();
 
-const connParams = Object.assign(config, {}, { debug: true });
+//const connParams = Object.assign(config, {}, { debug: true });
+const connParams = {
+  port: 33306,
+  database: 'test',
+  user: 'root'
+};
+
 //const pool = mysql.createPool(config);
 console.log(connParams);
 const conn = mysql.createConnection(connParams);
