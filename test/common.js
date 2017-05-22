@@ -13,11 +13,11 @@ module.exports.config = config;
 module.exports.waitDatabaseReady = function(callback) {
   const tryConnect = () => {
     const conn = module.exports.createConnection();
-    conn.query('select 1+1', (err, res) => {
-      if (err) {
-        console.log('not ready, retrying');
-        return setTimeout(tryConnect, 1000);
-      }
+    conn.on('error', function() {
+      console.log('not ready');
+      return tryConnect();
+    });
+    conn.on('connect', function() {
       console.log('ready!');
       conn.close();
       callback();
