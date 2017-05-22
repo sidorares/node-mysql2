@@ -68,6 +68,7 @@
     "prettier-markdown": "^0.1.6",
     "progress": "2.0.0",
     "urun": "0.0.8",
-    "utest": "0.0.8"
+    "utest": "0.0.8",
+    "wait-on": "^2.0.2"
   }
 }
