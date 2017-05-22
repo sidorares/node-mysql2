@@ -101,7 +101,8 @@ module.exports.createConnection = function(args, callback) {
   return conn;
 };
 
-module.exports.getConfig = function(args) {
+module.exports.getConfig = function(input) {
+  const args = input || {};
   const params = {
     host: args.host || config.host,
     rowsAsArray: args.rowsAsArray,
