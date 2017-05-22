@@ -3,10 +3,10 @@ const mysql = require('../../index.js');
 const config = require('../common.js').getConfig();
 
 const connParams = Object.assign(config, {}, { debug: true });
-const pool = mysql.createPool(config);
+//const pool = mysql.createPool(config);
 console.log(connParams);
 const conn = mysql.createConnection(connParams);
-pool.config.connectionLimit = 10;
+//pool.config.connectionLimit = 10;
 
 const numSelectToPerform = 5;
 const tids = [];
