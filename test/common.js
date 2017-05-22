@@ -13,9 +13,10 @@ module.exports.config = config;
 module.exports.waitDatabaseReady = function(callback) {
   const tryConnect = () => {
     const conn = module.exports.createConnection();
-    conn.on('error', function() {
+    conn.on('error', function(err) {
+      console.log(err);
       console.log('not ready');
-      return tryConnect();
+      setTimeout(tryConnect, 1000);
     });
     conn.on('connect', function() {
       console.log('ready!');
