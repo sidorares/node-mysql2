@@ -52,25 +52,22 @@ module.exports.createConnection = function(args, callback) {
     // c.on('connect', function() {
     //
     // });
-    setTimeout(
-      function() {
-        console.log('altering client...');
-        c.oldQuery = c.query;
-        c.query = function(sql, callback) {
-          var rows = [];
-          var q = c.oldQuery(sql);
-          q.on('result', function(res) {
-            res.on('row', function(row) {
-              rows.push(row);
-            });
-            res.on('end', function() {
-              callback(null, rows);
-            });
+    setTimeout(function() {
+      console.log('altering client...');
+      c.oldQuery = c.query;
+      c.query = function(sql, callback) {
+        var rows = [];
+        var q = c.oldQuery(sql);
+        q.on('result', function(res) {
+          res.on('row', function(row) {
+            rows.push(row);
           });
-        };
-      },
-      1000
-    );
+          res.on('end', function() {
+            callback(null, rows);
+          });
+        });
+      };
+    }, 1000);
     return c;
   }
 
