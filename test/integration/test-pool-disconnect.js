@@ -5,7 +5,7 @@ var pool = mysql.createPool();
 var conn = mysql.createConnection({ multipleStatements: true });
 pool.config.connectionLimit = 5;
 
-var numSelectToPerform = 10;
+var numSelectToPerform = 5;
 var tids = [];
 var numSelects = 0;
 var killCount = 0;
