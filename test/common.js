@@ -10,6 +10,19 @@ var config = {
 module.exports.SqlString = require('sqlstring');
 module.exports.config = config;
 
+module.exports.waitDatabaseReady = function(callback) {
+  const tryConnect = () => {
+    const conn = module.exports.createConnection();
+    conn.query('select 1+1', (err, res) => {
+      if (err) {
+        return setTimeout(tryConnect, 1000);
+      }
+      conn.close();
+      callback();
+    });
+  };
+};
+
 module.exports.createConnection = function(args, callback) {
   if (!args) {
     args = {};
@@ -39,22 +52,25 @@ module.exports.createConnection = function(args, callback) {
     // c.on('connect', function() {
     //
     // });
-    setTimeout(function() {
-      console.log('altering client...');
-      c.oldQuery = c.query;
-      c.query = function(sql, callback) {
-        var rows = [];
-        var q = c.oldQuery(sql);
-        q.on('result', function(res) {
-          res.on('row', function(row) {
-            rows.push(row);
+    setTimeout(
+      function() {
+        console.log('altering client...');
+        c.oldQuery = c.query;
+        c.query = function(sql, callback) {
+          var rows = [];
+          var q = c.oldQuery(sql);
+          q.on('result', function(res) {
+            res.on('row', function(row) {
+              rows.push(row);
+            });
+            res.on('end', function() {
+              callback(null, rows);
+            });
           });
-          res.on('end', function() {
-            callback(null, rows);
-          });
-        });
-      };
-    }, 1000);
+        };
+      },
+      1000
+    );
     return c;
   }
 
