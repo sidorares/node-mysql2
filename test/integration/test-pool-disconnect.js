@@ -2,9 +2,11 @@ const assert = require('assert');
 const mysql = require('../../index.js');
 const config = require('../common.js').getConfig();
 
+const connParams = Object.assign(config, {}, { debug: true });
 const pool = mysql.createPool(config);
-const conn = mysql.createPool(Object.assign(config, {}, { debug: true }));
-pool.config.connectionLimit = 5;
+console.log(connParams);
+const conn = mysql.createConnection(connParams);
+pool.config.connectionLimit = 10;
 
 const numSelectToPerform = 5;
 const tids = [];
@@ -43,7 +45,10 @@ conn.on('error', function(err) {
 
 pool.on('connection', function(poolConn) {
   tids.push(conn.threadId);
-  console.log('Test connection (supposed to be killed by killer connection)', poolConn.threadId);
+  console.log(
+    'Test connection (supposed to be killed by killer connection)',
+    poolConn.threadId
+  );
   poolConn.on('error', function(err) {
     setTimeout(kill, 5);
   });
