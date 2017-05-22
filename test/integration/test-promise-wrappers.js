@@ -62,7 +62,7 @@ function testErrors() {
     })
     .catch(function(err) {
       exceptionCaught = true;
-      return connResolved.end();
+      connPromise.end();
     });
 }
 
