@@ -2,6 +2,18 @@ var core = require('./index.js');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
+function inheritEvents(source, target, events) {
+  events
+    .forEach(function (eventName) {
+      source.on(eventName, function () {
+        var args = [].slice.call(arguments);
+        args.unshift(eventName);
+
+        target.emit.apply(target, args);
+      });
+    });
+}
+
 function createConnection (opts) {
   var coreConnection = core.createConnection(opts);
   var Promise = opts.Promise || global.Promise;
@@ -171,17 +183,7 @@ function PromisePool(pool, Promise) {
   this.pool = pool;
   this.Promise = Promise;
   
-  ['acquire', 'connection', 'enqueue', 'release']
-    .forEach(function (eventName) {
-      var t = this;
-    
-      this.pool.on(eventName, function () {
-        var args = [].slice.call(arguments);
-        args.unshift(eventName);
-          
-        t.emit.apply(t, args);
-      });
-  }, this);
+  inheritEvents(pool, this, ['acquire', 'connection', 'enqueue', 'release']);
 }
 util.inherits(PromisePool, EventEmitter);
 

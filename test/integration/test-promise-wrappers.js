@@ -21,7 +21,6 @@ var exceptionCaught = false;
 
 var doneCalledPool = false;
 var exceptionCaughtPool = false;
-
 var doneEventsPool = false;
 
 function testBasic() {
