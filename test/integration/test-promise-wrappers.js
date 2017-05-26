@@ -22,6 +22,8 @@ var exceptionCaught = false;
 var doneCalledPool = false;
 var exceptionCaughtPool = false;
 
+var doneEventsPool = false;
+
 function testBasic() {
   var connResolved;
   var connPromise = createConnection(config)
@@ -163,12 +165,39 @@ function testObjParamsPool() {
     });
 }
 
+function testEventsPool() {
+  var pool = createPool(config);
+  var events = 0;
+
+  pool
+    .once('acquire', function(connection) {
+      ++events;
+    })
+    .once('connection', function(connection) {
+      ++events;
+    })
+    .once('enqueue', function() {
+      ++events;
+    })
+    .once('release', function() {
+      ++events;
+
+      doneEventsPool = events === 4;
+    });
+
+  pool.pool.emit('acquire');
+  pool.pool.emit('connection');
+  pool.pool.emit('enqueue');
+  pool.pool.emit('release');
+}
+
 testBasic();
 testErrors();
 testObjParams();
 testBasicPool();
 testErrorsPool();
 testObjParamsPool();
+testEventsPool();
 
 process.on('exit', function() {
   if (skipTest) {
@@ -178,6 +207,7 @@ process.on('exit', function() {
   assert.equal(exceptionCaught, true);
   assert.equal(doneCalledPool, true);
   assert.equal(exceptionCaughtPool, true);
+  assert.equal(doneEventsPool, true);
 });
 
 process.on('unhandledRejection', function(err) {
