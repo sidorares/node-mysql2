@@ -18,6 +18,7 @@ assert.equal(mainExport, createConnection);
 
 var doneCalled = false;
 var exceptionCaught = false;
+var doneEventsConnect = false;
 
 var doneCalledPool = false;
 var exceptionCaughtPool = false;
@@ -101,6 +102,38 @@ function testObjParams() {
     .catch(function(err) {
       console.log(err);
     });
+}
+
+function testEventsConnect() {
+  var connPromise = createConnection(config).then(function(conn) {
+    var events = 0;
+
+    conn
+      .once('error', function(connection) {
+        ++events;
+      })
+      .once('drain', function(connection) {
+        ++events;
+      })
+      .once('connect', function() {
+        ++events;
+      })
+      .once('enqueue', function() {
+        ++events;
+      })
+      .once('end', function() {
+        ++events;
+
+        doneEventsConnect = events === 5;
+      });
+
+    conn.connection.emit('error');
+    conn.connection.emit('drain');
+    conn.connection.emit('connect');
+    conn.connection.emit('enqueue');
+    conn.connection.emit('end');
+    conn.end();
+  });
 }
 
 function testBasicPool() {
@@ -193,6 +226,7 @@ function testEventsPool() {
 testBasic();
 testErrors();
 testObjParams();
+testEventsConnect();
 testBasicPool();
 testErrorsPool();
 testObjParamsPool();
@@ -204,6 +238,7 @@ process.on('exit', function() {
   }
   assert.equal(doneCalled, true);
   assert.equal(exceptionCaught, true);
+  assert.equal(doneEventsConnect, true);
   assert.equal(doneCalledPool, true);
   assert.equal(exceptionCaughtPool, true);
   assert.equal(doneEventsPool, true);

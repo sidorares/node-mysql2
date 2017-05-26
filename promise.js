@@ -33,7 +33,10 @@ function createConnection (opts) {
 function PromiseConnection (connection, promiseImpl) {
   this.connection = connection;
   this.Promise = promiseImpl;
+
+  inheritEvents(connection, this, ['error', 'drain', 'connect', 'end', 'enqueue']);
 }
+util.inherits(PromiseConnection, EventEmitter);
 
 PromiseConnection.prototype.release = function () {
   this.connection.release();
