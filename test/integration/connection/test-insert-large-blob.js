@@ -1,3 +1,5 @@
+if (0) {
+
 var common = require('../../common');
 var connection = common.createConnection();
 
@@ -84,3 +86,4 @@ process.on('exit', function() {
   assert.equal(result2[0].content.toString('hex'), content.toString('hex'));
   assert.equal(result4[0].content.toString('hex'), content1.toString('hex'));
 });
+}
