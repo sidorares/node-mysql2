@@ -12,3 +12,16 @@ if (process.env.FILTER) {
 process.env.TZ = 'UTC';
 
 require('urun')(__dirname, options);
+
+
+process.on('exit', (code) => {
+  console.log(`About to exit with code: ${code}`);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.log('unhandledRejection', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.log('uncaughtException', err);
+});

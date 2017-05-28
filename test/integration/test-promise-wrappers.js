@@ -18,9 +18,11 @@ assert.equal(mainExport, createConnection);
 
 var doneCalled = false;
 var exceptionCaught = false;
+var doneEventsConnect = false;
 
 var doneCalledPool = false;
 var exceptionCaughtPool = false;
+var doneEventsPool = false;
 
 function testBasic() {
   var connResolved;
@@ -102,6 +104,38 @@ function testObjParams() {
     });
 }
 
+function testEventsConnect() {
+  var connPromise = createConnection(config).then(function(conn) {
+    var events = 0;
+
+    conn
+      .once('error', function(connection) {
+        ++events;
+      })
+      .once('drain', function(connection) {
+        ++events;
+      })
+      .once('connect', function() {
+        ++events;
+      })
+      .once('enqueue', function() {
+        ++events;
+      })
+      .once('end', function() {
+        ++events;
+
+        doneEventsConnect = events === 5;
+      });
+
+    conn.connection.emit('error');
+    conn.connection.emit('drain');
+    conn.connection.emit('connect');
+    conn.connection.emit('enqueue');
+    conn.connection.emit('end');
+    conn.end();
+  });
+}
+
 function testBasicPool() {
   var pool = createPool(config);
   pool
@@ -163,12 +197,40 @@ function testObjParamsPool() {
     });
 }
 
+function testEventsPool() {
+  var pool = createPool(config);
+  var events = 0;
+
+  pool
+    .once('acquire', function(connection) {
+      ++events;
+    })
+    .once('connection', function(connection) {
+      ++events;
+    })
+    .once('enqueue', function() {
+      ++events;
+    })
+    .once('release', function() {
+      ++events;
+
+      doneEventsPool = events === 4;
+    });
+
+  pool.pool.emit('acquire');
+  pool.pool.emit('connection');
+  pool.pool.emit('enqueue');
+  pool.pool.emit('release');
+}
+
 testBasic();
 testErrors();
 testObjParams();
+testEventsConnect();
 testBasicPool();
 testErrorsPool();
 testObjParamsPool();
+testEventsPool();
 
 process.on('exit', function() {
   if (skipTest) {
@@ -176,8 +238,10 @@ process.on('exit', function() {
   }
   assert.equal(doneCalled, true);
   assert.equal(exceptionCaught, true);
+  assert.equal(doneEventsConnect, true);
   assert.equal(doneCalledPool, true);
   assert.equal(exceptionCaughtPool, true);
+  assert.equal(doneEventsPool, true);
 });
 
 process.on('unhandledRejection', function(err) {

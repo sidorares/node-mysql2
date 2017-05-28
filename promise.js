@@ -1,4 +1,18 @@
 var core = require('./index.js');
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+
+function inheritEvents(source, target, events) {
+  events
+    .forEach(function (eventName) {
+      source.on(eventName, function () {
+        var args = [].slice.call(arguments);
+        args.unshift(eventName);
+
+        target.emit.apply(target, args);
+      });
+    });
+}
 
 function createConnection (opts) {
   var coreConnection = core.createConnection(opts);
@@ -19,7 +33,10 @@ function createConnection (opts) {
 function PromiseConnection (connection, promiseImpl) {
   this.connection = connection;
   this.Promise = promiseImpl;
+
+  inheritEvents(connection, this, ['error', 'drain', 'connect', 'end', 'enqueue']);
 }
+util.inherits(PromiseConnection, EventEmitter);
 
 PromiseConnection.prototype.release = function () {
   this.connection.release();
@@ -165,6 +182,62 @@ PromiseConnection.prototype.prepare = function () {
   'unprepare'
 ]);
 
+function PromisePool(pool, Promise) {
+  this.pool = pool;
+  this.Promise = Promise;
+  
+  inheritEvents(pool, this, ['acquire', 'connection', 'enqueue', 'release']);
+}
+util.inherits(PromisePool, EventEmitter);
+
+PromisePool.prototype.getConnection = function () {
+  var corePool = this.pool;
+
+  return new this.Promise(function (resolve, reject) {
+    corePool.getConnection(function (err, coreConnection) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(new PromiseConnection(coreConnection, Promise));
+      }
+    });
+  });
+};
+
+PromisePool.prototype.query = function (sql, args) {
+  var corePool = this.pool;
+
+  return new this.Promise(function (resolve, reject) {
+    var done = makeDoneCb(resolve, reject);
+    if (args) {
+      corePool.query(sql, args, done);
+    } else {
+      corePool.query(sql, done);
+    }
+  });
+};
+
+PromisePool.prototype.execute = function (sql, values) {
+  var corePool = this.pool;
+
+  return new Promise(function (resolve, reject) {
+    corePool.execute(sql, values, makeDoneCb(resolve, reject));
+  });
+};
+
+PromisePool.prototype.end = function () {
+  var corePool = this.pool;
+
+  return new Promise(function (resolve, reject) {
+    corePool.end(function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+};
 
 function createPool (opts) {
   var corePool = core.createPool(opts);
@@ -175,50 +248,7 @@ function createPool (opts) {
       ' implementation as parameter, for example: { Promise: require(\'bluebird\') }');
   }
 
-  var promisePool = {
-    getConnection: function () {
-      return new Promise(function (resolve, reject) {
-        corePool.getConnection(function (err, coreConnection) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(new PromiseConnection(coreConnection, Promise));
-          }
-        });
-      });
-    },
-
-    query: function (sql, args) {
-      return new Promise(function (resolve, reject) {
-        var done = makeDoneCb(resolve, reject);
-        if (args) {
-          corePool.query(sql, args, done);
-        } else {
-          corePool.query(sql, done);
-        }
-      });
-    },
-
-    execute: function (sql, values) {
-      return new Promise(function (resolve, reject) {
-        corePool.execute(sql, values, makeDoneCb(resolve, reject));
-      });
-    },
-
-    end: function () {
-      return new Promise(function (resolve, reject) {
-        corePool.end(function (err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
-      });
-    }
-  };
-
-  return promisePool;
+  return new PromisePool(corePool, Promise);
 }
 
 module.exports.createConnection = createConnection;
