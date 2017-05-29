@@ -40,7 +40,7 @@
     "promise.js"
   ],
   "engines": {
-    "node": ">= 0.10"
+    "node": ">= 4.0"
   },
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
