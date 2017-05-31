@@ -104,6 +104,31 @@ function testObjParams() {
     });
 }
 
+function testPrepared() {
+  var connResolved;
+  var connPromise = createConnection(config)
+    .then(function(conn) {
+      connResolved = conn;
+      return conn.prepare('select ?-? as ttt, ? as uuu');
+    })
+    .then(function(statement) {
+      return statement.execute([11, 3, 'test']);
+    })
+    .then(function(result) {
+      assert.equal(result[0][0].ttt, 8);
+      assert.equal(result[0][0].uuu, 'test');
+      return connResolved.end();
+    })
+    .catch(function(err) {
+      console.log(err);
+      if (connResolved) {
+        connResolved.end();
+      } else {
+        console.log('Warning: promise rejected before executing prepared statement');
+      }
+    });
+}
+
 function testEventsConnect() {
   var connPromise = createConnection(config).then(function(conn) {
     var events = 0;
@@ -226,6 +251,7 @@ function testEventsPool() {
 testBasic();
 testErrors();
 testObjParams();
+testPrepared();
 testEventsConnect();
 testBasicPool();
 testErrorsPool();

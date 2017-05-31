@@ -129,16 +129,43 @@ PromiseConnection.prototype.connect = function () {
   });
 };
 
-PromiseConnection.prototype.prepare = function () {
+PromiseConnection.prototype.prepare = function (options) {
   var c = this.connection;
+  var promiseImpl = this.Promise;
   return new this.Promise(function (resolve, reject) {
-    c.prepare(function (error, statement) {
+    c.prepare(options, function (error, statement) {
       if (error) {
         reject(error);
       } else {
-        resolve(statement);
+        var wrappedStatement = new PromisePreparedStatementInfo(statement, promiseImpl);
+        resolve(wrappedStatement);
       }
     });
+  });
+};
+
+function PromisePreparedStatementInfo (statement, promiseImpl) {
+  this.statement = statement;
+  this.Promise = promiseImpl;
+}
+
+PromisePreparedStatementInfo.prototype.execute = function (parameters) {
+  var s = this.statement;
+  return new this.Promise(function (resolve, reject) {
+    var done = makeDoneCb(resolve, reject);
+    if (parameters) {
+      s.execute(parameters, done);
+    } else {
+      s.execute(done);
+    }
+  });
+};
+
+PromisePreparedStatementInfo.prototype.close = function () {
+  var s = this.statement;
+  return new this.Promise(function (resolve, reject) {
+    s.close();
+    resolve();
   });
 };
 
