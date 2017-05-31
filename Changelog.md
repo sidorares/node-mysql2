@@ -1,3 +1,10 @@
+1.3.2 ( 31/05/2017 )
+ - fix PromiseConnection.prepare and add                 #574, 575
+   PromisePreparedStatementInfo
+
+1.3.1 ( 31/05/2017 )
+ - move lint-staged to devDependencies                   #573
+
 1.3.0 ( 29/05/2017 )
  - Make Promise Pool wrapper extend EventEmitter         #567, 468
  - build: integrate prettier                             #563
