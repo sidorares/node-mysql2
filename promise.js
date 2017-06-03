@@ -3,9 +3,10 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
 function inheritEvents(source, target, events) {
+  target["eventHooks"] = {};
   events
     .forEach(function (eventName) {
-      source.on(eventName, function () {
+      source.on(eventName, target["eventHooks"][eventName] =  function () {
         var args = [].slice.call(arguments);
         args.unshift(eventName);
 
@@ -39,6 +40,10 @@ function PromiseConnection (connection, promiseImpl) {
 util.inherits(PromiseConnection, EventEmitter);
 
 PromiseConnection.prototype.release = function () {
+  var me = this;
+  ['error', 'drain', 'connect', 'end', 'enqueue'].forEach(function(eventName){
+    me.connection.removeListener(eventName,me["eventHooks"][eventName]);
+  });
   this.connection.release();
 };
 
