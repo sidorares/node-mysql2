@@ -15,6 +15,16 @@ function inheritEvents(source, target, events) {
     });
 }
 
+function removeEvents(source, target, events) {
+  if(target["eventHooks"]) {
+    events
+      .forEach(function (eventName) {
+        source.removeListener(eventName,target["eventHooks"][eventName]);
+    });
+    target["eventHooks"] = null;
+  }
+}
+
 function createConnection (opts) {
   var coreConnection = core.createConnection(opts);
   var Promise = opts.Promise || global.Promise;
@@ -40,10 +50,7 @@ function PromiseConnection (connection, promiseImpl) {
 util.inherits(PromiseConnection, EventEmitter);
 
 PromiseConnection.prototype.release = function () {
-  var me = this;
-  ['error', 'drain', 'connect', 'end', 'enqueue'].forEach(function(eventName){
-    me.connection.removeListener(eventName,me["eventHooks"][eventName]);
-  });
+  removeEvents(this.connection,this,['error', 'drain', 'connect', 'end', 'enqueue']);
   this.connection.release();
 };
 
@@ -82,6 +89,7 @@ PromiseConnection.prototype.execute = function (query, params) {
 };
 
 PromiseConnection.prototype.end = function () {
+  removeEvents(this.connection,this,['error', 'drain', 'connect', 'end', 'enqueue']);
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
     c.end(function () {
