@@ -13,7 +13,7 @@ var createConnection = require('../../../promise.js').createConnection;
 var createPool = require('../../../promise.js').createPool;
 
 // it's lazy exported from main index.js as well. Test that it's same function
-var mainExport = require('../../index.js').createConnectionPromise;
+var mainExport = require('../../../index.js').createConnectionPromise;
 assert.equal(mainExport, createConnection);
 
 var doneCalled = false;
