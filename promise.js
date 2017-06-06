@@ -85,8 +85,9 @@ PromiseConnection.prototype.query = function(query, params) {
 
 PromiseConnection.prototype.execute = function(query, params) {
   var c = this.connection;
+  const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+    var done = makeDoneCb(resolve, reject, localErr);
     if (params) {
       c.execute(query, params, done);
     } else {
@@ -106,24 +107,27 @@ PromiseConnection.prototype.end = function() {
 
 PromiseConnection.prototype.beginTransaction = function() {
   var c = this.connection;
+  const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+    var done = makeDoneCb(resolve, reject, localErr);
     c.beginTransaction(done);
   });
 };
 
 PromiseConnection.prototype.commit = function() {
   var c = this.connection;
+  const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+    var done = makeDoneCb(resolve, reject, localErr);
     c.commit(done);
   });
 };
 
 PromiseConnection.prototype.rollback = function() {
   var c = this.connection;
+  const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+    var done = makeDoneCb(resolve, reject, localErr);
     c.rollback(done);
   });
 };
@@ -137,10 +141,15 @@ PromiseConnection.prototype.ping = function() {
 
 PromiseConnection.prototype.connect = function() {
   var c = this.connection;
+  const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    c.connect(function(error, param) {
-      if (error) {
-        reject(error);
+    c.connect(function(err, param) {
+      if (err) {
+        localErr.message = err.message;
+        localErr.code = err.code;
+        localErr.errno = err.errno;
+        localErr.sqlState = err.sqlState;
+        reject(localErr);
       } else {
         resolve(param);
       }
@@ -151,10 +160,15 @@ PromiseConnection.prototype.connect = function() {
 PromiseConnection.prototype.prepare = function(options) {
   var c = this.connection;
   var promiseImpl = this.Promise;
+  const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    c.prepare(options, function(error, statement) {
-      if (error) {
-        reject(error);
+    c.prepare(options, function(err, statement) {
+      if (err) {
+        localErr.message = err.message;
+        localErr.code = err.code;
+        localErr.errno = err.errno;
+        localErr.sqlState = err.sqlState;
+        reject(localErr);
       } else {
         var wrappedStatement = new PromisePreparedStatementInfo(
           statement,
@@ -254,10 +268,10 @@ PromisePool.prototype.getConnection = function() {
 };
 
 PromisePool.prototype.query = function(sql, args) {
-  var corePool = this.pool;
-
+  const corePool = this.pool;
+  const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+    var done = makeDoneCb(resolve, reject, localErr);
     if (args) {
       corePool.query(sql, args, done);
     } else {
@@ -268,19 +282,24 @@ PromisePool.prototype.query = function(sql, args) {
 
 PromisePool.prototype.execute = function(sql, values) {
   var corePool = this.pool;
+  const localErr = new Error();
 
   return new Promise(function(resolve, reject) {
-    corePool.execute(sql, values, makeDoneCb(resolve, reject));
+    corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
   });
 };
 
 PromisePool.prototype.end = function() {
   var corePool = this.pool;
-
+  const localErr = new Error();
   return new Promise(function(resolve, reject) {
     corePool.end(function(err) {
       if (err) {
-        reject(err);
+        localErr.message = err.message;
+        localErr.code = err.code;
+        localErr.errno = err.errno;
+        localErr.sqlState = err.sqlState;
+        reject(localErr);
       } else {
         resolve();
       }
