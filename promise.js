@@ -3,15 +3,26 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
 function inheritEvents(source, target, events) {
+  target["eventHooks"] = {};
   events
     .forEach(function (eventName) {
-      source.on(eventName, function () {
+      source.on(eventName, target["eventHooks"][eventName] =  function () {
         var args = [].slice.call(arguments);
         args.unshift(eventName);
 
         target.emit.apply(target, args);
       });
     });
+}
+
+function removeEvents(source, target, events) {
+  if(target["eventHooks"]) {
+    events
+      .forEach(function (eventName) {
+        source.removeListener(eventName,target["eventHooks"][eventName]);
+    });
+    target["eventHooks"] = null;
+  }
 }
 
 function createConnection (opts) {
@@ -39,6 +50,7 @@ function PromiseConnection (connection, promiseImpl) {
 util.inherits(PromiseConnection, EventEmitter);
 
 PromiseConnection.prototype.release = function () {
+  removeEvents(this.connection,this,['error', 'drain', 'connect', 'end', 'enqueue']);
   this.connection.release();
 };
 
@@ -77,6 +89,7 @@ PromiseConnection.prototype.execute = function (query, params) {
 };
 
 PromiseConnection.prototype.end = function () {
+  removeEvents(this.connection,this,['error', 'drain', 'connect', 'end', 'enqueue']);
   var c = this.connection;
   return new this.Promise(function (resolve, reject) {
     c.end(function () {
