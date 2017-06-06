@@ -41,11 +41,11 @@ function test() {
     try {
       e2 = new Error();
       await Promise.all([conn.query('select 1+1'), conn.query('syntax error')]);
+    } catch (err) {
       const stack = ErrorStackParser.parse(err);
       const stackExpected = ErrorStackParser.parse(e2);
       assert(stack[1].getLineNumber() === stackExpected[0].getLineNumber() + 1);
-    } catch (e) {
-      assert(0);
+      conn.end();
     }
   }
 
