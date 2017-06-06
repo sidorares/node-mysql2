@@ -1,4 +1,4 @@
-var config = require('../common.js').config;
+var config = require('../../common.js').config;
 
 var skipTest = false;
 if (typeof Promise == 'undefined') {
@@ -9,8 +9,8 @@ if (typeof Promise == 'undefined') {
 
 var assert = require('assert');
 
-var createConnection = require('../../promise.js').createConnection;
-var createPool = require('../../promise.js').createPool;
+var createConnection = require('../../../promise.js').createConnection;
+var createPool = require('../../../promise.js').createPool;
 
 // it's lazy exported from main index.js as well. Test that it's same function
 var mainExport = require('../../index.js').createConnectionPromise;
@@ -124,7 +124,9 @@ function testPrepared() {
       if (connResolved) {
         connResolved.end();
       } else {
-        console.log('Warning: promise rejected before executing prepared statement');
+        console.log(
+          'Warning: promise rejected before executing prepared statement'
+        );
       }
     });
 }
