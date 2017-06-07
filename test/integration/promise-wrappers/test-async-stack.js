@@ -1,4 +1,4 @@
-/*
+const code = `
 var config = require('../../common.js').config;
 
 var assert = require('assert');
@@ -23,7 +23,7 @@ function test() {
 
   let e1, e2;
 
-  // TODO: investigate why connaction is still open after ENETUNREACH
+  // TODO: investigate why connection is still open after ENETUNREACH
   async function test1() {
     e1 = new Error();
     const conn = await createConnection({ host: '0.42.42.42' });
@@ -31,15 +31,17 @@ function test() {
     await Promise.all([conn.query('select 1+1'), conn.query('syntax error')]);
   }
 
+  /*
   test1().catch(err => {
     const stack = ErrorStackParser.parse(err);
     const stackExpected = ErrorStackParser.parse(e1);
     assert(stack[1].getLineNumber() === stackExpected[0].getLineNumber() + 1);
   });
+  */
 
   async function test2() {
     const conn = await createConnection(config);
-    let [rows, fields] = conn.query('select 1 + 1');
+    let [rows, fields] = await conn.query('select 1 + 1');
     try {
       e2 = new Error();
       await Promise.all([conn.query('select 1+1'), conn.query('syntax error')]);
@@ -55,4 +57,27 @@ function test() {
 }
 
 test();
-*/
+
+`;
+
+process.on('unhandledRejection', function(err) {
+  console.log(err.stack);
+});
+
+const vm = require('vm');
+
+try {
+  vm.runInNewContext(
+    code,
+    {
+      require: require
+    },
+    {
+      fileName: __filename,
+      lineOffset: 1
+    }
+  );
+} catch (err) {
+  // ignore sync errors (must be syntax - async/await not supported)
+  console.log(err);
+}

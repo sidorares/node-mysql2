@@ -51,9 +51,6 @@ function testErrors() {
   var connResolved;
   var connPromise = createConnection(config);
 
-  console.log('=== 1', connPromise);
-  console.log('=== 2', connPromise.end);
-
   connPromise
     .then(function(conn) {
       connResolved = conn;
@@ -154,7 +151,7 @@ function testEventsConnect() {
         doneEventsConnect = events === 5;
       });
 
-    conn.connection.emit('error');
+    conn.connection.emit('error', new Error());
     conn.connection.emit('drain');
     conn.connection.emit('connect');
     conn.connection.emit('enqueue');
