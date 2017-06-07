@@ -3,59 +3,78 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
 function inheritEvents(source, target, events) {
-  events
-    .forEach(function (eventName) {
-      source.on(eventName, function () {
-        var args = [].slice.call(arguments);
-        args.unshift(eventName);
+  events.forEach(function(eventName) {
+    source.on(eventName, function() {
+      var args = [].slice.call(arguments);
+      args.unshift(eventName);
 
-        target.emit.apply(target, args);
-      });
+      target.emit.apply(target, args);
     });
-}
-
-function createConnection (opts) {
-  var coreConnection = core.createConnection(opts);
-  var Promise = opts.Promise || global.Promise;
-  if (!Promise) {
-    throw new Error('no Promise implementation available.' +
-      'Use promise-enabled node version or pass userland Promise' +
-      ' implementation as parameter, for example: { Promise: require(\'bluebird\') }');
-  }
-  return new Promise(function (resolve, reject) {
-    coreConnection.once('connect', function (connectParams) {
-      resolve(new PromiseConnection(coreConnection, Promise));
-    });
-    coreConnection.once('error', reject);
   });
 }
 
-function PromiseConnection (connection, promiseImpl) {
+function createConnection(opts) {
+  const coreConnection = core.createConnection(opts);
+  const createConnectionErr = new Error();
+  const Promise = opts.Promise || global.Promise;
+  if (!Promise) {
+    throw new Error(
+      'no Promise implementation available.' +
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
+    );
+  }
+  return new Promise(function(resolve, reject) {
+    coreConnection.once('connect', function(connectParams) {
+      resolve(new PromiseConnection(coreConnection, Promise));
+    });
+    coreConnection.once('error', err => {
+      createConnectionErr.message = err.message;
+      createConnectionErr.code = err.code;
+      createConnectionErr.errno = err.errno;
+      createConnectionErr.sqlState = err.sqlState;
+      reject(createConnectionErr);
+    });
+  });
+}
+
+function PromiseConnection(connection, promiseImpl) {
   this.connection = connection;
   this.Promise = promiseImpl;
 
-  inheritEvents(connection, this, ['error', 'drain', 'connect', 'end', 'enqueue']);
+  inheritEvents(connection, this, [
+    'error',
+    'drain',
+    'connect',
+    'end',
+    'enqueue'
+  ]);
 }
 util.inherits(PromiseConnection, EventEmitter);
 
-PromiseConnection.prototype.release = function () {
+PromiseConnection.prototype.release = function() {
   this.connection.release();
 };
 
-function makeDoneCb (resolve, reject) {
-  return function (err, rows, fields) {
+function makeDoneCb(resolve, reject, localErr) {
+  return function(err, rows, fields) {
     if (err) {
-      reject(err);
+      localErr.message = err.message;
+      localErr.code = err.code;
+      localErr.errno = err.errno;
+      localErr.sqlState = err.sqlState;
+      reject(localErr);
     } else {
       resolve([rows, fields]);
     }
   };
 }
 
-PromiseConnection.prototype.query = function (query, params) {
-  var c = this.connection;
-  return new this.Promise(function (resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+PromiseConnection.prototype.query = function(query, params) {
+  const c = this.connection;
+  const localErr = new Error();
+  return new this.Promise(function(resolve, reject) {
+    const done = makeDoneCb(resolve, reject, localErr);
     if (params) {
       c.query(query, params, done);
     } else {
@@ -64,10 +83,11 @@ PromiseConnection.prototype.query = function (query, params) {
   });
 };
 
-PromiseConnection.prototype.execute = function (query, params) {
+PromiseConnection.prototype.execute = function(query, params) {
   var c = this.connection;
-  return new this.Promise(function (resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+  const localErr = new Error();
+  return new this.Promise(function(resolve, reject) {
+    var done = makeDoneCb(resolve, reject, localErr);
     if (params) {
       c.execute(query, params, done);
     } else {
@@ -76,52 +96,60 @@ PromiseConnection.prototype.execute = function (query, params) {
   });
 };
 
-PromiseConnection.prototype.end = function () {
+PromiseConnection.prototype.end = function() {
   var c = this.connection;
-  return new this.Promise(function (resolve, reject) {
-    c.end(function () {
+  return new this.Promise(function(resolve, reject) {
+    c.end(function() {
       resolve();
     });
   });
 };
 
-PromiseConnection.prototype.beginTransaction = function () {
+PromiseConnection.prototype.beginTransaction = function() {
   var c = this.connection;
-  return new this.Promise(function (resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+  const localErr = new Error();
+  return new this.Promise(function(resolve, reject) {
+    var done = makeDoneCb(resolve, reject, localErr);
     c.beginTransaction(done);
   });
 };
 
-PromiseConnection.prototype.commit = function () {
+PromiseConnection.prototype.commit = function() {
   var c = this.connection;
-  return new this.Promise(function (resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+  const localErr = new Error();
+  return new this.Promise(function(resolve, reject) {
+    var done = makeDoneCb(resolve, reject, localErr);
     c.commit(done);
   });
 };
 
-PromiseConnection.prototype.rollback = function () {
+PromiseConnection.prototype.rollback = function() {
   var c = this.connection;
-  return new this.Promise(function (resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+  const localErr = new Error();
+  return new this.Promise(function(resolve, reject) {
+    var done = makeDoneCb(resolve, reject, localErr);
     c.rollback(done);
   });
 };
 
-PromiseConnection.prototype.ping = function () {
+PromiseConnection.prototype.ping = function() {
   var c = this.connection;
-  return new this.Promise(function (resolve, reject) {
+  return new this.Promise(function(resolve, reject) {
     c.ping(resolve);
   });
 };
 
-PromiseConnection.prototype.connect = function () {
+PromiseConnection.prototype.connect = function() {
   var c = this.connection;
-  return new this.Promise(function (resolve, reject) {
-    c.connect(function (error, param) {
-      if (error) {
-        reject(error);
+  const localErr = new Error();
+  return new this.Promise(function(resolve, reject) {
+    c.connect(function(err, param) {
+      if (err) {
+        localErr.message = err.message;
+        localErr.code = err.code;
+        localErr.errno = err.errno;
+        localErr.sqlState = err.sqlState;
+        reject(localErr);
       } else {
         resolve(param);
       }
@@ -129,29 +157,37 @@ PromiseConnection.prototype.connect = function () {
   });
 };
 
-PromiseConnection.prototype.prepare = function (options) {
+PromiseConnection.prototype.prepare = function(options) {
   var c = this.connection;
   var promiseImpl = this.Promise;
-  return new this.Promise(function (resolve, reject) {
-    c.prepare(options, function (error, statement) {
-      if (error) {
-        reject(error);
+  const localErr = new Error();
+  return new this.Promise(function(resolve, reject) {
+    c.prepare(options, function(err, statement) {
+      if (err) {
+        localErr.message = err.message;
+        localErr.code = err.code;
+        localErr.errno = err.errno;
+        localErr.sqlState = err.sqlState;
+        reject(localErr);
       } else {
-        var wrappedStatement = new PromisePreparedStatementInfo(statement, promiseImpl);
+        var wrappedStatement = new PromisePreparedStatementInfo(
+          statement,
+          promiseImpl
+        );
         resolve(wrappedStatement);
       }
     });
   });
 };
 
-function PromisePreparedStatementInfo (statement, promiseImpl) {
+function PromisePreparedStatementInfo(statement, promiseImpl) {
   this.statement = statement;
   this.Promise = promiseImpl;
 }
 
-PromisePreparedStatementInfo.prototype.execute = function (parameters) {
+PromisePreparedStatementInfo.prototype.execute = function(parameters) {
   var s = this.statement;
-  return new this.Promise(function (resolve, reject) {
+  return new this.Promise(function(resolve, reject) {
     var done = makeDoneCb(resolve, reject);
     if (parameters) {
       s.execute(parameters, done);
@@ -161,9 +197,9 @@ PromisePreparedStatementInfo.prototype.execute = function (parameters) {
   });
 };
 
-PromisePreparedStatementInfo.prototype.close = function () {
+PromisePreparedStatementInfo.prototype.close = function() {
   var s = this.statement;
-  return new this.Promise(function (resolve, reject) {
+  return new this.Promise(function(resolve, reject) {
     s.close();
     resolve();
   });
@@ -177,26 +213,26 @@ PromisePreparedStatementInfo.prototype.close = function () {
 // implemented with PromiseConnection
 
 // proxy synchronous functions only
-(function (functionsToWrap) {
-
+(function(functionsToWrap) {
   for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
     var func = functionsToWrap[i];
 
     if (
-      typeof core.Connection.prototype[func] === 'function'
-      && PromiseConnection.prototype[func] === undefined
+      typeof core.Connection.prototype[func] === 'function' &&
+      PromiseConnection.prototype[func] === undefined
     ) {
-      PromiseConnection.prototype[func] = (function factory (funcName) {
-        return function () {
-          return core.Connection
-            .prototype[funcName].apply(this.connection, arguments);
+      PromiseConnection.prototype[func] = (function factory(funcName) {
+        return function() {
+          return core.Connection.prototype[funcName].apply(
+            this.connection,
+            arguments
+          );
         };
       })(func);
     }
   }
-
 })([
-// synchronous functions
+  // synchronous functions
   'close',
   'createBinlogStream',
   'destroy',
@@ -212,16 +248,16 @@ PromisePreparedStatementInfo.prototype.close = function () {
 function PromisePool(pool, Promise) {
   this.pool = pool;
   this.Promise = Promise;
-  
+
   inheritEvents(pool, this, ['acquire', 'connection', 'enqueue', 'release']);
 }
 util.inherits(PromisePool, EventEmitter);
 
-PromisePool.prototype.getConnection = function () {
+PromisePool.prototype.getConnection = function() {
   var corePool = this.pool;
 
-  return new this.Promise(function (resolve, reject) {
-    corePool.getConnection(function (err, coreConnection) {
+  return new this.Promise(function(resolve, reject) {
+    corePool.getConnection(function(err, coreConnection) {
       if (err) {
         reject(err);
       } else {
@@ -231,11 +267,11 @@ PromisePool.prototype.getConnection = function () {
   });
 };
 
-PromisePool.prototype.query = function (sql, args) {
-  var corePool = this.pool;
-
-  return new this.Promise(function (resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+PromisePool.prototype.query = function(sql, args) {
+  const corePool = this.pool;
+  const localErr = new Error();
+  return new this.Promise(function(resolve, reject) {
+    var done = makeDoneCb(resolve, reject, localErr);
     if (args) {
       corePool.query(sql, args, done);
     } else {
@@ -244,21 +280,26 @@ PromisePool.prototype.query = function (sql, args) {
   });
 };
 
-PromisePool.prototype.execute = function (sql, values) {
+PromisePool.prototype.execute = function(sql, values) {
   var corePool = this.pool;
+  const localErr = new Error();
 
-  return new Promise(function (resolve, reject) {
-    corePool.execute(sql, values, makeDoneCb(resolve, reject));
+  return new Promise(function(resolve, reject) {
+    corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
   });
 };
 
-PromisePool.prototype.end = function () {
+PromisePool.prototype.end = function() {
   var corePool = this.pool;
-
-  return new Promise(function (resolve, reject) {
-    corePool.end(function (err) {
+  const localErr = new Error();
+  return new Promise(function(resolve, reject) {
+    corePool.end(function(err) {
       if (err) {
-        reject(err);
+        localErr.message = err.message;
+        localErr.code = err.code;
+        localErr.errno = err.errno;
+        localErr.sqlState = err.sqlState;
+        reject(localErr);
       } else {
         resolve();
       }
@@ -266,13 +307,15 @@ PromisePool.prototype.end = function () {
   });
 };
 
-function createPool (opts) {
+function createPool(opts) {
   var corePool = core.createPool(opts);
   var Promise = opts.Promise || global.Promise;
   if (!Promise) {
-    throw new Error('no Promise implementation available.' +
-      'Use promise-enabled node version or pass userland Promise' +
-      ' implementation as parameter, for example: { Promise: require(\'bluebird\') }');
+    throw new Error(
+      'no Promise implementation available.' +
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
+    );
   }
 
   return new PromisePool(corePool, Promise);
