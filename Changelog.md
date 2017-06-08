@@ -1,12 +1,17 @@
+1.3.3 ( 8/06/2017 )
+ - fix node encodings lookup in string parser           #583, #582
+ - fix connection not released to the pool on error     #579, #551, #540, #508, #569
+ - better stack traces in promise wrapper               #580, #530
+
 1.3.2 ( 31/05/2017 )
- - fix PromiseConnection.prepare and add                 #574, 575
+ - fix PromiseConnection.prepare and add                 #574, #575
    PromisePreparedStatementInfo
 
 1.3.1 ( 31/05/2017 )
  - move lint-staged to devDependencies                   #573
 
 1.3.0 ( 29/05/2017 )
- - Make Promise Pool wrapper extend EventEmitter         #567, 468
+ - Make Promise Pool wrapper extend EventEmitter         #567, #468
  - build: integrate prettier                             #563
  - do not send 23 unallocated bytes over wire            #547
  - fix: PromiseConnection missing interface functions
