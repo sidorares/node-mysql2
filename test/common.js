@@ -11,7 +11,7 @@ module.exports.SqlString = require('sqlstring');
 module.exports.config = config;
 
 module.exports.waitDatabaseReady = function(callback) {
-  const tryConnect = () => {
+  const tryConnect = function() {
     const conn = module.exports.createConnection();
     conn.on('error', function(err) {
       console.log(err);

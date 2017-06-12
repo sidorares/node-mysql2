@@ -13,15 +13,14 @@ process.env.TZ = 'UTC';
 
 require('urun')(__dirname, options);
 
-
-process.on('exit', (code) => {
-  console.log(`About to exit with code: ${code}`);
+process.on('exit', function(code) {
+  console.log('About to exit with code: ' + code);
 });
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', function(reason) {
   console.log('unhandledRejection', reason);
 });
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', function(err) {
   console.log('uncaughtException', err);
 });
