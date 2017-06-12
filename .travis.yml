@@ -13,7 +13,7 @@ matrix:
     env: LINT=0
   - node_js: "7.10"
     env: LINT=0
-  - node_js: "8.10"
+  - node_js: "8.0"
     env: LINT=1
 
 cache:
@@ -26,7 +26,8 @@ notifications:
   email: false
 
 script:
-  - docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 33306:3306 mysql:5.7
+  - nvm ls-remote
+  - docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 33306:3306 mysql:5.7
   - MYSQL_PORT=33306 node tools/wait-up.js
   - node --version
   - yarn --version
