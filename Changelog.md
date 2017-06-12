@@ -1,3 +1,7 @@
+1.3.4 ( 13/06/2017 )
+ - use safe-buffer in string decoder                    #589, #585
+ - allow to use pool.execute() without parameters       #589
+
 1.3.3 ( 8/06/2017 )
  - fix node encodings lookup in string parser           #583, #582
  - fix connection not released to the pool on error     #579, #551, #540, #508, #569
