@@ -15,6 +15,7 @@ pool.query('test sql', function(err, res, rows) {
                   pool.execute('test sql', [], function(err, res, rows) {
                     pool.execute('test sql', function(err) {
                       pool.execute('test sql', function(err, res, rows) {
+                        assert.ifError(err);
                         // TODO change order events are fires so that connection is released before callback
                         // that way this number will be more deterministic
                         assert(pool._allConnections.length < 3);
