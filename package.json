@@ -47,7 +47,6 @@
   "dependencies": {
     "cardinal": "1.0.0",
     "denque": "^1.1.1",
-    "eslint": "^4.0.0",
     "generate-function": "^2.0.0",
     "iconv-lite": "^0.4.18",
     "long": "^3.2.0",
