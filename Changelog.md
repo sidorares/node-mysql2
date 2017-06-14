@@ -1,3 +1,7 @@
+1.3.5 ( 15/06/2017 )
+ - update iconv-lite to 0.4.18 to fix node 8 cesu8
+   encoding regression. Add node 8 to  build matrix     #591
+   
 1.3.4 ( 13/06/2017 )
  - use safe-buffer in string decoder                    #589, #585
  - allow to use pool.execute() without parameters       #589
