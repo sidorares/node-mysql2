@@ -66,7 +66,7 @@
     "eslint-plugin-async-await": "0.0.0",
     "eslint-plugin-markdown": "^1.0.0-beta.2",
     "eslint-plugin-prettier": "^2.1.1",
-    "husky": "^0.13.3",
+    "husky": "^0.14.0",
     "is-async-supported": "^1.2.0",
     "lint-staged": "^4.0.0",
     "portfinder": "^1.0.10",
