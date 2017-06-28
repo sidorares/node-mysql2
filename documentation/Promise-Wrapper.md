@@ -55,7 +55,7 @@ async function main () {
 var mysql = require('mysql2');
 var co = require('co');
 co(function * () {
-  var c = yield mysql.createConnectionPromise({user: 'root', namedPlaceholders: true });
+  var c = yield mysql.createConnection({user: 'root', namedPlaceholders: true });
   var rows = yield c.query('show databases');
   console.log(rows);
   console.log(yield c.execute('select 1+:toAdd as qqq', {toAdd: 10}));
