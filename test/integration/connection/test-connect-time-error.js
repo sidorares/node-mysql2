@@ -25,13 +25,10 @@ portfinder.getPort(function(err, port) {
   });
 
   connection.query('select 1+1', function(err) {
-    console.log('Here! 1');
-    console.log(err);
     assert.equal(err.message, ERROR_TEXT);
   });
 
   connection.query('select 1+2', function(err) {
-    console.log('Here! 2');
     assert.equal(err.message, ERROR_TEXT);
     connection.close();
     server._server.close();
