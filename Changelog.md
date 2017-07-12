@@ -1,3 +1,6 @@
+1.3.6 ( 12/07/2017 )
+ - fix crash when initial packet from server is error  # 607
+
 1.3.5 ( 15/06/2017 )
  - update iconv-lite to 0.4.18 to fix node 8 cesu8
    encoding regression. Add node 8 to  build matrix     #591
