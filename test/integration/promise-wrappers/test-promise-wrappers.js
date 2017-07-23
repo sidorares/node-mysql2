@@ -1,4 +1,5 @@
 var config = require('../../common.js').config;
+var Buffer = require('safe-buffer').Buffer;
 
 var skipTest = false;
 if (typeof Promise == 'undefined') {
@@ -23,6 +24,7 @@ var doneEventsConnect = false;
 var doneCalledPool = false;
 var exceptionCaughtPool = false;
 var doneEventsPool = false;
+var doneChangeUser = false;
 
 function testBasic() {
   var connResolved;
@@ -247,6 +249,71 @@ function testEventsPool() {
   pool.pool.emit('release');
 }
 
+function testChangeUser() {
+  var onlyUsername = function(name) {
+    return name.substring(0, name.indexOf('@'));
+  };
+  var connResolved;
+  var connPromise = createConnection(config)
+    .then(function(conn) {
+      connResolved = conn;
+      return connResolved.query(
+        "GRANT ALL ON *.* TO 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
+      );
+    })
+    .then(function() {
+      return connResolved.query(
+        "GRANT ALL ON *.* TO 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
+      );
+    })
+    .then(function() {
+      return connResolved.query('FLUSH PRIVILEGES');
+    })
+    .then(function() {
+      return connResolved.changeUser({
+        user: 'changeuser1',
+        password: 'changeuser1pass'
+      });
+    })
+    .then(function() {
+      return connResolved.query('select current_user()');
+    })
+    .then(function(rows) {
+      assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
+      return connResolved.changeUser({
+        user: 'changeuser2',
+        password: 'changeuser2pass'
+      });
+    })
+    .then(function() {
+      return connResolved.query('select current_user()');
+    })
+    .then(function(rows) {
+      assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser2');
+      return connResolved.changeUser({
+        user: 'changeuser1',
+        passwordSha1: Buffer.from(
+          'f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd',
+          'hex'
+        ) // sha1(changeuser1pass)
+      });
+    })
+    .then(function() {
+      return connResolved.query('select current_user()');
+    })
+    .then(function(rows) {
+      assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
+      doneChangeUser = true;
+      return connResolved.end();
+    })
+    .catch(function(err) {
+      if (connResolved) {
+        connResolved.end();
+      }
+      throw err;
+    });
+}
+
 testBasic();
 testErrors();
 testObjParams();
@@ -256,6 +323,7 @@ testBasicPool();
 testErrorsPool();
 testObjParamsPool();
 testEventsPool();
+testChangeUser();
 
 process.on('exit', function() {
   if (skipTest) {
@@ -267,6 +335,7 @@ process.on('exit', function() {
   assert.equal(doneCalledPool, true);
   assert.equal(exceptionCaughtPool, true);
   assert.equal(doneEventsPool, true);
+  assert.equal(doneChangeUser, true);
 });
 
 process.on('unhandledRejection', function(err) {
