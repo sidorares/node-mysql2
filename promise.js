@@ -180,6 +180,24 @@ PromiseConnection.prototype.prepare = function(options) {
   });
 };
 
+PromiseConnection.prototype.changeUser = function(options) {
+  var c = this.connection;
+  const localErr = new Error();
+  return new this.Promise(function(resolve, reject) {
+    c.changeUser(options, function(err) {
+      if (err) {
+        localErr.message = err.message;
+        localErr.code = err.code;
+        localErr.errno = err.errno;
+        localErr.sqlState = err.sqlState;
+        reject(localErr);
+      } else {
+        resolve();
+      }
+    });
+  });
+};
+
 function PromisePreparedStatementInfo(statement, promiseImpl) {
   this.statement = statement;
   this.Promise = promiseImpl;
