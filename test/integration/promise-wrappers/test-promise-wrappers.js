@@ -278,7 +278,7 @@ function testChangeUser() {
       return connResolved.query('select current_user()');
     })
     .then(function(result) {
-      const [rows, fields] = result;
+      const rows = result[0];
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
       return connResolved.changeUser({
         user: 'changeuser2',
@@ -289,7 +289,7 @@ function testChangeUser() {
       return connResolved.query('select current_user()');
     })
     .then(function(result) {
-      const [rows, fields] = result;
+      const rows = result[0];
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser2');
       return connResolved.changeUser({
         user: 'changeuser1',
@@ -303,7 +303,7 @@ function testChangeUser() {
       return connResolved.query('select current_user()');
     })
     .then(function(result) {
-      const [rows, fields] = result;
+      const rows = result[0];
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
       doneChangeUser = true;
       return connResolved.end();
