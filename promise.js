@@ -3,13 +3,21 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
 function inheritEvents(source, target, events) {
-  events.forEach(function(eventName) {
-    source.on(eventName, function() {
-      var args = [].slice.call(arguments);
-      args.unshift(eventName);
+  var listeners = {};
+  target.on('newListener', function(eventName) {
+    if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
+      source.on(eventName, listeners[eventName] = function() {
+        var args = [].slice.call(arguments);
+        args.unshift(eventName);
 
-      target.emit.apply(target, args);
-    });
+        target.emit.apply(target, args);
+      });
+    }
+  }).on('removeListener', function(eventName) {
+    if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
+      source.removeListener(eventName, listeners[eventName]);
+      delete listeners[eventName];
+    }
   });
 }
 
