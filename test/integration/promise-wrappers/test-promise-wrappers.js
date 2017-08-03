@@ -129,6 +129,49 @@ function testPrepared() {
     });
 }
 
+function testPreparedError() {
+  var connResolved;
+  var stmtPrepared;
+  var connPromise = createConnection(config)
+    .then(function(conn) {
+      connResolved = conn;
+      return conn.prepare('select ?-? as ttt, ? as uuu');
+    })
+    .then(function(statement) {
+      stmtPrepared = statement;
+      // This should throw an error prior to execution due to missing parameters
+      return statement.execute([11, 3]);
+    })
+    .catch(function(err) {
+      // If this error was thrown prior to the execute, pass it on
+      if (!connResolved || !stmtPrepared) throw err;
+
+      assert.equal(err.code, 'ER_WRONG_ARGUMENTS');
+    })
+    .catch(function(err) {
+      // An error here is fatal. Pass it on to the end handler
+      return err;
+    })
+    .then(function(err) {
+      if (!stmtPrepared || !connResolved) {
+        console.log(
+          'Warning: promise rejected before executing prepared statement'
+        );
+      }
+
+      if (stmtPrepared) {
+        stmtPrepared.close();
+      }
+      if (connResolved) {
+        connResolved.end();
+      }
+
+      if (err) {
+        console.log(err);
+      }
+    });
+}
+
 function testEventsConnect() {
   var connResolved;
   var connPromise = createConnection(config).then(function(conn) {
