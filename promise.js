@@ -213,8 +213,9 @@ function PromisePreparedStatementInfo(statement, promiseImpl) {
 
 PromisePreparedStatementInfo.prototype.execute = function(parameters) {
   var s = this.statement;
+  var localErr = new Error()
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject);
+    var done = makeDoneCb(resolve, reject, localErr);
     if (parameters) {
       s.execute(parameters, done);
     } else {
