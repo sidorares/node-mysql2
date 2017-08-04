@@ -1,10 +1,18 @@
+1.3.7 ( 5/08/2017 )
+ - Promise wrapper: fix error handling in prepared
+   statements                                          #622
+ - Binary protocol: fix deserializing TIMESTAMP(3)     #617, #618
+ - Promise wrapper: fix MaxListenersExceededWarning
+   error                                               #577, #578, #620
+ - Promise wrapper: add changeUser()                   #614 #615
+
 1.3.6 ( 12/07/2017 )
- - fix crash when initial packet from server is error  # 607
+ - fix crash when initial packet from server is error  #607
 
 1.3.5 ( 15/06/2017 )
  - update iconv-lite to 0.4.18 to fix node 8 cesu8
    encoding regression. Add node 8 to  build matrix     #591
-   
+
 1.3.4 ( 13/06/2017 )
  - use safe-buffer in string decoder                    #589, #585
  - allow to use pool.execute() without parameters       #589
