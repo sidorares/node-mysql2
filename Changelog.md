@@ -1,4 +1,4 @@
-1.3.7 ( 5/08/2017 )
+1.4.0 ( 5/08/2017 )
  - Promise wrapper: fix error handling in prepared
    statements                                          #622
  - Binary protocol: fix deserializing TIMESTAMP(3)     #617, #618
