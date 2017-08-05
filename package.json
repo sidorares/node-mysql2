@@ -61,7 +61,7 @@
   "devDependencies": {
     "assert-diff": "^1.2.0",
     "error-stack-parser": "^2.0.1",
-    "eslint": "^3.19.0",
+    "eslint": "^4.4.0",
     "eslint-config-prettier": "^2.1.1",
     "eslint-plugin-async-await": "0.0.0",
     "eslint-plugin-markdown": "^1.0.0-beta.2",
