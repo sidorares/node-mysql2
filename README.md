@@ -16,6 +16,7 @@ __Table of contents__
   - [Installation](#installation)
   - [First Query](#first-query)
   - [Using Prepared Statements](#using-prepared-statements)
+  - [Using connection pools](#using-connection-pools)
   - [Using Promise Wrapper](#using-promise-wrapper)
   - [API and Configuration](#api-and-configuration)
   - [Documentation](#documentation)
@@ -37,7 +38,7 @@ MySQL2 is mostly API compatible with [mysqljs][node-mysql] and supports majority
  - Compression
  - SSL and [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/Authentication-Switch.md)
  - [Custom Streams](https://github.com/sidorares/node-mysql2/tree/master/documentation/Extras.md)
- - Pooling
+ - [Pooling](#using-connection-pools)
 
 ## Installation
 
@@ -111,6 +112,7 @@ connection.execute(
   }
 );
 ```
+
 ## Using connection pools
 
 Connection pools provide automatic ways of managing multiple connections. A pool maintains a queue of *free* connections, allowing the use of multiple connections in parallel.
@@ -136,7 +138,6 @@ You can use the pool in the same way as connections (using `pool.Query()` and `p
 
 ```js
 // For pool initialization, see above
-
 pool.getConnection(function(conn) {
    // Do something with the connection
    conn.Query(/* ... */);
