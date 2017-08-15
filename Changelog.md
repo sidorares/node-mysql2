@@ -1,5 +1,19 @@
+1.4.1 ( 16/08/2017 )
+ - add missing encodings                               #628, #630
+ - (binary protocol) Fix parsing microsecond in 
+   datatime type                                       #629
+ - (promise wrapper) Fix handling of errors in promise 
+   prepared statement execute                          #622
+
+1.4.0 ( 30/07/2017 )
+ - fix DATETIME going into incorrect state when 
+   milliseconds part present                           #618 
+ - (promise wrapper) add changeUser                    #615, #614, #613
+ - redo event delegation in promise wrappers to be     #577, #620, #577, #568
+   lazy, self-cleaning
+
 1.3.6 ( 12/07/2017 )
- - fix crash when initial packet from server is error  # 607
+ - fix crash when initial packet from server is error  #607
 
 1.3.5 ( 15/06/2017 )
  - update iconv-lite to 0.4.18 to fix node 8 cesu8
