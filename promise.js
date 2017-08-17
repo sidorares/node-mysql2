@@ -281,6 +281,7 @@ function PromisePool(pool, Promise) {
 util.inherits(PromisePool, EventEmitter);
 
 PromisePool.prototype.getConnection = function() {
+  var self = this;
   var corePool = this.pool;
 
   return new this.Promise(function(resolve, reject) {
@@ -288,7 +289,7 @@ PromisePool.prototype.getConnection = function() {
       if (err) {
         reject(err);
       } else {
-        resolve(new PromiseConnection(coreConnection, Promise));
+        resolve(new PromiseConnection(coreConnection, self.Promise));
       }
     });
   });
