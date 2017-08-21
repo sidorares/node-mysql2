@@ -27,18 +27,13 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
 ```
 ## ES7 Async Await
 ```js
-/*
-async function main () {
+async function example1 () {
   const mysql = require('mysql2/promise');
   const conn = await mysql.createConnection({ database: test });
   let [rows, fields] = await conn.execute('select ?+? as sum', [2, 2]);
 }
-*/
-```
 
-```js
-// eslint-disable-next-block
-/*
+async function example2 () {
    let mysql = require('mysql2/promise');
    let pool = mysql.createPool({database: test});
    // execute in parallel, next console.log in 3 seconds
@@ -46,7 +41,7 @@ async function main () {
    console.log('3 seconds after');
    await pool.end();
    await conn.end();
-*/
+}
 ```
 
 ## With [CO](https://github.com/tj/co)
