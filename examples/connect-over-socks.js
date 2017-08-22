@@ -10,24 +10,21 @@ var SocksConnection = require('socksjs');
 //   console.log(err, rows, fields);
 // });
 
-
 var conn1 = mysql.createPool({
   debug: 1,
-  stream: function () {
-    return new SocksConnection({port: 3306});
+  stream: function() {
+    return new SocksConnection({ port: 3306 });
   }
 });
 
-
-conn1.execute('select sleep(1.1) as www', function (err, rows, fields) {
+conn1.execute('select sleep(1.1) as www', function(err, rows, fields) {
   console.log(err, rows, fields);
 });
 
-
-conn1.execute('select sleep(1) as qqq', function (err, rows, fields) {
+conn1.execute('select sleep(1) as qqq', function(err, rows, fields) {
   console.log(err, rows, fields);
 });
 
-conn1.execute('select sleep(1) as qqq', function (err, rows, fields) {
+conn1.execute('select sleep(1) as qqq', function(err, rows, fields) {
   console.log(err, rows, fields);
 });

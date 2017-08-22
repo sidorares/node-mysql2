@@ -5,7 +5,7 @@ var Packets = require('../../lib/packets/index.js');
 
 var assert = require('assert');
 
-var server = mysql.createServer(function (conn) {
+var server = mysql.createServer(function(conn) {
   conn.serverHandshake({
     protocolVersion: 10,
     serverVersion: '5.6.10',
@@ -13,8 +13,8 @@ var server = mysql.createServer(function (conn) {
     statusFlags: 2,
     characterSet: 8,
     capabilityFlags: 0xffffff,
-    authCallback: function (params, cb) {
-      cb(null, {message: 'too many connections', code: 1040});
+    authCallback: function(params, cb) {
+      cb(null, { message: 'too many connections', code: 1040 });
     }
   });
 });
@@ -22,8 +22,7 @@ var server = mysql.createServer(function (conn) {
 var err1, err2;
 
 var portfinder = require('portfinder');
-portfinder.getPort(function (err, port) {
-
+portfinder.getPort(function(err, port) {
   server.listen(port);
   var conn = mysql.createConnection({
     user: 'test_user',
@@ -31,7 +30,7 @@ portfinder.getPort(function (err, port) {
     database: 'test_database',
     port: port
   });
-  conn.on('error', function (err) {
+  conn.on('error', function(err) {
     err1 = err;
   });
 
@@ -42,15 +41,14 @@ portfinder.getPort(function (err, port) {
     port: port
   });
 
-  pool.query('test sql', function (err, res, rows) {
+  pool.query('test sql', function(err, res, rows) {
     err2 = err;
     pool.end();
     server.close();
   });
-
 });
 
-process.on('exit', function () {
+process.on('exit', function() {
   assert.equal(err1.errno, 1040);
   assert.equal(err2.errno, 1040);
 });

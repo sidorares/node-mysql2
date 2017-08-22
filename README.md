@@ -1,5 +1,6 @@
 ## Node MySQL 2
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/sidorares/node-mysql2.svg)](https://greenkeeper.io/)
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Node.js Version][node-version-image]][node-version-url]
@@ -53,21 +54,32 @@ npm install --save mysql2
 
 ```js
 // get the client
-var mysql = require('mysql2');
+const mysql = require('mysql2');
 
 // create the connection to database
-var connection = mysql.createConnection({host:'localhost', user: 'root', database: 'test'});
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test'
+});
 
 // simple query
-connection.query('SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45', function (err, results, fields) {
-  console.log(results); // results contains rows returned by server
-  console.log(fields); // fields contains extra meta data about results, if available
-});
+connection.query(
+  'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
+  function(err, results, fields) {
+    console.log(results); // results contains rows returned by server
+    console.log(fields); // fields contains extra meta data about results, if available
+  }
+);
 
 // with placeholder
-connection.query('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Page', 45], function (err, results) {
-  console.log(results);
-});
+connection.query(
+  'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+  ['Page', 45],
+  function(err, results) {
+    console.log(results);
+  }
+);
 ```
 
 ## Using Prepared Statements
@@ -80,19 +92,27 @@ MySQL provides `execute` helper which will prepare and query the statement. You 
 
 ```js
 // get the client
-var mysql = require('mysql2');
+const mysql = require('mysql2');
 
 // create the connection to database
-var connection = mysql.createConnection({host:'localhost', user: 'root', database: 'test'});
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test'
+});
 
 // execute will internally call prepare and query
-connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Rick C-137', 53], function (err, results, fields) {
-  console.log(results); // results contains rows returned by server
-  console.log(fields); // fields contains extra meta data about results, if available
+connection.execute(
+  'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+  ['Rick C-137', 53],
+  function(err, results, fields) {
+    console.log(results); // results contains rows returned by server
+    console.log(fields); // fields contains extra meta data about results, if available
 
-  // If you execute same statement again, it will be picked form a LRU cache
-  // which will save query preparation time and give better performance
-});
+    // If you execute same statement again, it will be picked form a LRU cache
+    // which will save query preparation time and give better performance
+  }
+);
 ```
 ## Using Promise Wrapper
 
@@ -100,14 +120,14 @@ MySQL2 also support Promise API. Which works very well with ES7 async await.
 
 <!--eslint-disable-next-block-->
 ```js
-// get the client
-let mysql = require('mysql2/promise');
-
-// create the connection
-let connection = await mysql.createConnection({host:'localhost', user: 'root', database: 'test'});
-
-// query database
-let [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+async function main() {
+  // get the client
+  const  mysql = require('mysql2/promise');
+  // create the connection
+  const connection = await mysql.createConnection({host:'localhost', user: 'root', database: 'test'});
+  // query database
+  const [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+}
 ```
 
 MySQL2 use default `Promise` object available in scope. But you can choose which `Promise` implementation you want to use
@@ -115,16 +135,16 @@ MySQL2 use default `Promise` object available in scope. But you can choose which
 <!--eslint-disable-next-block-->
 ```js
 // get the client
-let mysql = require('mysql2/promise');
+const mysql = require('mysql2/promise');
 
 // get the promise implementation, we will use bluebird
-let bluebird = require('bluebird');
+const bluebird = require('bluebird');
 
 // create the connection, specify bluebird as Promise
-let connection = await mysql.createConnection({host:'localhost', user: 'root', database: 'test', Promise: bluebird});
+const connection =  mysql.createConnection({host:'localhost', user: 'root', database: 'test', Promise: bluebird});
 
 // query database
-let [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+const [rows, fields] =  connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
 ```
 
 ## API and Configuration
@@ -135,7 +155,7 @@ If you find any incompatibility with [Node MySQL][node-mysql], Please report via
 
 ## Documentation
 
-You can find more detailed documentation [here](https://github.com/sidorares/node-mysql2/tree/master/documentation). You should also check various code [examples](https://github.com/sidorares/node-mysql2/tree/master/examples) to understand advance concepts.
+You can find more detailed documentation [here](https://github.com/sidorares/node-mysql2/tree/master/documentation). You should also check various code [examples](https://github.com/sidorares/node-mysql2/tree/master/examples) to understand advanced concepts.
 
 ## Acknowledgements
 

@@ -3,7 +3,7 @@ var connection = common.createConnection();
 var assert = require('assert');
 
 var rows;
-connection.query('SELECT ""', function (err, _rows) {
+connection.query('SELECT ""', function(err, _rows) {
   if (err) {
     throw err;
   }
@@ -12,6 +12,6 @@ connection.query('SELECT ""', function (err, _rows) {
   connection.end();
 });
 
-process.on('exit', function () {
-  assert.deepEqual(rows, [{'': ''}]);
+process.on('exit', function() {
+  assert.deepEqual(rows, [{ '': '' }]);
 });

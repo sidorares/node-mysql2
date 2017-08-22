@@ -14,9 +14,9 @@ var conn = mysql.createConnection({
   }
 });
 
-conn.query('select 1+1 as test', function (err, res) {
+conn.query('select 1+1 as test', function(err, res) {
   console.log(res);
-  conn.query('select repeat("a", 100) as test', function (err, res) {
+  conn.query('select repeat("a", 100) as test', function(err, res) {
     console.log(res);
   });
 });

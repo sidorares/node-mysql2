@@ -13,30 +13,32 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
 ```
 
 ```js
-  /* eslint-env es6 */
-   var pool = require('mysql2/promise').createPool({}); // or mysql.createPoolPromise({})
-   pool.getConnection()
-     .then((conn) => {
-       var res = conn.query('select foo from bar');
-       conn.release();
-       return res;
-     }).then((result) => {
-       console.log(result[0][0].foo);
-     }).catch((err) => {
-       console.log(err); // any of connection time or query time errors from above
-     });
-
+    const pool = require('mysql2/promise').createPool({}); // or mysql.createPoolPromise({})
+    pool.getConnection()
+      .then((conn) => {
+        const res = conn.query('select foo from bar');
+        conn.release();
+        return res;
+      }).then((result) => {
+        console.log(result[0][0].foo);
+      }).catch((err) => {
+        console.log(err); // any of connection time or query time errors from above
+      });
 ```
 ## ES7 Async Await
-<!--eslint-disable-next-block-->
 ```js
-  let mysql = require('mysql2/promise');
-  let conn = await mysql.createConnection({database: test});
+/*
+async function main () {
+  const mysql = require('mysql2/promise');
+  const conn = await mysql.createConnection({ database: test });
   let [rows, fields] = await conn.execute('select ?+? as sum', [2, 2]);
+}
+*/
 ```
 
-<!--eslint-disable-next-block-->
 ```js
+// eslint-disable-next-block
+/*
    let mysql = require('mysql2/promise');
    let pool = mysql.createPool({database: test});
    // execute in parallel, next console.log in 3 seconds
@@ -44,19 +46,20 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
    console.log('3 seconds after');
    await pool.end();
    await conn.end();
+*/
 ```
 
 ## With [CO](https://github.com/tj/co)
 <!--eslint-disable-next-block-->
 ```js
 var mysql = require('mysql2');
-var co = require('co')
+var co = require('co');
 co(function * () {
   var c = yield mysql.createConnectionPromise({user: 'root', namedPlaceholders: true });
   var rows = yield c.query('show databases');
   console.log(rows);
-  console.log( yield c.execute('select 1+:toAdd as qqq', {toAdd: 10}) );
+  console.log(yield c.execute('select 1+:toAdd as qqq', {toAdd: 10}));
   yield c.end();
-})
+});
 ```
 Examples in [/examples/promise-co-await](https://github.com/sidorares/node-mysql2/tree/master/examples/promise-co-await)

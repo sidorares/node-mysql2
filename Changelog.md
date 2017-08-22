@@ -1,8 +1,59 @@
+1.4.1 ( 16/08/2017 )
+ - add missing encodings                               #628, #630
+ - (binary protocol) Fix parsing microsecond in 
+   datatime type                                       #629
+ - (promise wrapper) Fix handling of errors in promise 
+   prepared statement execute                          #622
+
+1.4.0 ( 30/07/2017 )
+ - fix DATETIME going into incorrect state when 
+   milliseconds part present                           #618 
+ - (promise wrapper) add changeUser                    #615, #614, #613
+ - redo event delegation in promise wrappers to be     #577, #620, #577, #568
+   lazy, self-cleaning
+
+1.3.6 ( 12/07/2017 )
+ - fix crash when initial packet from server is error  #607
+
+1.3.5 ( 15/06/2017 )
+ - update iconv-lite to 0.4.18 to fix node 8 cesu8
+   encoding regression. Add node 8 to  build matrix     #591
+   
+1.3.4 ( 13/06/2017 )
+ - use safe-buffer in string decoder                    #589, #585
+ - allow to use pool.execute() without parameters       #589
+
+1.3.3 ( 8/06/2017 )
+ - fix node encodings lookup in string parser           #583, #582
+ - fix connection not released to the pool on error     #579, #551, #540, #508, #569
+ - better stack traces in promise wrapper               #580, #530
+
+1.3.2 ( 31/05/2017 )
+ - fix PromiseConnection.prepare and add                 #574, #575
+   PromisePreparedStatementInfo
+
+1.3.1 ( 31/05/2017 )
+ - move lint-staged to devDependencies                   #573
+
+1.3.0 ( 29/05/2017 )
+ - Make Promise Pool wrapper extend EventEmitter         #567, #468
+ - build: integrate prettier                             #563
+ - do not send 23 unallocated bytes over wire            #547
+ - fix: PromiseConnection missing interface functions
+   from Connection                                       #531, #495
+
+
+1.2.0 ( 17/02/2017 )
+ - add new MySQL 5.6/8.0 charsets                        #494
+ - build: drop support for node 0.10 and 0.12
+ - fix: Connection not released when Pool.Execute
+   called without values                                 #509, #485, #488, #475
+
 1.1.2 ( 15/11/2016 )
  - (fix) memory leak introduced with iconv
    encoder/decoder cache                                 #459, #458
  - remove use of domains                                 #451, #449
- - (fix) handle correctly packets over 0xffffff bytes    
+ - (fix) handle correctly packets over 0xffffff bytes
    long + compressed protocol rewrite                    #421, #248, #419, #426
  - (perf) replace double-ended-queue with denqueue       #444
  - (feat) automatically track client encoding change     #437, #389
