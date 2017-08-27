@@ -1,13 +1,21 @@
+1.4.2 ( 27/08/2017 )
+ - fix null value incorrectly returned as empty
+   string fro int values in text protocol              #637
+
+ - build: bump to node 8.4
+ - promise wrapper: use promise implementation passed
+   to PromisePool                                      #631, #632
+
 1.4.1 ( 16/08/2017 )
  - add missing encodings                               #628, #630
- - (binary protocol) Fix parsing microsecond in 
+ - (binary protocol) Fix parsing microsecond in
    datatime type                                       #629
- - (promise wrapper) Fix handling of errors in promise 
+ - (promise wrapper) Fix handling of errors in promise
    prepared statement execute                          #622
 
 1.4.0 ( 30/07/2017 )
- - fix DATETIME going into incorrect state when 
-   milliseconds part present                           #618 
+ - fix DATETIME going into incorrect state when
+   milliseconds part present                           #618
  - (promise wrapper) add changeUser                    #615, #614, #613
  - redo event delegation in promise wrappers to be     #577, #620, #577, #568
    lazy, self-cleaning
@@ -18,7 +26,7 @@
 1.3.5 ( 15/06/2017 )
  - update iconv-lite to 0.4.18 to fix node 8 cesu8
    encoding regression. Add node 8 to  build matrix     #591
-   
+
 1.3.4 ( 13/06/2017 )
  - use safe-buffer in string decoder                    #589, #585
  - allow to use pool.execute() without parameters       #589
