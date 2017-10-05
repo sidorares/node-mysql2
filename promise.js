@@ -342,12 +342,55 @@ function createPool(opts) {
     throw new Error(
       'no Promise implementation available.' +
         'Use promise-enabled node version or pass userland Promise' +
-        " implementation as parameter, for example: { Promise: require('bluebird') }"
+        ' implementation as parameter, for example: { Promise: require(\'bluebird\') }'
     );
   }
 
   return new PromisePool(corePool, Promise);
 }
 
+function PromisePoolCluster(poolCluster, Promise) {
+  this.poolCluster = poolCluster;
+  this.Promise = Promise;
+
+}
+util.inherits(PromiseConnection, EventEmitter);
+
+PromisePoolCluster.prototype.getConnection = function(pattern, selector) {
+  var self = this;
+  var poolCluster = this.poolCluster;
+
+  return new this.Promise(function(resolve, reject) {
+    poolCluster.getConnection(pattern, selector, function(err, coreConnection) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(new PromiseConnection(coreConnection, self.Promise));
+      }
+    });
+  });
+};
+PromisePoolCluster.prototype.add = function(id, config) {
+  this.poolCluster.add(id, config);
+}; 
+PromisePoolCluster.prototype.end = function() {
+  this.poolCluster.end();
+}; 
+
+function createPoolCluster(opts) {
+  var poolCluster = core.createPoolCluster(opts);
+  var Promise = opts.Promise || global.Promise;
+  if (!Promise) {
+    throw new Error(
+      'no Promise implementation available.' +
+        'Use promise-enabled node version or pass userland Promise' +
+        ' implementation as parameter, for example: { Promise: require(\'bluebird\') }'
+    );
+  }
+
+  return new PromisePoolCluster(poolCluster, Promise);
+}
+
 module.exports.createConnection = createConnection;
 module.exports.createPool = createPool;
+module.exports.createPoolCluster = createPoolCluster;
