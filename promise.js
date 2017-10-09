@@ -4,21 +4,26 @@ var util = require('util');
 
 function inheritEvents(source, target, events) {
   var listeners = {};
-  target.on('newListener', function(eventName) {
-    if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
-      source.on(eventName, listeners[eventName] = function() {
-        var args = [].slice.call(arguments);
-        args.unshift(eventName);
+  target
+    .on('newListener', function(eventName) {
+      if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
+        source.on(
+          eventName,
+          (listeners[eventName] = function() {
+            var args = [].slice.call(arguments);
+            args.unshift(eventName);
 
-        target.emit.apply(target, args);
-      });
-    }
-  }).on('removeListener', function(eventName) {
-    if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
-      source.removeListener(eventName, listeners[eventName]);
-      delete listeners[eventName];
-    }
-  });
+            target.emit.apply(target, args);
+          })
+        );
+      }
+    })
+    .on('removeListener', function(eventName) {
+      if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
+        source.removeListener(eventName, listeners[eventName]);
+        delete listeners[eventName];
+      }
+    });
 }
 
 function createConnection(opts) {
@@ -213,7 +218,7 @@ function PromisePreparedStatementInfo(statement, promiseImpl) {
 
 PromisePreparedStatementInfo.prototype.execute = function(parameters) {
   var s = this.statement;
-  var localErr = new Error()
+  var localErr = new Error();
   return new this.Promise(function(resolve, reject) {
     var done = makeDoneCb(resolve, reject, localErr);
     if (parameters) {
@@ -342,7 +347,7 @@ function createPool(opts) {
     throw new Error(
       'no Promise implementation available.' +
         'Use promise-enabled node version or pass userland Promise' +
-        ' implementation as parameter, for example: { Promise: require(\'bluebird\') }'
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
 
@@ -353,8 +358,14 @@ function PromisePoolCluster(poolCluster, Promise) {
   this.poolCluster = poolCluster;
   this.Promise = Promise;
 
+  inheritEvents(poolCluster, this, [
+    'acquire',
+    'connection',
+    'enqueue',
+    'release'
+  ]);
 }
-util.inherits(PromiseConnection, EventEmitter);
+util.inherits(PromisePoolCluster, EventEmitter);
 
 PromisePoolCluster.prototype.getConnection = function(pattern, selector) {
   var self = this;
@@ -372,10 +383,10 @@ PromisePoolCluster.prototype.getConnection = function(pattern, selector) {
 };
 PromisePoolCluster.prototype.add = function(id, config) {
   this.poolCluster.add(id, config);
-}; 
+};
 PromisePoolCluster.prototype.end = function() {
   this.poolCluster.end();
-}; 
+};
 
 function createPoolCluster(opts) {
   var poolCluster = core.createPoolCluster(opts);
@@ -384,7 +395,7 @@ function createPoolCluster(opts) {
     throw new Error(
       'no Promise implementation available.' +
         'Use promise-enabled node version or pass userland Promise' +
-        ' implementation as parameter, for example: { Promise: require(\'bluebird\') }'
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
 
