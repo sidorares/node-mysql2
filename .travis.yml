@@ -9,11 +9,9 @@ matrix:
   include:
   - node_js: "4.8"
     env: LINT=0
-  - node_js: "6.10"
+  - node_js: "6.11"
     env: LINT=0
-  - node_js: "7.10"
-    env: LINT=0
-  - node_js: "8.4"
+  - node_js: "8.0"
     env: LINT=1
 
 cache:

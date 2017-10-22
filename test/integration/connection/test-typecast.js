@@ -30,4 +30,18 @@ connection.query(
   }
 );
 
+connection.query(
+  {
+    sql: 'SELECT NULL as test, 6 as value;',
+    typeCast: function(field, next) {
+      return next();
+    }
+  },
+  function(err, _rows) {
+    assert.ifError(err);
+    assert.equal(_rows[0].test, null);
+    assert.equal(_rows[0].value, 6);
+  }
+);
+
 connection.end();

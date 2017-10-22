@@ -7,9 +7,8 @@ environment:
   LINT: 0
 
   matrix:
-    - nodejs_version: "6.10"
-    - nodejs_version: "7.10"
-    - nodejs_version: "8.1"
+    - nodejs_version: "6.11"
+    - nodejs_version: "8.6"
       LINT: 1
 
 services:
