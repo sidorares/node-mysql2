@@ -29,13 +29,13 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
 ```js
 async function example1 () {
   const mysql = require('mysql2/promise');
-  const conn = await mysql.createConnection({ database: test });
+  const conn = await mysql.createConnectionPromise({ database: test });
   let [rows, fields] = await conn.execute('select ?+? as sum', [2, 2]);
 }
 
 async function example2 () {
    let mysql = require('mysql2/promise');
-   let pool = mysql.createPool({database: test});
+   let pool = mysql.createPoolPromise({database: test});
    // execute in parallel, next console.log in 3 seconds
    await Promise.all([pool.query('select sleep(2)'), pool.query('select sleep(3)')]);
    console.log('3 seconds after');
