@@ -1,3 +1,7 @@
+1.4.3 (03/11/2017)
+ - Added sqlMessage to Error callback object           #665
+ - Normalized sqlState to a string of 5 chars
+   as Mysql specifies it
 1.4.2 ( 27/08/2017 )
  - fix null value incorrectly returned as empty
    string fro int values in text protocol              #637
