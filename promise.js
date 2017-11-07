@@ -4,21 +4,26 @@ var util = require('util');
 
 function inheritEvents(source, target, events) {
   var listeners = {};
-  target.on('newListener', function(eventName) {
-    if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
-      source.on(eventName, listeners[eventName] = function() {
-        var args = [].slice.call(arguments);
-        args.unshift(eventName);
+  target
+    .on('newListener', function(eventName) {
+      if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
+        source.on(
+          eventName,
+          (listeners[eventName] = function() {
+            var args = [].slice.call(arguments);
+            args.unshift(eventName);
 
-        target.emit.apply(target, args);
-      });
-    }
-  }).on('removeListener', function(eventName) {
-    if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
-      source.removeListener(eventName, listeners[eventName]);
-      delete listeners[eventName];
-    }
-  });
+            target.emit.apply(target, args);
+          })
+        );
+      }
+    })
+    .on('removeListener', function(eventName) {
+      if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
+        source.removeListener(eventName, listeners[eventName]);
+        delete listeners[eventName];
+      }
+    });
 }
 
 function createConnection(opts) {
@@ -213,7 +218,7 @@ function PromisePreparedStatementInfo(statement, promiseImpl) {
 
 PromisePreparedStatementInfo.prototype.execute = function(parameters) {
   var s = this.statement;
-  var localErr = new Error()
+  var localErr = new Error();
   return new this.Promise(function(resolve, reject) {
     var done = makeDoneCb(resolve, reject, localErr);
     if (parameters) {
@@ -270,6 +275,29 @@ PromisePreparedStatementInfo.prototype.close = function() {
   'pipe',
   'resume',
   'unprepare'
+]);
+
+(function(functionsToWrap) {
+  for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
+    var func = functionsToWrap[i];
+
+    if (
+      typeof core.Pool.prototype[func] === 'function' &&
+      PromisePool.prototype[func] === undefined
+    ) {
+      PromisePool.prototype[func] = (function factory(funcName) {
+        return function() {
+          console.log(core.Pool.prototype[funcName]);
+          return core.Pool.prototype[funcName].apply(this.pool, arguments);
+        };
+      })(func);
+    }
+  }
+})([
+  // synchronous functions
+  'escape',
+  'escapeId',
+  'format'
 ]);
 
 function PromisePool(pool, Promise) {
