@@ -33,6 +33,7 @@ module.exports.createServer = function(handler) {
   return s;
 };
 
+exports.PoolConnection = require('./lib/pool_connection');
 exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
 exports.format = SqlString.format;
