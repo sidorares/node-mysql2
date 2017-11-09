@@ -287,7 +287,6 @@ PromisePreparedStatementInfo.prototype.close = function() {
     ) {
       PromisePool.prototype[func] = (function factory(funcName) {
         return function() {
-          console.log(core.Pool.prototype[funcName]);
           return core.Pool.prototype[funcName].apply(this.pool, arguments);
         };
       })(func);
