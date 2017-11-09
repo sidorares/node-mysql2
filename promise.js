@@ -299,6 +299,19 @@ PromisePreparedStatementInfo.prototype.close = function() {
   'format'
 ]);
 
+function PromisePoolConnection() {
+  PromiseConnection.apply(this, arguments);
+}
+
+util.inherits(PromisePoolConnection, PromiseConnection);
+
+PromisePoolConnection.prototype.destroy = function() {
+  return core.PoolConnection.prototype.destroy.apply(
+    this.connection,
+    arguments
+  );
+};
+
 function PromisePool(pool, Promise) {
   this.pool = pool;
   this.Promise = Promise;
@@ -316,7 +329,7 @@ PromisePool.prototype.getConnection = function() {
       if (err) {
         reject(err);
       } else {
-        resolve(new PromiseConnection(coreConnection, self.Promise));
+        resolve(new PromisePoolConnection(coreConnection, self.Promise));
       }
     });
   });

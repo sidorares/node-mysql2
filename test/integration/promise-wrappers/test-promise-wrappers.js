@@ -174,67 +174,77 @@ function testPreparedError() {
 
 function testEventsConnect() {
   var connResolved;
-  var connPromise = createConnection(config).then(function(conn) {
-    connResolved = conn;
-    var events = 0;
+  var connPromise = createConnection(config)
+    .then(function(conn) {
+      connResolved = conn;
+      var events = 0;
 
-    var expectedListeners = {
-      error: 1,
-      drain: 0,
-      connect: 0,
-      enqueue: 0,
-      end: 0
-    };
-    for (var eventName in expectedListeners) {
-      assert.equal(conn.connection.listenerCount(eventName), expectedListeners[eventName], eventName);
-    }
+      var expectedListeners = {
+        error: 1,
+        drain: 0,
+        connect: 0,
+        enqueue: 0,
+        end: 0
+      };
+      for (var eventName in expectedListeners) {
+        assert.equal(
+          conn.connection.listenerCount(eventName),
+          expectedListeners[eventName],
+          eventName
+        );
+      }
 
-    conn
-      .once('error', function() {
-        assert.equal(this, conn);
-        ++events;
-      })
-      .once('drain', function() {
-        assert.equal(this, conn);
-        ++events;
-      })
-      .once('connect', function() {
-        assert.equal(this, conn);
-        ++events;
-      })
-      .once('enqueue', function() {
-        assert.equal(this, conn);
-        ++events;
-      })
-      .once('end', function() {
-        assert.equal(this, conn);
-        ++events;
+      conn
+        .once('error', function() {
+          assert.equal(this, conn);
+          ++events;
+        })
+        .once('drain', function() {
+          assert.equal(this, conn);
+          ++events;
+        })
+        .once('connect', function() {
+          assert.equal(this, conn);
+          ++events;
+        })
+        .once('enqueue', function() {
+          assert.equal(this, conn);
+          ++events;
+        })
+        .once('end', function() {
+          assert.equal(this, conn);
+          ++events;
 
-        doneEventsConnect = events === 5;
-      });
+          doneEventsConnect = events === 5;
+        });
 
-    conn.connection.emit('error', new Error());
-    conn.connection.emit('drain');
-    conn.connection.emit('connect');
-    conn.connection.emit('enqueue');
-    conn.connection.emit('end');
+      conn.connection.emit('error', new Error());
+      conn.connection.emit('drain');
+      conn.connection.emit('connect');
+      conn.connection.emit('enqueue');
+      conn.connection.emit('end');
 
-    expectedListeners.error = 0;
-    for (var eventName in expectedListeners) {
-      assert.equal(conn.connection.listenerCount(eventName), expectedListeners[eventName], eventName);
-    }
+      expectedListeners.error = 0;
+      for (var eventName in expectedListeners) {
+        assert.equal(
+          conn.connection.listenerCount(eventName),
+          expectedListeners[eventName],
+          eventName
+        );
+      }
 
-    conn.end();
-  }).catch(function(err) {
-    console.log(err);
-    if (connResolved) {
-      connResolved.end();
-    } else {
-      console.log(
-        'Warning: promise rejected before executing prepared statement'
-      );
-    }
-  });
+      conn.end();
+    })
+    .catch(function(err) {
+      console.log(err);
+      if (connResolved) {
+        connResolved.end();
+      } else {
+        console.log(
+          'Warning: promise rejected before executing prepared statement'
+        );
+      }
+    });
 }
 
 function testBasicPool() {
@@ -309,7 +319,11 @@ function testEventsPool() {
     release: 0
   };
   for (var eventName in expectedListeners) {
-    assert.equal(pool.pool.listenerCount(eventName), expectedListeners[eventName], eventName);
+    assert.equal(
+      pool.pool.listenerCount(eventName),
+      expectedListeners[eventName],
+      eventName
+    );
   }
 
   pool
@@ -338,7 +352,11 @@ function testEventsPool() {
   pool.pool.emit('release');
 
   for (var eventName in expectedListeners) {
-    assert.equal(pool.pool.listenerCount(eventName), expectedListeners[eventName], eventName);
+    assert.equal(
+      pool.pool.listenerCount(eventName),
+      expectedListeners[eventName],
+      eventName
+    );
   }
 }
 
@@ -410,6 +428,37 @@ function testChangeUser() {
     });
 }
 
+function timebomb(fuse) {
+  var timebomb;
+
+  return {
+    arm() {
+      timebomb = setTimeout(() => {
+        throw new Error(`Timebomb not defused within ${fuse}ms`);
+      }, fuse);
+    },
+    defuse() {
+      clearTimeout(timebomb);
+    }
+  };
+}
+
+function testPoolConnectionDestroy() {
+  // Only allow one connection
+  const options = Object.assign({ connectionLimit: 1 }, config);
+  const pool = createPool(options);
+
+  const bomb = timebomb(2000);
+
+  pool
+    .getConnection()
+    .then(connection => connection.destroy())
+    .then(bomb.arm)
+    .then(() => pool.getConnection())
+    .then(bomb.defuse)
+    .then(() => pool.end());
+}
+
 testBasic();
 testErrors();
 testObjParams();
@@ -420,18 +469,19 @@ testErrorsPool();
 testObjParamsPool();
 testEventsPool();
 testChangeUser();
+testPoolConnectionDestroy();
 
 process.on('exit', function() {
   if (skipTest) {
     return;
   }
-  assert.equal(doneCalled, true);
-  assert.equal(exceptionCaught, true);
-  assert.equal(doneEventsConnect, true);
-  assert.equal(doneCalledPool, true);
-  assert.equal(exceptionCaughtPool, true);
-  assert.equal(doneEventsPool, true);
-  assert.equal(doneChangeUser, true);
+  assert.equal(doneCalled, true, 'done not called');
+  assert.equal(exceptionCaught, true, 'exception not caught');
+  assert.equal(doneEventsConnect, true, 'wrong number of connection events');
+  assert.equal(doneCalledPool, true, 'pool done not called');
+  assert.equal(exceptionCaughtPool, true, 'pool exception not caught');
+  assert.equal(doneEventsPool, true, 'wrong number of pool connection events');
+  assert.equal(doneChangeUser, true, 'user not changed');
 });
 
 process.on('unhandledRejection', function(err) {
