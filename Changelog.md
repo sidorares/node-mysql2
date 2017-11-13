@@ -1,11 +1,17 @@
-1.4.3 (03/11/2017)
+1.5.0 (13/11/2017)
  - Added sqlMessage to Error callback object           #665
  - Normalized sqlState to a string of 5 chars          #667
    as Mysql specifies it  
+ - Remove destroyed promise pool connections from 
+   pool                                                #674, #672
+ - Expose escape & format methods on connection pool   #669, #663
+ - Support fractional seconds variable precision for 
+   the temporal types                                  #660, #659
+ - fix null values breaking typeCast behaviour         #652
 
 1.4.2 ( 27/08/2017 )
  - fix null value incorrectly returned as empty
-   string fro int values in text protocol              #637
+   string from int values in text protocol             #637
 
  - build: bump to node 8.4
  - promise wrapper: use promise implementation passed
