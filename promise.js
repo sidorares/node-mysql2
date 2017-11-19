@@ -76,6 +76,7 @@ function makeDoneCb(resolve, reject, localErr) {
       localErr.code = err.code;
       localErr.errno = err.errno;
       localErr.sqlState = err.sqlState;
+      localErr.sqlMessage = err.sqlMessage;
       reject(localErr);
     } else {
       resolve([rows, fields]);
@@ -162,6 +163,7 @@ PromiseConnection.prototype.connect = function() {
         localErr.code = err.code;
         localErr.errno = err.errno;
         localErr.sqlState = err.sqlState;
+        localErr.sqlMessage = err.sqlMessage;
         reject(localErr);
       } else {
         resolve(param);
@@ -181,6 +183,7 @@ PromiseConnection.prototype.prepare = function(options) {
         localErr.code = err.code;
         localErr.errno = err.errno;
         localErr.sqlState = err.sqlState;
+        localErr.sqlMessage = err.sqlMessage;
         reject(localErr);
       } else {
         var wrappedStatement = new PromisePreparedStatementInfo(
@@ -203,6 +206,7 @@ PromiseConnection.prototype.changeUser = function(options) {
         localErr.code = err.code;
         localErr.errno = err.errno;
         localErr.sqlState = err.sqlState;
+        localErr.sqlMessage = err.sqlMessage;
         reject(localErr);
       } else {
         resolve();
@@ -367,6 +371,7 @@ PromisePool.prototype.end = function() {
         localErr.code = err.code;
         localErr.errno = err.errno;
         localErr.sqlState = err.sqlState;
+        localErr.sqlMessage = err.sqlMessage;
         reject(localErr);
       } else {
         resolve();
