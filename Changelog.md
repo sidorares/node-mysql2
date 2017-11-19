@@ -1,3 +1,9 @@
+1.5.1 (19/11/2017)
+ - Fix empty buffer incorrectly returned instead of 
+   NULL value                                          #668, #671
+ - promise wrapper: pass sqlMessage from original 
+   error                                               #682, #678
+   
 1.5.0 (13/11/2017)
  - Added sqlMessage to Error callback object           #665
  - Normalized sqlState to a string of 5 chars          #667
