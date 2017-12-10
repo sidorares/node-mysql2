@@ -356,7 +356,7 @@ PromisePool.prototype.execute = function(sql, values) {
   var corePool = this.pool;
   const localErr = new Error();
 
-  return new Promise(function(resolve, reject) {
+  return new this.Promise(function(resolve, reject) {
     corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
   });
 };
@@ -364,7 +364,7 @@ PromisePool.prototype.execute = function(sql, values) {
 PromisePool.prototype.end = function() {
   var corePool = this.pool;
   const localErr = new Error();
-  return new Promise(function(resolve, reject) {
+  return new this.Promise(function(resolve, reject) {
     corePool.end(function(err) {
       if (err) {
         localErr.message = err.message;

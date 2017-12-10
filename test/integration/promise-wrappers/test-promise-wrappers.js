@@ -307,6 +307,24 @@ function testObjParamsPool() {
       console.log(err);
     });
 }
+function testPromiseLibrary() {
+  var pool = createPool(config);
+  var promise = pool.execute({
+	  sql: 'select ?-? as ttt',
+	  values: [8, 5]
+  });
+  promise
+    .then(function() {
+      assert.ok(promise instanceof pool.Promise);
+    })
+    .then(function() {
+      promise = pool.end();
+      assert.ok(promise instanceof pool.Promise);
+    })
+    .catch(function(err) {
+        console.log(err);
+    });
+}
 
 function testEventsPool() {
   var pool = createPool(config);
@@ -470,6 +488,7 @@ testObjParamsPool();
 testEventsPool();
 testChangeUser();
 testPoolConnectionDestroy();
+testPromiseLibrary();
 
 process.on('exit', function() {
   if (skipTest) {
