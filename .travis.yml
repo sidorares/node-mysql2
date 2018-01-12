@@ -11,7 +11,7 @@ matrix:
     env: LINT=0
   - node_js: "6.11"
     env: LINT=0
-  - node_js: "8.0"
+  - node_js: "8.9"
     env: LINT=1
 
 cache:
@@ -25,8 +25,8 @@ notifications:
 
 script:
   - nvm ls-remote
-  - docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 33306:3306 mysql:5.7
-  - MYSQL_PORT=33306 node tools/wait-up.js
+  - docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 33306:3306 mysql:5.7
+  - docker run --link mysql:db -e CHECK_PORT=3306 -e CHECK_HOST=db giorgos/takis
   - node --version
   - yarn --version
   - if [ "$LINT" = "1" ]; then yarn run lint; fi
