@@ -11,7 +11,7 @@ matrix:
     env: LINT=0
   - node_js: "6.11"
     env: LINT=0
-  - node_js: "8.0"
+  - node_js: "8.9"
     env: LINT=1
 
 cache:
