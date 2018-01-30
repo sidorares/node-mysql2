@@ -5,7 +5,7 @@ var assert = require('assert');
 var error = null;
 
 try {
-  connection.execute('SELECT ? AS result', [undefined], function(err, _rows) { });
+  connection.execute('SELECT ? AS result', [function () {}], function(err, _rows) { });
 } catch (err) {
   error = err
   connection.end();
@@ -13,7 +13,7 @@ try {
 
 process.on('exit', function() {
   assert.equal(error.name, 'TypeError');
-  if (!error.message.match(/undefined/)) {
-    assert.fail('Expected error.message to contain \'undefined\'')
+  if (!error.message.match(/function/)) {
+    assert.fail('Expected error.message to contain \'function\'')
   }
 });

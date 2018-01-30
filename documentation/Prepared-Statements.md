@@ -36,3 +36,18 @@ Note that you should not use statement after connection reset (`changeUser()` or
 # Configuration
 
 `maxPreparedStatements` : We keep the cached statements in a [lru-cache](https://github.com/isaacs/node-lru-cache). Default size is `16000` but you can use this option to override it. Any statements that are dropped from cache will be `closed`.
+
+# Serialization of bind parameters
+
+The bind parameter values passed to `execute` are serialized JS -> MySQL as:
+
+* `null` -> `NULL`
+* `number` -> `DOUBLE`
+* `boolean` -> `TINY` (0 for false, 1 for true)
+* `object` -> depending on prototype:
+  * `Date` -> `DATETIME`
+  * `JSON` like object - `JSON`
+  * `Buffer` -> `VAR_STRING`
+* Other -> `VAR_STRING`
+
+Passing in `undefined` or a `function` will result in an error.
