@@ -49,7 +49,7 @@
     "denque": "^1.1.1",
     "generate-function": "^2.0.0",
     "iconv-lite": "^0.4.18",
-    "long": "^3.2.0",
+    "long": "^4.0.0",
     "lru-cache": "^4.1.1",
     "named-placeholders": "1.1.1",
     "object-assign": "^4.1.1",
