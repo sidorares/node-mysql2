@@ -2,6 +2,7 @@ var SqlString = require('sqlstring');
 
 var Connection = require('./lib/connection.js');
 var ConnectionConfig = require('./lib/connection_config.js');
+var parserCache = require("./lib/parsers/parser_cache");
 
 module.exports.createConnection = function(opts) {
   return new Connection({ config: new ConnectionConfig(opts) });
@@ -61,3 +62,11 @@ exports.__defineGetter__('Charsets', function() {
 exports.__defineGetter__('CharsetToEncoding', function() {
   return require('./lib/constants/charset_encodings.js');
 });
+
+exports.setMaxParserCache = function (max) {
+  parserCache.setMaxCache(max);
+};
+
+exports.clearParserCache = function () {
+  parserCache.clearCache();
+};
