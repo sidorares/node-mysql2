@@ -20,7 +20,7 @@ connection.execute('select ?+1 as qqq, ? as rrr, ? as yyy', [1, null, 3], functi
     fields
   ) {
     console.log(err, rows, fields);
-    mysql.unprepare('select ?+1 as qqq, ? as rrr, ? as yyy');
+    connection.unprepare('select ?+1 as qqq, ? as rrr, ? as yyy');
     connection.execute(
       'select ?+1 as qqq, ? as rrr, ? as yyy',
       [3, null, 3],
