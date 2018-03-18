@@ -1,3 +1,10 @@
+1.5.3 (19/03/2018)
+ - fix incorrect denque dependency                     #740
+ - build: bump to node 8.10 and 6.16
+ - use strich lru-cache version                        #751
+ - bump sqlstring to 2.3.1
+ - remove noAssert flag from Buffer functions          #748
+ 
 1.5.2 (06/02/2018)
  - perf: Store Compiled Packet Parsers in a global
    cache                                               #722, #723
