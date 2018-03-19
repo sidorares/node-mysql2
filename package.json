@@ -1,8 +1,7 @@
 {
   "name": "mysql2",
   "version": "1.5.2",
-  "description":
-    "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
+  "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
   "directories": {
     "example": "examples"
@@ -14,22 +13,32 @@
     "test": "npm run lint && npm run test:raw",
     "test:raw": "node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
     "benchmark": "./benchmarks/run-unit.js",
-    "prettier":
-      "prettier --single-quote --trailing-comma none --write \"{lib,examples,test}/**/*.js\"",
+    "prettier": "prettier --single-quote --trailing-comma none --write \"{lib,examples,test}/**/*.js\"",
     "prettier:docs": "prettier-markdown README.md documentation/*",
     "precommit": "lint-staged",
     "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check",
     "wait-port": "wait-on"
   },
   "lint-staged": {
-    "*.js": ["prettier --single-quote --trailing-comma none --write", "git add"]
+    "*.js": [
+      "prettier --single-quote --trailing-comma none --write",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/sidorares/node-mysql2"
   },
-  "keywords": ["mysql", "client", "server"],
-  "files": ["lib", "index.js", "promise.js"],
+  "keywords": [
+    "mysql",
+    "client",
+    "server"
+  ],
+  "files": [
+    "lib",
+    "index.js",
+    "promise.js"
+  ],
   "engines": {
     "node": ">= 4.0"
   },
@@ -52,10 +61,10 @@
   "devDependencies": {
     "assert-diff": "^1.2.0",
     "error-stack-parser": "^2.0.1",
-    "eslint": "^4.6.0",
-    "eslint-config-prettier": "^2.1.1",
+    "eslint": "^4.19.0",
+    "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-async-await": "0.0.0",
-    "eslint-plugin-markdown": "^1.0.0-beta.2",
+    "eslint-plugin-markdown": "^1.0.0-beta.6",
     "eslint-plugin-prettier": "^2.1.1",
     "husky": "^0.14.0",
     "is-async-supported": "^1.2.0",
