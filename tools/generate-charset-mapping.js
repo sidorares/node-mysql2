@@ -15,23 +15,13 @@ var charsets = [];
 // see also https://github.com/ashtuchkin/iconv-lite/issues/125
 // https://en.wikipedia.org/wiki/Kamenick%C3%BD_encoding
 // https://github.com/twitter/mysql/tree/master/sql/share/charsets
-
-// Notes about ujis:
-// - ujis in MySQL is equivalent to eucjp in Linux,
-//   so ujis should be naturally mapped to eucjp.
-// - eucjpms is another charset, and it's a slightly extended vesion of eucjp.
-// - iconv-lite extends eucjp from the standard one, and it looks close to eucjpms.
-//   https://github.com/ashtuchkin/iconv-lite/blob/master/test/dbcs-test.js
-// - Historically, eucjpms has been mapped to eucjp in node-mysql2,
-//   and this was practically correct because of the reason above.
-// - So keep this mapping from eucjpms to eucjp, too.
+// https://github.com/sidorares/node-mysql2/pull/772
 
 var mysql2iconv = {
   utf8: 'cesu8',
   utf8mb4: 'utf8',
   utf16le: 'utf16-le',
   ujis: 'eucjp',
-  eucjpms: 'eucjp', // UJIS for Windows Japanese
   // need to check that this is correct mapping
   macce: 'macintosh' // Mac Central European
 };
