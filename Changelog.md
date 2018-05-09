@@ -1,13 +1,55 @@
+1.5.3 (19/03/2018)
+ - fix incorrect denque dependency                     #740
+ - build: bump to node 8.10 and 6.16
+ - use strich lru-cache version                        #751
+ - bump sqlstring to 2.3.1
+ - remove noAssert flag from Buffer functions          #748
+ 
+1.5.2 (06/02/2018)
+ - perf: Store Compiled Packet Parsers in a global
+   cache                                               #722, #723
+ - Improve performance of removing connections from
+   pools                                               #720
+ - use source parameters types with execute, fix
+   crash when parameter is undefined                   #718, #705
+ - PromisePool to always use the specified promises
+   library                                             #697
+
+1.5.1 (19/11/2017)
+ - Fix empty buffer incorrectly returned instead of
+   NULL value                                          #668, #671
+ - promise wrapper: pass sqlMessage from original
+   error                                               #682, #678
+
+1.5.0 (13/11/2017)
+ - Added sqlMessage to Error callback object           #665
+ - Normalized sqlState to a string of 5 chars          #667
+   as Mysql specifies it  
+ - Remove destroyed promise pool connections from
+   pool                                                #674, #672
+ - Expose escape & format methods on connection pool   #669, #663
+ - Support fractional seconds variable precision for
+   the temporal types                                  #660, #659
+ - fix null values breaking typeCast behaviour         #652
+
+1.4.2 ( 27/08/2017 )
+ - fix null value incorrectly returned as empty
+   string from int values in text protocol             #637
+
+ - build: bump to node 8.4
+ - promise wrapper: use promise implementation passed
+   to PromisePool                                      #631, #632
+
 1.4.1 ( 16/08/2017 )
  - add missing encodings                               #628, #630
- - (binary protocol) Fix parsing microsecond in 
+ - (binary protocol) Fix parsing microsecond in
    datatime type                                       #629
- - (promise wrapper) Fix handling of errors in promise 
+ - (promise wrapper) Fix handling of errors in promise
    prepared statement execute                          #622
 
 1.4.0 ( 30/07/2017 )
- - fix DATETIME going into incorrect state when 
-   milliseconds part present                           #618 
+ - fix DATETIME going into incorrect state when
+   milliseconds part present                           #618
  - (promise wrapper) add changeUser                    #615, #614, #613
  - redo event delegation in promise wrappers to be     #577, #620, #577, #568
    lazy, self-cleaning
@@ -18,7 +60,7 @@
 1.3.5 ( 15/06/2017 )
  - update iconv-lite to 0.4.18 to fix node 8 cesu8
    encoding regression. Add node 8 to  build matrix     #591
-   
+
 1.3.4 ( 13/06/2017 )
  - use safe-buffer in string decoder                    #589, #585
  - allow to use pool.execute() without parameters       #589

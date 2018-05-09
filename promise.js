@@ -4,21 +4,26 @@ var util = require('util');
 
 function inheritEvents(source, target, events) {
   var listeners = {};
-  target.on('newListener', function(eventName) {
-    if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
-      source.on(eventName, listeners[eventName] = function() {
-        var args = [].slice.call(arguments);
-        args.unshift(eventName);
+  target
+    .on('newListener', function(eventName) {
+      if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
+        source.on(
+          eventName,
+          (listeners[eventName] = function() {
+            var args = [].slice.call(arguments);
+            args.unshift(eventName);
 
-        target.emit.apply(target, args);
-      });
-    }
-  }).on('removeListener', function(eventName) {
-    if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
-      source.removeListener(eventName, listeners[eventName]);
-      delete listeners[eventName];
-    }
-  });
+            target.emit.apply(target, args);
+          })
+        );
+      }
+    })
+    .on('removeListener', function(eventName) {
+      if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
+        source.removeListener(eventName, listeners[eventName]);
+        delete listeners[eventName];
+      }
+    });
 }
 
 function createConnection(opts) {
@@ -71,6 +76,7 @@ function makeDoneCb(resolve, reject, localErr) {
       localErr.code = err.code;
       localErr.errno = err.errno;
       localErr.sqlState = err.sqlState;
+      localErr.sqlMessage = err.sqlMessage;
       reject(localErr);
     } else {
       resolve([rows, fields]);
@@ -157,6 +163,7 @@ PromiseConnection.prototype.connect = function() {
         localErr.code = err.code;
         localErr.errno = err.errno;
         localErr.sqlState = err.sqlState;
+        localErr.sqlMessage = err.sqlMessage;
         reject(localErr);
       } else {
         resolve(param);
@@ -176,6 +183,7 @@ PromiseConnection.prototype.prepare = function(options) {
         localErr.code = err.code;
         localErr.errno = err.errno;
         localErr.sqlState = err.sqlState;
+        localErr.sqlMessage = err.sqlMessage;
         reject(localErr);
       } else {
         var wrappedStatement = new PromisePreparedStatementInfo(
@@ -198,6 +206,7 @@ PromiseConnection.prototype.changeUser = function(options) {
         localErr.code = err.code;
         localErr.errno = err.errno;
         localErr.sqlState = err.sqlState;
+        localErr.sqlMessage = err.sqlMessage;
         reject(localErr);
       } else {
         resolve();
@@ -213,7 +222,7 @@ function PromisePreparedStatementInfo(statement, promiseImpl) {
 
 PromisePreparedStatementInfo.prototype.execute = function(parameters) {
   var s = this.statement;
-  var localErr = new Error()
+  var localErr = new Error();
   return new this.Promise(function(resolve, reject) {
     var done = makeDoneCb(resolve, reject, localErr);
     if (parameters) {
@@ -272,6 +281,41 @@ PromisePreparedStatementInfo.prototype.close = function() {
   'unprepare'
 ]);
 
+(function(functionsToWrap) {
+  for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
+    var func = functionsToWrap[i];
+
+    if (
+      typeof core.Pool.prototype[func] === 'function' &&
+      PromisePool.prototype[func] === undefined
+    ) {
+      PromisePool.prototype[func] = (function factory(funcName) {
+        return function() {
+          return core.Pool.prototype[funcName].apply(this.pool, arguments);
+        };
+      })(func);
+    }
+  }
+})([
+  // synchronous functions
+  'escape',
+  'escapeId',
+  'format'
+]);
+
+function PromisePoolConnection() {
+  PromiseConnection.apply(this, arguments);
+}
+
+util.inherits(PromisePoolConnection, PromiseConnection);
+
+PromisePoolConnection.prototype.destroy = function() {
+  return core.PoolConnection.prototype.destroy.apply(
+    this.connection,
+    arguments
+  );
+};
+
 function PromisePool(pool, Promise) {
   this.pool = pool;
   this.Promise = Promise;
@@ -289,7 +333,7 @@ PromisePool.prototype.getConnection = function() {
       if (err) {
         reject(err);
       } else {
-        resolve(new PromiseConnection(coreConnection, self.Promise));
+        resolve(new PromisePoolConnection(coreConnection, self.Promise));
       }
     });
   });
@@ -312,7 +356,7 @@ PromisePool.prototype.execute = function(sql, values) {
   var corePool = this.pool;
   const localErr = new Error();
 
-  return new Promise(function(resolve, reject) {
+  return new this.Promise(function(resolve, reject) {
     corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
   });
 };
@@ -320,13 +364,14 @@ PromisePool.prototype.execute = function(sql, values) {
 PromisePool.prototype.end = function() {
   var corePool = this.pool;
   const localErr = new Error();
-  return new Promise(function(resolve, reject) {
+  return new this.Promise(function(resolve, reject) {
     corePool.end(function(err) {
       if (err) {
         localErr.message = err.message;
         localErr.code = err.code;
         localErr.errno = err.errno;
         localErr.sqlState = err.sqlState;
+        localErr.sqlMessage = err.sqlMessage;
         reject(localErr);
       } else {
         resolve();
