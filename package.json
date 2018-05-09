@@ -56,7 +56,7 @@
     "readable-stream": "2.3.2",
     "safe-buffer": "^5.0.1",
     "seq-queue": "0.0.5",
-    "sqlstring": "github:yourwelcomeltd/sqlstring"
+    "sqlstring": "^2.1.0"
   },
   "devDependencies": {
     "assert-diff": "^1.2.0",
