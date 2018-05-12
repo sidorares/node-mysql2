@@ -16,6 +16,7 @@ __Table of contents__
   - [Installation](#installation)
   - [First Query](#first-query)
   - [Using Prepared Statements](#using-prepared-statements)
+  - [Using connection pools](#using-connection-pools)
   - [Using Promise Wrapper](#using-promise-wrapper)
   - [API and Configuration](#api-and-configuration)
   - [Documentation](#documentation)
@@ -37,7 +38,7 @@ MySQL2 is mostly API compatible with [mysqljs][node-mysql] and supports majority
  - Compression
  - SSL and [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/Authentication-Switch.md)
  - [Custom Streams](https://github.com/sidorares/node-mysql2/tree/master/documentation/Extras.md)
- - Pooling
+ - [Pooling](#using-connection-pools)
 
 ## Installation
 
@@ -111,6 +112,41 @@ connection.execute(
   }
 );
 ```
+
+## Using connection pools
+
+Connection pools help reduce the time spent connecting to the MySQL server by reusing a previous connection, leaving them open instead of closing when you are done with them.
+
+This improves the latency of queries as you avoid all of the overhead that comes with establishing a new connection.
+
+```js
+// get the client
+const mysql = require('mysql2');
+
+// Create the connection pool. The ool-specific settings are the defaults
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+```
+The pool does not create all connections upfront but creates them on demand until the connection limit is reached.
+
+You can use the pool in the same way as connections (using `pool.query()` and `pool.execute()`, but there is also the possibility of manually acquiring a connection from the pool and returning it later:
+
+```js
+// For pool initialization, see above
+pool.getConnection(function(conn) {
+   // Do something with the connection
+   conn.query(/* ... */);
+   // Don't forget to release the connection when finished!
+   pool.releaseConnection(conn);
+})
+```
+
 ## Using Promise Wrapper
 
 MySQL2 also support Promise API. Which works very well with ES7 async await.
