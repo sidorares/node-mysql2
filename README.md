@@ -135,13 +135,13 @@ const pool = mysql.createPool({
 ```
 The pool does not create all connections upfront but creates them on demand until the connection limit is reached.
 
-You can use the pool in the same way as connections (using `pool.Query()` and `pool.Execute()`, but there is also the possibility of manually acquiring a connection from the pool and returning it later:
+You can use the pool in the same way as connections (using `pool.query()` and `pool.execute()`, but there is also the possibility of manually acquiring a connection from the pool and returning it later:
 
 ```js
 // For pool initialization, see above
 pool.getConnection(function(conn) {
    // Do something with the connection
-   conn.Query(/* ... */);
+   conn.query(/* ... */);
    // Don't forget to release the connection when finished!
    pool.releaseConnection(conn);
 })
