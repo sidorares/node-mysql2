@@ -123,7 +123,7 @@ This improves the latency of queries as you avoid all of the overhead that comes
 // get the client
 const mysql = require('mysql2');
 
-// Create the connection pool. The ool-specific settings are the defaults
+// Create the connection pool. The pool-specific settings are the defaults
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
