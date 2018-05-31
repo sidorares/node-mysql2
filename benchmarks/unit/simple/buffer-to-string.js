@@ -1,4 +1,4 @@
-var a = new Buffer(10000);
+var a = Buffer.allocUnsafe(10000);
 a.fill(120); // 'x'
 var l = 5;
 var s = '';

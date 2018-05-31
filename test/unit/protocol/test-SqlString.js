@@ -1,4 +1,4 @@
-var Buffer = require('safe-buffer').Buffer;
+
 var common = require('../../common');
 var test = require('utest');
 var assert = require('assert');

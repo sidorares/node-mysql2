@@ -1,4 +1,4 @@
-var p = new Buffer(65535*10);
+var p = Buffer.allocUnsafe(65535*10);
 var offset = 0;
 var plen = 17;
 while(1) {

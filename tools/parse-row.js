@@ -24,15 +24,15 @@ var SAParser = (function(){ return function BinaryRow(packet) {
 }; })()
 
 function parse(s) {
-  var raw = new Buffer(s, 'hex');
+  var raw = Buffer.from(s, 'hex');
   var p = new Packet(0, raw, 0, raw.end);
   return new SAParser(p);
 }
 
 function parseC(s) {
-  var raw = new Buffer(s, 'hex');
+  var raw = Buffer.from(s, 'hex');
   var p = new Packet(0, raw, 0, raw.end);
-  var c new Packets.ColumnDefinition(p);
+  var c = new Packets.ColumnDefinition(p);
 }
 
 console.log(parseC('036465660000001a62696c6c696e675f69735f7069636b75705f6c6f636174696f6e000c3f0001000000030100000000'));

@@ -1,6 +1,6 @@
 var net = require('net');
 var count = 0;
-var byte = new Buffer([0x33]);
+var byte = Buffer.from([0x33]);
 function pong()
 {
   count++;

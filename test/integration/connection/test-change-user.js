@@ -1,4 +1,4 @@
-var Buffer = require('safe-buffer').Buffer;
+
 var assert = require('assert');
 var common = require('../../common');
 var connection = common.createConnection();

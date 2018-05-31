@@ -48,7 +48,7 @@ connection.query(sql, [badPath, ','], function(err, result) {
 
 // test path mapping
 var createMyStream = function(path) {
-  var Stream = require('readable-stream').PassThrough;
+  var Stream = require('stream').PassThrough;
   var myStream = new Stream();
   setTimeout(function() {
     myStream.write('11,Hello World\n');

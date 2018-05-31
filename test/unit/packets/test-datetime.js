@@ -1,4 +1,4 @@
-var Buffer = require('safe-buffer').Buffer;
+
 var assert = require('assert');
 var packets = require('../../../lib/packets/index.js');
 
