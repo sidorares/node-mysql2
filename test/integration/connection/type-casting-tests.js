@@ -1,4 +1,4 @@
-var Buffer = require('buffer');
+
 
 module.exports = function(connection) {
   return [

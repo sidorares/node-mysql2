@@ -1,5 +1,5 @@
 var config = require('../../common.js').config;
-var Buffer = require('buffer');
+
 
 var skipTest = false;
 if (typeof Promise == 'undefined') {

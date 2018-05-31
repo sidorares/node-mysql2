@@ -1,4 +1,4 @@
-var Buffer = require('buffer');
+
 
 var assert = require('assert');
 var common = require('../../common');

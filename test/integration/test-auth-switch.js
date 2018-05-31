@@ -3,7 +3,6 @@ var mysql = require('../../index.js');
 var Command = require('../../lib/commands/command.js');
 var Packets = require('../../lib/packets/index.js');
 
-var Buffer = require('buffer');
 var assert = require('assert');
 
 function TestAuthSwitchHandshake(args) {

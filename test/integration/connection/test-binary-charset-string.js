@@ -1,7 +1,7 @@
 var common = require('../../common');
 var connection = common.createConnection();
 var assert = require('assert');
-var Buffer = require('buffer');
+
 
 var rows = undefined;
 var fields = undefined;

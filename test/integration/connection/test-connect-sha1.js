@@ -1,7 +1,7 @@
 var mysql = require('../../../index.js');
 var auth = require('../../../lib/auth_41.js');
 var assert = require('assert');
-var Buffer = require('buffer');
+
 
 var server;
 
