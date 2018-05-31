@@ -12,7 +12,7 @@ if (0) {
 */
 
   var assert = require('assert');
-  var Buffer = require('safe-buffer').Buffer;
+  var Buffer = require('buffer');
 
   var table = 'insert_large_test';
   var length = 35777416;

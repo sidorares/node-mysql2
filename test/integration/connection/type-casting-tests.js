@@ -1,4 +1,4 @@
-var Buffer = require('safe-buffer').Buffer;
+var Buffer = require('buffer');
 
 module.exports = function(connection) {
   return [

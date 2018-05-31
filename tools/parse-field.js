@@ -4,7 +4,7 @@ var Packets = require('./lib/packets/index.js');
 var compileParser = require('./lib/compile_binary_parser.js')
 
 function parse(s) {
-  var raw = new Buffer(s, 'hex');
+  var raw = Buffer.from(s, 'hex');
   var p = new Packet(0, raw, 0, raw.end);
   return new SAParser(p);
 }
@@ -12,7 +12,7 @@ function parse(s) {
 var fields = [];
 
 function parseCcolumn(s) {
-  var raw = new Buffer(s, 'hex');
+  var raw = Buffer.from(s, 'hex');
   var p = new Packet(0, raw, 0, raw.end);
   var c  = new Packets.ColumnDefinition(p);
   fields.push(c);

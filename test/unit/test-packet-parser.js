@@ -1,4 +1,4 @@
-var Buffer = require('safe-buffer').Buffer;
+var Buffer = require('buffer');
 
 var PacketParser = require('../../lib/packet_parser.js');
 var Packet = require('../../lib/packets/packet.js');

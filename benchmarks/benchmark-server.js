@@ -18,7 +18,7 @@ function prepareReply(columns, row, n) {
   var rowPacket = Packets.TextRow.toPacket(row);
   length += n*rowPacket.length();
 
-  var replyBuffer = new Buffer(length);
+  var replyBuffer = Buffer.allocUnsafe(length);
   var offset = 0;
   var id = 1;
   function add(packet) {
