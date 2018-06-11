@@ -139,7 +139,7 @@ You can use the pool in the same way as connections (using `pool.query()` and `p
 
 ```js
 // For pool initialization, see above
-pool.getConnection(function(conn) {
+pool.getConnection(function(err, conn) {
    // Do something with the connection
    conn.query(/* ... */);
    // Don't forget to release the connection when finished!
