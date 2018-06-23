@@ -23,6 +23,8 @@ exports.createPoolCluster = function(config) {
   return new PoolCluster(config);
 };
 
+exports.createQuery = Connection.createQuery;
+
 module.exports.Pool = Pool;
 
 module.exports.createServer = function(handler) {
@@ -38,6 +40,7 @@ exports.PoolConnection = require('./lib/pool_connection');
 exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
 exports.format = SqlString.format;
+exports.raw = SqlString.raw;
 
 exports.__defineGetter__('createConnectionPromise', function() {
   return require('./promise.js').createConnection;

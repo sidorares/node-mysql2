@@ -396,3 +396,7 @@ function createPool(opts) {
 
 module.exports.createConnection = createConnection;
 module.exports.createPool = createPool;
+module.exports.escape = core.escape;
+module.exports.escapeId = core.escapeId;
+module.exports.format = core.format;
+module.exports.raw = core.raw;
