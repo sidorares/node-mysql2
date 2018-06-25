@@ -174,10 +174,10 @@ const mysql = require('mysql2/promise');
 const bluebird = require('bluebird');
 
 // create the connection, specify bluebird as Promise
-const connection =  mysql.createConnection({host:'localhost', user: 'root', database: 'test', Promise: bluebird});
+const connection = await mysql.createConnection({host:'localhost', user: 'root', database: 'test', Promise: bluebird});
 
 // query database
-const [rows, fields] =  connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+const [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
 ```
 
 ## API and Configuration
