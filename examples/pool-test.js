@@ -10,7 +10,7 @@ setInterval(function() {
     pool.getConnection(function(err, db) {
       db.query('select sleep(0.5) as qqq', function(err, rows, fields) {
         console.log(rows, fields);
-        db.release();
+        // Connection is automatically released upon query completion
       });
     });
   }
