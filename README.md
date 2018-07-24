@@ -194,10 +194,10 @@ async function main() {
   // get the client
   const mysql = require('mysql2');
   // create the pool
-  const pool = await mysql.createPool({host:'localhost', user: 'root', database: 'test'});
+  const pool = mysql.createPool({host:'localhost', user: 'root', database: 'test'});
   // now get a Promise wrapped instance of that pool
   const promisePool = pool.promise();
-  // query database
+  // query database using promises
   const [rows,fields] = await promisePool.query("SELECT 1");
 ```
 
