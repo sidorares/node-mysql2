@@ -400,3 +400,6 @@ module.exports.escape = core.escape;
 module.exports.escapeId = core.escapeId;
 module.exports.format = core.format;
 module.exports.raw = core.raw;
+module.exports.PromisePool = PromisePool;
+module.exports.PromiseConnection = PromiseConnection;
+module.exports.PromisePoolConnection = PromisePoolConnection;

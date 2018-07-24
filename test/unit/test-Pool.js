@@ -21,6 +21,26 @@ test('Pool', {
       "SELECT a FROM `table name` WHERE b = 'thing'"
     );
   }
+  
+});
+
+const poolDotPromise = pool.promise();
+test('Pool.promise()', {
+  'exposes escape': () => {
+    assert.equal(poolDotPromise.escape(123), '123');
+  },
+
+  'exposes escapeId': () => {
+    assert.equal(poolDotPromise.escapeId('table name'), '`table name`');
+  },
+
+  'exposes format': () => {
+    const params = ['table name', 'thing'];
+    assert.equal(
+      poolDotPromise.format('SELECT a FROM ?? WHERE b = ?', params),
+      "SELECT a FROM `table name` WHERE b = 'thing'"
+    );
+  }
 });
 
 const promisePool = new mysql.createPoolPromise(poolConfig);
@@ -41,3 +61,4 @@ test('PromisePool', {
     );
   }
 });
+
