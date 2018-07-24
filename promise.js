@@ -53,7 +53,7 @@ function createConnection(opts) {
 
 function PromiseConnection(connection, promiseImpl) {
   this.connection = connection;
-  this.Promise = promiseImpl;
+  this.Promise = promiseImpl || global.Promise;
 
   inheritEvents(connection, this, [
     'error',
@@ -318,7 +318,7 @@ PromisePoolConnection.prototype.destroy = function() {
 
 function PromisePool(pool, Promise) {
   this.pool = pool;
-  this.Promise = Promise;
+  this.Promise = Promise || global.Promise;
 
   inheritEvents(pool, this, ['acquire', 'connection', 'enqueue', 'release']);
 }
