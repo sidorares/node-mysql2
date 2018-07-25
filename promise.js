@@ -342,7 +342,7 @@ PromisePool.prototype.getConnection = function() {
 PromisePool.prototype.withConnection = function(promise) {
   return this.getConnection()
   .then(function(con) {
-    return this.Promise.resolve(promise(con))
+    return this.Promise.resolve(con).then(promise)
     .catch(function(err) {
       con.release();
       throw err;
