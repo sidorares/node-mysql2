@@ -98,10 +98,10 @@ PromiseConnection.prototype.query = function(query, params) {
 };
 
 PromiseConnection.prototype.execute = function(query, params) {
-  var c = this.connection;
+  const c = this.connection;
   const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
+    const done = makeDoneCb(resolve, reject, localErr);
     if (params) {
       c.execute(query, params, done);
     } else {
@@ -111,7 +111,7 @@ PromiseConnection.prototype.execute = function(query, params) {
 };
 
 PromiseConnection.prototype.end = function() {
-  var c = this.connection;
+  const c = this.connection;
   return new this.Promise(function(resolve, reject) {
     c.end(function() {
       resolve();
@@ -120,41 +120,43 @@ PromiseConnection.prototype.end = function() {
 };
 
 PromiseConnection.prototype.beginTransaction = function() {
-  var c = this.connection;
+  const c = this.connection;
   const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
+    const done = makeDoneCb(resolve, reject, localErr);
     c.beginTransaction(done);
   });
 };
 
 PromiseConnection.prototype.commit = function() {
-  var c = this.connection;
+  const c = this.connection;
   const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
+    const done = makeDoneCb(resolve, reject, localErr);
     c.commit(done);
   });
 };
 
 PromiseConnection.prototype.rollback = function() {
-  var c = this.connection;
+  const c = this.connection;
   const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
+    const done = makeDoneCb(resolve, reject, localErr);
     c.rollback(done);
   });
 };
 
 PromiseConnection.prototype.ping = function() {
-  var c = this.connection;
+  const c = this.connection;
+  const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    c.ping(resolve);
+    const done = makeDoneCb(resolve, reject, localErr);
+    c.ping(done);
   });
 };
 
 PromiseConnection.prototype.connect = function() {
-  var c = this.connection;
+  const c = this.connection;
   const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
     c.connect(function(err, param) {
@@ -173,8 +175,8 @@ PromiseConnection.prototype.connect = function() {
 };
 
 PromiseConnection.prototype.prepare = function(options) {
-  var c = this.connection;
-  var promiseImpl = this.Promise;
+  const c = this.connection;
+  const promiseImpl = this.Promise;
   const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
     c.prepare(options, function(err, statement) {
@@ -186,7 +188,7 @@ PromiseConnection.prototype.prepare = function(options) {
         localErr.sqlMessage = err.sqlMessage;
         reject(localErr);
       } else {
-        var wrappedStatement = new PromisePreparedStatementInfo(
+        const wrappedStatement = new PromisePreparedStatementInfo(
           statement,
           promiseImpl
         );
@@ -197,7 +199,7 @@ PromiseConnection.prototype.prepare = function(options) {
 };
 
 PromiseConnection.prototype.changeUser = function(options) {
-  var c = this.connection;
+  const c = this.connection;
   const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
     c.changeUser(options, function(err) {
@@ -214,6 +216,47 @@ PromiseConnection.prototype.changeUser = function(options) {
     });
   });
 };
+PromiseConnection.prototype.transaction = function(options,userPromise) {
+  const self = this;
+  if (! userPromise) {
+   userPromise = options;
+   options = {};
+  }
+  options = options || {};
+  
+  var promiseChain = Promise.resolve();
+
+  if (options.autoCommit !== true) {
+    promiseChain = promiseChain.then(function() {
+      return self.query(
+        "START TRANSACTION" +
+        ( options.consistentSnapshot === true ? " WITH CONSISTENT SNAPSHOT" : 
+         ( options.readWrite !== false ? " READ WRITE" : " READ ONLY" )
+        )
+      );
+    });
+  }
+  
+  promiseChain = promiseChain.then(function() {
+    return userPromise(self);
+  });
+
+  if (options.autoCommit === false) {
+    promiseChain = promiseChain.then(function(res) {
+      return self.query("COMMIT")
+      .then(function() {
+        return res;
+      });
+    })
+    .catch(function(err) {
+      return self.query("ROLLBACK")
+      .catch(function() {
+        throw err;
+      });
+    })
+  }
+  return promiseChain;
+};
 
 function PromisePreparedStatementInfo(statement, promiseImpl) {
   this.statement = statement;
@@ -221,10 +264,10 @@ function PromisePreparedStatementInfo(statement, promiseImpl) {
 }
 
 PromisePreparedStatementInfo.prototype.execute = function(parameters) {
-  var s = this.statement;
-  var localErr = new Error();
+  const s = this.statement;
+  const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
+    const done = makeDoneCb(resolve, reject, localErr);
     if (parameters) {
       s.execute(parameters, done);
     } else {
@@ -234,7 +277,7 @@ PromisePreparedStatementInfo.prototype.execute = function(parameters) {
 };
 
 PromisePreparedStatementInfo.prototype.close = function() {
-  var s = this.statement;
+  const s = this.statement;
   return new this.Promise(function(resolve, reject) {
     s.close();
     resolve();
@@ -251,7 +294,7 @@ PromisePreparedStatementInfo.prototype.close = function() {
 // proxy synchronous functions only
 (function(functionsToWrap) {
   for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
-    var func = functionsToWrap[i];
+    const func = functionsToWrap[i];
 
     if (
       typeof core.Connection.prototype[func] === 'function' &&
@@ -283,7 +326,7 @@ PromisePreparedStatementInfo.prototype.close = function() {
 
 (function(functionsToWrap) {
   for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
-    var func = functionsToWrap[i];
+    const func = functionsToWrap[i];
 
     if (
       typeof core.Pool.prototype[func] === 'function' &&
@@ -325,8 +368,8 @@ function PromisePool(pool, Promise) {
 util.inherits(PromisePool, EventEmitter);
 
 PromisePool.prototype.getConnection = function() {
-  var self = this;
-  var corePool = this.pool;
+  const self = this;
+  const corePool = this.pool;
 
   return new this.Promise(function(resolve, reject) {
     corePool.getConnection(function(err, coreConnection) {
@@ -339,11 +382,26 @@ PromisePool.prototype.getConnection = function() {
   });
 };
 
+PromisePool.prototype.transaction = function(options,userPromise) {
+  return this.getConnection()
+  .then(function(con) {
+    return this.Promise.resolve(con.transaction(options,userPromise))
+    .then(function(res) {
+      con.release();
+      return res;
+    })
+    .catch(function(err) {
+      con.release();
+      throw err;
+    });
+  });
+};
+
 PromisePool.prototype.query = function(sql, args) {
   const corePool = this.pool;
   const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
+    const done = makeDoneCb(resolve, reject, localErr);
     if (args) {
       corePool.query(sql, args, done);
     } else {
@@ -353,7 +411,7 @@ PromisePool.prototype.query = function(sql, args) {
 };
 
 PromisePool.prototype.execute = function(sql, values) {
-  var corePool = this.pool;
+  const corePool = this.pool;
   const localErr = new Error();
 
   return new this.Promise(function(resolve, reject) {
@@ -362,7 +420,7 @@ PromisePool.prototype.execute = function(sql, values) {
 };
 
 PromisePool.prototype.end = function() {
-  var corePool = this.pool;
+  const corePool = this.pool;
   const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
     corePool.end(function(err) {
@@ -381,8 +439,8 @@ PromisePool.prototype.end = function() {
 };
 
 function createPool(opts) {
-  var corePool = core.createPool(opts);
-  var Promise = opts.Promise || global.Promise;
+  const corePool = core.createPool(opts);
+  const Promise = opts.Promise || global.Promise;
   if (!Promise) {
     throw new Error(
       'no Promise implementation available.' +
