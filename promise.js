@@ -339,6 +339,20 @@ PromisePool.prototype.getConnection = function() {
   });
 };
 
+PromisePool.prototype.withConnection = function(promise) {
+  return this.getConnection()
+  .then(function(con) {
+    return this.Promise.resolve(promise(con))
+    .catch(function(err) {
+      con.release();
+      throw err;
+    })
+    .then(function() {
+      con.release();
+    });
+  });
+};
+
 PromisePool.prototype.query = function(sql, args) {
   const corePool = this.pool;
   const localErr = new Error();
