@@ -53,7 +53,7 @@ function createConnection(opts) {
 
 function PromiseConnection(connection, promiseImpl) {
   this.connection = connection;
-  this.Promise = promiseImpl;
+  this.Promise = promiseImpl || global.Promise;
 
   inheritEvents(connection, this, [
     'error',
@@ -318,7 +318,7 @@ PromisePoolConnection.prototype.destroy = function() {
 
 function PromisePool(pool, Promise) {
   this.pool = pool;
-  this.Promise = Promise;
+  this.Promise = Promise || global.Promise;
 
   inheritEvents(pool, this, ['acquire', 'connection', 'enqueue', 'release']);
 }
@@ -400,3 +400,6 @@ module.exports.escape = core.escape;
 module.exports.escapeId = core.escapeId;
 module.exports.format = core.format;
 module.exports.raw = core.raw;
+module.exports.PromisePool = PromisePool;
+module.exports.PromiseConnection = PromiseConnection;
+module.exports.PromisePoolConnection = PromisePoolConnection;
