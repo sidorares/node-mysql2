@@ -339,17 +339,55 @@ PromisePool.prototype.getConnection = function() {
   });
 };
 
-PromisePool.prototype.withConnection = function(promise) {
+PromisePool.prototype.transaction = function(options,userPromise) {
+  if (! userPromise) {
+   userPromise = options;
+   options = {}
+  }
+  options = options || {};
+  if (options.autoCommit === undefined) options.autoCommit = false;
+  if (options.readWrite === undefined) options.readWrite = true;
+  if (options.consistentSnapshot === undefined) options.consistentSnapshot = false;
+ 
   return this.getConnection()
   .then(function(con) {
-    return this.Promise.resolve(con).then(promise)
-    .catch(function(err) {
-      con.release();
-      throw err;
-    })
-    .then(function() {
-      con.release();
+    const promiseChain = Promise.resolve();
+
+    if (options.autoCommit === false) {
+      promiseChain = promiseChain.then(function() {
+        return con.query(
+          "START TRANSACTION" +
+          ( options.consistentSnapshot ? " WITH CONSISTENT SNAPSHOT" : "" ) +
+          ( options.readWrite ? " READ WRITE" : " READ ONLY" )
+        );
+      });
+    }
+    
+    promiseChain = promiseChain.then(function() {
+      return userPromise(con);
     });
+
+    if (options.autoCommit === false) {
+      promiseChain = promiseChain.catch(function(err) {
+        con.release();
+        throw err;
+      });
+    } else {
+      promiseChain = promiseChain.then(function(res) {
+        return con.query("COMMIT")
+        .then(function() {
+          con.release();
+          return res;
+        });
+      })
+      .catch(function(err) {
+        return con.query("ROLLBACK")
+        .then(function() {
+          con.release();
+          throw err;
+        });
+      })
+    }
   });
 };
 

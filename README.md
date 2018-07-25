@@ -220,19 +220,22 @@ async function main() {
   );
 ```
 
-When using a promise pool, MySQL2 also exposes a .withConnection(asyncFunction) function for automatically disposing of the connection after you are finished working with it:
+### Using managed transaction
+
+When using a promise pool, MySQL2 offers a .transaction() function to allow you to execute code within a transaction, with pre-defined behavior to roll back the transaction on error, and which automatically releases the connection after you are finished working with it:
 ```js
 async function main() {
   // get the client
   const mysql = require('mysql2/promise');
   // create the pool
   const pool = mysql.createPool({host:'localhost', user: 'root', database: 'test'});
-  // using the pool, execute a query
-  pool.withConnection(async function(con) {
-   const [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
-   console.log(rows);
+  // using the pool, execute a chain of queries within a transaction
+  pool.transaction({ autoCommit: false, readWrite: true, consistentSnapshot: false }, async function(con) {
+    const [rows, fields] = await con.query('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+    await con.execute('INSERT INTO `table` (name,age) VALUES(?,?)', ['Bob',rows[0].age]); // Bob and Morty are the same age
   });
-  // No need to call con.release(), connection is automatically disposed of when using .withConnection()
+  // If the promise chain passed to .transaction() resolves, .transaction() commits the changes, and releases the connection.
+  // If the promise chain passed to .transaction() rejects, or if a connection or SQL error occures, .transaction() rolls back the changes, and releases the connection.
 }
 ```
 
