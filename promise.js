@@ -214,6 +214,47 @@ PromiseConnection.prototype.changeUser = function(options) {
     });
   });
 };
+PromiseConnection.prototype.transaction = function(options,userPromise) {
+  const self = this;
+  if (! userPromise) {
+   userPromise = options;
+   options = {};
+  }
+  options = options || {};
+  
+  var promiseChain = Promise.resolve();
+
+  if (options.autoCommit !== true) {
+    promiseChain = promiseChain.then(function() {
+      return self.query(
+        "START TRANSACTION" +
+        ( options.consistentSnapshot === true ? " WITH CONSISTENT SNAPSHOT" : 
+         ( options.readWrite !== false ? " READ WRITE" : " READ ONLY" )
+        )
+      );
+    });
+  }
+  
+  promiseChain = promiseChain.then(function() {
+    return userPromise(self);
+  });
+
+  if (options.autoCommit === false) {
+    promiseChain = promiseChain.then(function(res) {
+      return self.query("COMMIT")
+      .then(function() {
+        return res;
+      });
+    })
+    .catch(function(err) {
+      return self.query("ROLLBACK")
+      .catch(function() {
+        throw err;
+      });
+    })
+  }
+  return promiseChain;
+};
 
 function PromisePreparedStatementInfo(statement, promiseImpl) {
   this.statement = statement;
@@ -340,54 +381,17 @@ PromisePool.prototype.getConnection = function() {
 };
 
 PromisePool.prototype.transaction = function(options,userPromise) {
-  if (! userPromise) {
-   userPromise = options;
-   options = {}
-  }
-  options = options || {};
-  if (options.autoCommit === undefined) options.autoCommit = false;
-  if (options.readWrite === undefined) options.readWrite = true;
-  if (options.consistentSnapshot === undefined) options.consistentSnapshot = false;
- 
   return this.getConnection()
   .then(function(con) {
-    var promiseChain = Promise.resolve();
-
-    if (options.autoCommit === false) {
-      promiseChain = promiseChain.then(function() {
-        return con.query(
-          "START TRANSACTION" +
-          ( options.consistentSnapshot ? " WITH CONSISTENT SNAPSHOT" : "" ) +
-          ( options.readWrite ? " READ WRITE" : " READ ONLY" )
-        );
-      });
-    }
-    
-    promiseChain = promiseChain.then(function() {
-      return userPromise(con);
+    return this.Promise.resolve(con.transaction(options,userPromise))
+    .then(function(res) {
+      con.release();
+      return res;
+    })
+    .catch(function(err) {
+      con.release();
+      throw err;
     });
-
-    if (options.autoCommit === false) {
-      promiseChain = promiseChain.catch(function(err) {
-        con.release();
-        throw err;
-      });
-    } else {
-      promiseChain = promiseChain.then(function(res) {
-        return con.query("COMMIT")
-        .then(function() {
-          con.release();
-          return res;
-        });
-      })
-      .catch(function(err) {
-        return con.query("ROLLBACK")
-        .then(function() {
-          con.release();
-          throw err;
-        });
-      })
-    }
   });
 };
 
