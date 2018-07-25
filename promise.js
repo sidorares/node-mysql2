@@ -284,7 +284,7 @@ PromisePreparedStatementInfo.prototype.close = function() {
 ]);
 
 (function(functionsToWrap) {
-  for (const i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
+  for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
     const func = functionsToWrap[i];
 
     if (
