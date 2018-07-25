@@ -351,7 +351,7 @@ PromisePool.prototype.transaction = function(options,userPromise) {
  
   return this.getConnection()
   .then(function(con) {
-    const promiseChain = Promise.resolve();
+    var promiseChain = Promise.resolve();
 
     if (options.autoCommit === false) {
       promiseChain = promiseChain.then(function() {
