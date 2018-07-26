@@ -2,7 +2,7 @@ const mysql = require('../..');
 const test = require('utest');
 const assert = require('assert');
 
-const poolConfig = { config: { connectionConfig: {} } };
+const poolConfig = {}; // config: { connectionConfig: {} } };
 
 const pool = new mysql.createPool(poolConfig);
 test('Pool', {
