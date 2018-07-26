@@ -192,7 +192,7 @@ MySQL2 also exposes a .promise() function on Pools, so you can create a promise/
 ```js
 async function main() {
   // get the client
-  const mysql = require('mysql2');
+  const mysql = require('mysql2/promise');
   // create the pool
   const pool = mysql.createPool({host:'localhost', user: 'root', database: 'test'});
   // now get a Promise wrapped instance of that pool
