@@ -7,6 +7,8 @@ var config = {
   port: process.env.MYSQL_PORT || 3306
 };
 
+var configURI = "mysql://" + config.user + ":" + config.password + "@" + config.host + ":" + config.port + "/" + config.database;
+
 module.exports.SqlString = require('sqlstring');
 module.exports.config = config;
 
@@ -147,6 +149,12 @@ module.exports.createPool = function(callback) {
   }
 
   return driver.createPool(config);
+};
+
+module.exports.createConnectionWithURI = function(callback) {
+  var driver = require('../index.js');
+  
+  return driver.createConnection(configURI);
 };
 
 module.exports.createTemplate = function() {
