@@ -10,6 +10,9 @@ try {
 } catch (err) {
  error = false;
 }
+q.on('end', function() {
+ connection.destroy();
+});
 
 process.on('exit', function() {
   assert.equal(error, false);
