@@ -7,7 +7,9 @@ var config = {
   port: process.env.MYSQL_PORT || 3306
 };
 
+console.log(config);
 var configURI = "mysql://" + config.user + ":" + config.password + "@" + config.host + ":" + config.port + "/" + config.database;
+console.log(configURI);
 
 module.exports.SqlString = require('sqlstring');
 module.exports.config = config;
