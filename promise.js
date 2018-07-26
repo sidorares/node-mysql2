@@ -214,10 +214,10 @@ PromiseConnection.prototype.changeUser = function(options) {
     });
   });
 };
-PromiseConnection.prototype.transaction = function(options,userPromise) {
+PromiseConnection.prototype.transaction = function(options,promiseCallback) {
   const self = this;
-  if (! userPromise) {
-   userPromise = options;
+  if (! promiseCallback) {
+   promiseCallback = options;
    options = {};
   }
   options = options || {};
@@ -236,10 +236,10 @@ PromiseConnection.prototype.transaction = function(options,userPromise) {
   }
   
   promiseChain = promiseChain.then(function() {
-    return userPromise(self);
+    return promiseCallback(self);
   });
 
-  if (options.autoCommit === false) {
+  if (options.autoCommit !== true) {
     promiseChain = promiseChain.then(function(res) {
       return self.query("COMMIT")
       .then(function() {
