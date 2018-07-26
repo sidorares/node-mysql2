@@ -230,7 +230,7 @@ async function main() {
   // create the pool
   const pool = mysql.createPool({host:'localhost', user: 'root', database: 'test'});
   // using the pool, execute a chain of queries within a transaction
-  pool.transaction({ autoCommit: false, readWrite: true, consistentSnapshot: false }, async function(con) {
+  pool.transaction({ autoCommit: false, readWrite: true, consistentSnapshot: false, isolationLevel: mysql.ISOLATION_LEVEL.READ_COMMITTED}, async function(con) {
     const [rows, fields] = await con.query('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
     await con.execute('INSERT INTO `table` (name,age) VALUES(?,?)', ['Bob',rows[0].age]); // Bob and Morty are the same age
   });

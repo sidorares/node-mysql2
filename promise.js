@@ -119,12 +119,12 @@ PromiseConnection.prototype.end = function() {
   });
 };
 
-PromiseConnection.prototype.beginTransaction = function() {
+PromiseConnection.prototype.beginTransaction = function(options) {
   var c = this.connection;
   const localErr = new Error();
   return new this.Promise(function(resolve, reject) {
     var done = makeDoneCb(resolve, reject, localErr);
-    c.beginTransaction(done);
+    c.beginTransaction(options,done);
   });
 };
 
@@ -226,12 +226,7 @@ PromiseConnection.prototype.transaction = function(options,promiseCallback) {
 
   if (options.autoCommit !== true) {
     promiseChain = promiseChain.then(function() {
-      return self.query(
-        "START TRANSACTION" +
-        ( options.consistentSnapshot === true ? " WITH CONSISTENT SNAPSHOT" : 
-         ( options.readWrite !== false ? " READ WRITE" : " READ ONLY" )
-        )
-      );
+      return self.beginTransaction(options);
     });
   }
   
@@ -241,13 +236,13 @@ PromiseConnection.prototype.transaction = function(options,promiseCallback) {
 
   if (options.autoCommit !== true) {
     promiseChain = promiseChain.then(function(res) {
-      return self.query("COMMIT")
+      return self.commit()
       .then(function() {
         return res;
       });
     })
     .catch(function(err) {
-      return self.query("ROLLBACK")
+      return self.rollback()
       .catch(function() {
         throw err;
       });
@@ -380,10 +375,10 @@ PromisePool.prototype.getConnection = function() {
   });
 };
 
-PromisePool.prototype.transaction = function(options,userPromise) {
+PromisePool.prototype.transaction = function(options,promiseCallback) {
   return this.getConnection()
   .then(function(con) {
-    return this.Promise.resolve(con.transaction(options,userPromise))
+    return this.Promise.resolve(con.transaction(options,promiseCallback))
     .then(function(res) {
       con.release();
       return res;
@@ -459,3 +454,4 @@ module.exports.raw = core.raw;
 module.exports.PromisePool = PromisePool;
 module.exports.PromiseConnection = PromiseConnection;
 module.exports.PromisePoolConnection = PromisePoolConnection;
+module.exports.ISOLATION_LEVEL = core.ISOLATION_LEVEL;
