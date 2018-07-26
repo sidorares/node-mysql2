@@ -1,15 +1,13 @@
 var config = {
   host: process.env.MYSQL_HOST || 'localhost',
   user: process.env.MYSQL_USER || 'root',
-  password: process.env.CI ? process.env.MYSQL_PASSWORD : '',
+  password: (process.env.CI ? process.env.MYSQL_PASSWORD : '') || '',
   database: process.env.MYSQL_DATABASE || 'test',
   compress: process.env.MYSQL_USE_COMPRESSION,
   port: process.env.MYSQL_PORT || 3306
 };
 
-console.log(config);
 var configURI = "mysql://" + config.user + ":" + config.password + "@" + config.host + ":" + config.port + "/" + config.database;
-console.log(configURI);
 
 module.exports.SqlString = require('sqlstring');
 module.exports.config = config;
