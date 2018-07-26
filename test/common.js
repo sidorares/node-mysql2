@@ -154,7 +154,7 @@ module.exports.createPool = function(callback) {
 module.exports.createConnectionWithURI = function(callback) {
   var driver = require('../index.js');
   
-  return driver.createConnection(configURI);
+  return driver.createConnection({ uri: configURI });
 };
 
 module.exports.createTemplate = function() {
