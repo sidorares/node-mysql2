@@ -57,7 +57,7 @@
     "sqlstring": "2.3.1"
   },
   "devDependencies": {
-    "assert-diff": "^1.2.0",
+    "assert-diff": "^2.0.0",
     "error-stack-parser": "^2.0.1",
     "eslint": "^4.19.0",
     "eslint-config-prettier": "^2.9.0",
