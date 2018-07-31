@@ -97,6 +97,11 @@ PromiseConnection.prototype.query = function(query, params) {
   });
 };
 
+PromiseConnection.prototype.streamingQuery = function(query, params) {
+  const c = this.connection;
+  return c.query(query, params);
+};
+
 PromiseConnection.prototype.execute = function(query, params) {
   const c = this.connection;
   const localErr = new Error();
