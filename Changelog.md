@@ -1,3 +1,17 @@
+1.6.0 (01/08/2018)
+ - Fixed `PromiseConnection.ping()` ignoring errors   #813
+ - Added a uri parameter to the connection config     #815
+ - Added a `.promise()` method shortcut on Pool,
+   Connection and PoolConnection                      #810 
+ - Added more functions from node-mysql:
+   `createQuery`, `raw`, `escape`, `escapeId`,
+   `format`                                           #799
+ - Added `acquire` and `release` and release events
+   on Connection                                      #783
+ - Added support for a Japanese charset `ujis`        #772
+ - Improved error handling on `ECONNRESET`            #768
+ - Drop support for Node 4                            #791
+
 1.5.3 (19/03/2018)
  - fix incorrect denque dependency                     #740
  - build: bump to node 8.10 and 6.16
