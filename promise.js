@@ -243,7 +243,8 @@ PromiseConnection.prototype.transaction = function(options,promiseCallback) {
     })
     .catch(function(err) {
       return self.rollback()
-      .catch(function() {
+      .catch(function() {})
+      .then(function() {
         throw err;
       });
     })
@@ -378,7 +379,7 @@ PromisePool.prototype.getConnection = function() {
 PromisePool.prototype.transaction = function(options,promiseCallback) {
   return this.getConnection()
   .then(function(con) {
-    return this.Promise.resolve(con.transaction(options,promiseCallback))
+    return con.transaction(options,promiseCallback)
     .then(function(res) {
       con.release();
       return res;
