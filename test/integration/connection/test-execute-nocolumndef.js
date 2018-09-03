@@ -1,13 +1,15 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert-diff');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert-diff');
 
 // https://github.com/sidorares/node-mysql2/issues/130
 // https://github.com/sidorares/node-mysql2/issues/37
 // binary protocol examples where `prepare` returns no column definitions but execute() does return fields/rows
 
-var rows;
-var fields;
+let rows;
+let fields;
 
 connection.execute('explain SELECT 1', function(err, _rows, _fields) {
   if (err) {
@@ -19,26 +21,22 @@ connection.execute('explain SELECT 1', function(err, _rows, _fields) {
   connection.end();
 });
 
-var expectedRows;
-var expectedFields;
-
-process.on('exit', function() {
-  assert.deepEqual(rows, expectedRows);
-  var fi = fields.map(function(c) {
-    return c.inspect();
-  });
-  for (var i; i < expectedFields.length; i++) {
-    assert.deepEqual(
-      Object.keys(fi[i]).sort(),
-      Object.keys(expectedFields[i]).sort()
-    );
-    expectedFields[i].map(function(key) {
-      assert.deepEqual(expectedFields[i][key], fi[i][key]);
-    });
+const expectedRows = [
+  {
+    id: 1,
+    select_type: 'SIMPLE',
+    table: null,
+    type: null,
+    possible_keys: null,
+    key: null,
+    key_len: null,
+    ref: null,
+    rows: null,
+    Extra: 'No tables used'
   }
-});
+];
 
-expectedFields = [
+const expectedFields = [
   {
     catalog: 'def',
     schema: '',
@@ -171,20 +169,20 @@ expectedFields = [
   }
 ];
 
-expectedRows = [
-  {
-    id: 1,
-    select_type: 'SIMPLE',
-    table: null,
-    type: null,
-    possible_keys: null,
-    key: null,
-    key_len: null,
-    ref: null,
-    rows: null,
-    Extra: 'No tables used'
+process.on('exit', function() {
+  assert.deepEqual(rows, expectedRows);
+  const fi = fields.map(function(c) {
+    return c.inspect();
+  });
+  // REVIEW: i was NaN
+  for (let i = 0; i < expectedFields.length; i++) {
+    assert.deepEqual(
+      Object.keys(fi[i]).sort(),
+      Object.keys(expectedFields[i]).sort()
+    );
+    assert.deepEqual(expectedFields[i], fi[i]);
   }
-];
+});
 
 // mysql 5.7 has extra fields. Add them based on version to allow to run tests in 5.7 and pre 5.7
 connection.on('connect', function(handshake) {

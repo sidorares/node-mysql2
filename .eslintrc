@@ -1,15 +1,22 @@
 {
   "extends": [
-    "prettier"
+    "prettier",
+    "eslint:recommended"
   ],
-      "parserOptions": {
-        "ecmaVersion": 2017,
-      },
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
   "plugins": [
-      "markdown",
-      "async-await"
+    "markdown",
+    "async-await"
   ],
   "env": {
     "node": true
+  },
+  "rules": {
+    "prefer-const": "error",
+    "no-var": "error",
+    "no-use-before-define": "error",
+    "strict": ["error", "global"]
   }
 }

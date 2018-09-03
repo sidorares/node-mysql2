@@ -1,10 +1,12 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 common.useTestDb(connection);
 
-var table = 'nested_test';
+const table = 'nested_test';
 connection.query(
   [
     'CREATE TEMPORARY TABLE `' + table + '` (',
@@ -17,19 +19,19 @@ connection.query(
 
 connection.query('INSERT INTO ' + table + ' SET ?', { title: 'test' });
 
-var options1 = {
+const options1 = {
   nestTables: true,
   sql: 'SELECT * FROM ' + table
 };
-var options2 = {
+const options2 = {
   nestTables: '_',
   sql: 'SELECT * FROM ' + table
 };
-var options3 = {
+const options3 = {
   rowsAsArray: true,
   sql: 'SELECT * FROM ' + table
 };
-var rows1, rows2, rows3, rows1e, rows2e, rows3e;
+let rows1, rows2, rows3, rows1e, rows2e, rows3e;
 
 connection.query(options1, function(err, _rows) {
   if (err) {

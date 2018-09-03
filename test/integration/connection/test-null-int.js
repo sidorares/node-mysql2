@@ -1,14 +1,16 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let rows;
 
 connection.query('CREATE TEMPORARY TABLE t (i int)');
 connection.query('INSERT INTO t VALUES(null)');
 connection.query('INSERT INTO t VALUES(123)');
 
-connection.query('SELECT * from t', function(err, _rows, _fields) {
+connection.query('SELECT * from t', function(err, _rows) {
   if (err) {
     throw err;
   }

@@ -1,8 +1,10 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let rows;
 connection.query('SELECT ""', function(err, _rows) {
   if (err) {
     throw err;

@@ -1,21 +1,21 @@
-const code = `
-var config = require('../../common.js').config;
+'use strict';
 
-var assert = require('assert');
+const code = `
+const config = require('../../common.js').config;
+
+const assert = require('assert');
 const isAsyncSupported = require('is-async-supported');
 const ErrorStackParser = require('error-stack-parser');
 
-var skipTest = false;
+let skipTest = false;
 if (!isAsyncSupported) {
   console.log('no async/await support, skipping test');
   skipTest = true;
   process.exit(0);
 }
 
-var assert = require('assert');
-
-var createConnection = require('../../../promise.js').createConnection;
-var createPool = require('../../../promise.js').createPool;
+const createConnection = require('../../../promise.js').createConnection;
+const createPool = require('../../../promise.js').createPool;
 
 function test() {
   // TODO check this is actially required. This meant as a help for pre async/await node
@@ -57,7 +57,6 @@ function test() {
 }
 
 test();
-
 `;
 
 process.on('unhandledRejection', function(err) {

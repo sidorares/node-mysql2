@@ -1,3 +1,5 @@
+'use strict';
+
 const mysql = require('../../index.js');
 
 const assert = require('assert');
@@ -16,12 +18,12 @@ const server = mysql.createServer(function(conn) {
   });
 });
 
-var err1, err2;
+let err1, err2;
 
-var portfinder = require('portfinder');
+const portfinder = require('portfinder');
 portfinder.getPort(function(err, port) {
   server.listen(port);
-  var conn = mysql.createConnection({
+  const conn = mysql.createConnection({
     user: 'test_user',
     password: 'test',
     database: 'test_database',
@@ -31,14 +33,14 @@ portfinder.getPort(function(err, port) {
     err1 = err;
   });
 
-  var pool = mysql.createPool({
+  const pool = mysql.createPool({
     user: 'test_user',
     password: 'test',
     database: 'test_database',
     port: port
   });
 
-  pool.query('test sql', function(err, res, rows) {
+  pool.query('test sql', function(err) {
     err2 = err;
     pool.end();
     server.close();

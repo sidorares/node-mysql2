@@ -1,14 +1,16 @@
+'use strict';
+
 /**
  * <plusmancn@gmail.com> created at 2016.09.17 15:24:34
  *
  * issue#288: https://github.com/sidorares/node-mysql2/issues/288
  */
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-var result1 = undefined;
-var result2 = undefined;
+let result1 = undefined;
+let result2 = undefined;
 
 // connection.
 connection.query(

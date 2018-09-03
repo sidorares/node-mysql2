@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-var options = {
+'use strict';
+
+const options = {
   verbose: true
 };
 

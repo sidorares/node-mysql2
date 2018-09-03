@@ -1,10 +1,12 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows = undefined;
-var rows1 = undefined;
-var fields = undefined;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let rows = undefined;
+let rows1 = undefined;
+let fields = undefined;
 
 connection.query(
   [

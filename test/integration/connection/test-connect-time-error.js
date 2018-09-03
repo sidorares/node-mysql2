@@ -1,14 +1,13 @@
-var mysql = require('../../../index.js');
-var assert = require('assert');
+'use strict';
 
-
-var server;
+const mysql = require('../../../index.js');
+const assert = require('assert');
 
 const ERROR_TEXT = 'test error';
 
-var portfinder = require('portfinder');
+const portfinder = require('portfinder');
 portfinder.getPort(function(err, port) {
-  var server = mysql.createServer();
+  const server = mysql.createServer();
   server.listen(port);
   server.on('connection', function(conn) {
     console.log('Here!');
@@ -16,7 +15,7 @@ portfinder.getPort(function(err, port) {
     conn.close();
   });
 
-  var connection = mysql.createConnection({
+  const connection = mysql.createConnection({
     host: 'localhost',
     port: port,
     user: 'testuser',

@@ -1,8 +1,10 @@
-var SqlString = require('sqlstring');
+'use strict';
 
-var Connection = require('./lib/connection.js');
-var ConnectionConfig = require('./lib/connection_config.js');
-var parserCache = require("./lib/parsers/parser_cache");
+const SqlString = require('sqlstring');
+
+const Connection = require('./lib/connection.js');
+const ConnectionConfig = require('./lib/connection_config.js');
+const parserCache = require('./lib/parsers/parser_cache');
 
 module.exports.createConnection = function(opts) {
   return new Connection({ config: new ConnectionConfig(opts) });
@@ -11,15 +13,15 @@ module.exports.createConnection = function(opts) {
 module.exports.connect = module.exports.createConnection;
 module.exports.Connection = Connection;
 
-var Pool = require('./lib/pool.js');
+const Pool = require('./lib/pool.js');
 
 module.exports.createPool = function(config) {
-  var PoolConfig = require('./lib/pool_config.js');
+  const PoolConfig = require('./lib/pool_config.js');
   return new Pool({ config: new PoolConfig(config) });
 };
 
 exports.createPoolCluster = function(config) {
-  var PoolCluster = require('./lib/pool_cluster.js');
+  const PoolCluster = require('./lib/pool_cluster.js');
   return new PoolCluster(config);
 };
 
@@ -28,8 +30,8 @@ exports.createQuery = Connection.createQuery;
 module.exports.Pool = Pool;
 
 module.exports.createServer = function(handler) {
-  var Server = require('./lib/server.js');
-  var s = new Server();
+  const Server = require('./lib/server.js');
+  const s = new Server();
   if (handler) {
     s.on('connection', handler);
   }
@@ -66,10 +68,10 @@ exports.__defineGetter__('CharsetToEncoding', function() {
   return require('./lib/constants/charset_encodings.js');
 });
 
-exports.setMaxParserCache = function (max) {
+exports.setMaxParserCache = function(max) {
   parserCache.setMaxCache(max);
 };
 
-exports.clearParserCache = function () {
+exports.clearParserCache = function() {
   parserCache.clearCache();
 };

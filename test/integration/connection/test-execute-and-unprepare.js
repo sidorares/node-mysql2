@@ -1,12 +1,12 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var max = 500;
-var start = process.hrtime();
+const common = require('../../common');
+const connection = common.createConnection();
+
+const max = 500;
 function exec(i) {
-  var query = 'select 1+' + i;
-  connection.execute(query, function(err, rows, columns) {
+  const query = 'select 1+' + i;
+  connection.execute(query, function(err) {
     connection.unprepare(query);
     if (err) {
       throw err;

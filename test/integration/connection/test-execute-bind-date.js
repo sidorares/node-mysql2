@@ -1,16 +1,17 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var date = new Date(2018, 02, 10, 15, 12, 34, 1234)
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-var rows, fields;
-connection.execute('SELECT ? AS result', [date], function(err, _rows, _fields) {
+const date = new Date(2018, 2, 10, 15, 12, 34, 1234);
+
+let rows;
+connection.execute('SELECT ? AS result', [date], function(err, _rows) {
   if (err) {
     throw err;
   }
   rows = _rows;
-  fields = _fields;
   connection.end();
 });
 

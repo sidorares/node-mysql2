@@ -1,8 +1,9 @@
+'use strict';
 
-var common = require('../../common');
-var test = require('utest');
-var assert = require('assert');
-var SqlString = common.SqlString;
+const common = require('../../common');
+const test = require('utest');
+const assert = require('assert');
+const SqlString = common.SqlString;
 
 test('SqlString.escapeId', {
   'value is quoted': function() {
@@ -124,16 +125,16 @@ test('SqlString.escape', {
   },
 
   'dates are converted to YYYY-MM-DD HH:II:SS.sss': function() {
-    var expected = '2012-05-07 11:42:03.002';
-    var date = new Date(2012, 4, 7, 11, 42, 3, 2);
-    var string = SqlString.escape(date);
+    const expected = '2012-05-07 11:42:03.002';
+    const date = new Date(2012, 4, 7, 11, 42, 3, 2);
+    const string = SqlString.escape(date);
 
     assert.strictEqual(string, "'" + expected + "'");
   },
 
   'buffers are converted to hex': function() {
-    var buffer = Buffer.from([0, 1, 254, 255]);
-    var string = SqlString.escape(buffer);
+    const buffer = Buffer.from([0, 1, 254, 255]);
+    const string = SqlString.escape(buffer);
 
     assert.strictEqual(string, "X'0001feff'");
   },
@@ -149,40 +150,40 @@ test('SqlString.escape', {
 
 test('SqlString.format', {
   'question marks are replaced with escaped array values': function() {
-    var sql = SqlString.format('? and ?', ['a', 'b']);
+    const sql = SqlString.format('? and ?', ['a', 'b']);
     assert.equal(sql, "'a' and 'b'");
   },
 
   'extra question marks are left untouched': function() {
-    var sql = SqlString.format('? and ?', ['a']);
+    const sql = SqlString.format('? and ?', ['a']);
     assert.equal(sql, "'a' and ?");
   },
 
   'extra arguments are not used': function() {
-    var sql = SqlString.format('? and ?', ['a', 'b', 'c']);
+    const sql = SqlString.format('? and ?', ['a', 'b', 'c']);
     assert.equal(sql, "'a' and 'b'");
   },
 
   'question marks within values do not cause issues': function() {
-    var sql = SqlString.format('? and ?', ['hello?', 'b']);
+    const sql = SqlString.format('? and ?', ['hello?', 'b']);
     assert.equal(sql, "'hello?' and 'b'");
   },
 
   'undefined is ignored': function() {
-    var sql = SqlString.format('?', undefined, false);
+    const sql = SqlString.format('?', undefined, false);
     assert.equal(sql, '?');
   },
 
   'objects is converted to values': function() {
-    var sql = SqlString.format('?', { hello: 'world' }, false);
+    const sql = SqlString.format('?', { hello: 'world' }, false);
     assert.equal(sql, "`hello` = 'world'");
   },
 
   'objects is not converted to values': function() {
-    var sql = SqlString.format('?', { hello: 'world' }, true);
+    const sql = SqlString.format('?', { hello: 'world' }, true);
     assert.equal(sql, "'[object Object]'");
 
-    var sql = SqlString.format(
+    const sql2 = SqlString.format(
       '?',
       {
         toString: function() {
@@ -191,6 +192,6 @@ test('SqlString.format', {
       },
       true
     );
-    assert.equal(sql, "'hello'");
+    assert.equal(sql2, "'hello'");
   }
 });

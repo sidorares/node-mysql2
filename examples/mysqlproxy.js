@@ -1,7 +1,9 @@
-var mysql = require('mysql2');
-var ClientFlags = require('mysql2/lib/constants/client.js');
+'use strict';
 
-var server = mysql.createServer();
+const mysql = require('mysql2');
+const ClientFlags = require('mysql2/lib/constants/client.js');
+
+const server = mysql.createServer();
 server.listen(3307);
 
 server.on('connection', function(conn) {
@@ -21,7 +23,7 @@ server.on('connection', function(conn) {
     conn.writeEof();
   });
 
-  var remote = mysql.createConnection({
+  const remote = mysql.createConnection({
     user: 'root',
     database: 'dbname',
     host: 'server.example.com',
@@ -35,13 +37,14 @@ server.on('connection', function(conn) {
       // or (err, rows :array, columns :array)
       if (Array.isArray(arguments[1])) {
         // response to a 'select', 'show' or similar
-        var rows = arguments[1], columns = arguments[2];
+        const rows = arguments[1],
+          columns = arguments[2];
         console.log('rows', rows);
         console.log('columns', columns);
         conn.writeTextResult(rows, columns);
       } else {
         // response to an 'insert', 'update' or 'delete'
-        var result = arguments[1];
+        const result = arguments[1];
         console.log('result', result);
         conn.writeOk(result);
       }

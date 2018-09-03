@@ -1,9 +1,10 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows = undefined;
-var fields = undefined;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let rows = undefined;
 
 connection.query(
   [
@@ -23,16 +24,11 @@ connection.query('insert into test_table(num,l) values(4+?, 4000000-?)', [
   8000000
 ]);
 
-connection.execute('SELECT * from test_table', [], function(
-  err,
-  _rows,
-  _fields
-) {
+connection.execute('SELECT * from test_table', [], function(err, _rows) {
   if (err) {
     throw err;
   }
   rows = _rows;
-  fields = _fields;
   connection.end();
 });
 

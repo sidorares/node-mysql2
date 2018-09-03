@@ -1,4 +1,6 @@
-var typeCastWrapper = function(stringMethod) {
+'use strict';
+
+const typeCastWrapper = function(stringMethod) {
   return function(field, next) {
     if (field.type == 'VAR_STRING') {
       return field.string()[stringMethod]();
@@ -7,12 +9,12 @@ var typeCastWrapper = function(stringMethod) {
   };
 };
 
-var common = require('../../common');
-var connection = common.createConnection({
+const common = require('../../common');
+const connection = common.createConnection({
   typeCast: typeCastWrapper('toUpperCase')
 });
 
-var assert = require('assert');
+const assert = require('assert');
 
 // query option override global typeCast
 connection.query(

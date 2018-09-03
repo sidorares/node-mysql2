@@ -1,11 +1,13 @@
-var common = require('../../common');
-var connection = common.createConnection({
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection({
   host: 'www.google.com'
 });
-var assert = require('assert');
+const assert = require('assert');
 
-var errorCount = 0;
-var error = null;
+let errorCount = 0;
+let error = null;
 
 connection.on('error', function(err) {
   errorCount++;

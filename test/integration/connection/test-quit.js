@@ -1,51 +1,57 @@
-var assert = require('assert');
-var common = require('../../common');
-var quitReceived = false;
-var queryCli = 'SELECT 1';
-var server = common.createServer(serverReady, function(conn) {
-  conn.on('quit', function() {
-    // COM_QUIT
-    quitReceived = true;
-    conn.stream.end();
-    server.close();
-  });
+'use strict';
 
-  conn.on('query', function(q) {
-    queryServ = q;
-    conn.writeTextResult(
-      [{ '1': '1' }],
-      [
-        {
-          catalog: 'def',
-          schema: '',
-          table: '',
-          orgTable: '',
-          name: '1',
-          orgName: '',
-          characterSet: 63,
-          columnLength: 1,
-          columnType: 8,
-          flags: 129,
-          decimals: 0
-        }
-      ]
-    );
-  });
-});
+const assert = require('assert');
+const common = require('../../common');
+let quitReceived = false;
+const queryCli = 'SELECT 1';
+let queryServ;
+let rows;
+let fields;
+const server = common.createServer(
+  () => {
+    const connection = common.createConnection({ port: server._port });
 
-function serverReady() {
-  var connection = common.createConnection({ port: server._port });
+    connection.query(queryCli, function(err, _rows, _fields) {
+      if (err) {
+        throw err;
+      }
+      rows = _rows;
+      fields = _fields;
 
-  connection.query(queryCli, function(err, _rows, _fields) {
-    if (err) {
-      throw err;
-    }
-    rows = _rows;
-    fields = _fields;
+      connection.end();
+    });
+  },
+  conn => {
+    conn.on('quit', function() {
+      // COM_QUIT
+      quitReceived = true;
+      conn.stream.end();
+      server.close();
+    });
 
-    connection.end();
-  });
-}
+    conn.on('query', function(q) {
+      queryServ = q;
+      conn.writeTextResult(
+        [{ '1': '1' }],
+        [
+          {
+            catalog: 'def',
+            schema: '',
+            table: '',
+            orgTable: '',
+            name: '1',
+            orgName: '',
+            characterSet: 63,
+            columnLength: 1,
+            columnType: 8,
+            flags: 129,
+            decimals: 0
+          }
+        ]
+      );
+    });
+  }
+);
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{ 1: 1 }]);

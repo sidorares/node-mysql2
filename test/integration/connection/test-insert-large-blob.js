@@ -1,6 +1,10 @@
-if (0) {
-  var common = require('../../common');
-  var connection = common.createConnection();
+'use strict';
+
+// intentionally disabled
+// eslint-disable-next-line no-constant-condition
+if (false) {
+  const common = require('../../common');
+  const connection = common.createConnection();
 
   /*
   connection.query('SELECT repeat("a", 60000000) as qqq', function (err, res) {
@@ -11,16 +15,15 @@ if (0) {
   return;
 */
 
-  var assert = require('assert');
+  const assert = require('assert');
 
-
-  var table = 'insert_large_test';
-  var length = 35777416;
-  var content = Buffer.allocUnsafe(length); // > 16 megabytes
-  var content1 = Buffer.allocUnsafe(length); // > 16 megabytes
+  const table = 'insert_large_test';
+  const length = 35777416;
+  const content = Buffer.allocUnsafe(length); // > 16 megabytes
+  const content1 = Buffer.allocUnsafe(length); // > 16 megabytes
 
   // this is to force compressed packed to be larger than uncompressed
-  for (var i = 0; i < content.length; ++i) {
+  for (let i = 0; i < content.length; ++i) {
     content[i] = Math.floor(Math.random() * 256);
     content1[i] = Math.floor(Math.random() * 256);
 
@@ -30,14 +33,14 @@ if (0) {
     }
   }
 
-  var result, result2, result3, result4;
+  let result, result2, result3, result4;
 
   connection.query(
     'SET GLOBAL max_allowed_packet=' + (length * 2 + 2000),
-    function(err, res) {
+    function(err) {
       assert.ifError(err);
       connection.end();
-      var connection2 = common.createConnection();
+      const connection2 = common.createConnection();
       connection2.query(
         [
           'CREATE TEMPORARY TABLE `' + table + '` (',
