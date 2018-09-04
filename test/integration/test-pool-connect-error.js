@@ -1,11 +1,8 @@
-var util = require('util');
-var mysql = require('../../index.js');
-var Command = require('../../lib/commands/command.js');
-var Packets = require('../../lib/packets/index.js');
+const mysql = require('../../index.js');
 
-var assert = require('assert');
+const assert = require('assert');
 
-var server = mysql.createServer(function(conn) {
+const server = mysql.createServer(function(conn) {
   conn.serverHandshake({
     protocolVersion: 10,
     serverVersion: '5.6.10',
