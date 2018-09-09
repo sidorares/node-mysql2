@@ -156,7 +156,7 @@ pool.getConnection(function(err, conn) {
 
 ## Using Promise Wrapper
 
-MySQL2 also support Promise API. Which works very well with ES7 async await.
+MySQL2 also support Promise API. Which works very well with ES8 async await.
 
 <!--eslint-disable-next-block-->
 ```js
