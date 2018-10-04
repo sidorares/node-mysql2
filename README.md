@@ -138,7 +138,7 @@ The pool does not create all connections upfront but creates them on demand unti
 You can use the pool in the same way as connections (using `pool.query()` and `pool.execute()`):
 ```js
 // For pool initialization, see above
-pool.query(function(err, rows, fields) {
+pool.query("SELECT field FROM atable", function(err, rows, fields) {
    // Connection is automatically released when query resolves
 })
 ```
