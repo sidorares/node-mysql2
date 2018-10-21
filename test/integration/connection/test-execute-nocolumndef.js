@@ -32,7 +32,9 @@ const expectedRows = [
     key_len: null,
     ref: null,
     rows: null,
-    Extra: 'No tables used'
+    Extra: 'No tables used',
+    partitions: null,
+    filtered: null
   }
 ];
 
@@ -40,10 +42,10 @@ const expectedFields = [
   {
     catalog: 'def',
     schema: '',
-    table: '',
-    orgTable: '',
     name: 'id',
     orgName: '',
+    table: '',
+    orgTable: '',
     characterSet: 63,
     columnLength: 3,
     columnType: 8,
@@ -53,12 +55,12 @@ const expectedFields = [
   {
     catalog: 'def',
     schema: '',
-    table: '',
-    orgTable: '',
     name: 'select_type',
     orgName: '',
-    characterSet: 33,
-    columnLength: 57,
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 76,
     columnType: 253,
     flags: 1,
     decimals: 31
@@ -66,12 +68,12 @@ const expectedFields = [
   {
     catalog: 'def',
     schema: '',
-    table: '',
-    orgTable: '',
     name: 'table',
     orgName: '',
-    characterSet: 33,
-    columnLength: 192,
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 256,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -79,12 +81,25 @@ const expectedFields = [
   {
     catalog: 'def',
     schema: '',
+    name: 'partitions',
+    orgName: '',
     table: '',
     orgTable: '',
+    characterSet: 224,
+    columnLength: 25264128,
+    columnType: 250,
+    flags: 0,
+    decimals: 31
+  },
+  {
+    catalog: 'def',
+    schema: '',
     name: 'type',
     orgName: '',
-    characterSet: 33,
-    columnLength: 30,
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 40,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -92,12 +107,12 @@ const expectedFields = [
   {
     catalog: 'def',
     schema: '',
-    table: '',
-    orgTable: '',
     name: 'possible_keys',
     orgName: '',
-    characterSet: 33,
-    columnLength: 12288,
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 16384,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -105,12 +120,12 @@ const expectedFields = [
   {
     catalog: 'def',
     schema: '',
-    table: '',
-    orgTable: '',
     name: 'key',
     orgName: '',
-    characterSet: 33,
-    columnLength: 192,
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 256,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -118,12 +133,12 @@ const expectedFields = [
   {
     catalog: 'def',
     schema: '',
-    table: '',
-    orgTable: '',
     name: 'key_len',
     orgName: '',
-    characterSet: 33,
-    columnLength: 12288,
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 16384,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -131,12 +146,12 @@ const expectedFields = [
   {
     catalog: 'def',
     schema: '',
-    table: '',
-    orgTable: '',
     name: 'ref',
     orgName: '',
-    characterSet: 33,
-    columnLength: 3072,
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 4096,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -144,10 +159,10 @@ const expectedFields = [
   {
     catalog: 'def',
     schema: '',
-    table: '',
-    orgTable: '',
     name: 'rows',
     orgName: '',
+    table: '',
+    orgTable: '',
     characterSet: 63,
     columnLength: 10,
     columnType: 8,
@@ -157,12 +172,25 @@ const expectedFields = [
   {
     catalog: 'def',
     schema: '',
+    name: 'filtered',
+    orgName: '',
     table: '',
     orgTable: '',
+    characterSet: 63,
+    columnLength: 4,
+    columnType: 5,
+    flags: 128,
+    decimals: 2
+  },
+  {
+    catalog: 'def',
+    schema: '',
     name: 'Extra',
     orgName: '',
-    characterSet: 33,
-    columnLength: 765,
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 1020,
     columnType: 253,
     flags: 1,
     decimals: 31
@@ -171,23 +199,12 @@ const expectedFields = [
 
 process.on('exit', function() {
   assert.deepEqual(rows, expectedRows);
-  const fi = fields.map(function(c) {
-    return c.inspect();
-  });
-  // REVIEW: i was NaN
+  const fi = fields.map(f => f.inspect());
   for (let i = 0; i < expectedFields.length; i++) {
     assert.deepEqual(
       Object.keys(fi[i]).sort(),
       Object.keys(expectedFields[i]).sort()
     );
     assert.deepEqual(expectedFields[i], fi[i]);
-  }
-});
-
-// mysql 5.7 has extra fields. Add them based on version to allow to run tests in 5.7 and pre 5.7
-connection.on('connect', function(handshake) {
-  if (handshake.serverVersion.slice(0, 3) === '5.7') {
-    expectedRows[0].partitions = null;
-    expectedRows[0].filtered = null;
   }
 });
