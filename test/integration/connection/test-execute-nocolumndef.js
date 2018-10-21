@@ -199,12 +199,12 @@ const expectedFields = [
 
 process.on('exit', function() {
   assert.deepEqual(rows, expectedRows);
-  const fi = fields.map(f => f.inspect());
-  for (let i = 0; i < expectedFields.length; i++) {
+  fields.forEach((f, index) => {
+    const fi = f.inspect();
     assert.deepEqual(
-      Object.keys(fi[i]).sort(),
-      Object.keys(expectedFields[i]).sort()
+      Object.keys(fi).sort(),
+      Object.keys(expectedFields[index]).sort()
     );
-    assert.deepEqual(expectedFields[i], fi[i]);
-  }
+    assert.deepEqual(expectedFields[index], fi);
+  });
 });
