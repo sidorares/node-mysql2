@@ -1,9 +1,11 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 // test data stores
-var testData = [
+const testData = [
   'ютф восемь',
   'Experimental',
   'परीक्षण',
@@ -11,11 +13,11 @@ var testData = [
   'ტესტი પરીક્ષણ  מבחן פּרובירן اختبار'
 ];
 
-var resultData = null;
+let resultData = null;
 
 // test inserting of non latin data if we are able to parse it
 
-var testEncoding = function(err) {
+const testEncoding = function(err) {
   assert.ifError(err);
 
   testData.forEach(function(data) {
@@ -40,9 +42,7 @@ var testEncoding = function(err) {
 
 // init test sequence
 (function() {
-  connection.query('DROP TABLE IF EXISTS `test-charset-encoding`', function(
-    err
-  ) {
+  connection.query('DROP TABLE IF EXISTS `test-charset-encoding`', function() {
     connection.query(
       'CREATE TABLE IF NOT EXISTS `test-charset-encoding` ' +
         '( `field` VARCHAR(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci)',

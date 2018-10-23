@@ -1,13 +1,12 @@
-var mysql = require('../../../index.js');
-var auth = require('../../../lib/auth_41.js');
-var assert = require('assert');
+'use strict';
 
-
-var server;
+const mysql = require('../../../index.js');
+const auth = require('../../../lib/auth_41.js');
+const assert = require('assert');
 
 function authenticate(params, cb) {
-  var doubleSha = auth.doubleSha1('testpassword');
-  var isValid = auth.verifyToken(
+  const doubleSha = auth.doubleSha1('testpassword');
+  const isValid = auth.verifyToken(
     params.authPluginData1,
     params.authPluginData2,
     params.authToken,
@@ -17,14 +16,14 @@ function authenticate(params, cb) {
   cb(null);
 }
 
-var _1_2 = false;
-var _1_3 = false;
+let _1_2 = false;
+let _1_3 = false;
 
-var queryCalls = 0;
+let queryCalls = 0;
 
-var portfinder = require('portfinder');
+const portfinder = require('portfinder');
 portfinder.getPort(function(err, port) {
-  var server = mysql.createServer();
+  const server = mysql.createServer();
   server.listen(port);
   server.on('connection', function(conn) {
     conn.serverHandshake({
@@ -43,7 +42,7 @@ portfinder.getPort(function(err, port) {
     });
   });
 
-  var connection = mysql.createConnection({
+  const connection = mysql.createConnection({
     port: port,
     user: 'testuser',
     database: 'testdatabase',

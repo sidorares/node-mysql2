@@ -1,8 +1,8 @@
+'use strict';
 
-
-var assert = require('assert');
-var common = require('../../common');
-var connection = common.createConnection({
+const assert = require('assert');
+const common = require('../../common');
+const connection = common.createConnection({
   authSwitchHandler: function() {
     throw new Error(
       'should not be called - we expect mysql_native_password ' +
@@ -10,7 +10,7 @@ var connection = common.createConnection({
     );
   }
 });
-var onlyUsername = function(name) {
+const onlyUsername = function(name) {
   return name.substring(0, name.indexOf('@'));
 };
 
@@ -22,58 +22,6 @@ connection.query(
   "GRANT ALL ON *.* TO 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
 );
 connection.query('FLUSH PRIVILEGES');
-
-connection.changeUser(
-  {
-    user: 'changeuser1',
-    password: 'changeuser1pass'
-  },
-  function(err, res) {
-    assert.ifError(err);
-    connection.query('select current_user()', function(err, rows) {
-      assert.ifError(err);
-      assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
-
-      connection.changeUser(
-        {
-          user: 'changeuser2',
-          password: 'changeuser2pass'
-        },
-        function(err, res) {
-          assert.ifError(err);
-
-          connection.query('select current_user()', function(err, rows) {
-            assert.ifError(err);
-            assert.deepEqual(
-              onlyUsername(rows[0]['current_user()']),
-              'changeuser2'
-            );
-
-            connection.changeUser(
-              {
-                user: 'changeuser1',
-                passwordSha1: Buffer.from(
-                  'f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd',
-                  'hex'
-                ) // sha1(changeuser1pass)
-              },
-              function(err, res) {
-                connection.query('select current_user()', function(err, rows) {
-                  assert.ifError(err);
-                  assert.deepEqual(
-                    onlyUsername(rows[0]['current_user()']),
-                    'changeuser1'
-                  );
-                  testIncorrectDb();
-                });
-              }
-            );
-          });
-        }
-      );
-    });
-  }
-);
 
 function testIncorrectDb() {
   connection.end();
@@ -91,3 +39,55 @@ function testIncorrectDb() {
   connection.end();
   */
 }
+
+connection.changeUser(
+  {
+    user: 'changeuser1',
+    password: 'changeuser1pass'
+  },
+  function(err) {
+    assert.ifError(err);
+    connection.query('select current_user()', function(err, rows) {
+      assert.ifError(err);
+      assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
+
+      connection.changeUser(
+        {
+          user: 'changeuser2',
+          password: 'changeuser2pass'
+        },
+        function(err) {
+          assert.ifError(err);
+
+          connection.query('select current_user()', function(err, rows) {
+            assert.ifError(err);
+            assert.deepEqual(
+              onlyUsername(rows[0]['current_user()']),
+              'changeuser2'
+            );
+
+            connection.changeUser(
+              {
+                user: 'changeuser1',
+                passwordSha1: Buffer.from(
+                  'f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd',
+                  'hex'
+                ) // sha1(changeuser1pass)
+              },
+              function() {
+                connection.query('select current_user()', function(err, rows) {
+                  assert.ifError(err);
+                  assert.deepEqual(
+                    onlyUsername(rows[0]['current_user()']),
+                    'changeuser1'
+                  );
+                  testIncorrectDb();
+                });
+              }
+            );
+          });
+        }
+      );
+    });
+  }
+);

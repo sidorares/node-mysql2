@@ -1,9 +1,11 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows, rows1;
-var fields, fields1;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let rows, rows1;
+let fields, fields1;
 
 connection.query('CREATE TEMPORARY TABLE t (i int)');
 connection.query('INSERT INTO t VALUES(null)');

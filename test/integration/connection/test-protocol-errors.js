@@ -1,49 +1,55 @@
-var assert = require('assert');
-var common = require('../../common');
-var server = common.createServer(serverReady, function(conn) {
-  conn.on('query', function(q) {
-    conn.writeTextResult(
-      [{ '1': '1' }],
-      [
-        {
-          catalog: 'def',
-          schema: '',
-          table: '',
-          orgTable: '',
-          name: '1',
-          orgName: '',
-          characterSet: 63,
-          columnLength: 1,
-          columnType: 8,
-          flags: 129,
-          decimals: 0
-        }
-      ]
-    );
-    // this is extra (incorrect) packet - client should emit error on receiving it
-    conn.writeOk();
-  });
-});
+'use strict';
 
-var fields, error;
-var query = 'SELECT 1';
-function serverReady() {
-  var connection = common.createConnection({ port: server._port });
-  connection.query(query, function(err, _rows, _fields) {
-    if (err) {
-      throw err;
-    }
-    rows = _rows;
-    fields = _fields;
-  });
+const assert = require('assert');
+const common = require('../../common');
 
-  connection.on('error', function(err) {
-    error = err;
-    if (server._server._handle) {
-      server.close();
-    }
-  });
-}
+let fields, error;
+const query = 'SELECT 1';
+let rows;
+
+const server = common.createServer(
+  () => {
+    const connection = common.createConnection({ port: server._port });
+    connection.query(query, function(err, _rows, _fields) {
+      if (err) {
+        throw err;
+      }
+      rows = _rows;
+      fields = _fields;
+    });
+
+    connection.on('error', function(err) {
+      error = err;
+      if (server._server._handle) {
+        server.close();
+      }
+    });
+  },
+  conn => {
+    conn.on('query', function() {
+      conn.writeTextResult(
+        [{ '1': '1' }],
+        [
+          {
+            catalog: 'def',
+            schema: '',
+            table: '',
+            orgTable: '',
+            name: '1',
+            orgName: '',
+            characterSet: 63,
+            columnLength: 1,
+            columnType: 8,
+            flags: 129,
+            decimals: 0
+          }
+        ]
+      );
+      // this is extra (incorrect) packet - client should emit error on receiving it
+      conn.writeOk();
+    });
+  }
+);
 
 process.on('exit', function() {
   assert.deepEqual(rows, [{ 1: 1 }]);

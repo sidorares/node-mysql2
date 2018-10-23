@@ -6,7 +6,7 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
 
 ```js
    /* eslint-env es6 */
-   var mysql = require('mysql2/promise'); // or require('mysql2').createConnectionPromise
+   const mysql = require('mysql2/promise'); // or require('mysql2').createConnectionPromise
    mysql.createConnection({ /* same parameters as for non-promise createConnection */ })
      .then((conn) => conn.query('select foo from bar'))
      .then(([rows, fields]) => console.log(rows[0].foo));
@@ -30,12 +30,12 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
 async function example1 () {
   const mysql = require('mysql2/promise');
   const conn = await mysql.createConnection({ database: test });
-  let [rows, fields] = await conn.execute('select ?+? as sum', [2, 2]);
+  const [rows, fields] = await conn.execute('select ?+? as sum', [2, 2]);
 }
 
 async function example2 () {
-   let mysql = require('mysql2/promise');
-   let pool = mysql.createPool({database: test});
+   const mysql = require('mysql2/promise');
+   const pool = mysql.createPool({database: test});
    // execute in parallel, next console.log in 3 seconds
    await Promise.all([pool.query('select sleep(2)'), pool.query('select sleep(3)')]);
    console.log('3 seconds after');
@@ -47,11 +47,11 @@ async function example2 () {
 ## With [CO](https://github.com/tj/co)
 <!--eslint-disable-next-block-->
 ```js
-var mysql = require('mysql2');
-var co = require('co');
+const mysql = require('mysql2');
+const co = require('co');
 co(function * () {
-  var c = yield mysql.createConnectionPromise({user: 'root', namedPlaceholders: true });
-  var rows = yield c.query('show databases');
+  const c = yield mysql.createConnectionPromise({user: 'root', namedPlaceholders: true });
+  const rows = yield c.query('show databases');
   console.log(rows);
   console.log(yield c.execute('select 1+:toAdd as qqq', {toAdd: 10}));
   yield c.end();

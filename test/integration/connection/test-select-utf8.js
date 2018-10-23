@@ -1,10 +1,12 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows = undefined;
-var fields = undefined;
-var multibyteText = '本日は晴天なり';
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let rows = undefined;
+let fields = undefined;
+const multibyteText = '本日は晴天なり';
 connection.query("SELECT '" + multibyteText + "'", function(
   err,
   _rows,

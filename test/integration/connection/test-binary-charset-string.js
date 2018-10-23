@@ -1,24 +1,25 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-var rows = undefined;
-var fields = undefined;
-var rows1 = undefined;
-var fields1 = undefined;
-var rows2 = undefined;
-var fields2 = undefined;
-var rows3 = undefined;
-var fields3 = undefined;
+let rows = undefined;
+let fields = undefined;
+let rows1 = undefined;
+let fields1 = undefined;
+let rows2 = undefined;
+let fields2 = undefined;
+let rows3 = undefined;
+let fields3 = undefined;
 
-var rows4 = undefined;
-var fields4 = undefined;
-var rows5 = undefined;
-var fields5 = undefined;
+let rows4 = undefined;
+let fields4 = undefined;
+let rows5 = undefined;
+let fields5 = undefined;
 
-var query = "SELECT x'010203'";
-var query1 = "SELECT '010203'";
+const query = "SELECT x'010203'";
+const query1 = "SELECT '010203'";
 
 connection.query(query, function(err, _rows, _fields) {
   if (err) {

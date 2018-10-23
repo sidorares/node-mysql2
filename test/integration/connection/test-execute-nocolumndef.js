@@ -1,13 +1,15 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert-diff');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert-diff');
 
 // https://github.com/sidorares/node-mysql2/issues/130
 // https://github.com/sidorares/node-mysql2/issues/37
 // binary protocol examples where `prepare` returns no column definitions but execute() does return fields/rows
 
-var rows;
-var fields;
+let rows;
+let fields;
 
 connection.execute('explain SELECT 1', function(err, _rows, _fields) {
   if (err) {
@@ -19,159 +21,7 @@ connection.execute('explain SELECT 1', function(err, _rows, _fields) {
   connection.end();
 });
 
-var expectedRows;
-var expectedFields;
-
-process.on('exit', function() {
-  assert.deepEqual(rows, expectedRows);
-  var fi = fields.map(function(c) {
-    return c.inspect();
-  });
-  for (var i; i < expectedFields.length; i++) {
-    assert.deepEqual(
-      Object.keys(fi[i]).sort(),
-      Object.keys(expectedFields[i]).sort()
-    );
-    expectedFields[i].map(function(key) {
-      assert.deepEqual(expectedFields[i][key], fi[i][key]);
-    });
-  }
-});
-
-expectedFields = [
-  {
-    catalog: 'def',
-    schema: '',
-    table: '',
-    orgTable: '',
-    name: 'id',
-    orgName: '',
-    characterSet: 63,
-    columnLength: 3,
-    columnType: 8,
-    flags: 161,
-    decimals: 0
-  },
-  {
-    catalog: 'def',
-    schema: '',
-    table: '',
-    orgTable: '',
-    name: 'select_type',
-    orgName: '',
-    characterSet: 33,
-    columnLength: 57,
-    columnType: 253,
-    flags: 1,
-    decimals: 31
-  },
-  {
-    catalog: 'def',
-    schema: '',
-    table: '',
-    orgTable: '',
-    name: 'table',
-    orgName: '',
-    characterSet: 33,
-    columnLength: 192,
-    columnType: 253,
-    flags: 0,
-    decimals: 31
-  },
-  {
-    catalog: 'def',
-    schema: '',
-    table: '',
-    orgTable: '',
-    name: 'type',
-    orgName: '',
-    characterSet: 33,
-    columnLength: 30,
-    columnType: 253,
-    flags: 0,
-    decimals: 31
-  },
-  {
-    catalog: 'def',
-    schema: '',
-    table: '',
-    orgTable: '',
-    name: 'possible_keys',
-    orgName: '',
-    characterSet: 33,
-    columnLength: 12288,
-    columnType: 253,
-    flags: 0,
-    decimals: 31
-  },
-  {
-    catalog: 'def',
-    schema: '',
-    table: '',
-    orgTable: '',
-    name: 'key',
-    orgName: '',
-    characterSet: 33,
-    columnLength: 192,
-    columnType: 253,
-    flags: 0,
-    decimals: 31
-  },
-  {
-    catalog: 'def',
-    schema: '',
-    table: '',
-    orgTable: '',
-    name: 'key_len',
-    orgName: '',
-    characterSet: 33,
-    columnLength: 12288,
-    columnType: 253,
-    flags: 0,
-    decimals: 31
-  },
-  {
-    catalog: 'def',
-    schema: '',
-    table: '',
-    orgTable: '',
-    name: 'ref',
-    orgName: '',
-    characterSet: 33,
-    columnLength: 3072,
-    columnType: 253,
-    flags: 0,
-    decimals: 31
-  },
-  {
-    catalog: 'def',
-    schema: '',
-    table: '',
-    orgTable: '',
-    name: 'rows',
-    orgName: '',
-    characterSet: 63,
-    columnLength: 10,
-    columnType: 8,
-    flags: 160,
-    decimals: 0
-  },
-  {
-    catalog: 'def',
-    schema: '',
-    table: '',
-    orgTable: '',
-    name: 'Extra',
-    orgName: '',
-    characterSet: 33,
-    columnLength: 765,
-    columnType: 253,
-    flags: 1,
-    decimals: 31
-  }
-];
-
-expectedRows = [
+const expectedRows = [
   {
     id: 1,
     select_type: 'SIMPLE',
@@ -182,14 +32,179 @@ expectedRows = [
     key_len: null,
     ref: null,
     rows: null,
-    Extra: 'No tables used'
+    Extra: 'No tables used',
+    partitions: null,
+    filtered: null
   }
 ];
 
-// mysql 5.7 has extra fields. Add them based on version to allow to run tests in 5.7 and pre 5.7
-connection.on('connect', function(handshake) {
-  if (handshake.serverVersion.slice(0, 3) === '5.7') {
-    expectedRows[0].partitions = null;
-    expectedRows[0].filtered = null;
+const expectedFields = [
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'id',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 63,
+    columnLength: 3,
+    columnType: 8,
+    flags: 161,
+    decimals: 0
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'select_type',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 76,
+    columnType: 253,
+    flags: 1,
+    decimals: 31
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'table',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 256,
+    columnType: 253,
+    flags: 0,
+    decimals: 31
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'partitions',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 25264128,
+    columnType: 250,
+    flags: 0,
+    decimals: 31
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'type',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 40,
+    columnType: 253,
+    flags: 0,
+    decimals: 31
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'possible_keys',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 16384,
+    columnType: 253,
+    flags: 0,
+    decimals: 31
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'key',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 256,
+    columnType: 253,
+    flags: 0,
+    decimals: 31
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'key_len',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 16384,
+    columnType: 253,
+    flags: 0,
+    decimals: 31
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'ref',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 4096,
+    columnType: 253,
+    flags: 0,
+    decimals: 31
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'rows',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 63,
+    columnLength: 10,
+    columnType: 8,
+    flags: 160,
+    decimals: 0
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'filtered',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 63,
+    columnLength: 4,
+    columnType: 5,
+    flags: 128,
+    decimals: 2
+  },
+  {
+    catalog: 'def',
+    schema: '',
+    name: 'Extra',
+    orgName: '',
+    table: '',
+    orgTable: '',
+    characterSet: 224,
+    columnLength: 1020,
+    columnType: 253,
+    flags: 1,
+    decimals: 31
   }
+];
+
+process.on('exit', function() {
+  assert.deepEqual(rows, expectedRows);
+  fields.forEach((f, index) => {
+    const fi = f.inspect();
+    assert.deepEqual(
+      Object.keys(fi).sort(),
+      Object.keys(expectedFields[index]).sort()
+    );
+    assert.deepEqual(expectedFields[index], fi);
+  });
 });

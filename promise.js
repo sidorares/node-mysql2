@@ -1,15 +1,32 @@
+'use strict';
+
 const core = require('./index.js');
 const { EventEmitter } = require('events');
 
+function makeDoneCb(resolve, reject, localErr) {
+  return function(err, rows, fields) {
+    if (err) {
+      localErr.message = err.message;
+      localErr.code = err.code;
+      localErr.errno = err.errno;
+      localErr.sqlState = err.sqlState;
+      localErr.sqlMessage = err.sqlMessage;
+      reject(localErr);
+    } else {
+      resolve([rows, fields]);
+    }
+  };
+}
+
 function inheritEvents(source, target, events) {
-  var listeners = {};
+  const listeners = {};
   target
     .on('newListener', function(eventName) {
       if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
         source.on(
           eventName,
           (listeners[eventName] = function() {
-            var args = [].slice.call(arguments);
+            const args = [].slice.call(arguments);
             args.unshift(eventName);
 
             target.emit.apply(target, args);
@@ -25,29 +42,31 @@ function inheritEvents(source, target, events) {
     });
 }
 
-function createConnection(opts) {
-  const coreConnection = core.createConnection(opts);
-  const createConnectionErr = new Error();
-  const Promise = opts.Promise || global.Promise;
-  if (!Promise) {
-    throw new Error(
-      'no Promise implementation available.' +
-        'Use promise-enabled node version or pass userland Promise' +
-        " implementation as parameter, for example: { Promise: require('bluebird') }"
-    );
+class PromisePreparedStatementInfo {
+  constructor(statement, promiseImpl) {
+    this.statement = statement;
+    this.Promise = promiseImpl;
   }
-  return new Promise(function(resolve, reject) {
-    coreConnection.once('connect', function(connectParams) {
-      resolve(new PromiseConnection(coreConnection, Promise));
+
+  execute(parameters) {
+    const s = this.statement;
+    const localErr = new Error();
+    return new this.Promise(function(resolve, reject) {
+      const done = makeDoneCb(resolve, reject, localErr);
+      if (parameters) {
+        s.execute(parameters, done);
+      } else {
+        s.execute(done);
+      }
     });
-    coreConnection.once('error', err => {
-      createConnectionErr.message = err.message;
-      createConnectionErr.code = err.code;
-      createConnectionErr.errno = err.errno;
-      createConnectionErr.sqlState = err.sqlState;
-      reject(createConnectionErr);
+  }
+
+  close() {
+    return new this.Promise(resolve => {
+      this.statement.close();
+      resolve();
     });
-  });
+  }
 }
 
 class PromiseConnection extends EventEmitter {
@@ -71,12 +90,11 @@ class PromiseConnection extends EventEmitter {
   query(query, params) {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
+    return new this.Promise(function(resolve, reject) {
       const done = makeDoneCb(resolve, reject, localErr);
       if (params) {
         c.query(query, params, done);
-      }
-      else {
+      } else {
         c.query(query, done);
       }
     });
@@ -85,30 +103,26 @@ class PromiseConnection extends EventEmitter {
   execute(query, params) {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
+    return new this.Promise(function(resolve, reject) {
       const done = makeDoneCb(resolve, reject, localErr);
       if (params) {
         c.execute(query, params, done);
-      }
-      else {
+      } else {
         c.execute(query, done);
       }
     });
   }
 
   end() {
-    const c = this.connection;
-    return new this.Promise(function (resolve, reject) {
-      c.end(function () {
-        resolve();
-      });
+    return new this.Promise(resolve => {
+      this.connection.end(resolve);
     });
   }
 
   beginTransaction() {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
+    return new this.Promise(function(resolve, reject) {
       const done = makeDoneCb(resolve, reject, localErr);
       c.beginTransaction(done);
     });
@@ -117,7 +131,7 @@ class PromiseConnection extends EventEmitter {
   commit() {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
+    return new this.Promise(function(resolve, reject) {
       const done = makeDoneCb(resolve, reject, localErr);
       c.commit(done);
     });
@@ -126,7 +140,7 @@ class PromiseConnection extends EventEmitter {
   rollback() {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
+    return new this.Promise(function(resolve, reject) {
       const done = makeDoneCb(resolve, reject, localErr);
       c.rollback(done);
     });
@@ -135,7 +149,7 @@ class PromiseConnection extends EventEmitter {
   ping() {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
+    return new this.Promise(function(resolve, reject) {
       const done = makeDoneCb(resolve, reject, localErr);
       c.ping(done);
     });
@@ -144,8 +158,8 @@ class PromiseConnection extends EventEmitter {
   connect() {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
-      c.connect(function (err, param) {
+    return new this.Promise(function(resolve, reject) {
+      c.connect(function(err, param) {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -153,8 +167,7 @@ class PromiseConnection extends EventEmitter {
           localErr.sqlState = err.sqlState;
           localErr.sqlMessage = err.sqlMessage;
           reject(localErr);
-        }
-        else {
+        } else {
           resolve(param);
         }
       });
@@ -165,8 +178,8 @@ class PromiseConnection extends EventEmitter {
     const c = this.connection;
     const promiseImpl = this.Promise;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
-      c.prepare(options, function (err, statement) {
+    return new this.Promise(function(resolve, reject) {
+      c.prepare(options, function(err, statement) {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -174,9 +187,11 @@ class PromiseConnection extends EventEmitter {
           localErr.sqlState = err.sqlState;
           localErr.sqlMessage = err.sqlMessage;
           reject(localErr);
-        }
-        else {
-          const wrappedStatement = new PromisePreparedStatementInfo(statement, promiseImpl);
+        } else {
+          const wrappedStatement = new PromisePreparedStatementInfo(
+            statement,
+            promiseImpl
+          );
           resolve(wrappedStatement);
         }
       });
@@ -186,8 +201,8 @@ class PromiseConnection extends EventEmitter {
   changeUser(options) {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
-      c.changeUser(options, function (err) {
+    return new this.Promise(function(resolve, reject) {
+      c.changeUser(options, function(err) {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -195,8 +210,7 @@ class PromiseConnection extends EventEmitter {
           localErr.sqlState = err.sqlState;
           localErr.sqlMessage = err.sqlMessage;
           reject(localErr);
-        }
-        else {
+        } else {
           resolve();
         }
       });
@@ -204,52 +218,30 @@ class PromiseConnection extends EventEmitter {
   }
 }
 
-function makeDoneCb(resolve, reject, localErr) {
-  return function(err, rows, fields) {
-    if (err) {
-      localErr.message = err.message;
-      localErr.code = err.code;
-      localErr.errno = err.errno;
-      localErr.sqlState = err.sqlState;
-      localErr.sqlMessage = err.sqlMessage;
-      reject(localErr);
-    } else {
-      resolve([rows, fields]);
-    }
-  };
-}
-
-
-class PromisePreparedStatementInfo {
-  constructor(statement, promiseImpl) {
-    this.statement = statement;
-    this.Promise = promiseImpl;
+function createConnection(opts) {
+  const coreConnection = core.createConnection(opts);
+  const createConnectionErr = new Error();
+  const Promise = opts.Promise || global.Promise;
+  if (!Promise) {
+    throw new Error(
+      'no Promise implementation available.' +
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
+    );
   }
-
-  execute(parameters) {
-    const s = this.statement;
-    const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
-      const done = makeDoneCb(resolve, reject, localErr);
-      if (parameters) {
-        s.execute(parameters, done);
-      }
-      else {
-        s.execute(done);
-      }
+  return new Promise(function(resolve, reject) {
+    coreConnection.once('connect', function() {
+      resolve(new PromiseConnection(coreConnection, Promise));
     });
-  }
-
-  close() {
-    const s = this.statement;
-    return new this.Promise(function (resolve, reject) {
-      s.close();
-      resolve();
+    coreConnection.once('error', err => {
+      createConnectionErr.message = err.message;
+      createConnectionErr.code = err.code;
+      createConnectionErr.errno = err.errno;
+      createConnectionErr.sqlState = err.sqlState;
+      reject(createConnectionErr);
     });
-  }
+  });
 }
-
-
 
 // note: the callback of "changeUser" is not called on success
 // hence there is no possibility to call "resolve"
@@ -260,7 +252,7 @@ class PromisePreparedStatementInfo {
 
 // proxy synchronous functions only
 (function(functionsToWrap) {
-  for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
+  for (let i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
     const func = functionsToWrap[i];
 
     if (
@@ -297,7 +289,10 @@ class PromisePoolConnection extends PromiseConnection {
   }
 
   destroy() {
-    return core.PoolConnection.prototype.destroy.apply(this.connection, arguments);
+    return core.PoolConnection.prototype.destroy.apply(
+      this.connection,
+      arguments
+    );
   }
 }
 
@@ -312,12 +307,11 @@ class PromisePool extends EventEmitter {
   getConnection() {
     const self = this;
     const corePool = this.pool;
-    return new this.Promise(function (resolve, reject) {
-      corePool.getConnection(function (err, coreConnection) {
+    return new this.Promise(function(resolve, reject) {
+      corePool.getConnection(function(err, coreConnection) {
         if (err) {
           reject(err);
-        }
-        else {
+        } else {
           resolve(new PromisePoolConnection(coreConnection, self.Promise));
         }
       });
@@ -327,12 +321,11 @@ class PromisePool extends EventEmitter {
   query(sql, args) {
     const corePool = this.pool;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
+    return new this.Promise(function(resolve, reject) {
       const done = makeDoneCb(resolve, reject, localErr);
       if (args) {
         corePool.query(sql, args, done);
-      }
-      else {
+      } else {
         corePool.query(sql, done);
       }
     });
@@ -341,7 +334,7 @@ class PromisePool extends EventEmitter {
   execute(sql, values) {
     const corePool = this.pool;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
+    return new this.Promise(function(resolve, reject) {
       corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
     });
   }
@@ -349,8 +342,8 @@ class PromisePool extends EventEmitter {
   end() {
     const corePool = this.pool;
     const localErr = new Error();
-    return new this.Promise(function (resolve, reject) {
-      corePool.end(function (err) {
+    return new this.Promise(function(resolve, reject) {
+      corePool.end(function(err) {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -358,8 +351,7 @@ class PromisePool extends EventEmitter {
           localErr.sqlState = err.sqlState;
           localErr.sqlMessage = err.sqlMessage;
           reject(localErr);
-        }
-        else {
+        } else {
           resolve();
         }
       });
@@ -382,7 +374,7 @@ function createPool(opts) {
 }
 
 (function(functionsToWrap) {
-  for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
+  for (let i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
     const func = functionsToWrap[i];
 
     if (

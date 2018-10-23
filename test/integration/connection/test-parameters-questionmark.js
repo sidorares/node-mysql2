@@ -1,7 +1,9 @@
-var common = require('../../common');
-var assert = require('assert');
+'use strict';
 
-var pool = common.createPool();
+const common = require('../../common');
+const assert = require('assert');
+
+const pool = common.createPool();
 pool.config.connectionLimit = 1;
 
 pool.query(
@@ -18,11 +20,7 @@ pool.query('UPDATE test_table SET str = ? WHERE id = ?', [
   'should not change ?',
   1
 ]);
-pool.query('SELECT str FROM test_table WHERE id = ?', [1], function(
-  err,
-  rows,
-  fields
-) {
+pool.query('SELECT str FROM test_table WHERE id = ?', [1], function(err, rows) {
   pool.end();
   if (err) {
     throw err;

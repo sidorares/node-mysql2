@@ -1,13 +1,14 @@
-var net = require('net');
-var count = 0;
-var byte = Buffer.from([0x33]);
-function pong()
-{
+'use strict';
+
+const net = require('net');
+let count = 0;
+const byte = Buffer.from([0x33]);
+function pong() {
   count++;
   this.write(byte);
 }
 
-var c = net.connect(3334);
+const c = net.connect(3334);
 c.setNoDelay(true);
 c.ondata = pong;
 pong.apply(c);

@@ -7,7 +7,7 @@
 		<script src="./14092016-mysql2-1.0.0-rc13.js"></script>
 
 		<script>
-      var benchDataset = window.mysql1Data.filter(bench => bench.result).map( (bench) => {
+      let benchDataset = window.mysql1Data.filter(bench => bench.result).map( (bench) => {
 				return {
 					label: bench.opts.rate,
 					fill: false,
@@ -21,7 +21,7 @@
 			  };
 			});
 
-			var benchDataset2 = window.mysql2masterData.filter(bench => bench.result).map( (bench) => {
+			const benchDataset2 = window.mysql2masterData.filter(bench => bench.result).map( (bench) => {
 				return {
 					label: bench.opts.rate,
 					fill: false,
@@ -55,8 +55,8 @@
 					};
 				}
 
-				var data_mysql = toPlotlySurface3D(window.mysql1Data);
-				var data_mysql2 = toPlotlySurface3D(window.mysql2masterData);
+				const data_mysql = toPlotlySurface3D(window.mysql1Data);
+				const data_mysql2 = toPlotlySurface3D(window.mysql2masterData);
 
 				data_mysql2.opacity = 1;
 				data_mysql2.showscale = true;

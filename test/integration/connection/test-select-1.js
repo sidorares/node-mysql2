@@ -1,9 +1,11 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows = undefined;
-var fields = undefined;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let rows = undefined;
+let fields = undefined;
 connection.query('SELECT 1', function(err, _rows, _fields) {
   if (err) {
     throw err;

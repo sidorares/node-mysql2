@@ -1,4 +1,6 @@
-var mysql = require('mysql2/promise');
+'use strict';
+
+const mysql = require('mysql2/promise');
 
 async function test() {
   const c = await mysql.createConnection({
@@ -21,7 +23,7 @@ async function test() {
   console.log('after first sleep');
   console.log(await c.execute('select sleep(0.5)'));
   console.log('after second sleep');
-  var start = +new Date();
+  let start = +new Date();
   console.log(
     await Promise.all([
       c.execute('select sleep(2.5)'),
@@ -31,7 +33,7 @@ async function test() {
   console.log(
     'after 2+3 parallel sleep whitch is in fact not parallel because commands are queued per connection'
   );
-  var end = +new Date();
+  let end = +new Date();
   console.log(end - start);
   await c.end();
 
@@ -43,7 +45,7 @@ async function test() {
   });
   console.log(await p.execute('select sleep(0.5)'));
   console.log('after first pool sleep');
-  var start = +new Date();
+  start = +new Date();
   console.log(
     await Promise.all([
       p.execute('select sleep(2.5)'),
@@ -51,7 +53,7 @@ async function test() {
     ])
   );
   console.log('after 2+3 parallel pool sleep');
-  var end = +new Date();
+  end = +new Date();
   console.log(end - start);
   await p.end();
 }

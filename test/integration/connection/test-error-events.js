@@ -1,15 +1,17 @@
-var common = require('../../common');
-var assert = require('assert');
+'use strict';
 
-var callCount = 0;
-var exceptionCount = 0;
+const common = require('../../common');
+const assert = require('assert');
+
+let callCount = 0;
+let exceptionCount = 0;
 
 process.on('uncaughtException', function(err) {
   assert.ifError(err);
   exceptionCount++;
 });
 
-var connection1 = common.createConnection({
+const connection1 = common.createConnection({
   password: 'lol'
 });
 
@@ -18,7 +20,7 @@ connection1.on('error', function() {
   callCount++;
 });
 
-var connection2 = common.createConnection({
+const connection2 = common.createConnection({
   password: 'lol'
 });
 

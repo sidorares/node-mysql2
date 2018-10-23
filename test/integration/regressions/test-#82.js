@@ -1,16 +1,18 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var config = {
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+const config = {
   table1: 'test82t1',
   table2: 'test82t2',
   view1: 'view82v1',
   view2: 'view82v2'
 };
-var results = null;
+let results = null;
 
-var prepareTestSet = function(cb) {
+const prepareTestSet = function(cb) {
   connection.query('drop table if exists ' + config.table1);
   connection.query('drop table if exists ' + config.table2);
   connection.query('drop view if exists ' + config.view1);

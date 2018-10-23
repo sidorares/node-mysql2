@@ -1,6 +1,8 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 connection.query(
   [
@@ -25,10 +27,10 @@ connection.query('insert into test_table(num1,num2) values(?, ?)', [
 ]);
 
 connection.config.namedPlaceholders = true;
-var cmd = connection.execute(
+const cmd = connection.execute(
   'SELECT * from test_table where num1 < :numParam and num2 > :lParam',
   { lParam: 100, numParam: 2 },
-  function(err, rows, fields) {
+  function(err, rows) {
     if (err) {
       throw err;
     }
@@ -38,21 +40,17 @@ var cmd = connection.execute(
 assert.equal(cmd.sql, 'SELECT * from test_table where num1 < ? and num2 > ?');
 assert.deepEqual(cmd.values, [2, 100]);
 
-connection.execute('SELECT :a + :a as sum', { a: 2 }, function(
-  err,
-  rows,
-  fields
-) {
+connection.execute('SELECT :a + :a as sum', { a: 2 }, function(err, rows) {
   if (err) {
     throw err;
   }
   assert.deepEqual(rows, [{ sum: 4 }]);
 });
 
-var qCmd = connection.query(
+const qCmd = connection.query(
   'SELECT * from test_table where num1 < :numParam and num2 > :lParam',
   { lParam: 100, numParam: 2 },
-  function(err, rows, fields) {
+  function(err, rows) {
     if (err) {
       throw err;
     }
@@ -65,11 +63,7 @@ assert.equal(
 );
 assert.deepEqual(qCmd.values, [2, 100]);
 
-connection.query('SELECT :a + :a as sum', { a: 2 }, function(
-  err,
-  rows,
-  fields
-) {
+connection.query('SELECT :a + :a as sum', { a: 2 }, function(err, rows) {
   if (err) {
     throw err;
   }
@@ -77,15 +71,15 @@ connection.query('SELECT :a + :a as sum', { a: 2 }, function(
   connection.end();
 });
 
-var sql = connection.format(
+const sql = connection.format(
   'SELECT * from test_table where num1 < :numParam and num2 > :lParam',
   { lParam: 100, numParam: 2 }
 );
 assert.equal(sql, 'SELECT * from test_table where num1 < 2 and num2 > 100');
 
-var pool = common.createPool();
+const pool = common.createPool();
 pool.config.connectionConfig.namedPlaceholders = true;
-pool.query('SELECT :a + :a as sum', { a: 2 }, function(err, rows, fields) {
+pool.query('SELECT :a + :a as sum', { a: 2 }, function(err, rows) {
   pool.end();
   if (err) {
     throw err;

@@ -1,20 +1,21 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var error = true;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-var q = connection.query('SELECT 1')
+let error = true;
+
+const q = connection.query('SELECT 1');
 try {
- if (q.then) q.then();
+  if (q.then) q.then();
 } catch (err) {
- error = false;
+  error = false;
 }
 q.on('end', function() {
- connection.destroy();
+  connection.destroy();
 });
 
 process.on('exit', function() {
   assert.equal(error, false);
 });
- 

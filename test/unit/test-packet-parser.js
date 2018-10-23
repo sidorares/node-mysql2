@@ -1,26 +1,26 @@
+'use strict';
 
+const PacketParser = require('../../lib/packet_parser.js');
+const Packet = require('../../lib/packets/packet.js');
 
-var PacketParser = require('../../lib/packet_parser.js');
-var Packet = require('../../lib/packets/packet.js');
+const assert = require('assert');
 
-var assert = require('assert');
-
-var pp;
-var packets = [];
+let pp;
+let packets = [];
+const handler = function(p) {
+  packets.push(p);
+};
 function reset() {
   pp = new PacketParser(handler);
   packets = [];
 }
-var handler = function(p) {
-  packets.push(p);
-};
 
 function execute(str, verify) {
   reset();
-  var buffers = str.split('|').map(function(sb) {
+  const buffers = str.split('|').map(function(sb) {
     return sb.split(',').map(Number);
   });
-  for (var i = 0; i < buffers.length; ++i) {
+  for (let i = 0; i < buffers.length; ++i) {
     pp.execute(Buffer.from(buffers[i]));
   }
   verify();
@@ -68,7 +68,7 @@ execute('0|0,0|42', p42);
 execute('0,0,0,120,0,0,0,121', p120_121);
 execute('0,0,0|120|0|0|0|121', p120_121);
 
-var p122_123 = function() {
+const p122_123 = function() {
   assert(packets.length === 2);
   assert(packets[0].length() === 9);
   assert(packets[0].sequenceId === 122);
@@ -89,17 +89,17 @@ execute('5,0,0,122,1,2,3,4,5,6,0,0,123,1|2,3|4,5,6', p122_123);
 // test packet > 65536 lengt
 // TODO combine with "execute" function
 
-var length = 123000;
-var pbuff = Buffer.alloc(length + 4);
+const length = 123000;
+const pbuff = Buffer.alloc(length + 4);
 pbuff[4] = 123;
 pbuff[5] = 124;
 pbuff[6] = 125;
-var p = new Packet(144, pbuff, 4, pbuff.length - 4);
+const p = new Packet(144, pbuff, 4, pbuff.length - 4);
 p.writeHeader(42);
 
 function testBigPackets(chunks, cb) {
-  var packets = [];
-  var pp = new PacketParser(function(p) {
+  const packets = [];
+  const pp = new PacketParser(function(p) {
     packets.push(p);
   });
   chunks.forEach(function(ch) {
@@ -130,7 +130,7 @@ testBigPackets(
   [pbuff.slice(0, 120000), pbuff.slice(120000, 123004), pbuff],
   assert2FullPackets
 );
-var frameEnd = 120000;
+const frameEnd = 120000;
 testBigPackets(
   [
     pbuff.slice(0, frameEnd),
@@ -138,7 +138,7 @@ testBigPackets(
   ],
   assert2FullPackets
 );
-for (var frameStart = 1; frameStart < 100; frameStart++) {
+for (let frameStart = 1; frameStart < 100; frameStart++) {
   testBigPackets(
     [
       Buffer.concat([pbuff, pbuff.slice(0, frameStart)]),

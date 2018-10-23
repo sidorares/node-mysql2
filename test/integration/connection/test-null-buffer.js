@@ -1,9 +1,11 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rowsTextProtocol;
-var rowsBinaryProtocol;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let rowsTextProtocol;
+let rowsBinaryProtocol;
 
 connection.query('CREATE TEMPORARY TABLE binary_table (stuff BINARY(16));');
 connection.query('INSERT INTO binary_table VALUES(null)');
@@ -13,11 +15,7 @@ connection.query('SELECT * from binary_table', function(err, _rows) {
     throw err;
   }
   rowsTextProtocol = _rows;
-  connection.execute('SELECT * from binary_table', function(
-    err,
-    _rows,
-    _fields
-  ) {
+  connection.execute('SELECT * from binary_table', function(err, _rows) {
     if (err) {
       throw err;
     }
