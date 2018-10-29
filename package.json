@@ -64,7 +64,7 @@
     "eslint-plugin-prettier": "^3.0.0",
     "husky": "^1.1.2",
     "is-async-supported": "^1.2.0",
-    "lint-staged": "^7.3.0",
+    "lint-staged": "^8.0.0",
     "portfinder": "^1.0.17",
     "prettier": "^1.14.3",
     "prettier-markdown": "^0.1.6",
