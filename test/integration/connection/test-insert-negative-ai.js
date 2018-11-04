@@ -1,26 +1,15 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var testTable = 'neg-ai-test';
-var testData = 'test negative ai';
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-var selectResult, insertResult;
+const testTable = 'neg-ai-test';
+const testData = 'test negative ai';
 
-var prepareAndTest = function(cb) {
-  connection.query(
-    'CREATE TEMPORARY TABLE `' +
-      testTable +
-      '` (' +
-      '`id` int(11) signed NOT NULL AUTO_INCREMENT,' +
-      '`title` varchar(255),' +
-      'PRIMARY KEY (`id`)' +
-      ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-    testNegativeAI
-  );
-};
+let selectResult, insertResult;
 
-var testNegativeAI = function(err) {
+const testNegativeAI = function(err) {
   assert.ifError(err);
   // insert the negative AI
   connection.query(
@@ -44,6 +33,19 @@ var testNegativeAI = function(err) {
         }
       );
     }
+  );
+};
+
+const prepareAndTest = function() {
+  connection.query(
+    'CREATE TEMPORARY TABLE `' +
+      testTable +
+      '` (' +
+      '`id` int(11) signed NOT NULL AUTO_INCREMENT,' +
+      '`title` varchar(255),' +
+      'PRIMARY KEY (`id`)' +
+      ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
+    testNegativeAI
   );
 };
 

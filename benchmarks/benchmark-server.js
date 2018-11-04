@@ -1,26 +1,26 @@
-var mysql = require('../index.js');
-var flags  = require('../lib/constants/client');
-var Packets      = require('../lib/packets/index.js');
-var Packet       = require('../lib/packets/packet');
+'use strict';
+
+const mysql = require('../index.js');
+const Packets = require('../lib/packets/index.js');
 
 function prepareReply(columns, row, n) {
-  var length = 0;
-  var rsHeader = Packets.ResultSetHeader.toPacket(columns.length);
+  let length = 0;
+  const rsHeader = Packets.ResultSetHeader.toPacket(columns.length);
   length += rsHeader.length();
-  var columnPackets = [];
+  const columnPackets = [];
   columns.forEach(function(column) {
-    var packet = Packets.ColumnDefinition.toPacket(column);
+    const packet = Packets.ColumnDefinition.toPacket(column);
     length += packet.length();
     columnPackets.push(packet);
   });
-  var eof = Packets.EOF.toPacket();
-  length += 2*eof.length();
-  var rowPacket = Packets.TextRow.toPacket(row);
-  length += n*rowPacket.length();
+  const eof = Packets.EOF.toPacket();
+  length += 2 * eof.length();
+  const rowPacket = Packets.TextRow.toPacket(row);
+  length += n * rowPacket.length();
 
-  var replyBuffer = Buffer.allocUnsafe(length);
-  var offset = 0;
-  var id = 1;
+  const replyBuffer = Buffer.allocUnsafe(length);
+  let offset = 0;
+  let id = 1;
   function add(packet) {
     packet.writeHeader(id);
     id = id + 1;
@@ -28,19 +28,19 @@ function prepareReply(columns, row, n) {
     offset += packet.length();
   }
 
-  var i;
+  let i;
   add(rsHeader);
-  for (i=0; i < columns.length; ++i)
-    add(columnPackets[i]);
+  for (i = 0; i < columns.length; ++i) add(columnPackets[i]);
   add(eof);
-  for (i=0; i < n; ++i)
-    add(rowPacket);
+  for (i = 0; i < n; ++i) add(rowPacket);
   add(eof);
 
   return replyBuffer;
 }
 
-var buff = prepareReply([{
+const buff = prepareReply(
+  [
+    {
       catalog: 'def',
       schema: 'test',
       table: 'test_table',
@@ -52,9 +52,13 @@ var buff = prepareReply([{
       columnType: 3, //253,
       flags: 0,
       decimals: 0
-    }], ['12345'], 1);
+    }
+  ],
+  ['12345'],
+  1
+);
 
-var server = mysql.createServer();
+const server = mysql.createServer();
 server.listen('/tmp/mybench3.sock');
 server.on('connection', function(conn) {
   conn.serverHandshake({
@@ -65,7 +69,7 @@ server.on('connection', function(conn) {
     characterSet: 8,
     capabilityFlags: 0xffffff
   });
-  conn.on('query', function(query) {
+  conn.on('query', function() {
     //console.log(query);
     conn.write(buff);
   });

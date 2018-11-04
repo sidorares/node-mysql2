@@ -1,9 +1,11 @@
-var common = require('../../common');
-var connection = common.createConnection({
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection({
   supportBigNumbers: true,
   bigNumberStrings: true
 });
-var assert = require('assert');
+const assert = require('assert');
 
 connection.query(
   [

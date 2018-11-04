@@ -1,26 +1,24 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows = undefined;
-var rows1 = undefined;
-var fields = undefined;
-var fields1 = undefined;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-connection.execute('SELECT -1 v', [], function(err, _rows, _fields) {
+let rows = undefined;
+let rows1 = undefined;
+
+connection.execute('SELECT -1 v', [], function(err, _rows) {
   if (err) {
     throw err;
   }
   rows = _rows;
-  fields = _fields;
 });
 
-connection.query('SELECT -1 v', function(err, _rows, _fields) {
+connection.query('SELECT -1 v', function(err, _rows) {
   if (err) {
     throw err;
   }
   rows1 = _rows;
-  fields1 = _fields;
   connection.end();
 });
 

@@ -1,15 +1,17 @@
+'use strict';
+
 /**
  * Created by Alexander Panko <god@panki.ru> on 2016.09.23 18:02
  * issue#409: https://github.com/sidorares/node-mysql2/issues/409
  */
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-var textFetchedRows = undefined;
-var binaryFetchedRows = undefined;
+let textFetchedRows = undefined;
+let binaryFetchedRows = undefined;
 
-var face = '\uD83D\uDE02';
+const face = '\uD83D\uDE02';
 
 connection.query('CREATE TEMPORARY TABLE json_test (json_test JSON)');
 connection.query('INSERT INTO json_test VALUES (?)', JSON.stringify(face));

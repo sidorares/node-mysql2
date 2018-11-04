@@ -1,10 +1,12 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 common.useTestDb(connection);
 
-var table = 'insert_test';
+const table = 'insert_test';
 connection.query(
   [
     'CREATE TEMPORARY TABLE `' + table + '` (',
@@ -21,7 +23,7 @@ connection.query('INSERT INTO ' + table + ' SET ?', {
   number: null
 });
 
-var results;
+let results;
 connection.query('SELECT * FROM ' + table, function(err, _results) {
   if (err) {
     throw err;

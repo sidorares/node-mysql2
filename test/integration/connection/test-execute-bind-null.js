@@ -1,17 +1,24 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows, fields;
-connection.execute('SELECT ? AS firstValue, ? AS nullValue, ? AS lastValue', ['foo', null, 'bar'], function(err, _rows, _fields) {
-  if (err) {
-    throw err;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let rows;
+connection.execute(
+  'SELECT ? AS firstValue, ? AS nullValue, ? AS lastValue',
+  ['foo', null, 'bar'],
+  function(err, _rows) {
+    if (err) {
+      throw err;
+    }
+    rows = _rows;
+    connection.end();
   }
-  rows = _rows;
-  fields = _fields;
-  connection.end();
-});
+);
 
 process.on('exit', function() {
-  assert.deepEqual(rows, [{ firstValue: 'foo', nullValue: null, lastValue: 'bar' }]);
+  assert.deepEqual(rows, [
+    { firstValue: 'foo', nullValue: null, lastValue: 'bar' }
+  ]);
 });

@@ -1,7 +1,9 @@
-var fs = require('fs');
-var mysql = require('mysql2');
+'use strict';
 
-var conn = mysql.createConnection({
+const fs = require('fs');
+const mysql = require('mysql2');
+
+const conn = mysql.createConnection({
   user: 'root',
   password: '',
   database: 'test',

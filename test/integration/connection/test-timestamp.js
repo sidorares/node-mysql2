@@ -1,15 +1,17 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 connection.query('SET SQL_MODE="ALLOW_INVALID_DATES";');
 connection.query('CREATE TEMPORARY TABLE t (f TIMESTAMP)');
 connection.query("INSERT INTO t VALUES('0000-00-00 00:00:00')");
 connection.query("INSERT INTO t VALUES('2013-01-22 01:02:03')");
 
-var rows, fields;
-var rows1, fields1;
-var rows2, fields2;
+let rows, fields;
+let rows1, fields1;
+let rows2;
 connection.query('SELECT f FROM t', function(err, _rows, _fields) {
   if (err) {
     throw err;
@@ -26,16 +28,11 @@ connection.execute('SELECT f FROM t', function(err, _rows, _fields) {
 });
 
 // test 11-byte timestamp - https://github.com/sidorares/node-mysql2/issues/254
-connection.execute('SELECT CURRENT_TIMESTAMP(6) as t11', function(
-  err,
-  _rows,
-  _fields
-) {
+connection.execute('SELECT CURRENT_TIMESTAMP(6) as t11', function(err, _rows) {
   if (err) {
     throw err;
   }
   rows2 = _rows;
-  fields2 = _fields;
   connection.end();
 });
 

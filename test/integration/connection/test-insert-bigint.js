@@ -1,9 +1,10 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
-var Long = require('long');
+'use strict';
 
-var table = 'insert_test';
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+const Long = require('long');
+
 connection.query(
   [
     'CREATE TEMPORARY TABLE `bigs` (',
@@ -14,7 +15,6 @@ connection.query(
   ].join('\n')
 );
 
-var result, result2;
 connection.query("INSERT INTO bigs SET title='test', id=123");
 connection.query("INSERT INTO bigs SET title='test1'", function(err, result) {
   if (err) {

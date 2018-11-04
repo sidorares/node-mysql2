@@ -1,12 +1,14 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 // common.useTestDb(connection);
 
-var table = 'insert_test';
-// var text = "本日は晴天なり";
-var text = ' test test test ';
+const table = 'insert_test';
+// const text = "本日は晴天なり";
+const text = ' test test test ';
 connection.query(
   [
     'CREATE TEMPORARY TABLE `' + table + '` (',
@@ -17,7 +19,7 @@ connection.query(
   ].join('\n')
 );
 
-var result, result2;
+let result, result2;
 connection.query('INSERT INTO ' + table + ' SET title="' + text + '"', function(
   err,
   _result

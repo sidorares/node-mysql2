@@ -1,14 +1,16 @@
-var common = require('../../common');
-var connection = common.createConnection({ dateStrings: true });
-var assert = require('assert');
+'use strict';
 
-var tableName = 'dates';
-var testFields = ['id', 'date', 'name'];
-var testRows = [
+const common = require('../../common');
+const connection = common.createConnection({ dateStrings: true });
+const assert = require('assert');
+
+const tableName = 'dates';
+const testFields = ['id', 'date', 'name'];
+const testRows = [
   [1, '2017-07-26 09:36:42.000', 'John'],
   [2, '2017-07-26 09:36:42.123', 'Jane']
 ];
-var expected = [
+const expected = [
   {
     id: 1,
     date: '2017-07-26 09:36:42',
@@ -21,7 +23,16 @@ var expected = [
   }
 ];
 
-var actualRows = null;
+let actualRows = null;
+
+function executeTest(err) {
+  assert.ifError(err);
+  connection.execute('SELECT * FROM `' + tableName + '`', function(err, rows) {
+    assert.ifError(err);
+    actualRows = rows;
+    connection.end();
+  });
+}
 
 connection.query(
   [
@@ -56,22 +67,9 @@ connection.query(
   }
 );
 
-function executeTest(err) {
-  assert.ifError(err);
-  connection.execute('SELECT * FROM `' + tableName + '`', function(
-    err,
-    rows,
-    fields
-  ) {
-    assert.ifError(err);
-    actualRows = rows;
-    connection.end();
-  });
-}
-
 process.on('exit', function() {
   expected.map(function(exp, index) {
-    var row = actualRows[index];
+    const row = actualRows[index];
     Object.keys(exp).map(function(key) {
       assert.equal(exp[key], row[key]);
     });

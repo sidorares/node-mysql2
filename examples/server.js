@@ -1,11 +1,13 @@
-var mysql = require('mysql2');
-var flags = require('mysql2/lib/constants/client.js');
-var auth = require('mysql2/lib/auth_41.js');
+'use strict';
+
+const mysql = require('mysql2');
+const flags = require('mysql2/lib/constants/client.js');
+const auth = require('mysql2/lib/auth_41.js');
 
 function authenticate(params, cb) {
   console.log(params);
-  var doubleSha = auth.doubleSha1('pass123');
-  var isValid = auth.verifyToken(
+  const doubleSha = auth.doubleSha1('pass123');
+  const isValid = auth.verifyToken(
     params.authPluginData1,
     params.authPluginData2,
     params.authToken,
@@ -19,7 +21,7 @@ function authenticate(params, cb) {
   }
 }
 
-var server = mysql.createServer();
+const server = mysql.createServer();
 server.listen(3333);
 server.on('connection', function(conn) {
   // we can deny connection here:

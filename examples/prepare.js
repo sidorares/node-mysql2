@@ -1,8 +1,10 @@
+'use strict';
+
 // get the client
-var mysql = require('mysql2');
+const mysql = require('mysql2');
 
 // create the connection to database
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   database: 'test'

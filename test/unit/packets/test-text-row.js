@@ -1,19 +1,21 @@
-var assert = require('assert');
-var TextRow = require('../../../lib/packets/text_row.js');
+'use strict';
+
+const assert = require('assert');
+const TextRow = require('../../../lib/packets/text_row.js');
 
 // simple
-var packet = TextRow.toPacket(['Hello', 'World'], 'cesu8');
+let packet = TextRow.toPacket(['Hello', 'World'], 'cesu8');
 assert.equal(packet.buffer.toString('hex', 4), '0548656c6c6f05576f726c64');
 
 // Russian (unicode)
-var packet = TextRow.toPacket(['Ну,', 'погоди!'], 'cesu8');
+packet = TextRow.toPacket(['Ну,', 'погоди!'], 'cesu8');
 assert.equal(
   packet.buffer.toString('hex', 4),
   '05d09dd1832c0dd0bfd0bed0b3d0bed0b4d0b821'
 );
 
 // Long > 256 byte
-var packet = TextRow.toPacket(
+packet = TextRow.toPacket(
   [
     'Пушкин родился 26 мая (6 июня) 1799 г. в Москве. В метрической книге церкви Богоявления в Елохове (сейчас на её месте находится Богоявленский собор в Елохове) на дату 8 июня 1799 г.'
   ],

@@ -1,11 +1,13 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 connection.query('CREATE TEMPORARY TABLE t (f DECIMAL(19,4))');
 connection.query('INSERT INTO t VALUES(12345.67)');
 
-var rows, fields;
+let rows, fields;
 connection.execute('SELECT f FROM t', function(err, _rows, _fields) {
   if (err) {
     throw err;

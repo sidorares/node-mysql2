@@ -1,11 +1,13 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var _stmt1, _stmt2, _stmt3;
-var query1 = 'select 1 + ? + ? as test';
-var query2 = 'select 1 + 1'; // no parameters
-var query3 = 'create temporary table aaa(i int);'; // no parameters, no result columns
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let _stmt1, _stmt2, _stmt3;
+const query1 = 'select 1 + ? + ? as test';
+const query2 = 'select 1 + 1'; // no parameters
+const query3 = 'create temporary table aaa(i int);'; // no parameters, no result columns
 
 connection.prepare(query1, function(err1, stmt1) {
   assert.ifError(err1);

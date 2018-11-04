@@ -1,3 +1,5 @@
-const waitReady = require('../test/common.js').waitDatabaseReady(() => {
+'use strict';
+
+require('../test/common.js').waitDatabaseReady(() => {
   console.log('ready!');
 });

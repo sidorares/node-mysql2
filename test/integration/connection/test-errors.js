@@ -1,16 +1,18 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var onExecuteResultError = undefined;
-var onQueryResultError = undefined;
-var onExecuteErrorEvent = undefined;
-var onQueryErrorEvent = undefined;
-var onExecuteErrorEvent1 = undefined;
-var onQueryErrorEvent1 = undefined;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let onExecuteResultError = undefined;
+let onQueryResultError = undefined;
+let onExecuteErrorEvent = undefined;
+let onQueryErrorEvent = undefined;
+let onExecuteErrorEvent1 = undefined;
+let onQueryErrorEvent1 = undefined;
 
 connection
-  .execute('error in execute', [], function(err, _rows, _fields) {
+  .execute('error in execute', [], function(err) {
     assert.equal(err.errno, 1064);
     assert.equal(err.code, 'ER_PARSE_ERROR');
     if (err) {
@@ -21,7 +23,7 @@ connection
     onExecuteErrorEvent = true;
   });
 connection
-  .query('error in query', [], function(err, _rows, _fields) {
+  .query('error in query', [], function(err) {
     assert.equal(err.errno, 1064);
     assert.equal(err.code, 'ER_PARSE_ERROR');
     if (err) {

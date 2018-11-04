@@ -11,8 +11,8 @@
 
 		<script>
 		$(document).ready(function(){
-		  var ctx = document.getElementById("myChart").getContext("2d");
-			var chart = new Chart(ctx, {
+			const ctx = document.getElementById("myChart").getContext("2d");
+			const chart = new Chart(ctx, {
 			    type: 'line',
 			    data: {
 						datasets: []
@@ -33,14 +33,14 @@
 			});
 
 			$('#rateSelect').on('input change', function(ev) {
-				var rate = Number(ev.target.value);
+				const rate = Number(ev.target.value);
 				setRate(rate);
 			});
 
 			setRate(3000);
 
 			function setRate(rate) {
-				var closestRes = null;
+				let closestRes = null;
 				//console.log(window.mysql1Data);
 				//debugger;
 				window.mysql1Data.forEach(function(bench) {
@@ -52,7 +52,7 @@
 					}
 				});
 
-				var closestRes1 = null;
+				let closestRes1 = null;
 				window.mysql2Data.forEach(function(bench) {
 					if (!closestRes1) {
 						closestRes1 = bench;
@@ -61,7 +61,7 @@
 						closestRes1 = bench;
 					}
 				});
-				var closestRes2 = null;
+				let closestRes2 = null;
 				window.mysql2masterData.forEach(function(bench) {
 					if (!closestRes2) {
 						closestRes2 = bench;

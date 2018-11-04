@@ -1,34 +1,28 @@
-var config = require('../../common.js').config;
+'use strict';
 
+const config = require('../../common.js').config;
 
-var skipTest = false;
-if (typeof Promise == 'undefined') {
-  console.log('no Promise support, skipping test');
-  skipTest = true;
-  process.exit(0);
-}
+const assert = require('assert');
 
-var assert = require('assert');
-
-var createConnection = require('../../../promise.js').createConnection;
-var createPool = require('../../../promise.js').createPool;
+const createConnection = require('../../../promise.js').createConnection;
+const createPool = require('../../../promise.js').createPool;
 
 // it's lazy exported from main index.js as well. Test that it's same function
-var mainExport = require('../../../index.js').createConnectionPromise;
+const mainExport = require('../../../index.js').createConnectionPromise;
 assert.equal(mainExport, createConnection);
 
-var doneCalled = false;
-var exceptionCaught = false;
-var doneEventsConnect = false;
+let doneCalled = false;
+let exceptionCaught = false;
+let doneEventsConnect = false;
 
-var doneCalledPool = false;
-var exceptionCaughtPool = false;
-var doneEventsPool = false;
-var doneChangeUser = false;
+let doneCalledPool = false;
+let exceptionCaughtPool = false;
+let doneEventsPool = false;
+let doneChangeUser = false;
 
 function testBasic() {
-  var connResolved;
-  var connPromise = createConnection(config)
+  let connResolved;
+  createConnection(config)
     .then(function(conn) {
       connResolved = conn;
       return conn.query('select 1+2 as ttt');
@@ -50,8 +44,8 @@ function testBasic() {
 }
 
 function testErrors() {
-  var connResolved;
-  var connPromise = createConnection(config);
+  let connResolved;
+  const connPromise = createConnection(config);
 
   connPromise
     .then(function(conn) {
@@ -63,10 +57,10 @@ function testErrors() {
       return connResolved.query('bad sql');
     })
     .then(function(result2) {
-      assert.equal(result1[0][0].ttt, 3);
+      assert.equal(result2[0][0].ttt, 3);
       return connResolved.query('select 2+2 as qqq');
     })
-    .catch(function(err) {
+    .catch(function() {
       exceptionCaught = true;
       if (connResolved) {
         connResolved.end();
@@ -77,8 +71,8 @@ function testErrors() {
 }
 
 function testObjParams() {
-  var connResolved;
-  var connPromise = createConnection(config)
+  let connResolved;
+  createConnection(config)
     .then(function(conn) {
       connResolved = conn;
       return conn.query({
@@ -103,8 +97,8 @@ function testObjParams() {
 }
 
 function testPrepared() {
-  var connResolved;
-  var connPromise = createConnection(config)
+  let connResolved;
+  createConnection(config)
     .then(function(conn) {
       connResolved = conn;
       return conn.prepare('select ?-? as ttt, ? as uuu');
@@ -129,64 +123,23 @@ function testPrepared() {
     });
 }
 
-function testPreparedError() {
-  var connResolved;
-  var stmtPrepared;
-  var connPromise = createConnection(config)
-    .then(function(conn) {
-      connResolved = conn;
-      return conn.prepare('select ?-? as ttt, ? as uuu');
-    })
-    .then(function(statement) {
-      stmtPrepared = statement;
-      // This should throw an error prior to execution due to missing parameters
-      return statement.execute([11, 3]);
-    })
-    .catch(function(err) {
-      // If this error was thrown prior to the execute, pass it on
-      if (!connResolved || !stmtPrepared) throw err;
-
-      assert.equal(err.code, 'ER_WRONG_ARGUMENTS');
-    })
-    .catch(function(err) {
-      // An error here is fatal. Pass it on to the end handler
-      return err;
-    })
-    .then(function(err) {
-      if (!stmtPrepared || !connResolved) {
-        console.log(
-          'Warning: promise rejected before executing prepared statement'
-        );
-      }
-
-      if (stmtPrepared) {
-        stmtPrepared.close();
-      }
-      if (connResolved) {
-        connResolved.end();
-      }
-
-      if (err) {
-        console.log(err);
-      }
-    });
-}
+// REVIEW: Unused
 
 function testEventsConnect() {
-  var connResolved;
-  var connPromise = createConnection(config)
+  let connResolved;
+  createConnection(config)
     .then(function(conn) {
       connResolved = conn;
-      var events = 0;
+      let events = 0;
 
-      var expectedListeners = {
+      const expectedListeners = {
         error: 1,
         drain: 0,
         connect: 0,
         enqueue: 0,
         end: 0
       };
-      for (var eventName in expectedListeners) {
+      for (const eventName in expectedListeners) {
         assert.equal(
           conn.connection.listenerCount(eventName),
           expectedListeners[eventName],
@@ -225,7 +178,7 @@ function testEventsConnect() {
       conn.connection.emit('end');
 
       expectedListeners.error = 0;
-      for (var eventName in expectedListeners) {
+      for (const eventName in expectedListeners) {
         assert.equal(
           conn.connection.listenerCount(eventName),
           expectedListeners[eventName],
@@ -248,7 +201,7 @@ function testEventsConnect() {
 }
 
 function testBasicPool() {
-  var pool = createPool(config);
+  const pool = createPool(config);
   pool
     .query('select 1+2 as ttt')
     .then(function(result1) {
@@ -268,7 +221,7 @@ function testBasicPool() {
 }
 
 function testErrorsPool() {
-  var pool = createPool(config);
+  const pool = createPool(config);
   pool
     .query('select 1+2 as ttt')
     .then(function(result1) {
@@ -276,17 +229,17 @@ function testErrorsPool() {
       return pool.query('bad sql');
     })
     .then(function(result2) {
-      assert.equal(result1[0][0].ttt, 3);
+      assert.equal(result2[0][0].ttt, 3);
       return pool.query('select 2+2 as qqq');
     })
-    .catch(function(err) {
+    .catch(function() {
       exceptionCaughtPool = true;
       return pool.end();
     });
 }
 
 function testObjParamsPool() {
-  var pool = createPool(config);
+  const pool = createPool(config);
   pool
     .query({
       sql: 'select ?-? as ttt',
@@ -308,10 +261,10 @@ function testObjParamsPool() {
     });
 }
 function testPromiseLibrary() {
-  var pool = createPool(config);
-  var promise = pool.execute({
-	  sql: 'select ?-? as ttt',
-	  values: [8, 5]
+  const pool = createPool(config);
+  let promise = pool.execute({
+    sql: 'select ?-? as ttt',
+    values: [8, 5]
   });
   promise
     .then(function() {
@@ -322,21 +275,21 @@ function testPromiseLibrary() {
       assert.ok(promise instanceof pool.Promise);
     })
     .catch(function(err) {
-        console.log(err);
+      console.log(err);
     });
 }
 
 function testEventsPool() {
-  var pool = createPool(config);
-  var events = 0;
+  const pool = createPool(config);
+  let events = 0;
 
-  var expectedListeners = {
+  const expectedListeners = {
     acquire: 0,
     connection: 0,
     enqueue: 0,
     release: 0
   };
-  for (var eventName in expectedListeners) {
+  for (const eventName in expectedListeners) {
     assert.equal(
       pool.pool.listenerCount(eventName),
       expectedListeners[eventName],
@@ -369,7 +322,7 @@ function testEventsPool() {
   pool.pool.emit('enqueue');
   pool.pool.emit('release');
 
-  for (var eventName in expectedListeners) {
+  for (const eventName in expectedListeners) {
     assert.equal(
       pool.pool.listenerCount(eventName),
       expectedListeners[eventName],
@@ -379,11 +332,11 @@ function testEventsPool() {
 }
 
 function testChangeUser() {
-  var onlyUsername = function(name) {
+  const onlyUsername = function(name) {
     return name.substring(0, name.indexOf('@'));
   };
-  var connResolved;
-  var connPromise = createConnection(config)
+  let connResolved;
+  createConnection(config)
     .then(function(conn) {
       connResolved = conn;
       return connResolved.query(
@@ -447,7 +400,7 @@ function testChangeUser() {
 }
 
 function timebomb(fuse) {
-  var timebomb;
+  let timebomb;
 
   return {
     arm() {
@@ -491,9 +444,6 @@ testPoolConnectionDestroy();
 testPromiseLibrary();
 
 process.on('exit', function() {
-  if (skipTest) {
-    return;
-  }
   assert.equal(doneCalled, true, 'done not called');
   assert.equal(exceptionCaught, true, 'exception not caught');
   assert.equal(doneEventsConnect, true, 'wrong number of connection events');

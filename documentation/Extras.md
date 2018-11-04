@@ -23,7 +23,7 @@ You can use named placeholders for parameters by setting `namedPlaceholders` con
 ## Receiving rows as array of columns instead of hash with column name as key:
 
 ```js
-var options = {sql: 'select A,B,C,D from foo', rowsAsArray: true};
+const options = {sql: 'select A,B,C,D from foo', rowsAsArray: true};
 connection.query(options, function (err, results) {
   /* results will be an array of arrays like this now:
   [[
@@ -44,7 +44,7 @@ In addition to sending local fs files you can send any stream using `infileStrea
 // local file
 connection.query('LOAD DATA LOCAL INFILE "/tmp/data.csv" INTO TABLE test FIELDS TERMINATED BY ? (id, title)', onInserted1);
 // local stream
-var sql = 'LOAD DATA LOCAL INFILE "mystream" INTO TABLE test FIELDS TERMINATED BY ? (id, title)';
+const sql = 'LOAD DATA LOCAL INFILE "mystream" INTO TABLE test FIELDS TERMINATED BY ? (id, title)';
 connection.query({
   sql: sql,
   infileStreamFactory: function (path) { return getStream(); }
@@ -54,10 +54,10 @@ connection.query({
 ## Connecting using custom stream:
 
 ```js
-var net = require('net');
-var mysql = require('mysql2');
-var shape = require('shaper');
-var connection = mysql.createConnection({
+const net = require('net');
+const mysql = require('mysql2');
+const shape = require('shaper');
+const connection = mysql.createConnection({
   user: 'test',
   database: 'test',
   stream: net.connect('/tmp/mysql.sock').pipe(shape(10)) // emulate 10 bytes/sec link
@@ -67,14 +67,14 @@ connection.query('SELECT 1+1 as test1', console.log);
 `stream` also can be a function. In that case function result has to be duplex stream, and it is used for connection transport. This is required if you connect pool using custom transport as new pooled connection needs new stream. [Example](https://github.com/sidorares/node-mysql2/issues/80) connecting over socks5 proxy:
 
 ```js
-var mysql = require('mysql2');
-var SocksConnection = require('socksjs');
-var pool = mysql.createPool({
+const mysql = require('mysql2');
+const SocksConnection = require('socksjs');
+const pool = mysql.createPool({
   database: 'test',
   user: 'foo',
   password: 'bar',
   stream: function (cb) {
-    var newStream = new SocksConnection({host: 'remote.host', port: 3306}, {host: 'localhost', port: 1080});
+    const newStream = new SocksConnection({host: 'remote.host', port: 3306}, {host: 'localhost', port: 1080});
     cb(null, newStream);
   }
 });

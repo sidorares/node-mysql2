@@ -1,4 +1,4 @@
-
+'use strict';
 
 module.exports = function(connection) {
   return [
@@ -43,7 +43,7 @@ module.exports = function(connection) {
     {
       type: 'point',
       insertRaw: (function() {
-        var buffer = Buffer.alloc(21);
+        const buffer = Buffer.alloc(21);
         buffer.writeUInt8(1, 0);
         buffer.writeUInt32LE(1, 1);
         buffer.writeDoubleLE(-5.6, 5);
@@ -62,7 +62,8 @@ module.exports = function(connection) {
     },
     {
       type: 'polygon',
-      insertRaw: "GeomFromText('POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))')",
+      insertRaw:
+        "GeomFromText('POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))')",
       expect: [
         [
           { x: 0, y: 0 },
@@ -95,7 +96,8 @@ module.exports = function(connection) {
     },
     {
       type: 'multilinestring',
-      insertRaw: "GeomFromText('MULTILINESTRING((10 10, 20 20), (15 15, 30 15))')",
+      insertRaw:
+        "GeomFromText('MULTILINESTRING((10 10, 20 20), (15 15, 30 15))')",
       expect: [
         [{ x: 10, y: 10 }, { x: 20, y: 20 }],
         [{ x: 15, y: 15 }, { x: 30, y: 15 }]
@@ -104,7 +106,8 @@ module.exports = function(connection) {
     },
     {
       type: 'multipolygon',
-      insertRaw: "GeomFromText('MULTIPOLYGON(((0 0,10 0,10 10,0 10,0 0)),((5 5,7 5,7 7,5 7, 5 5)))')",
+      insertRaw:
+        "GeomFromText('MULTIPOLYGON(((0 0,10 0,10 10,0 10,0 0)),((5 5,7 5,7 7,5 7, 5 5)))')",
       expect: [
         [
           [
@@ -129,7 +132,8 @@ module.exports = function(connection) {
     },
     {
       type: 'geometrycollection',
-      insertRaw: "GeomFromText('GEOMETRYCOLLECTION(POINT(11 10), POINT(31 30), LINESTRING(15 15, 20 20))')",
+      insertRaw:
+        "GeomFromText('GEOMETRYCOLLECTION(POINT(11 10), POINT(31 30), LINESTRING(15 15, 20 20))')",
       expect: [
         { x: 11, y: 10 },
         { x: 31, y: 30 },

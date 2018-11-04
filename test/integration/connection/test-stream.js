@@ -1,10 +1,12 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows;
-var rows1 = [];
-var rows2 = [];
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let rows;
+const rows1 = [];
+const rows2 = [];
 
 connection.query(
   [
@@ -43,14 +45,14 @@ connection.execute(
     }
   }
 );
-connection.execute('SELECT * FROM announcements', function(err, _rows, cols) {
+connection.execute('SELECT * FROM announcements', function(err, _rows) {
   rows = _rows;
-  var s1 = connection.query('SELECT * FROM announcements').stream();
+  const s1 = connection.query('SELECT * FROM announcements').stream();
   s1.on('data', function(row) {
     rows1.push(row);
   });
   s1.on('end', function() {
-    var s2 = connection.execute('SELECT * FROM announcements').stream();
+    const s2 = connection.execute('SELECT * FROM announcements').stream();
     s2.on('data', function(row) {
       rows2.push(row);
     });

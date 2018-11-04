@@ -1,8 +1,10 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var result1, resul2;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let result1, result2;
 
 connection.query('SET NAMES koi8r', function(err, _ok) {
   assert.ifError(err);

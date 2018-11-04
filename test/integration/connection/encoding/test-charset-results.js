@@ -1,16 +1,18 @@
-var mysql = require('../../../../index.js');
-var common = require('../../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var payload = 'привет, мир';
+const mysql = require('../../../../index.js');
+const common = require('../../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+const payload = 'привет, мир';
 
 function tryEncoding(encoding, cb) {
   connection.query('set character_set_results = ?', [encoding], function(err) {
     assert.ifError(err);
     connection.query('SELECT ?', [payload], function(err, rows, fields) {
       assert.ifError(err);
-      var iconvEncoding = encoding;
+      let iconvEncoding = encoding;
       if (encoding == 'utf8mb4') {
         iconvEncoding = 'utf8';
       }
@@ -32,7 +34,7 @@ function tryEncodingExecute(encoding, cb) {
     assert.ifError(err);
     connection.execute('SELECT ? as n', [payload], function(err, rows, fields) {
       assert.ifError(err);
-      var iconvEncoding = encoding;
+      let iconvEncoding = encoding;
       if (encoding == 'utf8mb4') {
         iconvEncoding = 'utf8';
       }

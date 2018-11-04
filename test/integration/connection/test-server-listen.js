@@ -1,15 +1,14 @@
-var assert = require('assert');
-var mysql = require('../../../index.js');
+'use strict';
+
+const assert = require('assert');
+const mysql = require('../../../index.js');
 
 // Verifies that the Server.listen can be called with any combination of
 // pararameters valid for net.Server.listen.
 
-var server = mysql.createServer();
-var serverListenCallbackFired = false;
-
 function testListen(argsDescription, listenCaller) {
-  var server = mysql.createServer();
-  var listenCallbackFired = false;
+  const server = mysql.createServer();
+  let listenCallbackFired = false;
 
   listenCaller(server, function() {
     listenCallbackFired = true;

@@ -1,26 +1,20 @@
-var config = require('../../common.js').config;
+'use strict';
 
-var skipTest = false;
-if (typeof Promise == 'undefined') {
-  console.log('no Promise support, skipping test');
-  skipTest = true;
-  process.exit(0);
-}
+const config = require('../../common.js').config;
 
-var assert = require('assert');
-var createPool = require('../../../promise.js').createPool;
-var PoolConnection = require('../../../lib/pool_connection.js');
+const assert = require('assert');
+const createPool = require('../../../promise.js').createPool;
+const PoolConnection = require('../../../lib/pool_connection.js');
 
 // stub
-var release = PoolConnection.prototype.release;
-var releaseCalls = 0;
+const release = PoolConnection.prototype.release;
+let releaseCalls = 0;
 PoolConnection.prototype.release = function() {
   releaseCalls++;
 };
 
 function testPoolPromiseExecuteLeak() {
-  var pool = createPool(config);
-  var conn = null;
+  const pool = createPool(config);
   pool
     .execute('select 1+2 as ttt')
     .then(function(result) {
@@ -36,8 +30,5 @@ testPoolPromiseExecuteLeak();
 
 process.on('exit', function() {
   PoolConnection.prototype.release = release;
-  if (skipTest) {
-    return;
-  }
   assert.equal(releaseCalls, 1, 'PoolConnection.release was not called');
 });
