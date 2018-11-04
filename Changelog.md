@@ -1,3 +1,13 @@
+1.6.2 (08/10/2018)
+ - Fix "Socket ended by other party" error            #447, #867, #868
+ - replace var with let/const                         #849
+ - Fix "close emitted before end" error               #711, #859
+ - fix docs                                           #856
+ - migrate to es6 classes where appropriate           #848
+
+1.6.1 (02/08/2018)
+ - Fix missing Promise option in checks for Pool      #826
+
 1.6.0 (01/08/2018)
  - Fixed `PromiseConnection.ping()` ignoring errors   #813
  - Added a uri parameter to the connection config     #815
