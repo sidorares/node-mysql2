@@ -3,15 +3,15 @@
 const net = require('net');
 let count = 0;
 const byte = Buffer.from([0x33]);
-function pong() {
+function pong(connection) {
   count++;
-  this.write(byte);
+  connection.write(byte);
 }
 
 const c = net.connect(3334);
 c.setNoDelay(true);
-c.ondata = pong;
-pong.apply(c);
+c.ondata = () => pong(c);
+pong(c);
 
 setInterval(() => {
   console.log(count);

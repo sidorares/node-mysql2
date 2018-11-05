@@ -145,6 +145,7 @@ function testEventsConnect() {
         );
       }
 
+      /* eslint-disable no-invalid-this */
       conn
         .once('error', function() {
           assert.equal(this, conn);
@@ -168,6 +169,7 @@ function testEventsConnect() {
 
           doneEventsConnect = events === 5;
         });
+      /* eslint-enable no-invalid-this */
 
       conn.connection.emit('error', new Error());
       conn.connection.emit('drain');
@@ -295,6 +297,7 @@ function testEventsPool() {
     );
   }
 
+  /* eslint-disable no-invalid-this */
   pool
     .once('acquire', function() {
       assert.equal(this, pool);
@@ -314,6 +317,7 @@ function testEventsPool() {
 
       doneEventsPool = events === 4;
     });
+  /* eslint-enable no-invalid-this */
 
   pool.pool.emit('acquire');
   pool.pool.emit('connection');

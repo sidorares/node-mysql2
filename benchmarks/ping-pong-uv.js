@@ -9,9 +9,9 @@ function pong(sock) {
   writeReq.oncomplete = noop;
 }
 
-function ping() {
+function ping(conn) {
   count++;
-  pong(this);
+  pong(conn);
 }
 
 const port = 3334;
@@ -25,7 +25,7 @@ req.oncomplete = function() {
   console.log('connected');
   pong(client);
 };
-client.onread = ping;
+client.onread = () => ping(client);
 client.readStart();
 
 setInterval(() => {

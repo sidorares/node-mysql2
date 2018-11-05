@@ -25,15 +25,23 @@ module.exports.SqlString = require('sqlstring');
 module.exports.config = config;
 
 module.exports.waitDatabaseReady = function(callback) {
+  const start = Date.now();
   const tryConnect = function() {
     const conn = module.exports.createConnection();
-    conn.on('error', err => {
-      console.log(err);
+    conn.once('error', err => {
+      if (err.code !== 'PROTOCOL_CONNECTION_LOST' && err.code !== 'ETIMEDOUT') {
+        console.log('Unexpected error waiting for connection', err);
+      }
+      try {
+        conn.close();
+      } catch (err) {
+        // ignore
+      }
       console.log('not ready');
       setTimeout(tryConnect, 1000);
     });
-    conn.on('connect', () => {
-      console.log('ready!');
+    conn.once('connect', () => {
+      console.log(`ready after ${Date.now() - start}ms!`);
       conn.close();
       callback();
     });
