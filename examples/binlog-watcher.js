@@ -13,7 +13,7 @@ const binlogStream = mysql.createBinlogStream({
 });
 
 binlogStream.pipe(
-  through2.obj(function(obj, enc, next) {
+  through2.obj((obj, enc, next) => {
     console.log(obj);
     next();
   })

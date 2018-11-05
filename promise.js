@@ -305,14 +305,13 @@ class PromisePool extends EventEmitter {
   }
 
   getConnection() {
-    const self = this;
     const corePool = this.pool;
     return new this.Promise((resolve, reject) => {
       corePool.getConnection((err, coreConnection) => {
         if (err) {
           reject(err);
         } else {
-          resolve(new PromisePoolConnection(coreConnection, self.Promise));
+          resolve(new PromisePoolConnection(coreConnection, this.Promise));
         }
       });
     });
