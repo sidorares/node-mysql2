@@ -119,14 +119,14 @@ function do_test(testIndex) {
   const expectation = entry[1];
   // prepared statements do not support multiple statements itself, we need to wrap quey in a stored procedure
   const sp = procedurise(sql);
-  mysql.query(sp, function(err) {
+  mysql.query(sp, err => {
     if (err) {
       throw err;
     }
 
     sql = 'CALL _as_sp_call()'; // this call is allowed with prepared statements, and result contain multiple statements
     let _numResults = 0;
-    const textCmd = mysql.query(sql, function(err, _rows, _columns) {
+    const textCmd = mysql.query(sql, (err, _rows, _columns) => {
       if (err) {
         throw err;
       }
@@ -190,7 +190,7 @@ function do_test(testIndex) {
       q.on('end', next);
     });
 
-    textCmd.on('fields', function() {
+    textCmd.on('fields', () => {
       _numResults++;
     });
   });

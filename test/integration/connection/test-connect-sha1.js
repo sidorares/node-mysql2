@@ -22,10 +22,10 @@ let _1_3 = false;
 let queryCalls = 0;
 
 const portfinder = require('portfinder');
-portfinder.getPort(function(err, port) {
+portfinder.getPort((err, port) => {
   const server = mysql.createServer();
   server.listen(port);
-  server.on('connection', function(conn) {
+  server.on('connection', conn => {
     conn.serverHandshake({
       protocolVersion: 10,
       serverVersion: 'node.js rocks',
@@ -35,7 +35,7 @@ portfinder.getPort(function(err, port) {
       capabilityFlags: 0xffffff,
       authCallback: authenticate
     });
-    conn.on('query', function(sql) {
+    conn.on('query', sql => {
       assert.equal(sql, 'select 1+1');
       queryCalls++;
       conn.close();
@@ -49,27 +49,27 @@ portfinder.getPort(function(err, port) {
     passwordSha1: Buffer.from('8bb6118f8fd6935ad0876a3be34a717d32708ffd', 'hex')
   });
 
-  connection.on('error', function(err) {
+  connection.on('error', err => {
     assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
   });
 
-  connection.query('select 1+1', function(err) {
+  connection.query('select 1+1', err => {
     assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     server._server.close();
   });
 
-  connection.query('select 1+2', function(err) {
+  connection.query('select 1+2', err => {
     assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     _1_2 = true;
   });
 
-  connection.query('select 1+3', function(err) {
+  connection.query('select 1+3', err => {
     assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     _1_3 = true;
   });
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(queryCalls, 1);
   assert.equal(_1_2, true);
   assert.equal(_1_3, true);

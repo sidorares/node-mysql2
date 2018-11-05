@@ -5,7 +5,7 @@ const connection = common.createConnection();
 const assert = require('assert');
 
 let rows;
-connection.query('SELECT ""', function(err, _rows) {
+connection.query('SELECT ""', (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -14,6 +14,6 @@ connection.query('SELECT ""', function(err, _rows) {
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, [{ '': '' }]);
 });

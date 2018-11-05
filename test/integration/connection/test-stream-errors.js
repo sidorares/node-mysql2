@@ -13,21 +13,21 @@ const query = 'SELECT 1';
 const server = common.createServer(
   () => {
     clientConnection = common.createConnection({ port: server._port });
-    clientConnection.query(query, function(err) {
+    clientConnection.query(query, err => {
       receivedError1 = err;
     });
-    clientConnection.query('second query, should not be executed', function() {
+    clientConnection.query('second query, should not be executed', () => {
       receivedError2 = err;
       clientConnection.query(
         'trying to enqueue command to a connection which is already in error state',
-        function(err1) {
+        err1 => {
           receivedError3 = err1;
         }
       );
     });
   },
   conn => {
-    conn.on('query', function() {
+    conn.on('query', () => {
       conn.writeColumns([
         {
           catalog: 'def',
@@ -51,7 +51,7 @@ const server = common.createServer(
   }
 );
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(receivedError1.fatal, true);
   assert.equal(receivedError1.code, err.code);
   assert.equal(receivedError2.fatal, true);

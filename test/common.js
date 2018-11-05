@@ -27,12 +27,12 @@ module.exports.config = config;
 module.exports.waitDatabaseReady = function(callback) {
   const tryConnect = function() {
     const conn = module.exports.createConnection();
-    conn.on('error', function(err) {
+    conn.on('error', err => {
       console.log(err);
       console.log('not ready');
       setTimeout(tryConnect, 1000);
     });
-    conn.on('connect', function() {
+    conn.on('connect', () => {
       console.log('ready!');
       conn.close();
       callback();
@@ -70,17 +70,17 @@ module.exports.createConnection = function(args) {
     // c.on('connect', function() {
     //
     // });
-    setTimeout(function() {
+    setTimeout(() => {
       console.log('altering client...');
       c.oldQuery = c.query;
       c.query = function(sql, callback) {
         const rows = [];
         const q = c.oldQuery(sql);
-        q.on('result', function(res) {
-          res.on('row', function(row) {
+        q.on('result', res => {
+          res.on('row', row => {
             rows.push(row);
           });
-          res.on('end', function() {
+          res.on('end', () => {
             callback(null, rows);
           });
         });
@@ -183,8 +183,8 @@ const ClientFlags = require('../lib/constants/client.js');
 const portfinder = require('portfinder');
 module.exports.createServer = function(onListening, handler) {
   const server = require('../index.js').createServer();
-  server.on('connection', function(conn) {
-    conn.on('error', function() {
+  server.on('connection', conn => {
+    conn.on('error', () => {
       // we are here when client drops connection
     });
     let flags = 0xffffff;
@@ -202,7 +202,7 @@ module.exports.createServer = function(onListening, handler) {
       handler(conn);
     }
   });
-  portfinder.getPort(function(err, port) {
+  portfinder.getPort((err, port) => {
     server.listen(port, onListening);
   });
   return server;

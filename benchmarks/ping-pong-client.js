@@ -13,7 +13,7 @@ c.setNoDelay(true);
 c.ondata = pong;
 pong.apply(c);
 
-setInterval(function() {
+setInterval(() => {
   console.log(count);
   count = 0;
 }, 1000);

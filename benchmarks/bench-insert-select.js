@@ -18,7 +18,7 @@ connection.query(
 function benchmarkInsert(numLeft, callback) {
   connection.query(
     'INSERT INTO ' + table + ' SET title="' + text + '"',
-    function(err) {
+    err => {
       if (err) throw err;
       if (numLeft > 1) benchmarkInsert(numLeft - 1, callback);
       else callback();
@@ -29,7 +29,7 @@ function benchmarkInsert(numLeft, callback) {
 function benchmarkInserts(n, cb) {
   const numInsert = 10000;
   const start = process.hrtime();
-  benchmarkInsert(numInsert, function() {
+  benchmarkInsert(numInsert, () => {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
     console.log((numInsert * 1e9) / diff + ' inserts/sec');
@@ -39,9 +39,7 @@ function benchmarkInserts(n, cb) {
 }
 
 function benchmarkSelect(numLeft, numSelect, callback) {
-  connection.query('select * from ' + table + ' limit ' + numSelect, function(
-    err
-  ) {
+  connection.query('select * from ' + table + ' limit ' + numSelect, err => {
     if (err) throw err;
     if (numLeft > 1) benchmarkSelect(numLeft - 1, numSelect, callback);
     else callback();
@@ -51,7 +49,7 @@ function benchmarkSelect(numLeft, numSelect, callback) {
 function benchmarkSelects(n, size, cb) {
   const numSelects = 100;
   const start = process.hrtime();
-  benchmarkSelect(numSelects, size, function() {
+  benchmarkSelect(numSelects, size, () => {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
     console.log(
@@ -69,10 +67,10 @@ function benchmarkSelects(n, size, cb) {
 
 module.exports = function(done) {
   const testStart = process.hrtime();
-  benchmarkInserts(5, function() {
-    benchmarkSelects(5, 10000, function() {
-      benchmarkSelects(10, 1000, function() {
-        benchmarkSelects(2, 50000, function() {
+  benchmarkInserts(5, () => {
+    benchmarkSelects(5, 10000, () => {
+      benchmarkSelects(10, 1000, () => {
+        benchmarkSelects(2, 50000, () => {
           const testEnd = process.hrtime();
           console.log('total time: ', common.hrdiff(testStart, testEnd) / 1e9);
           connection.end();

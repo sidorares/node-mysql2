@@ -9,12 +9,12 @@ const assert = require('assert');
 let errorCount = 0;
 let error = null;
 
-connection.on('error', function(err) {
+connection.on('error', err => {
   errorCount++;
   error = err;
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(errorCount, 1);
   assert.equal(error.code, 'ETIMEDOUT');
 });

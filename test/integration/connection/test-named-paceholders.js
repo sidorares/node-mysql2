@@ -30,7 +30,7 @@ connection.config.namedPlaceholders = true;
 const cmd = connection.execute(
   'SELECT * from test_table where num1 < :numParam and num2 > :lParam',
   { lParam: 100, numParam: 2 },
-  function(err, rows) {
+  (err, rows) => {
     if (err) {
       throw err;
     }
@@ -40,7 +40,7 @@ const cmd = connection.execute(
 assert.equal(cmd.sql, 'SELECT * from test_table where num1 < ? and num2 > ?');
 assert.deepEqual(cmd.values, [2, 100]);
 
-connection.execute('SELECT :a + :a as sum', { a: 2 }, function(err, rows) {
+connection.execute('SELECT :a + :a as sum', { a: 2 }, (err, rows) => {
   if (err) {
     throw err;
   }
@@ -50,7 +50,7 @@ connection.execute('SELECT :a + :a as sum', { a: 2 }, function(err, rows) {
 const qCmd = connection.query(
   'SELECT * from test_table where num1 < :numParam and num2 > :lParam',
   { lParam: 100, numParam: 2 },
-  function(err, rows) {
+  (err, rows) => {
     if (err) {
       throw err;
     }
@@ -63,7 +63,7 @@ assert.equal(
 );
 assert.deepEqual(qCmd.values, [2, 100]);
 
-connection.query('SELECT :a + :a as sum', { a: 2 }, function(err, rows) {
+connection.query('SELECT :a + :a as sum', { a: 2 }, (err, rows) => {
   if (err) {
     throw err;
   }
@@ -79,7 +79,7 @@ assert.equal(sql, 'SELECT * from test_table where num1 < 2 and num2 > 100');
 
 const pool = common.createPool();
 pool.config.connectionConfig.namedPlaceholders = true;
-pool.query('SELECT :a + :a as sum', { a: 2 }, function(err, rows) {
+pool.query('SELECT :a + :a as sum', { a: 2 }, (err, rows) => {
   pool.end();
   if (err) {
     throw err;

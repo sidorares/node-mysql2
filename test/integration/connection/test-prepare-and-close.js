@@ -7,7 +7,7 @@ const assert = require('assert');
 const max = 500;
 const start = process.hrtime();
 function prepare(i) {
-  connection.prepare('select 1+' + i, function(err, stmt) {
+  connection.prepare('select 1+' + i, (err, stmt) => {
     assert.ifError(err);
     stmt.close();
     if (!err) {
@@ -18,7 +18,7 @@ function prepare(i) {
         connection.end();
         return;
       }
-      setTimeout(function() {
+      setTimeout(() => {
         prepare(i + 1);
       }, 2);
       return;
@@ -26,7 +26,7 @@ function prepare(i) {
     assert(0, 'Error in prepare!');
   });
 }
-connection.query('SET GLOBAL max_prepared_stmt_count=10', function(err) {
+connection.query('SET GLOBAL max_prepared_stmt_count=10', err => {
   assert.ifError(err);
   prepare(1);
 });

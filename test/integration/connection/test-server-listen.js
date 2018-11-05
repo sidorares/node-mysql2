@@ -10,10 +10,10 @@ function testListen(argsDescription, listenCaller) {
   const server = mysql.createServer();
   let listenCallbackFired = false;
 
-  listenCaller(server, function() {
+  listenCaller(server, () => {
     listenCallbackFired = true;
   });
-  setTimeout(function() {
+  setTimeout(() => {
     assert.ok(
       listenCallbackFired,
       'Callback for call with ' + argsDescription + ' did not fire'
@@ -22,14 +22,14 @@ function testListen(argsDescription, listenCaller) {
   }, 100);
 }
 
-testListen('port', function(server, callback) {
+testListen('port', (server, callback) => {
   server.listen(0, callback);
 });
 
-testListen('port, host', function(server, callback) {
+testListen('port, host', (server, callback) => {
   server.listen(0, '127.0.0.1', callback);
 });
 
-testListen('port, host, backlog', function(server, callback) {
+testListen('port, host, backlog', (server, callback) => {
   server.listen(0, '127.0.0.1', 50, callback);
 });

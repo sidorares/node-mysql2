@@ -12,7 +12,7 @@ const path = require('path');
 const prevResults = {};
 try {
   const r = require('./results.json');
-  r.forEach(function(rr) {
+  r.forEach(rr => {
     prevResults[rr.path] = rr;
   });
 } catch (e) {
@@ -37,7 +37,7 @@ function stats(times) {
 }
 
 function runFolder(name, done) {
-  fs.readdir(name, function(err, list) {
+  fs.readdir(name, (err, list) => {
     if (err) return done(err);
     // eslint-disable-next-line no-use-before-define
     runFileList(name, list, done);
@@ -97,8 +97,8 @@ function benchmarkModule(m, modulePath, done) {
       return done(null, result);
     }
     const start = process.hrtime();
-    setImmediate(function() {
-      m(function() {
+    setImmediate(() => {
+      m(() => {
         const end = process.hrtime(start);
         if (w <= 0) results.push(end[0] * 1e9 + end[1]);
         repeat(w - 1, n - 1);
@@ -123,7 +123,7 @@ function runFileList(base, list, done) {
       return done(null, results);
     }
     const fname = base + '/' + list[index];
-    fs.stat(fname, function(err, stat) {
+    fs.stat(fname, (err, stat) => {
       if (err) return done(err);
       if (stat.isDirectory()) return runFolder(fname, runOne);
       else if (fname.slice(-3) == '.js') {
@@ -137,7 +137,7 @@ function runFileList(base, list, done) {
 }
 
 //const name = process.argv[2] || __dirname + '/unit';
-runFolder(__dirname + '/unit', function(err, results) {
+runFolder(__dirname + '/unit', (err, results) => {
   //console.log(results);
   fs.writeFileSync(__dirname + '/results.json', JSON.stringify(results));
 });

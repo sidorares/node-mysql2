@@ -14,7 +14,7 @@ let actualError = null;
 function executeErrorMessageTest() {
   // tableName does not have closing "`", we do this to have tableName in error string
   // it is sent back in original encoding (koi8r), we are testing that it's decoded correctly
-  connection.query('SELECT * FROM `' + tableName, function(err) {
+  connection.query('SELECT * FROM `' + tableName, err => {
     actualError = err.message;
     connection.end();
   });
@@ -22,7 +22,7 @@ function executeErrorMessageTest() {
 
 function executeTest(err) {
   assert.ifError(err);
-  connection.query('SELECT * FROM `' + tableName + '`', function(err, rows) {
+  connection.query('SELECT * FROM `' + tableName + '`', (err, rows) => {
     assert.ifError(err);
     actualRows = rows;
     executeErrorMessageTest();
@@ -39,7 +39,7 @@ connection.query(
     ' PRIMARY KEY (`' + testFields[0] + '`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
   ].join(' '),
-  function(err) {
+  err => {
     assert.ifError(err);
     connection.query(
       [
@@ -72,8 +72,8 @@ connection.query(
 const expectedError =
   "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`МояТаблица' at line 1";
 
-process.on('exit', function() {
-  testRows.map(function(tRow, index) {
+process.on('exit', () => {
+  testRows.map((tRow, index) => {
     const cols = testFields;
     const aRow = actualRows[index];
     assert.equal(aRow[cols[0]], tRow[0]);

@@ -17,9 +17,7 @@ function reset() {
 
 function execute(str, verify) {
   reset();
-  const buffers = str.split('|').map(function(sb) {
-    return sb.split(',').map(Number);
-  });
+  const buffers = str.split('|').map(sb => sb.split(',').map(Number));
   for (let i = 0; i < buffers.length; ++i) {
     pp.execute(Buffer.from(buffers[i]));
   }
@@ -33,7 +31,7 @@ function p123() {
 }
 
 function p120_121() {
-  packets.forEach(function(p) {
+  packets.forEach(p => {
     p.dump;
   });
   assert(packets.length === 2);
@@ -99,10 +97,10 @@ p.writeHeader(42);
 
 function testBigPackets(chunks, cb) {
   const packets = [];
-  const pp = new PacketParser(function(p) {
+  const pp = new PacketParser(p => {
     packets.push(p);
   });
-  chunks.forEach(function(ch) {
+  chunks.forEach(ch => {
     pp.execute(ch);
   });
   cb(packets);

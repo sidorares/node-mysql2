@@ -38,9 +38,9 @@ connection.changeUser(
     user: 'changeuser1',
     password: 'changeuser1pass'
   },
-  function(err) {
+  err => {
     assert.ifError(err);
-    connection.query('select current_user()', function(err, rows) {
+    connection.query('select current_user()', (err, rows) => {
       assert.ifError(err);
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
 
@@ -49,10 +49,10 @@ connection.changeUser(
           user: 'changeuser2',
           password: 'changeuser2pass'
         },
-        function(err) {
+        err => {
           assert.ifError(err);
 
-          connection.query('select current_user()', function(err, rows) {
+          connection.query('select current_user()', (err, rows) => {
             assert.ifError(err);
             assert.deepEqual(
               onlyUsername(rows[0]['current_user()']),
@@ -67,8 +67,8 @@ connection.changeUser(
                   'hex'
                 ) // sha1(changeuser1pass)
               },
-              function() {
-                connection.query('select current_user()', function(err, rows) {
+              () => {
+                connection.query('select current_user()', (err, rows) => {
                   assert.ifError(err);
                   assert.deepEqual(
                     onlyUsername(rows[0]['current_user()']),

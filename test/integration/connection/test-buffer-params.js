@@ -24,14 +24,14 @@ const buf = Buffer.from([
   255,
   255
 ]);
-connection.execute('SELECT HEX(?) as buf', [buf], function(err, _rows) {
+connection.execute('SELECT HEX(?) as buf', [buf], (err, _rows) => {
   if (err) {
     throw err;
   }
   rows = _rows;
 });
 
-connection.query('SELECT HEX(?) as buf', [buf], function(err, _rows) {
+connection.query('SELECT HEX(?) as buf', [buf], (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -39,7 +39,7 @@ connection.query('SELECT HEX(?) as buf', [buf], function(err, _rows) {
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, [{ buf: buf.toString('hex').toUpperCase() }]);
   assert.deepEqual(rows1, [{ buf: buf.toString('hex').toUpperCase() }]);
 });

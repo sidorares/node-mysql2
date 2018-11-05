@@ -7,7 +7,7 @@ const assert = require('assert');
 const pileOfPoo = '💩';
 
 const connection = common.createConnection({ charset: 'UTF8_GENERAL_CI' });
-connection.query('select "💩"', function(err, rows, fields) {
+connection.query('select "💩"', (err, rows, fields) => {
   assert.ifError(err);
   assert.equal(fields[0].name, pileOfPoo);
   assert.equal(rows[0][fields[0].name], pileOfPoo);
@@ -15,7 +15,7 @@ connection.query('select "💩"', function(err, rows, fields) {
 });
 
 const connection2 = common.createConnection({ charset: 'UTF8MB4_GENERAL_CI' });
-connection2.query('select "💩"', function(err, rows, fields) {
+connection2.query('select "💩"', (err, rows, fields) => {
   assert.ifError(err);
   assert.equal(fields[0].name, '?');
   assert.equal(rows[0]['?'], pileOfPoo);

@@ -12,10 +12,10 @@ try {
 } catch (err) {
   error = false;
 }
-q.on('end', function() {
+q.on('end', () => {
   connection.destroy();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(error, false);
 });

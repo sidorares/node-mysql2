@@ -9,7 +9,7 @@ const render = common.createTemplate();
 const port = process.env.PORT;
 
 http
-  .createServer(function(req, res) {
+  .createServer((req, res) => {
     const q = url.parse(req.url, true);
     if (q.pathname == '/render') {
       const sql = q.query.q;
@@ -24,7 +24,7 @@ http
           });
           res.end(body);
         } else {
-          conn.query(sql, function(err, rows) {
+          conn.query(sql, (err, rows) => {
             // TODO: handle error
             rowsTotal = rowsTotal.concat(rows);
             doQueries(number - 1);

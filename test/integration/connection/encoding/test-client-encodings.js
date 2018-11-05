@@ -7,9 +7,9 @@ const connection = common.createConnection({ charset: 'UTF8MB4_GENERAL_CI' });
 connection.query('drop table if exists __test_client_encodings');
 connection.query(
   'create table if not exists __test_client_encodings (name VARCHAR(200)) CHARACTER SET=utf8mb4',
-  function(err) {
+  err => {
     assert.ifError(err);
-    connection.query('delete from __test_client_encodings', function(err) {
+    connection.query('delete from __test_client_encodings', err => {
       assert.ifError(err);
       connection.end();
 
@@ -18,21 +18,21 @@ connection.query(
       });
       connection1.query(
         'insert into __test_client_encodings values("привет, мир")',
-        function(err) {
+        err => {
           assert.ifError(err);
           connection1.end();
 
           const connection2 = common.createConnection({
             charset: 'KOI8R_GENERAL_CI'
           });
-          connection2.query('select * from __test_client_encodings', function(
-            err,
-            rows
-          ) {
-            assert.ifError(err);
-            assert.equal(rows[0].name, 'привет, мир');
-            connection2.end();
-          });
+          connection2.query(
+            'select * from __test_client_encodings',
+            (err, rows) => {
+              assert.ifError(err);
+              assert.equal(rows[0].name, 'привет, мир');
+              connection2.end();
+            }
+          );
         }
       );
     });

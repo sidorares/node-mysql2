@@ -8,7 +8,7 @@ let rows;
 connection.execute(
   'SELECT ? AS firstValue, ? AS nullValue, ? AS lastValue',
   ['foo', null, 'bar'],
-  function(err, _rows) {
+  (err, _rows) => {
     if (err) {
       throw err;
     }
@@ -17,7 +17,7 @@ connection.execute(
   }
 );
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, [
     { firstValue: 'foo', nullValue: null, lastValue: 'bar' }
   ]);

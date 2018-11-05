@@ -32,7 +32,6 @@ before_test:
 
 test_script:
   - mysql --version
-  - if "%LINT%"=="1" (yarn run lint)
   - node test/run.js
   - SET MYSQL_USE_COMPRESSION=1
   - node test/run.js

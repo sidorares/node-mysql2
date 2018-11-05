@@ -9,7 +9,7 @@ if (cluster.isMaster) {
     cluster.fork();
   }
 
-  cluster.on('exit', function(worker) {
+  cluster.on('exit', worker => {
     console.log('worker ' + worker.pid + ' died');
   });
 
@@ -58,7 +58,7 @@ function getRandomNumber() {
 }
 
 function sequelizeQuery(callback) {
-  World.findById(getRandomNumber(), function(err, world) {
+  World.findById(getRandomNumber(), (err, world) => {
     callback(null, world);
   });
 }
@@ -71,7 +71,7 @@ function handlePrepared(req, res) {
     mysql2conn.execute(
       'SELECT * FROM world WHERE id = ?',
       [getRandomNumber()],
-      function(err, rows) {
+      (err, rows) => {
         results.push(rows[0]);
         if (results.length == queries) res.end(JSON.stringify(results));
       }
@@ -89,7 +89,7 @@ function handleMysqlIsh(conn, req, res) {
     mysql2conn.query(
       'SELECT * FROM world WHERE id = ?',
       [getRandomNumber()],
-      function(err, rows) {
+      (err, rows) => {
         results.push(rows[0]);
         if (results.length == queries) res.end(JSON.stringify(results));
       }
@@ -103,10 +103,10 @@ function handleMysqlIshPool(pool, req, res) {
   const queries = values.query.queries || 1;
   const results = [];
   for (let i = 0; i < queries; ++i) {
-    pool.getConnection(function() {
+    pool.getConnection(() => {
       mysql2conn.query(
         'SELECT * FROM world WHERE id = ' + getRandomNumber(),
-        function(err, rows) {
+        (err, rows) => {
           results.push(rows[0]);
           if (results.length == queries) res.end(JSON.stringify(results));
         }
@@ -122,8 +122,8 @@ function handleMaria(req, res) {
   for (let i = 0; i < queries; ++i) {
     mariaconn
       .query('SELECT * FROM world WHERE id = :id', { id: getRandomNumber() })
-      .on('result', function(dbres) {
-        dbres.on('row', function(row) {
+      .on('result', dbres => {
+        dbres.on('row', row => {
           results.push(row);
           if (results.length == queries) res.end(JSON.stringify(results));
         });
@@ -137,7 +137,7 @@ function sortFortunes(a, b) {
 
 function fortuneMysql(conn, res) {
   res.writeHead(200, { 'Content-Type': 'text/html' });
-  conn.query('select * from Fortune', function(err, fortunes) {
+  conn.query('select * from Fortune', (err, fortunes) => {
     fortunes.push({
       id: 0,
       message: 'Additional fortune added at request time.'
@@ -150,11 +150,11 @@ function fortuneMysql(conn, res) {
 function fortuneMaria(res) {
   const fortunes = [];
   res.writeHead(200, { 'Content-Type': 'text/html' });
-  mariaconn.query('SELECT * from Fortune').on('result', function(dbres) {
-    dbres.on('row', function(row) {
+  mariaconn.query('SELECT * from Fortune').on('result', dbres => {
+    dbres.on('row', row => {
       fortunes.push(row);
     });
-    dbres.on('end', function() {
+    dbres.on('end', () => {
       fortunes.push({
         id: 0,
         message: 'Additional fortune added at request time.'
@@ -166,7 +166,7 @@ function fortuneMaria(res) {
 }
 
 http
-  .createServer(function(req, res) {
+  .createServer((req, res) => {
     // JSON response object
     const hello = { message: 'Hello, world' };
 
@@ -197,7 +197,7 @@ http
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
 
-        async.parallel(queryFunctions, function(err, results) {
+        async.parallel(queryFunctions, (err, results) => {
           res.end(JSON.stringify(results));
         });
         break;
@@ -208,12 +208,12 @@ http
         function libmysqlQuery2(callback) {
           libmysql.query(
             'SELECT * FROM world WHERE id = ' + getRandomNumber(),
-            function(err, res) {
+            (err, res) => {
               if (err) {
                 throw err;
               }
 
-              res.fetchAll(function(err, rows) {
+              res.fetchAll((err, rows) => {
                 if (err) {
                   throw err;
                 }
@@ -232,7 +232,7 @@ http
         for (let i = 0; i < queries; i += 1) {
           queryFunctions[i] = libmysqlQuery2;
         }
-        async.parallel(queryFunctions, function(err, results) {
+        async.parallel(queryFunctions, (err, results) => {
           if (err) {
             res.writeHead(500);
             return res.end('MYSQL CONNECTION ERROR.');
@@ -279,12 +279,12 @@ http
         function libmysqlQuery(callback) {
           libmysql.query(
             'SELECT * FROM world WHERE id = ' + getRandomNumber(),
-            function(err, res) {
+            (err, res) => {
               if (err) {
                 throw err;
               }
 
-              res.fetchAll(function(err, rows) {
+              res.fetchAll((err, rows) => {
                 if (err) {
                   throw err;
                 }
@@ -297,7 +297,7 @@ http
                     rows[0].randomNumber +
                     ' WHERE id = ' +
                     rows[0]['id'],
-                  function(err) {
+                  err => {
                     if (err) {
                       throw err;
                     }
@@ -316,7 +316,7 @@ http
         for (let i = 0; i < queries; i += 1) {
           queryFunctions[i] = libmysqlQuery;
         }
-        async.parallel(queryFunctions, function(err, results) {
+        async.parallel(queryFunctions, (err, results) => {
           if (err) {
             res.writeHead(500);
             return res.end('MYSQL CONNECTION ERROR.');

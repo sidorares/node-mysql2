@@ -23,10 +23,10 @@ function benchmarkSelect(numLeft, callback) {
 
   let rows = 0;
   const q = connection.query('query from fake server fixture');
-  q.on('result', function() {
+  q.on('result', () => {
     rows++;
   });
-  q.on('end', function() {
+  q.on('end', () => {
     if (numLeft > 1) benchmarkSelect(numLeft - 1, callback);
     else callback(rows);
   });
@@ -35,7 +35,7 @@ function benchmarkSelect(numLeft, callback) {
 function benchmarkSelects(n, cb) {
   const numSelects = 100000;
   const start = process.hrtime();
-  benchmarkSelect(numSelects, function(rowsPerQuery) {
+  benchmarkSelect(numSelects, rowsPerQuery => {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
     console.log(
@@ -52,7 +52,7 @@ function benchmarkSelects(n, cb) {
 
 module.exports = function(done) {
   const testStart = process.hrtime();
-  benchmarkSelects(5, function() {
+  benchmarkSelects(5, () => {
     const testEnd = process.hrtime();
     console.log('total time: ', common.hrdiff(testStart, testEnd) / 1e9);
     connection.end();

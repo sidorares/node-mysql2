@@ -13,7 +13,7 @@ const table = 'type_casting';
 const schema = [];
 const inserts = [];
 
-tests.forEach(function(test, index) {
+tests.forEach((test, index) => {
   const escaped = test.insertRaw || connection.escape(test.insert);
 
   test.columnName = test.type + '_' + index;
@@ -35,20 +35,21 @@ connection.query(createTable);
 connection.query('INSERT INTO ' + table + ' SET' + inserts.join(',\n'));
 
 let row;
-connection.execute('SELECT * FROM ' + table + ' WHERE id = ?;', [1], function(
-  err,
-  rows
-) {
-  if (err) {
-    throw err;
+connection.execute(
+  'SELECT * FROM ' + table + ' WHERE id = ?;',
+  [1],
+  (err, rows) => {
+    if (err) {
+      throw err;
+    }
+
+    row = rows[0];
+    connection.end();
   }
+);
 
-  row = rows[0];
-  connection.end();
-});
-
-process.on('exit', function() {
-  tests.forEach(function(test) {
+process.on('exit', () => {
+  tests.forEach(test => {
     let expected = test.expect || test.insert;
     let got = row[test.columnName];
     let message;

@@ -28,7 +28,7 @@ req.oncomplete = function() {
 client.onread = ping;
 client.readStart();
 
-setInterval(function() {
+setInterval(() => {
   console.log(count);
   count = 0;
 }, 1000);

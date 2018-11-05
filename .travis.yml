@@ -31,5 +31,4 @@ script:
   - docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 33306:3306 mysql:5.7
   - MYSQL_PORT=33306 node tools/wait-up.js
   - yarn --version
-  - if [ "$LINT" = "1" ]; then yarn run lint; fi
   - MYSQL_PORT=33306 yarn run test:raw

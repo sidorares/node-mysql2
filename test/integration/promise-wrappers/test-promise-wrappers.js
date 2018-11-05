@@ -23,22 +23,22 @@ let doneChangeUser = false;
 function testBasic() {
   let connResolved;
   createConnection(config)
-    .then(function(conn) {
+    .then(conn => {
       connResolved = conn;
       return conn.query('select 1+2 as ttt');
     })
-    .then(function(result1) {
+    .then(result1 => {
       assert.equal(result1[0][0].ttt, 3);
       return connResolved.query('select 2+2 as qqq');
     })
-    .then(function(result2) {
+    .then(result2 => {
       assert.equal(result2[0][0].qqq, 4);
       return connResolved.end();
     })
-    .then(function() {
+    .then(() => {
       doneCalled = true;
     })
-    .catch(function(err) {
+    .catch(err => {
       throw err;
     });
 }
@@ -48,19 +48,19 @@ function testErrors() {
   const connPromise = createConnection(config);
 
   connPromise
-    .then(function(conn) {
+    .then(conn => {
       connResolved = conn;
       return conn.query('select 1+2 as ttt');
     })
-    .then(function(result1) {
+    .then(result1 => {
       assert.equal(result1[0][0].ttt, 3);
       return connResolved.query('bad sql');
     })
-    .then(function(result2) {
+    .then(result2 => {
       assert.equal(result2[0][0].ttt, 3);
       return connResolved.query('select 2+2 as qqq');
     })
-    .catch(function() {
+    .catch(() => {
       exceptionCaught = true;
       if (connResolved) {
         connResolved.end();
@@ -73,25 +73,25 @@ function testErrors() {
 function testObjParams() {
   let connResolved;
   createConnection(config)
-    .then(function(conn) {
+    .then(conn => {
       connResolved = conn;
       return conn.query({
         sql: 'select ?-? as ttt',
         values: [5, 2]
       });
     })
-    .then(function(result1) {
+    .then(result1 => {
       assert.equal(result1[0][0].ttt, 3);
       return connResolved.execute({
         sql: 'select ?-? as ttt',
         values: [8, 5]
       });
     })
-    .then(function(result2) {
+    .then(result2 => {
       assert.equal(result2[0][0].ttt, 3);
       return connResolved.end();
     })
-    .catch(function(err) {
+    .catch(err => {
       console.log(err);
     });
 }
@@ -99,19 +99,17 @@ function testObjParams() {
 function testPrepared() {
   let connResolved;
   createConnection(config)
-    .then(function(conn) {
+    .then(conn => {
       connResolved = conn;
       return conn.prepare('select ?-? as ttt, ? as uuu');
     })
-    .then(function(statement) {
-      return statement.execute([11, 3, 'test']);
-    })
-    .then(function(result) {
+    .then(statement => statement.execute([11, 3, 'test']))
+    .then(result => {
       assert.equal(result[0][0].ttt, 8);
       assert.equal(result[0][0].uuu, 'test');
       return connResolved.end();
     })
-    .catch(function(err) {
+    .catch(err => {
       console.log(err);
       if (connResolved) {
         connResolved.end();
@@ -128,7 +126,7 @@ function testPrepared() {
 function testEventsConnect() {
   let connResolved;
   createConnection(config)
-    .then(function(conn) {
+    .then(conn => {
       connResolved = conn;
       let events = 0;
 
@@ -188,7 +186,7 @@ function testEventsConnect() {
 
       conn.end();
     })
-    .catch(function(err) {
+    .catch(err => {
       console.log(err);
       if (connResolved) {
         connResolved.end();
@@ -204,18 +202,18 @@ function testBasicPool() {
   const pool = createPool(config);
   pool
     .query('select 1+2 as ttt')
-    .then(function(result1) {
+    .then(result1 => {
       assert.equal(result1[0][0].ttt, 3);
       return pool.query('select 2+2 as qqq');
     })
-    .then(function(result2) {
+    .then(result2 => {
       assert.equal(result2[0][0].qqq, 4);
       return pool.end();
     })
-    .then(function() {
+    .then(() => {
       doneCalledPool = true;
     })
-    .catch(function(err) {
+    .catch(err => {
       throw err;
     });
 }
@@ -224,15 +222,15 @@ function testErrorsPool() {
   const pool = createPool(config);
   pool
     .query('select 1+2 as ttt')
-    .then(function(result1) {
+    .then(result1 => {
       assert.equal(result1[0][0].ttt, 3);
       return pool.query('bad sql');
     })
-    .then(function(result2) {
+    .then(result2 => {
       assert.equal(result2[0][0].ttt, 3);
       return pool.query('select 2+2 as qqq');
     })
-    .catch(function() {
+    .catch(() => {
       exceptionCaughtPool = true;
       return pool.end();
     });
@@ -245,18 +243,18 @@ function testObjParamsPool() {
       sql: 'select ?-? as ttt',
       values: [5, 2]
     })
-    .then(function(result1) {
+    .then(result1 => {
       assert.equal(result1[0][0].ttt, 3);
       return pool.execute({
         sql: 'select ?-? as ttt',
         values: [8, 5]
       });
     })
-    .then(function(result2) {
+    .then(result2 => {
       assert.equal(result2[0][0].ttt, 3);
       return pool.end();
     })
-    .catch(function(err) {
+    .catch(err => {
       console.log(err);
     });
 }
@@ -267,14 +265,14 @@ function testPromiseLibrary() {
     values: [8, 5]
   });
   promise
-    .then(function() {
+    .then(() => {
       assert.ok(promise instanceof pool.Promise);
     })
-    .then(function() {
+    .then(() => {
       promise = pool.end();
       assert.ok(promise instanceof pool.Promise);
     })
-    .catch(function(err) {
+    .catch(err => {
       console.log(err);
     });
 }
@@ -337,30 +335,26 @@ function testChangeUser() {
   };
   let connResolved;
   createConnection(config)
-    .then(function(conn) {
+    .then(conn => {
       connResolved = conn;
       return connResolved.query(
         "GRANT ALL ON *.* TO 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
       );
     })
-    .then(function() {
-      return connResolved.query(
+    .then(() =>
+      connResolved.query(
         "GRANT ALL ON *.* TO 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
-      );
-    })
-    .then(function() {
-      return connResolved.query('FLUSH PRIVILEGES');
-    })
-    .then(function() {
-      return connResolved.changeUser({
+      )
+    )
+    .then(() => connResolved.query('FLUSH PRIVILEGES'))
+    .then(() =>
+      connResolved.changeUser({
         user: 'changeuser1',
         password: 'changeuser1pass'
-      });
-    })
-    .then(function() {
-      return connResolved.query('select current_user()');
-    })
-    .then(function(result) {
+      })
+    )
+    .then(() => connResolved.query('select current_user()'))
+    .then(result => {
       const rows = result[0];
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
       return connResolved.changeUser({
@@ -368,10 +362,8 @@ function testChangeUser() {
         password: 'changeuser2pass'
       });
     })
-    .then(function() {
-      return connResolved.query('select current_user()');
-    })
-    .then(function(result) {
+    .then(() => connResolved.query('select current_user()'))
+    .then(result => {
       const rows = result[0];
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser2');
       return connResolved.changeUser({
@@ -382,16 +374,14 @@ function testChangeUser() {
         ) // sha1(changeuser1pass)
       });
     })
-    .then(function() {
-      return connResolved.query('select current_user()');
-    })
-    .then(function(result) {
+    .then(() => connResolved.query('select current_user()'))
+    .then(result => {
       const rows = result[0];
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
       doneChangeUser = true;
       return connResolved.end();
     })
-    .catch(function(err) {
+    .catch(err => {
       if (connResolved) {
         connResolved.end();
       }
@@ -443,7 +433,7 @@ testChangeUser();
 testPoolConnectionDestroy();
 testPromiseLibrary();
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(doneCalled, true, 'done not called');
   assert.equal(exceptionCaught, true, 'exception not caught');
   assert.equal(doneEventsConnect, true, 'wrong number of connection events');
@@ -453,6 +443,6 @@ process.on('exit', function() {
   assert.equal(doneChangeUser, true, 'user not changed');
 });
 
-process.on('unhandledRejection', function(err) {
+process.on('unhandledRejection', err => {
   console.log('AAA', err.stack);
 });

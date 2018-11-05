@@ -8,7 +8,7 @@ function pong() {
 }
 
 net
-  .createServer(function(s) {
+  .createServer(s => {
     s.setNoDelay(true);
     s.ondata = pong;
   })

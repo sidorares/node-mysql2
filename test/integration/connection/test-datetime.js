@@ -52,7 +52,7 @@ const dateAsStringExpected = [
 connection.execute(
   'select from_unixtime(?) t',
   [(+date).valueOf() / 1000],
-  function(err, _rows) {
+  (err, _rows) => {
     if (err) {
       throw err;
     }
@@ -60,21 +60,21 @@ connection.execute(
   }
 );
 
-connection.query('select from_unixtime(631152000) t', function(err, _rows) {
+connection.query('select from_unixtime(631152000) t', (err, _rows) => {
   if (err) {
     throw err;
   }
   rows1 = _rows;
 });
 
-connection.query('select * from t', function(err, _rows) {
+connection.query('select * from t', (err, _rows) => {
   if (err) {
     throw err;
   }
   rows2 = _rows;
 });
 
-connection.execute('select * from t', function(err, _rows) {
+connection.execute('select * from t', (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -82,32 +82,33 @@ connection.execute('select * from t', function(err, _rows) {
   connection.end();
 });
 
-connection1.query('select * from t', function(err, _rows) {
+connection1.query('select * from t', (err, _rows) => {
   if (err) {
     throw err;
   }
   rows4 = _rows;
 });
 
-connection1.execute('select * from t', function(err, _rows) {
+connection1.execute('select * from t', (err, _rows) => {
   if (err) {
     throw err;
   }
   rows5 = _rows;
 });
 
-connection1.execute('select * from t where d6 = ?', [new Date(date5)], function(
-  err,
-  _rows
-) {
-  if (err) {
-    throw err;
+connection1.execute(
+  'select * from t where d6 = ?',
+  [new Date(date5)],
+  (err, _rows) => {
+    if (err) {
+      throw err;
+    }
+    rows6 = _rows;
+    connection1.end();
   }
-  rows6 = _rows;
-  connection1.end();
-});
+);
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(rows[0].t.constructor, Date);
   assert.equal(rows[0].t.getDate(), date.getDate());
   assert.equal(rows[0].t.getHours(), date.getHours());

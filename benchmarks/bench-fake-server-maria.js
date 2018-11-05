@@ -15,16 +15,16 @@ connection.connect({
 function benchmarkSelect(numLeft, callback) {
   let numRows = 0;
   const q = connection.query('select 1+1 as qqq');
-  q.on('result', function(res) {
+  q.on('result', res => {
     //console.log("result!");
     //console.log(res);
 
-    res.on('row', function() {
+    res.on('row', () => {
       //console.log(r);
       numRows++;
     });
 
-    res.on('end', function() {
+    res.on('end', () => {
       if (numLeft > 1) benchmarkSelect(numLeft - 1, callback);
       else callback(numRows);
     });
@@ -34,7 +34,7 @@ function benchmarkSelect(numLeft, callback) {
 function benchmarkSelects(n, cb) {
   const numSelects = 100;
   const start = process.hrtime();
-  benchmarkSelect(numSelects, function(rowsPerQuery) {
+  benchmarkSelect(numSelects, rowsPerQuery => {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
     console.log(
@@ -52,7 +52,7 @@ function benchmarkSelects(n, cb) {
 module.exports = function(done) {
   console.log('connected');
   const testStart = process.hrtime();
-  benchmarkSelects(5, function() {
+  benchmarkSelects(5, () => {
     const testEnd = process.hrtime();
     console.log('total time: ', common.hrdiff(testStart, testEnd) / 1e9);
     connection.end();

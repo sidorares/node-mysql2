@@ -60,7 +60,7 @@ function test() {
 test();
 `;
 
-process.on('unhandledRejection', function(err) {
+process.on('unhandledRejection', err => {
   console.log(err.stack);
 });
 

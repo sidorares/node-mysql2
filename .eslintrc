@@ -14,7 +14,12 @@
     "node": true
   },
   "rules": {
+    "no-invalid-this": "error",
+    "consistent-this": "error",
+    "prefer-arrow-callback": "error",
     "prefer-const": "error",
+    "arrow-parens": ["error", "as-needed"],
+    "arrow-body-style": ["error", "as-needed"],
     "no-var": "error",
     "no-use-before-define": "error",
     "strict": ["error", "global"]
