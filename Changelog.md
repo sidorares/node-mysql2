@@ -1,4 +1,7 @@
-1.6.2 (08/10/2018)
+1.6.3 (06/10/2018)
+ - Don't treat selector-making function as a class.   #869, #871
+
+1.6.2 (05/10/2018)
  - Fix "Socket ended by other party" error            #447, #867, #868
  - replace var with let/const                         #849
  - Fix "close emitted before end" error               #711, #859
