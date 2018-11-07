@@ -1,7 +1,7 @@
 'use strict';
 
 const core = require('./index.js');
-const { EventEmitter } = require('events');
+const EventEmitter = require('events').EventEmitter;
 
 function makeDoneCb(resolve, reject, localErr) {
   return function(err, rows, fields) {
