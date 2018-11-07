@@ -1,8 +1,9 @@
 'use strict';
 
 const code = `
-const config = require('../../common.js').config;
+'use strict';
 
+const config = require('../../common.js').config;
 const assert = require('assert');
 const isAsyncSupported = require('is-async-supported');
 const ErrorStackParser = require('error-stack-parser');
