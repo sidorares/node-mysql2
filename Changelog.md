@@ -1,3 +1,7 @@
+1.6.4 (08/11/2018)
+ - revert changes breaking node v4 and add v4 to 
+   build matrix                                       #872, #873
+
 1.6.3 (06/10/2018)
  - Don't treat selector-making function as a class.   #869, #871
 
