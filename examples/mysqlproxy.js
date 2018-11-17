@@ -6,7 +6,7 @@ const ClientFlags = require('mysql2/lib/constants/client.js');
 const server = mysql.createServer();
 server.listen(3307);
 
-server.on('connection', function(conn) {
+server.on('connection', conn => {
   console.log('connection');
 
   conn.serverHandshake({
@@ -18,7 +18,7 @@ server.on('connection', function(conn) {
     capabilityFlags: 0xffffff ^ ClientFlags.COMPRESS
   });
 
-  conn.on('field_list', function(table, fields) {
+  conn.on('field_list', (table, fields) => {
     console.log('field list:', table, fields);
     conn.writeEof();
   });
@@ -30,7 +30,7 @@ server.on('connection', function(conn) {
     password: 'secret'
   });
 
-  conn.on('query', function(sql) {
+  conn.on('query', sql => {
     console.log('proxying query:' + sql);
     remote.query(sql, function(err) {
       // overloaded args, either (err, result :object)

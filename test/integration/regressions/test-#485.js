@@ -17,18 +17,18 @@ function testPoolPromiseExecuteLeak() {
   const pool = createPool(config);
   pool
     .execute('select 1+2 as ttt')
-    .then(function(result) {
+    .then(result => {
       assert.equal(result[0][0].ttt, 3);
       return pool.end();
     })
-    .catch(function(err) {
+    .catch(err => {
       assert.ifError(err);
     });
 }
 
 testPoolPromiseExecuteLeak();
 
-process.on('exit', function() {
+process.on('exit', () => {
   PoolConnection.prototype.release = release;
   assert.equal(releaseCalls, 1, 'PoolConnection.release was not called');
 });

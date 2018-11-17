@@ -7,19 +7,19 @@ const pool = require('mysql2').createPool({
   password: 'root'
 });
 
-setInterval(function() {
+setInterval(() => {
   for (let i = 0; i < 5; ++i) {
-    pool.query(function(err, db) {
+    pool.query((err, db) => {
       console.log(rows, fields);
       // Connection is automatically released once query resolves
     });
   }
 }, 1000);
 
-setInterval(function() {
+setInterval(() => {
   for (let i = 0; i < 5; ++i) {
-    pool.getConnection(function(err, db) {
-      db.query('select sleep(0.5) as qqq', function(err, rows, fields) {
+    pool.getConnection((err, db) => {
+      db.query('select sleep(0.5) as qqq', (err, rows, fields) => {
         console.log(rows, fields);
         db.release();
       });

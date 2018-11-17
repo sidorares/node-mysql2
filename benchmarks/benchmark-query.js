@@ -11,7 +11,7 @@ const sql = process.argv[2];
   const start = Date.now();
   let prev1000 = start;
   function bench() {
-    db.query(sql).on('end', function() {
+    db.query(sql).on('end', () => {
       left--;
       if (left % 1000 === 0) {
         const curTime = Date.now();

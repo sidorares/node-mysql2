@@ -37,7 +37,7 @@ if (false) {
 
   connection.query(
     'SET GLOBAL max_allowed_packet=' + (length * 2 + 2000),
-    function(err) {
+    err => {
       assert.ifError(err);
       connection.end();
       const connection2 = common.createConnection();
@@ -53,17 +53,17 @@ if (false) {
       connection2.query(
         'INSERT INTO ' + table + ' (content) VALUES(?)',
         [content],
-        function(err, _result) {
+        (err, _result) => {
           assert.ifError(err);
           result = _result;
           connection2.query(
             'SELECT * FROM ' + table + ' WHERE id = ' + result.insertId,
-            function(err, _result2) {
+            (err, _result2) => {
               result2 = _result2;
               connection2.query(
                 'INSERT INTO ' + table + ' (content) VALUES(?)',
                 [content1],
-                function(err, _result) {
+                (err, _result) => {
                   assert.ifError(err);
                   result3 = _result;
                   connection2.query(
@@ -71,7 +71,7 @@ if (false) {
                       table +
                       ' WHERE id = ' +
                       result3.insertId,
-                    function(err, _result) {
+                    (err, _result) => {
                       assert.ifError(err);
                       result4 = _result;
                       connection2.end();
@@ -86,7 +86,7 @@ if (false) {
     }
   );
 
-  process.on('exit', function() {
+  process.on('exit', () => {
     assert.equal(result2[0].id, String(result.insertId));
     assert.equal(result2[0].content.toString('hex'), content.toString('hex'));
     assert.equal(result4[0].content.toString('hex'), content1.toString('hex'));

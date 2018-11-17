@@ -25,7 +25,7 @@ class TestAuthSwitchHandshake extends Command {
       capabilityFlags: 0xffffff
     });
     this.serverHello = serverHelloPacket;
-    serverHelloPacket.setScrambleData(function() {
+    serverHelloPacket.setScrambleData(() => {
       connection.writePacket(serverHelloPacket.toPacket(0));
     });
     return TestAuthSwitchHandshake.prototype.readClientReply;
@@ -65,7 +65,7 @@ class TestAuthSwitchHandshake extends Command {
   }
 }
 
-const server = mysql.createServer(function(conn) {
+const server = mysql.createServer(conn => {
   conn.serverConfig = {};
   conn.serverConfig.encoding = 'cesu8';
   conn.addCommand(
@@ -79,7 +79,7 @@ const server = mysql.createServer(function(conn) {
 // REVIEW: Unused var
 
 const portfinder = require('portfinder');
-portfinder.getPort(function(err, port) {
+portfinder.getPort((err, port) => {
   const makeSwitchHandler = function() {
     let count = 0;
     return function(data, cb) {
@@ -104,7 +104,7 @@ portfinder.getPort(function(err, port) {
     connectAttributes: connectAttributes
   });
 
-  conn.on('connect', function(data) {
+  conn.on('connect', data => {
     assert.equal(data.serverVersion, 'node.js rocks');
     assert.equal(data.connectionId, 1234);
 

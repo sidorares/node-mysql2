@@ -101,7 +101,7 @@ function do_test(testIndex) {
   const entry = tests[testIndex];
   const sql = entry[0];
   const expectation = entry[1];
-  mysql.query(sql, function(err, _rows, _columns) {
+  mysql.query(sql, (err, _rows, _columns) => {
     let _numResults = 0;
     if (_rows.constructor.name == 'ResultSetHeader') {
       _numResults = 1;
@@ -185,7 +185,7 @@ function do_test(testIndex) {
     }
     q.on('result', checkRow);
     q.on('fields', checkFields);
-    q.on('end', function() {
+    q.on('end', () => {
       if (testIndex + 1 < tests.length) {
         do_test(testIndex + 1);
       } else {

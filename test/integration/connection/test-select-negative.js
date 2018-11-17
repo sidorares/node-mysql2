@@ -7,14 +7,14 @@ const assert = require('assert');
 let rows = undefined;
 let rows1 = undefined;
 
-connection.execute('SELECT -1 v', [], function(err, _rows) {
+connection.execute('SELECT -1 v', [], (err, _rows) => {
   if (err) {
     throw err;
   }
   rows = _rows;
 });
 
-connection.query('SELECT -1 v', function(err, _rows) {
+connection.query('SELECT -1 v', (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -22,7 +22,7 @@ connection.query('SELECT -1 v', function(err, _rows) {
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, [{ v: -1 }]);
   assert.deepEqual(rows1, [{ v: -1 }]);
 });

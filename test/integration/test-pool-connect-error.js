@@ -4,7 +4,7 @@ const mysql = require('../../index.js');
 
 const assert = require('assert');
 
-const server = mysql.createServer(function(conn) {
+const server = mysql.createServer(conn => {
   conn.serverHandshake({
     protocolVersion: 10,
     serverVersion: '5.6.10',
@@ -21,7 +21,7 @@ const server = mysql.createServer(function(conn) {
 let err1, err2;
 
 const portfinder = require('portfinder');
-portfinder.getPort(function(err, port) {
+portfinder.getPort((err, port) => {
   server.listen(port);
   const conn = mysql.createConnection({
     user: 'test_user',
@@ -29,7 +29,7 @@ portfinder.getPort(function(err, port) {
     database: 'test_database',
     port: port
   });
-  conn.on('error', function(err) {
+  conn.on('error', err => {
     err1 = err;
   });
 
@@ -40,14 +40,14 @@ portfinder.getPort(function(err, port) {
     port: port
   });
 
-  pool.query('test sql', function(err) {
+  pool.query('test sql', err => {
     err2 = err;
     pool.end();
     server.close();
   });
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(err1.errno, 1040);
   assert.equal(err2.errno, 1040);
 });

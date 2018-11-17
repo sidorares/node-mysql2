@@ -17,7 +17,7 @@ connection.query(
   ].join('\n')
 );
 
-connection.beginTransaction(function(err) {
+connection.beginTransaction(err => {
   assert.ifError(err);
 
   const row = {
@@ -25,13 +25,13 @@ connection.beginTransaction(function(err) {
     title: 'Test row'
   };
 
-  connection.query('INSERT INTO ' + table + ' SET ?', row, function(err) {
+  connection.query('INSERT INTO ' + table + ' SET ?', row, err => {
     assert.ifError(err);
 
-    connection.rollback(function(err) {
+    connection.rollback(err => {
       assert.ifError(err);
 
-      connection.query('SELECT * FROM ' + table, function(err, rows) {
+      connection.query('SELECT * FROM ' + table, (err, rows) => {
         assert.ifError(err);
         connection.end();
         assert.equal(rows.length, 0);

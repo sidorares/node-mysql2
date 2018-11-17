@@ -27,7 +27,7 @@ let actualRows = null;
 
 function executeTest(err) {
   assert.ifError(err);
-  connection.execute('SELECT * FROM `' + tableName + '`', function(err, rows) {
+  connection.execute('SELECT * FROM `' + tableName + '`', (err, rows) => {
     assert.ifError(err);
     actualRows = rows;
     connection.end();
@@ -42,7 +42,7 @@ connection.query(
     ' `' + testFields[2] + '` varchar(10)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
   ].join(' '),
-  function(err) {
+  err => {
     assert.ifError(err);
     connection.query(
       [
@@ -67,10 +67,10 @@ connection.query(
   }
 );
 
-process.on('exit', function() {
-  expected.map(function(exp, index) {
+process.on('exit', () => {
+  expected.map((exp, index) => {
     const row = actualRows[index];
-    Object.keys(exp).map(function(key) {
+    Object.keys(exp).map(key => {
       assert.equal(exp[key], row[key]);
     });
   });

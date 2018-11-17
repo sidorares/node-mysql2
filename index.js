@@ -44,29 +44,30 @@ exports.escapeId = SqlString.escapeId;
 exports.format = SqlString.format;
 exports.raw = SqlString.raw;
 
-exports.__defineGetter__('createConnectionPromise', function() {
-  return require('./promise.js').createConnection;
-});
+exports.__defineGetter__(
+  'createConnectionPromise',
+  () => require('./promise.js').createConnection
+);
 
-exports.__defineGetter__('createPoolPromise', function() {
-  return require('./promise.js').createPool;
-});
+exports.__defineGetter__(
+  'createPoolPromise',
+  () => require('./promise.js').createPool
+);
 
-exports.__defineGetter__('createPoolClusterPromise', function() {
-  return require('./promise.js').createPoolCluster;
-});
+exports.__defineGetter__(
+  'createPoolClusterPromise',
+  () => require('./promise.js').createPoolCluster
+);
 
-exports.__defineGetter__('Types', function() {
-  return require('./lib/constants/types.js');
-});
+exports.__defineGetter__('Types', () => require('./lib/constants/types.js'));
 
-exports.__defineGetter__('Charsets', function() {
-  return require('./lib/constants/charsets.js');
-});
+exports.__defineGetter__('Charsets', () =>
+  require('./lib/constants/charsets.js')
+);
 
-exports.__defineGetter__('CharsetToEncoding', function() {
-  return require('./lib/constants/charset_encodings.js');
-});
+exports.__defineGetter__('CharsetToEncoding', () =>
+  require('./lib/constants/charset_encodings.js')
+);
 
 exports.setMaxParserCache = function(max) {
   parserCache.setMaxCache(max);

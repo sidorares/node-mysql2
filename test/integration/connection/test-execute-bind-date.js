@@ -7,7 +7,7 @@ const assert = require('assert');
 const date = new Date(2018, 2, 10, 15, 12, 34, 1234);
 
 let rows;
-connection.execute('SELECT ? AS result', [date], function(err, _rows) {
+connection.execute('SELECT ? AS result', [date], (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -15,6 +15,6 @@ connection.execute('SELECT ? AS result', [date], function(err, _rows) {
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, [{ result: date }]);
 });

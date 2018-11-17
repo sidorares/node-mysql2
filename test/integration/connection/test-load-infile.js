@@ -23,7 +23,7 @@ const sql =
   'FIELDS TERMINATED BY ? (id, title)';
 
 let ok;
-connection.query(sql, [path, ','], function(err, _ok) {
+connection.query(sql, [path, ','], (err, _ok) => {
   if (err) {
     throw err;
   }
@@ -31,7 +31,7 @@ connection.query(sql, [path, ','], function(err, _ok) {
 });
 
 let rows;
-connection.query('SELECT * FROM ' + table, function(err, _rows) {
+connection.query('SELECT * FROM ' + table, (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -43,7 +43,7 @@ let loadErr;
 let loadResult;
 const badPath = '/does_not_exist.csv';
 
-connection.query(sql, [badPath, ','], function(err, result) {
+connection.query(sql, [badPath, ','], (err, result) => {
   loadErr = err;
   loadResult = result;
 });
@@ -52,7 +52,7 @@ connection.query(sql, [badPath, ','], function(err, result) {
 const createMyStream = function() {
   const Stream = require('stream').PassThrough;
   const myStream = new Stream();
-  setTimeout(function() {
+  setTimeout(() => {
     myStream.write('11,Hello World\n');
     myStream.write('21,One ');
     myStream.write('more row\n');
@@ -68,7 +68,7 @@ connection.query(
     values: [badPath, ','],
     infileStreamFactory: createMyStream
   },
-  function(err, result) {
+  (err, result) => {
     if (err) {
       throw err;
     }
@@ -77,7 +77,7 @@ connection.query(
   }
 );
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(ok.affectedRows, 4);
   assert.equal(rows.length, 4);
   assert.equal(rows[0].id, 1);

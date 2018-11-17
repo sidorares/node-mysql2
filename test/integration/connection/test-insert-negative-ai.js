@@ -19,14 +19,14 @@ const testNegativeAI = function(err) {
       ' (id, title) values (-999, "' +
       testData +
       '")',
-    function(err, result) {
+    (err, result) => {
       assert.ifError(err);
       insertResult = result;
 
       // select the row with negative AI
       connection.query(
         'SELECT * FROM `' + testTable + '`' + ' WHERE id = ' + result.insertId,
-        function(err, result_) {
+        (err, result_) => {
           assert.ifError(err);
           selectResult = result_;
           connection.end();
@@ -51,7 +51,7 @@ const prepareAndTest = function() {
 
 prepareAndTest();
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.strictEqual(insertResult.insertId, -999);
   assert.strictEqual(selectResult.length, 1);
 

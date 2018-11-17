@@ -22,7 +22,7 @@ const values = [
   [null, null]
 ];
 
-conn.connect(function(err) {
+conn.connect(err => {
   if (err) {
     console.error(err);
     return;
@@ -71,7 +71,7 @@ conn.connect(function(err) {
         supportBigNumbers: supportBigNumbers,
         bigNumberStrings: bigNumberStrings
       },
-      function(err, rows) {
+      (err, rows) => {
         assert.ifError(err);
         assert.deepEqual(rows, expectation);
         completed++;
@@ -90,7 +90,7 @@ conn.connect(function(err) {
         supportBigNumbers: supportBigNumbers,
         bigNumberStrings: bigNumberStrings
       },
-      function(err, rows) {
+      (err, rows) => {
         assert.ifError(err);
         assert.deepEqual(rows, expectation);
         completed++;

@@ -6,7 +6,7 @@ const connection = common.createConnection();
 const table = 'insert_test';
 //const text = "本日は晴天なり";
 const text = 'test abc xyz';
-connection.query('drop table ' + table).on('error', function() {});
+connection.query('drop table ' + table).on('error', () => {});
 connection.query(
   [
     'CREATE TABLE `' + table + '` (',
@@ -20,7 +20,7 @@ connection.query(
 function benchmarkInsert(numLeft, callback) {
   connection.query(
     'INSERT INTO ' + table + ' SET title="' + text + '"',
-    function(err) {
+    err => {
       if (err) throw err;
       if (numLeft > 1) benchmarkInsert(numLeft - 1, callback);
       else callback();
@@ -31,7 +31,7 @@ function benchmarkInsert(numLeft, callback) {
 function benchmarkInserts(n, cb) {
   const numInsert = 50000;
   const start = process.hrtime();
-  benchmarkInsert(numInsert, function() {
+  benchmarkInsert(numInsert, () => {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
     console.log((numInsert * 1e9) / diff + ' inserts/sec');
@@ -75,8 +75,8 @@ function benchmarkParallelSelects(n, size, cb) {
 
 module.exports = function(done) {
   const testStart = process.hrtime();
-  benchmarkInserts(1, function() {
-    benchmarkParallelSelects(8, 50000, function() {
+  benchmarkInserts(1, () => {
+    benchmarkParallelSelects(8, 50000, () => {
       const testEnd = process.hrtime();
       console.log('total time: ', common.hrdiff(testStart, testEnd) / 1e9);
       if (done) done();

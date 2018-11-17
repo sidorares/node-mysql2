@@ -22,7 +22,7 @@ let numRequests = 0;
   let prev1000 = start;
   function bench() {
     //db.query(sql).on('end', function(err, res) {
-    db.query(sql, function(err, res) {
+    db.query(sql, (err, res) => {
       //db.execute(sql, function(err, res) {
 
       rowsReceived += res.length;

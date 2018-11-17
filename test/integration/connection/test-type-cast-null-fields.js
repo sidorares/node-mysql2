@@ -24,7 +24,7 @@ connection.query('INSERT INTO ' + table + ' SET ?', {
 });
 
 let results;
-connection.query('SELECT * FROM ' + table, function(err, _results) {
+connection.query('SELECT * FROM ' + table, (err, _results) => {
   if (err) {
     throw err;
   }
@@ -33,7 +33,7 @@ connection.query('SELECT * FROM ' + table, function(err, _results) {
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.strictEqual(results[0].date, null);
   assert.strictEqual(results[0].number, null);
 });

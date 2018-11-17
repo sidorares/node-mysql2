@@ -11,7 +11,7 @@ const server = common.createServer(
   () => {
     const connection = common.createConnection({ port: server._port });
 
-    connection.query(queryCli, function(err, _rows, _fields) {
+    connection.query(queryCli, (err, _rows, _fields) => {
       if (err) {
         throw err;
       }
@@ -22,14 +22,14 @@ const server = common.createServer(
     });
   },
   conn => {
-    conn.on('quit', function() {
+    conn.on('quit', () => {
       // COM_QUIT
       quitReceived = true;
       conn.stream.end();
       server.close();
     });
 
-    conn.on('query', function(q) {
+    conn.on('query', q => {
       queryServ = q;
       conn.writeTextResult(
         [{ '1': '1' }],
@@ -53,7 +53,7 @@ const server = common.createServer(
   }
 );
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, [{ 1: 1 }]);
   assert.equal(fields[0].name, '1');
   assert.equal(quitReceived, true);

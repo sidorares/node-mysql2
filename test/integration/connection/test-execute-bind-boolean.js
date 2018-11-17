@@ -8,7 +8,7 @@ let rows;
 connection.execute(
   'SELECT ? AS trueValue, ? AS falseValue',
   [true, false],
-  function(err, _rows) {
+  (err, _rows) => {
     if (err) {
       throw err;
     }
@@ -17,6 +17,6 @@ connection.execute(
   }
 );
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, [{ trueValue: 1, falseValue: 0 }]);
 });

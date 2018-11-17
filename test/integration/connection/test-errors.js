@@ -12,36 +12,36 @@ let onExecuteErrorEvent1 = undefined;
 let onQueryErrorEvent1 = undefined;
 
 connection
-  .execute('error in execute', [], function(err) {
+  .execute('error in execute', [], err => {
     assert.equal(err.errno, 1064);
     assert.equal(err.code, 'ER_PARSE_ERROR');
     if (err) {
       onExecuteResultError = true;
     }
   })
-  .on('error', function() {
+  .on('error', () => {
     onExecuteErrorEvent = true;
   });
 connection
-  .query('error in query', [], function(err) {
+  .query('error in query', [], err => {
     assert.equal(err.errno, 1064);
     assert.equal(err.code, 'ER_PARSE_ERROR');
     if (err) {
       onQueryResultError = true;
     }
   })
-  .on('error', function() {
+  .on('error', () => {
     onQueryErrorEvent = true;
   });
-connection.execute('error in execute 1', []).on('error', function() {
+connection.execute('error in execute 1', []).on('error', () => {
   onExecuteErrorEvent1 = true;
 });
-connection.query('error in query 1').on('error', function() {
+connection.query('error in query 1').on('error', () => {
   onQueryErrorEvent1 = true;
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(onExecuteResultError, true);
   assert.equal(onQueryResultError, true);
   assert.equal(onExecuteErrorEvent, undefined);

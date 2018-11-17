@@ -11,21 +11,21 @@ const connections = [];
 const server = common.createServer(
   () => {
     const connection = common.createConnection({ port: server._port });
-    connection.query('SELECT 123', function(err, _rows, _fields) {
+    connection.query('SELECT 123', (err, _rows, _fields) => {
       if (err) {
         throw err;
       }
 
       rows = _rows;
       fields = _fields;
-      connection.on('error', function(_err) {
+      connection.on('error', _err => {
         err = _err;
       });
 
-      connections.forEach(function(conn) {
+      connections.forEach(conn => {
         conn.stream.end();
       });
-      server._server.close(function() {
+      server._server.close(() => {
         assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
       });
     });
@@ -33,7 +33,7 @@ const server = common.createServer(
   },
   conn => {
     connections.push(conn);
-    conn.on('query', function() {
+    conn.on('query', () => {
       conn.writeTextResult(
         [{ '1': '1' }],
         [
@@ -56,7 +56,7 @@ const server = common.createServer(
   }
 );
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, [{ 1: 1 }]);
   assert.equal(fields[0].name, '1');
 });

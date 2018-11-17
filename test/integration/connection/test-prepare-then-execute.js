@@ -8,12 +8,12 @@ let _stmt = null;
 let _columns = null;
 let _rows = null;
 
-connection.prepare('select 1 + ? + ? as test', function(err, stmt) {
+connection.prepare('select 1 + ? + ? as test', (err, stmt) => {
   if (err) {
     throw err;
   }
   _stmt = stmt;
-  stmt.execute([111, 123], function(err, rows, columns) {
+  stmt.execute([111, 123], (err, rows, columns) => {
     if (err) {
       throw err;
     }
@@ -23,7 +23,7 @@ connection.prepare('select 1 + ? + ? as test', function(err, stmt) {
   });
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(_stmt.columns.length, 1);
   assert.equal(_stmt.parameters.length, 2);
   assert.deepEqual(_rows, [{ test: 235 }]);

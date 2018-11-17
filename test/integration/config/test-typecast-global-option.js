@@ -22,7 +22,7 @@ connection.query(
     sql: 'select "FOOBAR" as foo',
     typeCast: typeCastWrapper('toLowerCase')
   },
-  function(err, res) {
+  (err, res) => {
     assert.ifError(err);
     assert.equal(res[0].foo, 'foobar');
   }
@@ -33,7 +33,7 @@ connection.query(
   {
     sql: 'select "foobar" as foo'
   },
-  function(err, res) {
+  (err, res) => {
     assert.ifError(err);
     assert.equal(res[0].foo, 'FOOBAR');
   }

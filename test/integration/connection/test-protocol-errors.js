@@ -10,7 +10,7 @@ let rows;
 const server = common.createServer(
   () => {
     const connection = common.createConnection({ port: server._port });
-    connection.query(query, function(err, _rows, _fields) {
+    connection.query(query, (err, _rows, _fields) => {
       if (err) {
         throw err;
       }
@@ -18,7 +18,7 @@ const server = common.createServer(
       fields = _fields;
     });
 
-    connection.on('error', function(err) {
+    connection.on('error', err => {
       error = err;
       if (server._server._handle) {
         server.close();
@@ -26,7 +26,7 @@ const server = common.createServer(
     });
   },
   conn => {
-    conn.on('query', function() {
+    conn.on('query', () => {
       conn.writeTextResult(
         [{ '1': '1' }],
         [
@@ -51,7 +51,7 @@ const server = common.createServer(
   }
 );
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, [{ 1: 1 }]);
   assert.equal(fields[0].name, '1');
   assert.equal(

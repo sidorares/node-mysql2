@@ -19,14 +19,14 @@ const conn1 = mysql.createPool({
   }
 });
 
-conn1.execute('select sleep(1.1) as www', function(err, rows, fields) {
+conn1.execute('select sleep(1.1) as www', (err, rows, fields) => {
   console.log(err, rows, fields);
 });
 
-conn1.execute('select sleep(1) as qqq', function(err, rows, fields) {
+conn1.execute('select sleep(1) as qqq', (err, rows, fields) => {
   console.log(err, rows, fields);
 });
 
-conn1.execute('select sleep(1) as qqq', function(err, rows, fields) {
+conn1.execute('select sleep(1) as qqq', (err, rows, fields) => {
   console.log(err, rows, fields);
 });

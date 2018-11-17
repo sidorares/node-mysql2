@@ -11,7 +11,7 @@ const assert = require('assert-diff');
 let rows;
 let fields;
 
-connection.execute('explain SELECT 1', function(err, _rows, _fields) {
+connection.execute('explain SELECT 1', (err, _rows, _fields) => {
   if (err) {
     throw err;
   }
@@ -197,7 +197,7 @@ const expectedFields = [
   }
 ];
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, expectedRows);
   fields.forEach((f, index) => {
     const fi = f.inspect();

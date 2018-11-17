@@ -6,10 +6,10 @@ const assert = require('assert');
 const ERROR_TEXT = 'test error';
 
 const portfinder = require('portfinder');
-portfinder.getPort(function(err, port) {
+portfinder.getPort((err, port) => {
   const server = mysql.createServer();
   server.listen(port);
-  server.on('connection', function(conn) {
+  server.on('connection', conn => {
     console.log('Here!');
     conn.writeError(new Error(ERROR_TEXT));
     conn.close();
@@ -23,11 +23,11 @@ portfinder.getPort(function(err, port) {
     password: 'testpassword'
   });
 
-  connection.query('select 1+1', function(err) {
+  connection.query('select 1+1', err => {
     assert.equal(err.message, ERROR_TEXT);
   });
 
-  connection.query('select 1+2', function(err) {
+  connection.query('select 1+2', err => {
     assert.equal(err.message, ERROR_TEXT);
     connection.close();
     server._server.close();

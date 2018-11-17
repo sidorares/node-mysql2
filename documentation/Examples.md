@@ -6,7 +6,7 @@
 const mysql = require('mysql2');
 const connection = mysql.createConnection({user: 'test', database: 'test'});
 
-connection.query('SELECT 1+1 as test1', function (err, rows) {
+connection.query('SELECT 1+1 as test1', (err, rows) => {
   //
 });
 ```
@@ -17,7 +17,7 @@ connection.query('SELECT 1+1 as test1', function (err, rows) {
 const mysql = require('mysql2');
 const connection = mysql.createConnection({user: 'test', database: 'test'});
 
-connection.execute('SELECT 1+? as test1', [10], function (err, rows) {
+connection.execute('SELECT 1+? as test1', [10], (err, rows) => {
   //
 });
 ```
@@ -49,7 +49,7 @@ const connection = mysql.createConnection({
   ssl: 'Amazon RDS'
 });
 
-conn.query('show status like \'Ssl_cipher\'', function (err, res) {
+conn.query('show status like \'Ssl_cipher\'', (err, res) => {
   console.log(err, res);
   conn.end();
 });
@@ -63,7 +63,7 @@ const mysql = require('mysql2');
 
 const server = mysql.createServer();
 server.listen(3307);
-server.on('connection', function (conn) {
+server.on('connection', conn => {
   console.log('connection');
 
   conn.serverHandshake({
@@ -75,14 +75,14 @@ server.on('connection', function (conn) {
     capabilityFlags: 0xffffff
   });
 
-  conn.on('field_list', function (table, fields) {
+  conn.on('field_list', (table, fields) => {
     console.log('field list:', table, fields);
     conn.writeEof();
   });
 
   const remote = mysql.createConnection({user: 'root', database: 'dbname', host:'server.example.com', password: 'secret'});
 
-  conn.on('query', function (sql) {
+  conn.on('query', sql => {
     console.log('proxying query:' + sql);
     remote.query(sql, function (err) {
       // overloaded args, either (err, result :object)

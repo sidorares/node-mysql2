@@ -55,11 +55,11 @@ const prepareTestSet = function(cb) {
   );
 };
 
-prepareTestSet(function(err) {
+prepareTestSet(err => {
   assert.ifError(err);
   connection.query(
     'select * from ' + config.view2 + ' order by name2 desc',
-    function(err, rows) {
+    (err, rows) => {
       assert.ifError(err);
       results = rows;
       connection.close();
@@ -67,7 +67,7 @@ prepareTestSet(function(err) {
   );
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(results[0].name1, 'D');
   assert.equal(results[1].name1, 'C');
   assert.equal(results[2].name1, 'B');

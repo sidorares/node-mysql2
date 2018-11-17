@@ -20,20 +20,17 @@ let resultData = null;
 const testEncoding = function(err) {
   assert.ifError(err);
 
-  testData.forEach(function(data) {
+  testData.forEach(data => {
     connection.query(
       'INSERT INTO `test-charset-encoding` (field) values(?)',
       [data],
-      function(err2) {
+      err2 => {
         assert.ifError(err2);
       }
     );
   });
 
-  connection.query('SELECT * from `test-charset-encoding`', function(
-    err,
-    results
-  ) {
+  connection.query('SELECT * from `test-charset-encoding`', (err, results) => {
     assert.ifError(err);
     resultData = results;
   });
@@ -42,11 +39,11 @@ const testEncoding = function(err) {
 
 // init test sequence
 (function() {
-  connection.query('DROP TABLE IF EXISTS `test-charset-encoding`', function() {
+  connection.query('DROP TABLE IF EXISTS `test-charset-encoding`', () => {
     connection.query(
       'CREATE TABLE IF NOT EXISTS `test-charset-encoding` ' +
         '( `field` VARCHAR(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci)',
-      function(err) {
+      err => {
         assert.ifError(err);
         connection.query('DELETE from `test-charset-encoding`', testEncoding);
       }
@@ -54,8 +51,8 @@ const testEncoding = function(err) {
   });
 })();
 
-process.on('exit', function() {
-  resultData.forEach(function(data, index) {
+process.on('exit', () => {
+  resultData.forEach((data, index) => {
     assert.equal(data.field, testData[index]);
   });
 });

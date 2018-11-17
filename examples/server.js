@@ -23,7 +23,7 @@ function authenticate(params, cb) {
 
 const server = mysql.createServer();
 server.listen(3333);
-server.on('connection', function(conn) {
+server.on('connection', conn => {
   // we can deny connection here:
   // conn.writeError({ message: 'secret', code: 123 });
   // conn.close();
@@ -39,12 +39,12 @@ server.on('connection', function(conn) {
     authCallback: authenticate
   });
 
-  conn.on('field_list', function(table, fields) {
+  conn.on('field_list', (table, fields) => {
     console.log('FIELD LIST:', table, fields);
     conn.writeEof();
   });
 
-  conn.on('query', function(query) {
+  conn.on('query', query => {
     conn.writeColumns([
       {
         catalog: 'def',

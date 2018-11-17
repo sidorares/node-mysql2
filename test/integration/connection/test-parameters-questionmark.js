@@ -20,7 +20,7 @@ pool.query('UPDATE test_table SET str = ? WHERE id = ?', [
   'should not change ?',
   1
 ]);
-pool.query('SELECT str FROM test_table WHERE id = ?', [1], function(err, rows) {
+pool.query('SELECT str FROM test_table WHERE id = ?', [1], (err, rows) => {
   pool.end();
   if (err) {
     throw err;

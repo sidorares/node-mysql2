@@ -8,9 +8,9 @@ const assert = require('assert');
 const payload = 'привет, мир';
 
 function tryEncoding(encoding, cb) {
-  connection.query('set character_set_results = ?', [encoding], function(err) {
+  connection.query('set character_set_results = ?', [encoding], err => {
     assert.ifError(err);
-    connection.query('SELECT ?', [payload], function(err, rows, fields) {
+    connection.query('SELECT ?', [payload], (err, rows, fields) => {
       assert.ifError(err);
       let iconvEncoding = encoding;
       if (encoding == 'utf8mb4') {
@@ -28,11 +28,9 @@ function tryEncoding(encoding, cb) {
 }
 
 function tryEncodingExecute(encoding, cb) {
-  connection.execute('set character_set_results = ?', [encoding], function(
-    err
-  ) {
+  connection.execute('set character_set_results = ?', [encoding], err => {
     assert.ifError(err);
-    connection.execute('SELECT ? as n', [payload], function(err, rows, fields) {
+    connection.execute('SELECT ? as n', [payload], (err, rows, fields) => {
       assert.ifError(err);
       let iconvEncoding = encoding;
       if (encoding == 'utf8mb4') {
@@ -51,14 +49,14 @@ function tryEncodingExecute(encoding, cb) {
 }
 
 // christmas tree!!! :)
-tryEncoding('cp1251', function() {
-  tryEncoding('koi8r', function() {
-    tryEncoding('cp866', function() {
-      tryEncoding('utf8mb4', function() {
-        tryEncodingExecute('cp1251', function() {
-          tryEncodingExecute('koi8r', function() {
-            tryEncodingExecute('cp866', function() {
-              tryEncodingExecute('utf8mb4', function() {
+tryEncoding('cp1251', () => {
+  tryEncoding('koi8r', () => {
+    tryEncoding('cp866', () => {
+      tryEncoding('utf8mb4', () => {
+        tryEncodingExecute('cp1251', () => {
+          tryEncodingExecute('koi8r', () => {
+            tryEncodingExecute('cp866', () => {
+              tryEncodingExecute('utf8mb4', () => {
                 connection.end();
               });
             });

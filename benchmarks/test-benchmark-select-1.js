@@ -9,7 +9,7 @@ const createConnection = require('../common').createConnection;
   const start = Date.now();
   let prev1000 = start;
   function bench() {
-    db.query('select 1').on('end', function() {
+    db.query('select 1').on('end', () => {
       left--;
       if (left % 1000 === 0) {
         const curTime = Date.now();

@@ -27,19 +27,13 @@ connection.query('insert into changed_rows(value) values(1)');
 connection.query('insert into changed_rows(value) values(2)');
 connection.query('insert into changed_rows(value) values(3)');
 
-connection.execute('update changed_rows set value=1', [], function(
-  err,
-  _result
-) {
+connection.execute('update changed_rows set value=1', [], (err, _result) => {
   if (err) {
     throw err;
   }
 
   result1 = _result;
-  connection.execute('update changed_rows set value=1', [], function(
-    err,
-    _result
-  ) {
+  connection.execute('update changed_rows set value=1', [], (err, _result) => {
     if (err) {
       throw err;
     }
@@ -49,7 +43,7 @@ connection.execute('update changed_rows set value=1', [], function(
   });
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(result1.affectedRows, 4);
   assert.equal(result1.changedRows, 2);
   assert.equal(result2.affectedRows, 4);

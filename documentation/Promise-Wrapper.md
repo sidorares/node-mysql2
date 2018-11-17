@@ -8,20 +8,20 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
    /* eslint-env es6 */
    const mysql = require('mysql2/promise'); // or require('mysql2').createConnectionPromise
    mysql.createConnection({ /* same parameters as for non-promise createConnection */ })
-     .then((conn) => conn.query('select foo from bar'))
+     .then(conn => conn.query('select foo from bar'))
      .then(([rows, fields]) => console.log(rows[0].foo));
 ```
 
 ```js
     const pool = require('mysql2/promise').createPool({}); // or mysql.createPoolPromise({})
     pool.getConnection()
-      .then((conn) => {
+      .then(conn => {
         const res = conn.query('select foo from bar');
         conn.release();
         return res;
-      }).then((result) => {
+      }).then(result => {
         console.log(result[0][0].foo);
-      }).catch((err) => {
+      }).catch(err => {
         console.log(err); // any of connection time or query time errors from above
       });
 ```

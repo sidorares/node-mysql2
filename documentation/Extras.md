@@ -6,16 +6,16 @@ You can use named placeholders for parameters by setting `namedPlaceholders` con
 
 ```js
    connection.config.namedPlaceholders = true;
-   connection.execute('select :x + :y as z', {x: 1, y: 2}, function (err, rows) {
+   connection.execute('select :x + :y as z', {x: 1, y: 2}, (err, rows) => {
      // statement prepared as "select ? + ? as z" and executed with [1,2] values
      // rows returned: [ { z: 3 } ]
    });
 
-   connection.execute('select :x + :x as z', {x: 1}, function (err, rows) {
+   connection.execute('select :x + :x as z', {x: 1}, (err, rows) => {
      // select ? + ? as z, execute with [1, 1]
    });
 
-   connection.query('select :x + :x as z', {x: 1}, function (err, rows) {
+   connection.query('select :x + :x as z', {x: 1}, (err, rows) => {
      // query select 1 + 1 as z
    });
 ```
@@ -24,7 +24,7 @@ You can use named placeholders for parameters by setting `namedPlaceholders` con
 
 ```js
 const options = {sql: 'select A,B,C,D from foo', rowsAsArray: true};
-connection.query(options, function (err, results) {
+connection.query(options, (err, results) => {
   /* results will be an array of arrays like this now:
   [[
      'field A value',

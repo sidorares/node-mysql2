@@ -13,12 +13,12 @@ let numSelects = 0;
 let killCount = 0;
 
 function kill() {
-  setTimeout(function() {
+  setTimeout(() => {
     const id = tids.shift();
     if (typeof id != 'undefined') {
       // sleep required to give mysql time to close connection,
       // and callback called after connection with id is really closed
-      conn.query('kill ?; select sleep(0.05)', id, function(err) {
+      conn.query('kill ?; select sleep(0.05)', id, err => {
         assert.ifError(err);
         killCount++;
         // TODO: this assertion needs to be fixed, after kill
@@ -33,15 +33,15 @@ function kill() {
   }, 5);
 }
 
-pool.on('connection', function(conn) {
+pool.on('connection', conn => {
   tids.push(conn.threadId);
-  conn.on('error', function() {
+  conn.on('error', () => {
     setTimeout(kill, 5);
   });
 });
 
 for (let i = 0; i < numSelectToPerform; i++) {
-  pool.query('select 1 as value', function(err, rows) {
+  pool.query('select 1 as value', (err, rows) => {
     numSelects++;
     assert.ifError(err);
     assert.equal(rows[0].value, 1);
@@ -53,7 +53,7 @@ for (let i = 0; i < numSelectToPerform; i++) {
   });
 }
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(numSelects, numSelectToPerform);
   assert.equal(killCount, pool.config.connectionLimit);
 });

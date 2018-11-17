@@ -20,24 +20,24 @@ connection.query(
 );
 
 let result, result2;
-connection.query('INSERT INTO ' + table + ' SET title="' + text + '"', function(
-  err,
-  _result
-) {
-  if (err) {
-    throw err;
-  }
-  result = _result;
-  connection.query(
-    'SELECT * FROM ' + table + ' WHERE id = ' + result.insertId,
-    function(err, _result2) {
-      result2 = _result2;
-      connection.end();
+connection.query(
+  'INSERT INTO ' + table + ' SET title="' + text + '"',
+  (err, _result) => {
+    if (err) {
+      throw err;
     }
-  );
-});
+    result = _result;
+    connection.query(
+      'SELECT * FROM ' + table + ' WHERE id = ' + result.insertId,
+      (err, _result2) => {
+        result2 = _result2;
+        connection.end();
+      }
+    );
+  }
+);
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.strictEqual(result.insertId, 1);
   assert.strictEqual(result2.length, 1);
   // TODO: type conversions

@@ -21,7 +21,7 @@ function makeDoneCb(resolve, reject, localErr) {
 function inheritEvents(source, target, events) {
   const listeners = {};
   target
-    .on('newListener', function(eventName) {
+    .on('newListener', eventName => {
       if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
         source.on(
           eventName,
@@ -34,7 +34,7 @@ function inheritEvents(source, target, events) {
         );
       }
     })
-    .on('removeListener', function(eventName) {
+    .on('removeListener', eventName => {
       if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
         source.removeListener(eventName, listeners[eventName]);
         delete listeners[eventName];
@@ -51,7 +51,7 @@ class PromisePreparedStatementInfo {
   execute(parameters) {
     const s = this.statement;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
+    return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       if (parameters) {
         s.execute(parameters, done);
@@ -90,7 +90,7 @@ class PromiseConnection extends EventEmitter {
   query(query, params) {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
+    return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       if (params) {
         c.query(query, params, done);
@@ -103,7 +103,7 @@ class PromiseConnection extends EventEmitter {
   execute(query, params) {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
+    return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       if (params) {
         c.execute(query, params, done);
@@ -122,7 +122,7 @@ class PromiseConnection extends EventEmitter {
   beginTransaction() {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
+    return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       c.beginTransaction(done);
     });
@@ -131,7 +131,7 @@ class PromiseConnection extends EventEmitter {
   commit() {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
+    return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       c.commit(done);
     });
@@ -140,7 +140,7 @@ class PromiseConnection extends EventEmitter {
   rollback() {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
+    return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       c.rollback(done);
     });
@@ -149,7 +149,7 @@ class PromiseConnection extends EventEmitter {
   ping() {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
+    return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       c.ping(done);
     });
@@ -158,8 +158,8 @@ class PromiseConnection extends EventEmitter {
   connect() {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
-      c.connect(function(err, param) {
+    return new this.Promise((resolve, reject) => {
+      c.connect((err, param) => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -178,8 +178,8 @@ class PromiseConnection extends EventEmitter {
     const c = this.connection;
     const promiseImpl = this.Promise;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
-      c.prepare(options, function(err, statement) {
+    return new this.Promise((resolve, reject) => {
+      c.prepare(options, (err, statement) => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -201,8 +201,8 @@ class PromiseConnection extends EventEmitter {
   changeUser(options) {
     const c = this.connection;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
-      c.changeUser(options, function(err) {
+    return new this.Promise((resolve, reject) => {
+      c.changeUser(options, err => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -229,8 +229,8 @@ function createConnection(opts) {
         " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
-  return new Promise(function(resolve, reject) {
-    coreConnection.once('connect', function() {
+  return new Promise((resolve, reject) => {
+    coreConnection.once('connect', () => {
       resolve(new PromiseConnection(coreConnection, Promise));
     });
     coreConnection.once('error', err => {
@@ -305,14 +305,13 @@ class PromisePool extends EventEmitter {
   }
 
   getConnection() {
-    const self = this;
     const corePool = this.pool;
-    return new this.Promise(function(resolve, reject) {
-      corePool.getConnection(function(err, coreConnection) {
+    return new this.Promise((resolve, reject) => {
+      corePool.getConnection((err, coreConnection) => {
         if (err) {
           reject(err);
         } else {
-          resolve(new PromisePoolConnection(coreConnection, self.Promise));
+          resolve(new PromisePoolConnection(coreConnection, this.Promise));
         }
       });
     });
@@ -321,7 +320,7 @@ class PromisePool extends EventEmitter {
   query(sql, args) {
     const corePool = this.pool;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
+    return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       if (args) {
         corePool.query(sql, args, done);
@@ -334,7 +333,7 @@ class PromisePool extends EventEmitter {
   execute(sql, values) {
     const corePool = this.pool;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
+    return new this.Promise((resolve, reject) => {
       corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
     });
   }
@@ -342,8 +341,8 @@ class PromisePool extends EventEmitter {
   end() {
     const corePool = this.pool;
     const localErr = new Error();
-    return new this.Promise(function(resolve, reject) {
-      corePool.end(function(err) {
+    return new this.Promise((resolve, reject) => {
+      corePool.end(err => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;

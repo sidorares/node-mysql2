@@ -20,7 +20,7 @@ connection.query("set time_zone = '+00:00'");
 connection.execute(
   'SELECT UNIX_TIMESTAMP(?) t',
   [new Date('1990-08-08 UTC')],
-  function(err, _rows) {
+  (err, _rows) => {
     if (err) {
       throw err;
     }
@@ -29,6 +29,6 @@ connection.execute(
   }
 );
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(rows[0].t, 650073600);
 });

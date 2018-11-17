@@ -13,18 +13,18 @@ const connection = mysql.createConnection({
 connection.execute(
   'select ?+1 as qqq, ? as rrr, ? as yyy',
   [1, null, 3],
-  function(err, rows, fields) {
+  (err, rows, fields) => {
     console.log(err, rows, fields);
     connection.execute(
       'select ?+1 as qqq, ? as rrr, ? as yyy',
       [3, null, 3],
-      function(err, rows, fields) {
+      (err, rows, fields) => {
         console.log(err, rows, fields);
         connection.unprepare('select ?+1 as qqq, ? as rrr, ? as yyy');
         connection.execute(
           'select ?+1 as qqq, ? as rrr, ? as yyy',
           [3, null, 3],
-          function(err, rows, fields) {
+          (err, rows, fields) => {
             console.log(err, rows, fields);
           }
         );
