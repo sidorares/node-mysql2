@@ -18,8 +18,8 @@ const conn = mysql.createConnection({
   database: 'test_database',
   authSwitchHandler: function ({pluginName, pluginData}, cb) {
     if (pluginName === 'ssh-key-auth') {
-      getPrivateKey(function (key) {
-        var response = encrypt(key, pluginData);
+      getPrivateKey(key => {
+        const response = encrypt(key, pluginData);
         // continue handshake by sending response data
         // respond with error to propagate error to connect/changeUser handlers
         cb(null, response);

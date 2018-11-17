@@ -42,8 +42,8 @@ const config = {
   //...
   typeCast: function (field, next) {
     if (field.type == 'DATETIME') {
-     return new Date(field.string() + 'Z') // can be 'Z' for UTC or an offset in the form '+HH:MM' or '-HH:MM'
-   }
+      return new Date(field.string() + 'Z') // can be 'Z' for UTC or an offset in the form '+HH:MM' or '-HH:MM'
+  }
     return next();
   }
 }

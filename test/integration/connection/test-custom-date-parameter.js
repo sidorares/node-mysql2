@@ -1,11 +1,14 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var rows = undefined;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
+let rows = undefined;
+
+// eslint-disable-next-line no-global-assign
 Date = (function() {
-  var NativeDate = Date;
+  const NativeDate = Date;
   function CustomDate(str) {
     return new NativeDate(str);
   }
@@ -17,7 +20,7 @@ connection.query("set time_zone = '+00:00'");
 connection.execute(
   'SELECT UNIX_TIMESTAMP(?) t',
   [new Date('1990-08-08 UTC')],
-  function(err, _rows, _fields) {
+  (err, _rows) => {
     if (err) {
       throw err;
     }
@@ -26,6 +29,6 @@ connection.execute(
   }
 );
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(rows[0].t, 650073600);
 });

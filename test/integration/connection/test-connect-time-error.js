@@ -1,22 +1,21 @@
-var mysql = require('../../../index.js');
-var assert = require('assert');
+'use strict';
 
-
-var server;
+const mysql = require('../../../index.js');
+const assert = require('assert');
 
 const ERROR_TEXT = 'test error';
 
-var portfinder = require('portfinder');
-portfinder.getPort(function(err, port) {
-  var server = mysql.createServer();
+const portfinder = require('portfinder');
+portfinder.getPort((err, port) => {
+  const server = mysql.createServer();
   server.listen(port);
-  server.on('connection', function(conn) {
+  server.on('connection', conn => {
     console.log('Here!');
     conn.writeError(new Error(ERROR_TEXT));
     conn.close();
   });
 
-  var connection = mysql.createConnection({
+  const connection = mysql.createConnection({
     host: 'localhost',
     port: port,
     user: 'testuser',
@@ -24,11 +23,11 @@ portfinder.getPort(function(err, port) {
     password: 'testpassword'
   });
 
-  connection.query('select 1+1', function(err) {
+  connection.query('select 1+1', err => {
     assert.equal(err.message, ERROR_TEXT);
   });
 
-  connection.query('select 1+2', function(err) {
+  connection.query('select 1+2', err => {
     assert.equal(err.message, ERROR_TEXT);
     connection.close();
     server._server.close();

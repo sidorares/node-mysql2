@@ -1,7 +1,9 @@
-var assert = require('assert');
-var packets = require('../../../lib/packets/index.js');
+'use strict';
 
-var packet = packets.OK.toPacket({ affectedRows: 0, insertId: 1 });
+const assert = require('assert');
+const packets = require('../../../lib/packets/index.js');
+
+const packet = packets.OK.toPacket({ affectedRows: 0, insertId: 1 });
 
 // 5 bytes for an OK packet, plus one byte to store affectedRows plus one byte to store the insertId
 assert.equal(

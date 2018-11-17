@@ -1,11 +1,13 @@
-var mysql = require('mysql2');
-var flags = require('mysql2/lib/constants/client.js');
-var auth = require('mysql2/lib/auth_41.js');
+'use strict';
+
+const mysql = require('mysql2');
+const flags = require('mysql2/lib/constants/client.js');
+const auth = require('mysql2/lib/auth_41.js');
 
 function authenticate(params, cb) {
   console.log(params);
-  var doubleSha = auth.doubleSha1('pass123');
-  var isValid = auth.verifyToken(
+  const doubleSha = auth.doubleSha1('pass123');
+  const isValid = auth.verifyToken(
     params.authPluginData1,
     params.authPluginData2,
     params.authToken,
@@ -19,9 +21,9 @@ function authenticate(params, cb) {
   }
 }
 
-var server = mysql.createServer();
+const server = mysql.createServer();
 server.listen(3333);
-server.on('connection', function(conn) {
+server.on('connection', conn => {
   // we can deny connection here:
   // conn.writeError({ message: 'secret', code: 123 });
   // conn.close();
@@ -37,12 +39,12 @@ server.on('connection', function(conn) {
     authCallback: authenticate
   });
 
-  conn.on('field_list', function(table, fields) {
+  conn.on('field_list', (table, fields) => {
     console.log('FIELD LIST:', table, fields);
     conn.writeEof();
   });
 
-  conn.on('query', function(query) {
+  conn.on('query', query => {
     conn.writeColumns([
       {
         catalog: 'def',

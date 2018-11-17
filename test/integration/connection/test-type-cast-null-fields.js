@@ -1,10 +1,12 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 common.useTestDb(connection);
 
-var table = 'insert_test';
+const table = 'insert_test';
 connection.query(
   [
     'CREATE TEMPORARY TABLE `' + table + '` (',
@@ -21,8 +23,8 @@ connection.query('INSERT INTO ' + table + ' SET ?', {
   number: null
 });
 
-var results;
-connection.query('SELECT * FROM ' + table, function(err, _results) {
+let results;
+connection.query('SELECT * FROM ' + table, (err, _results) => {
   if (err) {
     throw err;
   }
@@ -31,7 +33,7 @@ connection.query('SELECT * FROM ' + table, function(err, _results) {
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.strictEqual(results[0].date, null);
   assert.strictEqual(results[0].number, null);
 });

@@ -1,12 +1,15 @@
-var net = require('net');
+'use strict';
 
-var byte = Buffer.from([0x33]);
-function pong()
-{
-  this.write(byte);
+const net = require('net');
+
+const byte = Buffer.from([0x33]);
+function pong(conn) {
+  conn.write(byte);
 }
 
-net.createServer(function(s) {
-  s.setNoDelay(true);
-  s.ondata = pong;
-}).listen(3334);
+net
+  .createServer(s => {
+    s.setNoDelay(true);
+    s.ondata = () => pong(s);
+  })
+  .listen(3334);

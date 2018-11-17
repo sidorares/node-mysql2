@@ -1,56 +1,60 @@
-var assert = require('assert');
-var createConnection = require('../../test/common').createConnection;
+'use strict';
 
-var sql = process.argv[2];
-var starthr = process.hrtime();
-var haml = require('hamljs');
-var fs = require('fs');
+const createConnection = require('../../test/common').createConnection;
 
-var render = haml.compile(fs.readFileSync('./views/index.haml'));
+const sql = process.argv[2];
+const starthr = process.hrtime();
+const haml = require('hamljs');
+const fs = require('fs');
 
-l = 0;
-var rowsReceived = 0;
-var numRequests = 0;
+const render = haml.compile(fs.readFileSync('./views/index.haml'));
+
+let l = 0;
+let rowsReceived = 0;
+let numRequests = 0;
 
 (function(cb) {
-    var db = createConnection();
+  const db = createConnection();
 
-       var left = 1;
+  let left = 1;
 
-       var start = Date.now();
-       var prev1000 = start;
-       function bench()
-       {
-           //db.query(sql).on('end', function(err, res) {
-           db.query(sql, function(err, res) {
-           //db.execute(sql, function(err, res) {
+  const start = Date.now();
+  let prev1000 = start;
+  function bench() {
+    //db.query(sql).on('end', function(err, res) {
+    db.query(sql, (err, res) => {
+      //db.execute(sql, function(err, res) {
 
-               rowsReceived += res.length;
-               numRequests++;
+      rowsReceived += res.length;
+      numRequests++;
 
-               l += render({results: res}).length;
-               console.log(render({results: res}));
+      l += render({ results: res }).length;
+      console.log(render({ results: res }));
 
-               left--;
-               if (left % 1000 === 0)
-               {
-                   var curTime = Date.now();
-                   var last1000time = curTime - prev1000;
-                   prev1000 = curTime;
-                   console.error( (1000000/last1000time) + ' req/sec' );
-               }
+      left--;
+      if (left % 1000 === 0) {
+        const curTime = Date.now();
+        const last1000time = curTime - prev1000;
+        prev1000 = curTime;
+        console.error(1000000 / last1000time + ' req/sec');
+      }
 
-               if (left > 0)
-                   bench();
-               else {
-                   console.error( numRequests *1000/(Date.now() - start) + ' req/sec (average 10000 reqs)');
-                   console.error( rowsReceived*1000/(Date.now() - start) + ' row/sec (average 10000 reqs)');
-                   db.end();
-                   if (cb) cb();
-                   console.log(process.hrtime(starthr));
-                   console.log(l);
-               }
-           });
-       }
-       bench();
+      if (left > 0) bench();
+      else {
+        console.error(
+          (numRequests * 1000) / (Date.now() - start) +
+            ' req/sec (average 10000 reqs)'
+        );
+        console.error(
+          (rowsReceived * 1000) / (Date.now() - start) +
+            ' row/sec (average 10000 reqs)'
+        );
+        db.end();
+        if (cb) cb();
+        console.log(process.hrtime(starthr));
+        console.log(l);
+      }
+    });
+  }
+  bench();
 })();

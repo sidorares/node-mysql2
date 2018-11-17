@@ -1,13 +1,42 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var testTable = 'neg-ai-test';
-var testData = 'test negative ai';
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-var selectResult, insertResult;
+const testTable = 'neg-ai-test';
+const testData = 'test negative ai';
 
-var prepareAndTest = function(cb) {
+let selectResult, insertResult;
+
+const testNegativeAI = function(err) {
+  assert.ifError(err);
+  // insert the negative AI
+  connection.query(
+    'INSERT INTO `' +
+      testTable +
+      '`' +
+      ' (id, title) values (-999, "' +
+      testData +
+      '")',
+    (err, result) => {
+      assert.ifError(err);
+      insertResult = result;
+
+      // select the row with negative AI
+      connection.query(
+        'SELECT * FROM `' + testTable + '`' + ' WHERE id = ' + result.insertId,
+        (err, result_) => {
+          assert.ifError(err);
+          selectResult = result_;
+          connection.end();
+        }
+      );
+    }
+  );
+};
+
+const prepareAndTest = function() {
   connection.query(
     'CREATE TEMPORARY TABLE `' +
       testTable +
@@ -20,36 +49,9 @@ var prepareAndTest = function(cb) {
   );
 };
 
-var testNegativeAI = function(err) {
-  assert.ifError(err);
-  // insert the negative AI
-  connection.query(
-    'INSERT INTO `' +
-      testTable +
-      '`' +
-      ' (id, title) values (-999, "' +
-      testData +
-      '")',
-    function(err, result) {
-      assert.ifError(err);
-      insertResult = result;
-
-      // select the row with negative AI
-      connection.query(
-        'SELECT * FROM `' + testTable + '`' + ' WHERE id = ' + result.insertId,
-        function(err, result_) {
-          assert.ifError(err);
-          selectResult = result_;
-          connection.end();
-        }
-      );
-    }
-  );
-};
-
 prepareAndTest();
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.strictEqual(insertResult.insertId, -999);
   assert.strictEqual(selectResult.length, 1);
 

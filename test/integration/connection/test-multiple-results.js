@@ -1,18 +1,20 @@
-var mysql = require('../../common.js').createConnection({
+'use strict';
+
+const mysql = require('../../common.js').createConnection({
   multipleStatements: true
 });
-var assert = require('assert-diff');
+const assert = require('assert-diff');
 mysql.query('CREATE TEMPORARY TABLE no_rows (test int)');
 mysql.query('CREATE TEMPORARY TABLE some_rows (test int)');
 mysql.query('INSERT INTO some_rows values(0)');
 mysql.query('INSERT INTO some_rows values(42)');
 mysql.query('INSERT INTO some_rows values(314149)');
 
-var clone = function(obj) {
+const clone = function(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
 
-var rs1 = {
+const rs1 = {
   affectedRows: 0,
   fieldCount: 0,
   insertId: 0,
@@ -20,13 +22,13 @@ var rs1 = {
   warningStatus: 0,
   info: ''
 };
-var rs2 = clone(rs1);
+const rs2 = clone(rs1);
 rs2.serverStatus = 2;
 
-var twoInsertResult = [[rs1, rs2], [undefined, undefined], 2];
-var select1 = [{ '1': '1' }];
-var select2 = [{ '2': '2' }];
-var fields1 = [
+const twoInsertResult = [[rs1, rs2], [undefined, undefined], 2];
+const select1 = [{ '1': '1' }];
+const select2 = [{ '2': '2' }];
+const fields1 = [
   {
     catalog: 'def',
     characterSet: 63,
@@ -41,7 +43,7 @@ var fields1 = [
     table: ''
   }
 ];
-var nr_fields = [
+const nr_fields = [
   {
     catalog: 'def',
     characterSet: 63,
@@ -56,15 +58,15 @@ var nr_fields = [
     table: 'no_rows'
   }
 ];
-var sr_fields = clone(nr_fields);
+const sr_fields = clone(nr_fields);
 sr_fields[0].orgTable = 'some_rows';
 sr_fields[0].table = 'some_rows';
-var select3 = [{ test: 0 }, { test: 42 }, { test: 314149 }];
+const select3 = [{ test: 0 }, { test: 42 }, { test: 314149 }];
 
-var fields2 = clone(fields1);
+const fields2 = clone(fields1);
 fields2[0].name = '2';
 
-var tests = [
+const tests = [
   ['select * from some_rows', [select3, sr_fields, 1]], //  select 3 rows
   [
     'SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT; SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS;',
@@ -96,11 +98,11 @@ var tests = [
 // TODO: multiple results from single query
 
 function do_test(testIndex) {
-  var entry = tests[testIndex];
-  var sql = entry[0];
-  var expectation = entry[1];
-  mysql.query(sql, function(err, _rows, _columns) {
-    var _numResults = 0;
+  const entry = tests[testIndex];
+  const sql = entry[0];
+  const expectation = entry[1];
+  mysql.query(sql, (err, _rows, _columns) => {
+    let _numResults = 0;
     if (_rows.constructor.name == 'ResultSetHeader') {
       _numResults = 1;
     } else if (_rows.length === 0) {
@@ -126,7 +128,7 @@ function do_test(testIndex) {
       console.log(err);
       process.exit(-1);
     }
-    var arrOrColumn = function(c) {
+    const arrOrColumn = function(c) {
       if (Array.isArray(c)) {
         return c.map(arrOrColumn);
       }
@@ -140,14 +142,14 @@ function do_test(testIndex) {
 
     assert.deepEqual(expectation, [_rows, arrOrColumn(_columns), _numResults]);
 
-    var q = mysql.query(sql);
-    var resIndex = 0;
-    var rowIndex = 0;
+    const q = mysql.query(sql);
+    let resIndex = 0;
+    let rowIndex = 0;
 
-    var fieldIndex = -1;
+    let fieldIndex = -1;
 
     function checkRow(row) {
-      var index = fieldIndex;
+      const index = fieldIndex;
       if (_numResults == 1) {
         assert.equal(fieldIndex, 0);
         if (row.constructor.name == 'ResultSetHeader') {
@@ -183,7 +185,7 @@ function do_test(testIndex) {
     }
     q.on('result', checkRow);
     q.on('fields', checkFields);
-    q.on('end', function() {
+    q.on('end', () => {
       if (testIndex + 1 < tests.length) {
         do_test(testIndex + 1);
       } else {

@@ -1,12 +1,23 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var tableName = '商城';
-var testFields = ['商品类型', '商品说明', '价格', '剩余'];
-var testRows = [['商类型', '商品型', 47, 7], ['类商型', '商型品', 11, 108]];
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-var actualRows = null;
+const tableName = '商城';
+const testFields = ['商品类型', '商品说明', '价格', '剩余'];
+const testRows = [['商类型', '商品型', 47, 7], ['类商型', '商型品', 11, 108]];
+
+let actualRows = null;
+
+function executeTest(err) {
+  assert.ifError(err);
+  connection.query('SELECT * FROM `' + tableName + '`', (err, rows) => {
+    assert.ifError(err);
+    actualRows = rows;
+    connection.end();
+  });
+}
 
 connection.query(
   [
@@ -18,7 +29,7 @@ connection.query(
     ' PRIMARY KEY (`' + testFields[0] + '`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
   ].join(' '),
-  function(err) {
+  err => {
     assert.ifError(err);
     connection.query(
       [
@@ -47,19 +58,10 @@ connection.query(
   }
 );
 
-function executeTest(err) {
-  assert.ifError(err);
-  connection.query('SELECT * FROM `' + tableName + '`', function(err, rows) {
-    assert.ifError(err);
-    actualRows = rows;
-    connection.end();
-  });
-}
-
-process.on('exit', function() {
-  testRows.map(function(tRow, index) {
-    var cols = testFields;
-    var aRow = actualRows[index];
+process.on('exit', () => {
+  testRows.map((tRow, index) => {
+    const cols = testFields;
+    const aRow = actualRows[index];
     assert.equal(aRow[cols[0]], tRow[0]);
     assert.equal(aRow[cols[1]], tRow[1]);
     assert.equal(aRow[cols[2]], tRow[2]);

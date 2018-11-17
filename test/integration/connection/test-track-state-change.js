@@ -1,21 +1,23 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var result1, resul2;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-connection.query('SET NAMES koi8r', function(err, _ok) {
+let result1, result2;
+
+connection.query('SET NAMES koi8r', (err, _ok) => {
   assert.ifError(err);
   result1 = _ok;
 });
 
-connection.query('USE mysql', function(err, _ok) {
+connection.query('USE mysql', (err, _ok) => {
   assert.ifError(err);
   result2 = _ok;
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(result1.stateChanges.systemVariables, {
     character_set_connection: 'koi8r',
     character_set_client: 'koi8r',

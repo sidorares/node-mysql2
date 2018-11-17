@@ -1,19 +1,21 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var error = null;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+let error = null;
 
 try {
-  connection.execute('SELECT ? AS result', [function () {}], function(err, _rows) { });
+  connection.execute('SELECT ? AS result', [function() {}], () => {});
 } catch (err) {
-  error = err
+  error = err;
   connection.end();
 }
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(error.name, 'TypeError');
   if (!error.message.match(/function/)) {
-    assert.fail('Expected error.message to contain \'function\'')
+    assert.fail("Expected error.message to contain 'function'");
   }
 });

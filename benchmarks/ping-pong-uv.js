@@ -1,30 +1,34 @@
-var count = 0;
-var byte = Buffer.from([0x33]);
+'use strict';
 
-function ping(buffer, offset, length) {
-  count++;
-  pong(this);
-}
+let count = 0;
+const byte = Buffer.from([0x33]);
 
 function noop() {}
-function pong(sock)
-{
-  var writeReq = sock.writeBuffer(byte);
+function pong(sock) {
+  const writeReq = sock.writeBuffer(byte);
   writeReq.oncomplete = noop;
 }
 
-var port = 3334;
-var TCP = process.binding('tcp_wrap').TCP;
-var client = new TCP();
-var req = client.connect('127.0.0.1', port);
+function ping(conn) {
+  count++;
+  pong(conn);
+}
+
+const port = 3334;
+const TCP = process.binding('tcp_wrap').TCP;
+const client = new TCP();
+const req = client.connect(
+  '127.0.0.1',
+  port
+);
 req.oncomplete = function() {
   console.log('connected');
   pong(client);
 };
-client.onread = ping;
+client.onread = () => ping(client);
 client.readStart();
 
-setInterval(function() {
+setInterval(() => {
   console.log(count);
   count = 0;
 }, 1000);

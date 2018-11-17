@@ -1,14 +1,16 @@
-var common = require('../../common');
-var connection = common.createConnection({ dateStrings: false });
-var assert = require('assert');
+'use strict';
 
-var tableName = 'dates';
-var testFields = ['id', 'date1', 'date2', 'name'];
-var testRows = [
+const common = require('../../common');
+const connection = common.createConnection({ dateStrings: false });
+const assert = require('assert');
+
+const tableName = 'dates';
+const testFields = ['id', 'date1', 'date2', 'name'];
+const testRows = [
   [1, '2017-07-26 09:36:42.000', '2017-07-29 09:22:24.000', 'John'],
   [2, '2017-07-26 09:36:42.123', '2017-07-29 09:22:24.321', 'Jane']
 ];
-var expected = [
+const expected = [
   {
     id: 1,
     date1: new Date('2017-07-26T09:36:42.000Z'),
@@ -23,7 +25,16 @@ var expected = [
   }
 ];
 
-var actualRows = null;
+let actualRows = null;
+
+function executeTest(err) {
+  assert.ifError(err);
+  connection.execute('SELECT * FROM `' + tableName + '`', (err, rows) => {
+    assert.ifError(err);
+    actualRows = rows;
+    connection.end();
+  });
+}
 
 connection.query(
   [
@@ -34,7 +45,7 @@ connection.query(
     ' `' + testFields[3] + '` varchar(10)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
   ].join(' '),
-  function(err) {
+  err => {
     assert.ifError(err);
     connection.query(
       [
@@ -63,23 +74,10 @@ connection.query(
   }
 );
 
-function executeTest(err) {
-  assert.ifError(err);
-  connection.execute('SELECT * FROM `' + tableName + '`', function(
-    err,
-    rows,
-    fields
-  ) {
-    assert.ifError(err);
-    actualRows = rows;
-    connection.end();
-  });
-}
-
-process.on('exit', function() {
-  expected.map(function(exp, index) {
-    var row = actualRows[index];
-    Object.keys(exp).map(function(key) {
+process.on('exit', () => {
+  expected.map((exp, index) => {
+    const row = actualRows[index];
+    Object.keys(exp).map(key => {
       if (key.startsWith('date')) {
         assert.equal(+exp[key], +row[key]);
       } else {

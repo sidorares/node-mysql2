@@ -1,8 +1,10 @@
-var assert = require('assert');
+'use strict';
 
-var FieldFlags = require('../../../lib/constants/field_flags.js');
-var common = require('../../common');
-var conn = common.createConnection();
+const assert = require('assert');
+
+const FieldFlags = require('../../../lib/constants/field_flags.js');
+const common = require('../../common');
+const conn = common.createConnection();
 
 // it's possible to receive null values for columns marked with NOT_NULL flag
 // see https://github.com/sidorares/node-mysql2/issues/178 for info
@@ -45,7 +47,7 @@ conn.query(
   "INSERT INTO `tmp_account_session` VALUES ('1', '::1', '75efb145482ce22f4544390cad233c749c1b43e4', '1')"
 );
 
-conn.connect(function(err) {
+conn.connect(err => {
   if (err) {
     console.error(err);
     return;
@@ -54,9 +56,9 @@ conn.connect(function(err) {
   conn.execute(
     "SELECT `ac`.`username`, CONCAT('[', GROUP_CONCAT(DISTINCT `acf`.`flag` SEPARATOR ','), ']') flags FROM tmp_account ac LEFT JOIN tmp_account_flags acf ON `acf`.account = `ac`.id LEFT JOIN tmp_account_session acs ON `acs`.account = `ac`.id WHERE `acs`.`session`=?",
     ['asid=75efb145482ce22f4544390cad233c749c1b43e4'],
-    function(err, rows, fields) {
-      var flagNotNull = fields[0].flags & FieldFlags.NOT_NULL;
-      var valueIsNull = rows[0][fields[0].name] === null;
+    (err, rows, fields) => {
+      const flagNotNull = fields[0].flags & FieldFlags.NOT_NULL;
+      const valueIsNull = rows[0][fields[0].name] === null;
       assert(flagNotNull && valueIsNull);
       conn.end();
     }

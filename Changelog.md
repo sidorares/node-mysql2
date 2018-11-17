@@ -1,3 +1,34 @@
+1.6.4 (08/11/2018)
+ - revert changes breaking node v4 and add v4 to 
+   build matrix                                       #872, #873
+
+1.6.3 (06/10/2018)
+ - Don't treat selector-making function as a class.   #869, #871
+
+1.6.2 (05/10/2018)
+ - Fix "Socket ended by other party" error            #447, #867, #868
+ - replace var with let/const                         #849
+ - Fix "close emitted before end" error               #711, #859
+ - fix docs                                           #856
+ - migrate to es6 classes where appropriate           #848
+
+1.6.1 (02/08/2018)
+ - Fix missing Promise option in checks for Pool      #826
+
+1.6.0 (01/08/2018)
+ - Fixed `PromiseConnection.ping()` ignoring errors   #813
+ - Added a uri parameter to the connection config     #815
+ - Added a `.promise()` method shortcut on Pool,
+   Connection and PoolConnection                      #810 
+ - Added more functions from node-mysql:
+   `createQuery`, `raw`, `escape`, `escapeId`,
+   `format`                                           #799
+ - Added `acquire` and `release` and release events
+   on Connection                                      #783
+ - Added support for a Japanese charset `ujis`        #772
+ - Improved error handling on `ECONNRESET`            #768
+ - Drop support for Node 4                            #791
+
 1.5.3 (19/03/2018)
  - fix incorrect denque dependency                     #740
  - build: bump to node 8.10 and 6.16

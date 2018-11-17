@@ -1,6 +1,8 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 connection.query(
   {
@@ -12,7 +14,7 @@ connection.query(
       return next();
     }
   },
-  function(err, res) {
+  (err, res) => {
     assert.ifError(err);
     assert.deepEqual(res[0].foo, { x: 11, y: 0 });
   }
@@ -28,7 +30,7 @@ connection.query(
       return next();
     }
   },
-  function(err, res) {
+  (err, res) => {
     assert.ifError(err);
     assert.equal(Buffer.isBuffer(res[0].foo), true);
   }

@@ -1,10 +1,12 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 common.useTestDb(connection);
 
-var table = 'nested_test';
+const table = 'nested_test';
 connection.query(
   [
     'CREATE TEMPORARY TABLE `' + table + '` (',
@@ -17,21 +19,21 @@ connection.query(
 
 connection.query('INSERT INTO ' + table + ' SET ?', { title: 'test' });
 
-var options1 = {
+const options1 = {
   nestTables: true,
   sql: 'SELECT * FROM ' + table
 };
-var options2 = {
+const options2 = {
   nestTables: '_',
   sql: 'SELECT * FROM ' + table
 };
-var options3 = {
+const options3 = {
   rowsAsArray: true,
   sql: 'SELECT * FROM ' + table
 };
-var rows1, rows2, rows3, rows1e, rows2e, rows3e;
+let rows1, rows2, rows3, rows1e, rows2e, rows3e;
 
-connection.query(options1, function(err, _rows) {
+connection.query(options1, (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -39,7 +41,7 @@ connection.query(options1, function(err, _rows) {
   rows1 = _rows;
 });
 
-connection.query(options2, function(err, _rows) {
+connection.query(options2, (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -47,7 +49,7 @@ connection.query(options2, function(err, _rows) {
   rows2 = _rows;
 });
 
-connection.query(options3, function(err, _rows) {
+connection.query(options3, (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -55,7 +57,7 @@ connection.query(options3, function(err, _rows) {
   rows3 = _rows;
 });
 
-connection.execute(options1, function(err, _rows) {
+connection.execute(options1, (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -63,7 +65,7 @@ connection.execute(options1, function(err, _rows) {
   rows1e = _rows;
 });
 
-connection.execute(options2, function(err, _rows) {
+connection.execute(options2, (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -71,7 +73,7 @@ connection.execute(options2, function(err, _rows) {
   rows2e = _rows;
 });
 
-connection.execute(options3, function(err, _rows) {
+connection.execute(options3, (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -80,7 +82,7 @@ connection.execute(options3, function(err, _rows) {
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(rows1.length, 1);
   assert.equal(rows1[0].nested_test.id, 1);
   assert.equal(rows1[0].nested_test.title, 'test');

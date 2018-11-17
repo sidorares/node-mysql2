@@ -1,18 +1,20 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 common.useTestDb(connection);
 
-var tests = require('./type-casting-tests')(connection);
+const tests = require('./type-casting-tests')(connection);
 
-var table = 'type_casting';
+const table = 'type_casting';
 
-var schema = [];
-var inserts = [];
+const schema = [];
+const inserts = [];
 
-tests.forEach(function(test, index) {
-  var escaped = test.insertRaw || connection.escape(test.insert);
+tests.forEach((test, index) => {
+  const escaped = test.insertRaw || connection.escape(test.insert);
 
   test.columnName = test.type + '_' + index;
 
@@ -20,7 +22,7 @@ tests.forEach(function(test, index) {
   inserts.push('`' + test.columnName + '` = ' + escaped);
 });
 
-var createTable = [
+const createTable = [
   'CREATE TEMPORARY TABLE `' + table + '` (',
   '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,'
 ]
@@ -32,8 +34,8 @@ connection.query(createTable);
 
 connection.query('INSERT INTO ' + table + ' SET' + inserts.join(',\n'));
 
-var row;
-connection.query('SELECT * FROM type_casting', function(err, rows) {
+let row;
+connection.query('SELECT * FROM type_casting', (err, rows) => {
   if (err) {
     throw err;
   }
@@ -42,11 +44,11 @@ connection.query('SELECT * FROM type_casting', function(err, rows) {
   connection.end();
 });
 
-process.on('exit', function() {
-  tests.forEach(function(test) {
-    var expected = test.expect || test.insert;
-    var got = row[test.columnName];
-    var message;
+process.on('exit', () => {
+  tests.forEach(test => {
+    let expected = test.expect || test.insert;
+    let got = row[test.columnName];
+    let message;
 
     if (expected instanceof Date) {
       assert.equal(got instanceof Date, true, test.type);

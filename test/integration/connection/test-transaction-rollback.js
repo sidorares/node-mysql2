@@ -1,10 +1,12 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 common.useTestDb(connection);
 
-var table = 'transaction_test';
+const table = 'transaction_test';
 connection.query(
   [
     'CREATE TEMPORARY TABLE `' + table + '` (',
@@ -15,21 +17,21 @@ connection.query(
   ].join('\n')
 );
 
-connection.beginTransaction(function(err) {
+connection.beginTransaction(err => {
   assert.ifError(err);
 
-  var row = {
+  const row = {
     id: 1,
     title: 'Test row'
   };
 
-  connection.query('INSERT INTO ' + table + ' SET ?', row, function(err) {
+  connection.query('INSERT INTO ' + table + ' SET ?', row, err => {
     assert.ifError(err);
 
-    connection.rollback(function(err) {
+    connection.rollback(err => {
       assert.ifError(err);
 
-      connection.query('SELECT * FROM ' + table, function(err, rows) {
+      connection.query('SELECT * FROM ' + table, (err, rows) => {
         assert.ifError(err);
         connection.end();
         assert.equal(rows.length, 0);
