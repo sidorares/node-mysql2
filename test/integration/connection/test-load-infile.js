@@ -7,7 +7,7 @@ const assert = require('assert');
 const table = 'load_data_test';
 connection.query(
   [
-    'CREATE TEMPORARY TABLE `' + table + '` (',
+    `CREATE TEMPORARY TABLE \`${table}\` (`,
     '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
@@ -17,10 +17,8 @@ connection.query(
 
 const path = './test/fixtures/data.csv';
 const sql =
-  'LOAD DATA LOCAL INFILE ? INTO TABLE ' +
-  table +
-  ' ' +
-  'FIELDS TERMINATED BY ? (id, title)';
+  `LOAD DATA LOCAL INFILE ? INTO TABLE ${table} ` +
+  `FIELDS TERMINATED BY ? (id, title)`;
 
 let ok;
 connection.query(sql, [path, ','], (err, _ok) => {
@@ -31,7 +29,7 @@ connection.query(sql, [path, ','], (err, _ok) => {
 });
 
 let rows;
-connection.query('SELECT * FROM ' + table, (err, _rows) => {
+connection.query(`SELECT * FROM ${table}`, (err, _rows) => {
   if (err) {
     throw err;
   }

@@ -129,7 +129,7 @@ test('SqlString.escape', {
     const date = new Date(2012, 4, 7, 11, 42, 3, 2);
     const string = SqlString.escape(date);
 
-    assert.strictEqual(string, "'" + expected + "'");
+    assert.strictEqual(string, `'${expected}'`);
   },
 
   'buffers are converted to hex': function() {

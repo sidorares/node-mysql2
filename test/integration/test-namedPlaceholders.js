@@ -15,8 +15,7 @@ test('Test namedPlaceholder as command parameter', {
     c.query({ sql: query, namedPlaceholders: false }, values, err => {
       if (!err || !err.sqlMessage.match(/right syntax to use near ':named'/)) {
         assert.fail(
-          'Expected err.sqlMessage to contain "right syntax to use near \':named\'" sqlMessage: ' +
-            err.sqlMessage
+          `Expected err.sqlMessage to contain "right syntax to use near ':named'" sqlMessage: ${err.sqlMessage}`
         );
       }
       c.end();

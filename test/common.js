@@ -10,24 +10,15 @@ const config = {
 };
 
 const configURI =
-  'mysql://' +
-  config.user +
-  ':' +
-  config.password +
-  '@' +
-  config.host +
-  ':' +
-  config.port +
-  '/' +
-  config.database;
+  `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
-module.exports.SqlString = require('sqlstring');
-module.exports.config = config;
+exports.SqlString = require('sqlstring');
+exports.config = config;
 
-module.exports.waitDatabaseReady = function(callback) {
+exports.waitDatabaseReady = function(callback) {
   const start = Date.now();
   const tryConnect = function() {
-    const conn = module.exports.createConnection();
+    const conn = exports.createConnection();
     conn.once('error', err => {
       if (err.code !== 'PROTOCOL_CONNECTION_LOST' && err.code !== 'ETIMEDOUT') {
         console.log('Unexpected error waiting for connection', err);
@@ -49,7 +40,7 @@ module.exports.waitDatabaseReady = function(callback) {
   tryConnect();
 };
 
-module.exports.createConnection = function(args) {
+exports.createConnection = function(args) {
   if (!args) {
     args = {};
   }
@@ -139,7 +130,7 @@ module.exports.createConnection = function(args) {
   return conn;
 };
 
-module.exports.getConfig = function(input) {
+exports.getConfig = function(input) {
   const args = input || {};
   const params = {
     host: args.host || config.host,
@@ -162,7 +153,7 @@ module.exports.getConfig = function(input) {
   return params;
 };
 
-module.exports.createPool = function() {
+exports.createPool = function() {
   let driver = require('../index.js');
   if (process.env.BENCHMARK_MYSQL1) {
     driver = require('mysql');
@@ -171,16 +162,16 @@ module.exports.createPool = function() {
   return driver.createPool(config);
 };
 
-module.exports.createConnectionWithURI = function() {
+exports.createConnectionWithURI = function() {
   const driver = require('../index.js');
 
   return driver.createConnection({ uri: configURI });
 };
 
-module.exports.createTemplate = function() {
+exports.createTemplate = function() {
   const jade = require('jade');
   const template = require('fs').readFileSync(
-    __dirname + '/template.jade',
+    `${__dirname}/template.jade`,
     'ascii'
   );
   return jade.compile(template);
@@ -189,7 +180,7 @@ module.exports.createTemplate = function() {
 const ClientFlags = require('../lib/constants/client.js');
 
 const portfinder = require('portfinder');
-module.exports.createServer = function(onListening, handler) {
+exports.createServer = function(onListening, handler) {
   const server = require('../index.js').createServer();
   server.on('connection', conn => {
     conn.on('error', () => {
@@ -216,6 +207,6 @@ module.exports.createServer = function(onListening, handler) {
   return server;
 };
 
-module.exports.useTestDb = function() {
+exports.useTestDb = function() {
   // no-op in my setup, need it for compatibility with node-mysql tests
 };

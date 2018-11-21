@@ -9,7 +9,7 @@ let rows1 = undefined;
 let rows2 = undefined;
 
 const q = 'select 1 + ? as test';
-const key = 'undefined/undefined/undefined' + q;
+const key = `undefined/undefined/undefined${q}`;
 
 connection.execute(q, [123], (err, _rows) => {
   if (err) {
@@ -26,9 +26,9 @@ connection.execute(q, [123], (err, _rows) => {
         throw err;
       }
       rows2 = _rows;
-      assert(connection._statements.length == 1);
-      assert(connection._statements.get(key).query == q);
-      assert(connection._statements.get(key).parameters.length == 1);
+      assert(connection._statements.length === 1);
+      assert(connection._statements.get(key).query === q);
+      assert(connection._statements.get(key).parameters.length === 1);
       connection.end();
     });
   });

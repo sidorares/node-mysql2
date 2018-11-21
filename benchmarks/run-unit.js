@@ -46,7 +46,7 @@ function runFolder(name, done) {
 
 function benchmarkModule(m, modulePath, done) {
   const results = [];
-  const bar = new progress(m.comment + ' [:bar] ', {
+  const bar = new progress(`${m.comment} [:bar] `, {
     total: nRepeats,
     clear: true
   });
@@ -122,11 +122,11 @@ function runFileList(base, list, done) {
     if (index >= list.length) {
       return done(null, results);
     }
-    const fname = base + '/' + list[index];
+    const fname = `${base}/${list[index]}`;
     fs.stat(fname, (err, stat) => {
       if (err) return done(err);
       if (stat.isDirectory()) return runFolder(fname, runOne);
-      else if (fname.slice(-3) == '.js') {
+      if (fname.endsWith('.js')) {
         const m = require(fname);
         return benchmarkModule(m, fname, runOne);
       }
@@ -137,7 +137,7 @@ function runFileList(base, list, done) {
 }
 
 //const name = process.argv[2] || __dirname + '/unit';
-runFolder(__dirname + '/unit', (err, results) => {
+runFolder(`${__dirname}/unit`, (err, results) => {
   //console.log(results);
-  fs.writeFileSync(__dirname + '/results.json', JSON.stringify(results));
+  fs.writeFileSync(`${__dirname}/results.json`, JSON.stringify(results));
 });

@@ -83,7 +83,7 @@ server.on('connection', conn => {
   const remote = mysql.createConnection({user: 'root', database: 'dbname', host:'server.example.com', password: 'secret'});
 
   conn.on('query', sql => {
-    console.log('proxying query:' + sql);
+    console.log(`proxying query: ${sql}`);
     remote.query(sql, function (err) {
       // overloaded args, either (err, result :object)
       // or (err, rows :array, columns :array)

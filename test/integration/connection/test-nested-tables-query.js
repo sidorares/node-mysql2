@@ -9,7 +9,7 @@ common.useTestDb(connection);
 const table = 'nested_test';
 connection.query(
   [
-    'CREATE TEMPORARY TABLE `' + table + '` (',
+    `CREATE TEMPORARY TABLE \`${table}\` (`,
     '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
@@ -17,19 +17,19 @@ connection.query(
   ].join('\n')
 );
 
-connection.query('INSERT INTO ' + table + ' SET ?', { title: 'test' });
+connection.query(`INSERT INTO ${table} SET ?`, { title: 'test' });
 
 const options1 = {
   nestTables: true,
-  sql: 'SELECT * FROM ' + table
+  sql: `SELECT * FROM ${table}`
 };
 const options2 = {
   nestTables: '_',
-  sql: 'SELECT * FROM ' + table
+  sql: `SELECT * FROM ${table}`
 };
 const options3 = {
   rowsAsArray: true,
-  sql: 'SELECT * FROM ' + table
+  sql: `SELECT * FROM ${table}`
 };
 let rows1, rows2, rows3, rows1e, rows2e, rows3e;
 

@@ -14,6 +14,17 @@
     "node": true
   },
   "rules": {
+    "template-curly-spacing": ["error", "never"],
+    "prefer-template": "error",
+    "no-useless-call": "error",
+    "no-lonely-if": "error",
+    "indent": ["error", 2, {
+      "SwitchCase": 1
+    }],
+    "no-else-return": ["error", {
+      "allowElseIf": false
+    }],
+    "eqeqeq": "error",
     "no-invalid-this": "error",
     "consistent-this": "error",
     "prefer-arrow-callback": "error",

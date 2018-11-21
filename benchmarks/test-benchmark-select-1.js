@@ -15,13 +15,13 @@ const createConnection = require('../common').createConnection;
         const curTime = Date.now();
         const last1000time = curTime - prev1000;
         prev1000 = curTime;
-        console.error(1000000 / last1000time + ' req/sec');
+        console.error(`${1000000 / last1000time} req/sec`);
       }
 
       if (left > 0) bench();
       else {
         console.error(
-          10000000 / (Date.now() - start) + ' req/sec (average 10000 reqs)'
+          `${10000000 / (Date.now() - start)} req/sec (average 10000 reqs)`
         );
         db.end();
         if (cb) cb();

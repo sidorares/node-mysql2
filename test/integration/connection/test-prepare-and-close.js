@@ -7,14 +7,14 @@ const assert = require('assert');
 const max = 500;
 const start = process.hrtime();
 function prepare(i) {
-  connection.prepare('select 1+' + i, (err, stmt) => {
+  connection.prepare(`select 1+${i}`, (err, stmt) => {
     assert.ifError(err);
     stmt.close();
     if (!err) {
       if (i > max) {
         const end = process.hrtime(start);
         const ns = end[0] * 1e9 + end[1];
-        console.log((max * 1e9) / ns + ' prepares/sec');
+        console.log(`${(max * 1e9) / ns} prepares/sec`);
         connection.end();
         return;
       }
