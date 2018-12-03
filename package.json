@@ -68,7 +68,7 @@
     "portfinder": "^1.0.19",
     "prettier": "^1.14.3",
     "prettier-markdown": "^0.1.6",
-    "progress": "2.0.1",
+    "progress": "2.0.2",
     "urun": "0.0.8",
     "utest": "0.0.8"
   }
