@@ -207,16 +207,14 @@ async function main() {
   const mysql = require('mysql2');
   // create the connection
   mysql.createConnection(
-   {host:'localhost', user: 'root', database: 'test'},
-   (err,con) => {
-    con.promise().query("SELECT 1")
+   {host:'localhost', user: 'root', database: 'test'}
+  );
+  con.promise().query("SELECT 1")
     .then( ([rows,fields]) => {
      console.log(rows);
     })
     .catch(console.log)
     .then( () => con.end());
-   }
-  );
 ```
 
 ## API and Configuration
