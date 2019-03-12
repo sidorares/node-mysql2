@@ -202,21 +202,18 @@ async function main() {
 
 MySQL2 exposes a .promise() function on Connections, to "upgrade" an existing non-promise connection to use promise
 ```js
-async function main() {
-  // get the client
-  const mysql = require('mysql2');
-  // create the connection
-  mysql.createConnection(
-   {host:'localhost', user: 'root', database: 'test'},
-   (err,con) => {
-    con.promise().query("SELECT 1")
-    .then( ([rows,fields]) => {
-     console.log(rows);
-    })
-    .catch(console.log)
-    .then( () => con.end());
-   }
-  );
+// get the client
+const mysql = require('mysql2');
+// create the connection
+const con = mysql.createConnection(
+  {host:'localhost', user: 'root', database: 'test'}
+);
+con.promise().query("SELECT 1")
+  .then( ([rows,fields]) => {
+    console.log(rows);
+  })
+  .catch(console.log)
+  .then( () => con.end());
 ```
 
 ## API and Configuration
