@@ -205,7 +205,7 @@ MySQL2 exposes a .promise() function on Connections, to "upgrade" an existing no
 // get the client
 const mysql = require('mysql2');
 // create the connection
-mysql.createConnection(
+const con = mysql.createConnection(
   {host:'localhost', user: 'root', database: 'test'}
 );
 con.promise().query("SELECT 1")
