@@ -79,7 +79,8 @@ class PromiseConnection extends EventEmitter {
       'drain',
       'connect',
       'end',
-      'enqueue'
+      'enqueue',
+      'done'
     ]);
   }
 
@@ -294,6 +295,16 @@ class PromisePoolConnection extends PromiseConnection {
       arguments
     );
   }
+
+  query(pool, query, params) {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      query = pool._createQuery(query, params, done);
+      c.query(query);
+    });
+  }
 }
 
 class PromisePool extends EventEmitter {
@@ -318,23 +329,17 @@ class PromisePool extends EventEmitter {
   }
 
   query(sql, args) {
-    const corePool = this.pool;
-    const localErr = new Error();
-    return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
-      if (args) {
-        corePool.query(sql, args, done);
-      } else {
-        corePool.query(sql, done);
-      }
+    const pool = this.pool;
+    return this.getConnection().then(conn => {
+      conn.once('done', () => conn.release());
+      return conn.query(pool, sql, args);
     });
   }
 
   execute(sql, values) {
-    const corePool = this.pool;
-    const localErr = new Error();
-    return new this.Promise((resolve, reject) => {
-      corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
+    return this.getConnection().then(conn => {
+      conn.once('done', () => conn.release());
+      return conn.execute(sql, values);
     });
   }
 
