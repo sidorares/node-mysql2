@@ -13,7 +13,7 @@ function tryEncoding(encoding, cb) {
     connection.query('SELECT ?', [payload], (err, rows, fields) => {
       assert.ifError(err);
       let iconvEncoding = encoding;
-      if (encoding == 'utf8mb4') {
+      if (encoding === 'utf8mb4') {
         iconvEncoding = 'utf8';
       }
       assert.equal(
@@ -33,7 +33,7 @@ function tryEncodingExecute(encoding, cb) {
     connection.execute('SELECT ? as n', [payload], (err, rows, fields) => {
       assert.ifError(err);
       let iconvEncoding = encoding;
-      if (encoding == 'utf8mb4') {
+      if (encoding === 'utf8mb4') {
         iconvEncoding = 'utf8';
       }
       assert.equal(

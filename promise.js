@@ -394,12 +394,12 @@ function createPool(opts) {
   'format'
 ]);
 
-module.exports.createConnection = createConnection;
-module.exports.createPool = createPool;
-module.exports.escape = core.escape;
-module.exports.escapeId = core.escapeId;
-module.exports.format = core.format;
-module.exports.raw = core.raw;
-module.exports.PromisePool = PromisePool;
-module.exports.PromiseConnection = PromiseConnection;
-module.exports.PromisePoolConnection = PromisePoolConnection;
+exports.createConnection = createConnection;
+exports.createPool = createPool;
+exports.escape = core.escape;
+exports.escapeId = core.escapeId;
+exports.format = core.format;
+exports.raw = core.raw;
+exports.PromisePool = PromisePool;
+exports.PromiseConnection = PromiseConnection;
+exports.PromisePoolConnection = PromisePoolConnection;

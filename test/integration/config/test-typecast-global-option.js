@@ -2,7 +2,7 @@
 
 const typeCastWrapper = function(stringMethod) {
   return function(field, next) {
-    if (field.type == 'VAR_STRING') {
+    if (field.type === 'VAR_STRING') {
       return field.string()[stringMethod]();
     }
     return next();

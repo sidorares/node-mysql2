@@ -36,14 +36,14 @@ if (false) {
   let result, result2, result3, result4;
 
   connection.query(
-    'SET GLOBAL max_allowed_packet=' + (length * 2 + 2000),
+    `SET GLOBAL max_allowed_packet=${length * 2 + 2000}`,
     err => {
       assert.ifError(err);
       connection.end();
       const connection2 = common.createConnection();
       connection2.query(
         [
-          'CREATE TEMPORARY TABLE `' + table + '` (',
+          `CREATE TEMPORARY TABLE \`${table}\` (`,
           '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
           '`content` longblob NOT NULL,',
           'PRIMARY KEY (`id`)',
@@ -51,26 +51,23 @@ if (false) {
         ].join('\n')
       );
       connection2.query(
-        'INSERT INTO ' + table + ' (content) VALUES(?)',
+        `INSERT INTO ${table} (content) VALUES(?)`,
         [content],
         (err, _result) => {
           assert.ifError(err);
           result = _result;
           connection2.query(
-            'SELECT * FROM ' + table + ' WHERE id = ' + result.insertId,
+            `SELECT * FROM ${table} WHERE id = ${result.insertId}`,
             (err, _result2) => {
               result2 = _result2;
               connection2.query(
-                'INSERT INTO ' + table + ' (content) VALUES(?)',
+                `INSERT INTO ${table} (content) VALUES(?)`,
                 [content1],
                 (err, _result) => {
                   assert.ifError(err);
                   result3 = _result;
                   connection2.query(
-                    'SELECT * FROM ' +
-                      table +
-                      ' WHERE id = ' +
-                      result3.insertId,
+                    `SELECT * FROM ${table} WHERE id = ${result3.insertId}`,
                     (err, _result) => {
                       assert.ifError(err);
                       result4 = _result;

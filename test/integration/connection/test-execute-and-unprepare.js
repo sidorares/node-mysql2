@@ -5,7 +5,7 @@ const connection = common.createConnection();
 
 const max = 500;
 function exec(i) {
-  const query = 'select 1+' + i;
+  const query = `select 1+${i}`;
   connection.execute(query, err => {
     connection.unprepare(query);
     if (err) {

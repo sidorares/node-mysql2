@@ -31,7 +31,7 @@ server.on('connection', conn => {
   });
 
   conn.on('query', sql => {
-    console.log('proxying query:' + sql);
+    console.log(`proxying query: ${sql}`);
     remote.query(sql, function(err) {
       // overloaded args, either (err, result :object)
       // or (err, rows :array, columns :array)

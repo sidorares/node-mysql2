@@ -5,19 +5,19 @@
 You can use named placeholders for parameters by setting `namedPlaceholders` config value or query/execute time option. Named placeholders are converted to unnamed `?` on the client (mysql protocol does not support named parameters). If you reference parameter multiple times under the same name it is sent to server multiple times.
 
 ```js
-   connection.config.namedPlaceholders = true;
-   connection.execute('select :x + :y as z', {x: 1, y: 2}, (err, rows) => {
-     // statement prepared as "select ? + ? as z" and executed with [1,2] values
-     // rows returned: [ { z: 3 } ]
-   });
+connection.config.namedPlaceholders = true;
+connection.execute('select :x + :y as z', {x: 1, y: 2}, (err, rows) => {
+  // statement prepared as "select ? + ? as z" and executed with [1,2] values
+  // rows returned: [ { z: 3 } ]
+});
 
-   connection.execute('select :x + :x as z', {x: 1}, (err, rows) => {
-     // select ? + ? as z, execute with [1, 1]
-   });
+connection.execute('select :x + :x as z', {x: 1}, (err, rows) => {
+  // select ? + ? as z, execute with [1, 1]
+});
 
-   connection.query('select :x + :x as z', {x: 1}, (err, rows) => {
-     // query select 1 + 1 as z
-   });
+connection.query('select :x + :x as z', {x: 1}, (err, rows) => {
+  // query select 1 + 1 as z
+});
 ```
 
 ## Receiving rows as array of columns instead of hash with column name as key:
