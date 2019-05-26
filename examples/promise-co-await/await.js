@@ -31,7 +31,7 @@ async function test() {
     ])
   );
   console.log(
-    'after 2+3 parallel sleep whitch is in fact not parallel because commands are queued per connection'
+    'after 2+3 parallel sleep which is in fact not parallel because commands are queued per connection'
   );
   let end = +new Date();
   console.log(end - start);
