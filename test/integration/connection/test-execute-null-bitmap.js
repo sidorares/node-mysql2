@@ -8,7 +8,7 @@ const params = [1, 2];
 let query = 'select ? + ?';
 
 function dotest() {
-  connection.execute(query + ' as t', params, (err, _rows) => {
+  connection.execute(`${query} as t`, params, (err, _rows) => {
     assert.equal(err, null);
     if (params.length < 50) {
       assert.equal(_rows[0].t, params.reduce((x, y) => x + y));

@@ -16,14 +16,14 @@ const inserts = [];
 tests.forEach((test, index) => {
   const escaped = test.insertRaw || connection.escape(test.insert);
 
-  test.columnName = test.type + '_' + index;
+  test.columnName = `${test.type}_${index}`;
 
-  schema.push('`' + test.columnName + '` ' + test.type + ',');
-  inserts.push('`' + test.columnName + '` = ' + escaped);
+  schema.push(`\`${test.columnName}\` ${test.type},`);
+  inserts.push(`\`${test.columnName}\` = ${escaped}`);
 });
 
 const createTable = [
-  'CREATE TEMPORARY TABLE `' + table + '` (',
+  `CREATE TEMPORARY TABLE \`${table}\` (`,
   '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,'
 ]
   .concat(schema)
@@ -32,7 +32,7 @@ const createTable = [
 
 connection.query(createTable);
 
-connection.query('INSERT INTO ' + table + ' SET' + inserts.join(',\n'));
+connection.query(`INSERT INTO ${table} SET${inserts.join(',\n')}`);
 
 let row;
 connection.query('SELECT * FROM type_casting', (err, rows) => {
@@ -64,27 +64,11 @@ process.on('exit', () => {
 
     if (test.deep) {
       message =
-        'got: "' +
-        JSON.stringify(got) +
-        '" expected: "' +
-        JSON.stringify(expected) +
-        '" test: ' +
-        test.type +
-        '';
+        `got: "${JSON.stringify(got)}" expected: "${JSON.stringify(expected)}" test: ${test.type}`;
       assert.deepEqual(expected, got, message);
     } else {
       message =
-        'got: "' +
-        got +
-        '" (' +
-        typeof got +
-        ') expected: "' +
-        expected +
-        '" (' +
-        typeof expected +
-        ') test: ' +
-        test.type +
-        '';
+        `got: "${got}" (${typeof got}) expected: "${expected}" (${typeof expected}) test: ${test.type}`;
       assert.strictEqual(expected, got, message);
     }
   });

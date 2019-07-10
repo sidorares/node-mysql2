@@ -48,7 +48,7 @@ module.exports = function(connection) {
         buffer.writeUInt32LE(1, 1);
         buffer.writeDoubleLE(-5.6, 5);
         buffer.writeDoubleLE(10.23, 13);
-        return 'GeomFromWKB(' + connection.escape(buffer) + ')';
+        return `GeomFromWKB(${connection.escape(buffer)})`;
       })(),
       expect: { x: -5.6, y: 10.23 },
       deep: true

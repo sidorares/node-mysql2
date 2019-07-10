@@ -27,7 +27,7 @@ let actualRows = null;
 
 function executeTest(err) {
   assert.ifError(err);
-  connection.execute('SELECT * FROM `' + tableName + '`', (err, rows) => {
+  connection.execute(`SELECT * FROM \`${tableName}\``, (err, rows) => {
     assert.ifError(err);
     actualRows = rows;
     connection.end();
@@ -36,31 +36,19 @@ function executeTest(err) {
 
 connection.query(
   [
-    'CREATE TEMPORARY TABLE `' + tableName + '` (',
-    ' `' + testFields[0] + '` int,',
-    ' `' + testFields[1] + '` TIMESTAMP(3),',
-    ' `' + testFields[2] + '` varchar(10)',
+    `CREATE TEMPORARY TABLE \`${tableName}\` (`,
+    ` \`${testFields[0]}\` int,`,
+    ` \`${testFields[1]}\` TIMESTAMP(3),`,
+    ` \`${testFields[2]}\` varchar(10)`,
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
   ].join(' '),
   err => {
     assert.ifError(err);
     connection.query(
       [
-        'INSERT INTO `' + tableName + '` VALUES',
-        '(' +
-          testRows[0][0] +
-          ',"' +
-          testRows[0][1] +
-          '", "' +
-          testRows[0][2] +
-          '"),',
-        '(' +
-          testRows[1][0] +
-          ',"' +
-          testRows[1][1] +
-          '", "' +
-          testRows[1][2] +
-          '")'
+        `INSERT INTO \`${tableName}\` VALUES`,
+        `(${testRows[0][0]},"${testRows[0][1]}", "${testRows[0][2]}"),`,
+        `(${testRows[1][0]},"${testRows[1][1]}", "${testRows[1][2]}")`
       ].join(' '),
       executeTest
     );

@@ -1,3 +1,10 @@
+1.6.5 (08/02/2019)
+  - allow to use namedPlaceholders flag per query     #879
+  - migrate to more modern code style ( classes /
+   arrow functions )                                  #861, #870
+  - be more defencive about ssl config object         #895
+  - fix(debug): remove usage of callee                #882
+
 1.6.4 (08/11/2018)
  - revert changes breaking node v4 and add v4 to 
    build matrix                                       #872, #873

@@ -6,16 +6,16 @@ const Connection = require('./lib/connection.js');
 const ConnectionConfig = require('./lib/connection_config.js');
 const parserCache = require('./lib/parsers/parser_cache');
 
-module.exports.createConnection = function(opts) {
+exports.createConnection = function(opts) {
   return new Connection({ config: new ConnectionConfig(opts) });
 };
 
-module.exports.connect = module.exports.createConnection;
-module.exports.Connection = Connection;
+exports.connect = exports.createConnection;
+exports.Connection = Connection;
 
 const Pool = require('./lib/pool.js');
 
-module.exports.createPool = function(config) {
+exports.createPool = function(config) {
   const PoolConfig = require('./lib/pool_config.js');
   return new Pool({ config: new PoolConfig(config) });
 };
@@ -27,9 +27,9 @@ exports.createPoolCluster = function(config) {
 
 exports.createQuery = Connection.createQuery;
 
-module.exports.Pool = Pool;
+exports.Pool = Pool;
 
-module.exports.createServer = function(handler) {
+exports.createServer = function(handler) {
   const Server = require('./lib/server.js');
   const s = new Server();
   if (handler) {

@@ -9,7 +9,7 @@ common.useTestDb(connection);
 const table = 'insert_test';
 connection.query(
   [
-    'CREATE TEMPORARY TABLE `' + table + '` (',
+    `CREATE TEMPORARY TABLE \`${table}\` (`,
     '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
     '`date` DATETIME NULL,',
     '`number` INT NULL,',
@@ -18,13 +18,13 @@ connection.query(
   ].join('\n')
 );
 
-connection.query('INSERT INTO ' + table + ' SET ?', {
+connection.query(`INSERT INTO ${table} SET ?`, {
   date: null,
   number: null
 });
 
 let results;
-connection.query('SELECT * FROM ' + table, (err, _results) => {
+connection.query(`SELECT * FROM ${table}`, (err, _results) => {
   if (err) {
     throw err;
   }
