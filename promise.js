@@ -311,7 +311,17 @@ class PromisePool extends EventEmitter {
         if (err) {
           reject(err);
         } else {
-          resolve(new PromisePoolConnection(coreConnection, this.Promise));
+          function onPingOk() {
+            // Ping went through, connection good to be handed to client
+            resolve(new PromisePoolConnection(coreConnection, self.Promise));
+          }
+          function onPingError(err) {
+            // Ping went dead, release the connection for it is dead
+            corePool.releaseConnection(coreConnection);
+            reject(err);
+          }
+          // Make sure the connection is healthy
+          coreConnection.ping(onPingOk, onPingError);
         }
       });
     });
