@@ -393,6 +393,24 @@ function testChangeUser() {
     });
 }
 
+function testConnectionProperties() {
+  let connResolved;
+  createConnection(config)
+    .then(conn => {
+      connResolved = conn;
+      assert.equal(typeof conn.config, 'object');
+      assert.ok('queryFormat' in conn.config);
+      assert.equal(typeof conn.threadId, 'number');
+      return connResolved.end();
+    })
+    .catch(err => {
+      if (connResolved) {
+        connResolved.end();
+      }
+      throw err;
+    });
+}
+
 function timebomb(fuse) {
   let timebomb;
 
@@ -434,6 +452,7 @@ testErrorsPool();
 testObjParamsPool();
 testEventsPool();
 testChangeUser();
+testConnectionProperties();
 testPoolConnectionDestroy();
 testPromiseLibrary();
 
