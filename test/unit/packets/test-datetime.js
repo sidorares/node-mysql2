@@ -7,7 +7,7 @@ let buf = Buffer.from('0a000004000007dd070116010203', 'hex');
 
 let packet = new packets.Packet(4, buf, 0, buf.length);
 packet.readInt16(); // unused
-let d = packet.readDateTime();
+let d = packet.readDateTime('Z');
 
 assert.equal(+d, 1358816523000);
 
@@ -20,7 +20,7 @@ packet = new packets.Packet(6, buf, 0, buf.length);
 packet.readInt16(); // ignore
 const s = packet.readLengthCodedString('cesu8');
 assert.equal(s, 'foo1');
-d = packet.readDateTime();
+d = packet.readDateTime('Z');
 assert.equal(+d, 1455030069425);
 
 const s1 = packet.readLengthCodedString('cesu8');
