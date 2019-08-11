@@ -215,12 +215,9 @@ connection0930.execute(
 );
 
 process.on('exit', () => {
-  try {
-    common.createConnection({ timezone: 'utc' });
-    assert.fail('Expected throw');
-  } catch (err) {
-    assert.equal(err.message, 'Invalid timezone: utc');
-  }
+  const connBadTz = common.createConnection({ timezone: 'utc' });
+  assert.equal(connBadTz.config.timezone, 'Z');
+  connBadTz.end();
 
   // local TZ
   assert.equal(rows[0].t.constructor, Date);
