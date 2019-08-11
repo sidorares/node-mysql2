@@ -29,12 +29,18 @@ const date3 = null;
 const date4 = '2010-12-10 14:12:09.123456';
 const date5 = '2010-12-10 14:12:09.019';
 
-function adjustTZ(d, offset = d.getTimezoneOffset()) {
+function adjustTZ(d, offset) {
+  if (offset === undefined) {
+    offset = d.getTimezoneOffset();
+  }
   return new Date(d.getTime() - offset * 60000);
 }
 
-function toMidnight(d, offset = d.getTimezoneOffset()) {
+function toMidnight(d, offset) {
   const t = d.getTime();
+  if (offset === undefined) {
+    offset = d.getTimezoneOffset();
+  }
   return new Date(t - (t % (24 * 60 * 60 * 1000)) + offset * 60000);
 }
 
@@ -42,8 +48,11 @@ function formatUTCDate(d) {
   return d.toISOString().substring(0, 10);
 }
 
-function formatUTCDateTime(d, precision = 0) {
+function formatUTCDateTime(d, precision) {
   const raw = d.toISOString().replace('T', ' ');
+  if (precision === undefined) {
+    precision = 0;
+  }
   return precision <= 3
     ? raw.substring(0, 19 + (precision && 1) + precision)
     : raw.substring(0, 23) + '0'.repeat(precision - 3);
