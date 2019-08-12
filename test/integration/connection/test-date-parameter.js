@@ -1,7 +1,7 @@
 'use strict';
 
 const common = require('../../common');
-const connection = common.createConnection();
+const connection = common.createConnection({ timezone: 'Z' });
 const assert = require('assert');
 
 let rows = undefined;

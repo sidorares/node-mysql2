@@ -9,8 +9,9 @@ const config = {
   port: process.env.MYSQL_PORT || 3306
 };
 
-const configURI =
-  `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
+const configURI = `mysql://${config.user}:${config.password}@${config.host}:${
+  config.port
+}/${config.database}`;
 
 exports.SqlString = require('sqlstring');
 exports.config = config;
@@ -107,6 +108,7 @@ exports.createConnection = function(args) {
     compress: (args && args.compress) || config.compress,
     decimalNumbers: args && args.decimalNumbers,
     charset: args && args.charset,
+    timezone: args && args.timezone,
     dateStrings: args && args.dateStrings,
     authSwitchHandler: args && args.authSwitchHandler,
     typeCast: args && args.typeCast
@@ -146,6 +148,7 @@ exports.getConfig = function(input) {
     compress: (args && args.compress) || config.compress,
     decimalNumbers: args && args.decimalNumbers,
     charset: args && args.charset,
+    timezone: args && args.timezone,
     dateStrings: args && args.dateStrings,
     authSwitchHandler: args && args.authSwitchHandler,
     typeCast: args && args.typeCast
