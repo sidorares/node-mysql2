@@ -7,22 +7,20 @@ services:
 language: node_js
 matrix:
   include:
-  - node_js: "4"
-    env: LINT=0
-  - node_js: "6"
-    env: LINT=0
-  - node_js: "8"
-    env: LINT=1
-  - node_js: "10"
-    env: LINT=1
-  - node_js: "11"
-    env: LINT=0
+    - node_js: '8'
+      env: LINT=1
+    - node_js: '10'
+      env: LINT=1
+    - node_js: '11'
+      env: LINT=0
+    - node_js: '12'
+      env: LINT=0
 
 cache:
   yarn: true
   directories:
-  - node_modules
-  - $HOME/.yarn-cache
+    - node_modules
+    - $HOME/.yarn-cache
 
 notifications:
   email: false
