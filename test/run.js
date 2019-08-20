@@ -10,9 +10,6 @@ if (process.env.FILTER) {
   options.include = new RegExp(`${process.env.FILTER}.*\\.js$`);
 }
 
-// set timezone to UTC
-process.env.TZ = 'UTC';
-
 require('urun')(__dirname, options);
 
 process.on('exit', code => {

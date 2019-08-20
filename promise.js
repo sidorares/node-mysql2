@@ -216,6 +216,14 @@ class PromiseConnection extends EventEmitter {
       });
     });
   }
+
+  get config() {
+    return this.connection.config;
+  }
+
+  get threadId() {
+    return this.connection.threadId;
+  }
 }
 
 function createConnection(opts) {
