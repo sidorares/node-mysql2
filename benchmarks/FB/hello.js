@@ -33,10 +33,7 @@ const connMap = {
   host: 'localhost'
 };
 
-Mapper.connect(
-  connMap,
-  { verbose: false, strict: false }
-);
+Mapper.connect(connMap, { verbose: false, strict: false });
 const World = Mapper.map('World', 'id', 'randomNumber');
 
 const template = jade.compile(fs.readFileSync('./fortunes.jade'));
@@ -175,7 +172,8 @@ http
     let values;
     let queries;
     let queryFunctions;
-    /* eslint-disable no-case-declarations, no-inner-declarations */
+    /* eslint-disable no-case-declarations */
+    /* eslint-disable no-inner-declarations */
     switch (path) {
       case '/json':
         // JSON Response Test
@@ -293,7 +291,9 @@ http
 
                 rows[0].randomNumber = getRandomNumber();
                 libmysql.query(
-                  `UPDATE World SET randomNumber = ${rows[0].randomNumber} WHERE id = ${rows[0]['id']}`,
+                  `UPDATE World SET randomNumber = ${
+                    rows[0].randomNumber
+                  } WHERE id = ${rows[0]['id']}`,
                   err => {
                     if (err) {
                       throw err;
@@ -327,6 +327,5 @@ http
         res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
         res.end('NOT IMPLEMENTED');
     }
-    /* eslint-enable no-case-declarations no-inner-declarations */
   })
   .listen(8080);
