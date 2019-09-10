@@ -26,7 +26,7 @@ notifications:
   email: false
 
 before_install:
-  - "export MYSQL_DATABASE=node_mysql"
+  - "export MYSQL_DATABASE=test"
   - "export MYSQL_HOST=localhost"
   - "export MYSQL_PORT=$(./node_modules/.bin/get-port)"
   - "export MYSQL_USER=root"
