@@ -66,9 +66,6 @@ exports.createConnection = function(args) {
       password: config.password,
       db: config.database
     });
-    // c.on('connect', function() {
-    //
-    // });
     setTimeout(() => {
       console.log('altering client...');
       c.oldQuery = c.query;
@@ -113,21 +110,7 @@ exports.createConnection = function(args) {
     typeCast: args && args.typeCast
   };
 
-  console.log('cc params', params);
   const conn = driver.createConnection(params);
-
-  /*
-  conn.query('create database IF NOT EXISTS test', function (err) {
-    if (err) {
-      console.log('error during "create database IF NOT EXISTS test"', err);
-    }
-  });
-  conn.query('use test', function (err) {
-    if (err) {
-      console.log('error during "use test"', err);
-    }
-  });
-  */
   return conn;
 };
 
