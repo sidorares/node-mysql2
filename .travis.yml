@@ -8,17 +8,13 @@ language: node_js
 matrix:
   include:
     - node_js: '8'
-      env: LINT=1
+      env: LINT=1 DOCKER_MYSQL_TYPE=mysql DOCKER_MYSQL_VERSION=5.7
     - node_js: '10'
-      env: LINT=1
+      env: LINT=1 DOCKER_MYSQL_TYPE=mysql DOCKER_MYSQL_VERSION=5.7
     - node_js: '11'
-      env: LINT=0
-    - node_js: '12'
       env: LINT=0 DOCKER_MYSQL_TYPE=mysql DOCKER_MYSQL_VERSION=5.7
     - node_js: '12'
-      env: LINT=0 DOCKER_MYSQL_TYPE=mysql DOCKER_MYSQL_VERSION=8.0
-    - node_js: '12'
-      env: LINT=0 DOCKER_MYSQL_TYPE=mariadb DOCKER_MYSQL_VERSION=10.3
+      env: LINT=0 DOCKER_MYSQL_TYPE=mysql DOCKER_MYSQL_VERSION=5.7
 
 cache:
   yarn: true
@@ -35,12 +31,9 @@ before_install:
   - "export MYSQL_PORT=$(./node_modules/.bin/get-port)"
   - "export MYSQL_USER=root"
 
-install:
-  - "docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_DATABASE=node_mysql -p $MYSQL_PORT:3306 $DOCKER_MYSQL_TYPE:$DOCKER_MYSQL_VERSION"
-  - "npm install"
-  - "node tools/wait-up.js"
-
 script:
+  - docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p $MYSQL_PORT:3306 $DOCKER_MYSQL_TYPE:$DOCKER_MYSQL_VERSION
+  - node tools/wait-up.js
   - yarn --version
   - if [ "$LINT" = "1" ]; then yarn run lint; fi
-  - yarn run test:raw
+  - MYSQL_PORT=33306 yarn run test:raw
