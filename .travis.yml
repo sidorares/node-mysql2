@@ -14,7 +14,11 @@ matrix:
     - node_js: '11'
       env: LINT=0
     - node_js: '12'
-      env: LINT=0
+      env: LINT=0 DOCKER_MYSQL_TYPE=mysql DOCKER_MYSQL_VERSION=5.7
+    - node_js: '12'
+      env: LINT=0 DOCKER_MYSQL_TYPE=mysql DOCKER_MYSQL_VERSION=8.0
+    - node_js: '12'
+      env: LINT=0 DOCKER_MYSQL_TYPE=mariadb DOCKER_MYSQL_VERSION=10.3
 
 cache:
   yarn: true
@@ -25,9 +29,18 @@ cache:
 notifications:
   email: false
 
+before_install:
+  - "export MYSQL_DATABASE=node_mysql"
+  - "export MYSQL_HOST=localhost"
+  - "export MYSQL_PORT=$(./node_modules/.bin/get-port)"
+  - "export MYSQL_USER=root"
+
+install:
+  - "docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_DATABASE=$MYSQL_DATABASE -p $MYSQL_PORT:3306 $DOCKER_MYSQL_TYPE:$DOCKER_MYSQL_VERSION"
+  - "npm install"
+  - "node tools/wait-up.js"
+
 script:
-  - docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 33306:3306 mysql:5.7
-  - MYSQL_PORT=33306 node tools/wait-up.js
   - yarn --version
   - if [ "$LINT" = "1" ]; then yarn run lint; fi
-  - MYSQL_PORT=33306 yarn run test:raw
+  - yarn run test:raw
