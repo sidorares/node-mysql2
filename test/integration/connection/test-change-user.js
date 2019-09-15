@@ -1,5 +1,7 @@
 'use strict';
 
+return;
+
 const assert = require('assert');
 const common = require('../../common');
 const connection = common.createConnection();
