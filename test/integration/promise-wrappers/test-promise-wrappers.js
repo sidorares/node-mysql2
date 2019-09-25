@@ -338,9 +338,23 @@ function testChangeUser() {
     return name.substring(0, name.indexOf('@'));
   };
   let connResolved;
+
   createConnection(config)
     .then(conn => {
       connResolved = conn;
+      return connResolved.query(
+        "CREATE USER IF NOT EXISTS 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
+      );
+    })
+    .then(() => {
+      connResolved.query(
+        "CREATE USER IF NOT EXISTS 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
+      );
+      connResolved.query("GRANT ALL ON *.* TO 'changeuser1'@'%'");
+      connResolved.query("GRANT ALL ON *.* TO 'changeuser2'@'%'");
+      return connResolved.query('FLUSH PRIVILEGES');
+    })
+    .then(() => {
       connResolved.changeUser({
         user: 'changeuser1',
         password: 'changeuser1pass'
@@ -374,6 +388,7 @@ function testChangeUser() {
       return connResolved.end();
     })
     .catch(err => {
+      console.log('AAAA', err);
       if (connResolved) {
         connResolved.end();
       }

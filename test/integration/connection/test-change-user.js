@@ -7,21 +7,11 @@ const onlyUsername = function(name) {
   return name.substring(0, name.indexOf('@'));
 };
 
-// create test user first
-const allowCreateUserError = err => {
-  if (err.errno !== 1396) {
-    // ER_CANNOT_USER
-    throw err;
-  }
-};
-
 connection.query(
-  "CREATE USER 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'",
-  allowCreateUserError
+  "CREATE USER IF NOT EXISTS 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
 );
 connection.query(
-  "CREATE USER 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'",
-  allowCreateUserError
+  "CREATE USER IF NOT EXISTS 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
 );
 connection.query("GRANT ALL ON *.* TO 'changeuser1'@'%'");
 connection.query("GRANT ALL ON *.* TO 'changeuser2'@'%'");
