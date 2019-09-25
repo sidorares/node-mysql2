@@ -7,31 +7,15 @@ const onlyUsername = function(name) {
   return name.substring(0, name.indexOf('@'));
 };
 
-// create test user first
-
-// CREATE USER 'jeffrey'@'localhost' IDENTIFIED BY 'password';
-//connection.query("CREATE USER 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'");
-//connection.query("CREATE USER 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'");
+connection.query(
+  "CREATE USER 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
+);
+connection.query(
+  "CREATE USER 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
+);
 connection.query("GRANT ALL ON *.* TO 'changeuser1'@'%'");
 connection.query("GRANT ALL ON *.* TO 'changeuser2'@'%'");
 connection.query('FLUSH PRIVILEGES');
-
-function testIncorrectDb() {
-  connection.end();
-  // TODO figure out if stuff below is still relevant
-  /*
-  connection.on('error', function (err) {
-    assert.ok(err, 'got disconnect');
-    assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
-  });
-  connection.changeUser({database: 'does-not-exist', }, function (err) {
-    assert.ok(err, 'got error');
-    assert.equal(err.code, 'ER_BAD_DB_ERROR');
-    assert.equal(err.fatal, true);
-  });
-  connection.end();
-  */
-}
 
 connection.changeUser(
   {
@@ -75,7 +59,7 @@ connection.changeUser(
                     onlyUsername(rows[0]['current_user()']),
                     'changeuser1'
                   );
-                  testIncorrectDb();
+                  connection.end();
                 });
               }
             );
