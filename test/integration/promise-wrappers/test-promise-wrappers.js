@@ -1,7 +1,5 @@
 'use strict';
 
-return;
-
 const config = require('../../common.js').config;
 
 const assert = require('assert');
@@ -343,22 +341,11 @@ function testChangeUser() {
   createConnection(config)
     .then(conn => {
       connResolved = conn;
-      return connResolved.query(
-        "GRANT ALL ON *.* TO 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
-      );
-    })
-    .then(() =>
-      connResolved.query(
-        "GRANT ALL ON *.* TO 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
-      )
-    )
-    .then(() => connResolved.query('FLUSH PRIVILEGES'))
-    .then(() =>
       connResolved.changeUser({
         user: 'changeuser1',
         password: 'changeuser1pass'
-      })
-    )
+      });
+    })
     .then(() => connResolved.query('select current_user()'))
     .then(result => {
       const rows = result[0];
@@ -374,15 +361,13 @@ function testChangeUser() {
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser2');
       return connResolved.changeUser({
         user: 'changeuser1',
-        passwordSha1: Buffer.from(
-          'f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd',
-          'hex'
-        ) // sha1(changeuser1pass)
+        // TODO: re-enable testing passwordSha1 auth. Only works for mysql_native_password, so need to change test to create user with this auth method
+        password: 'changeuser1pass'
+        //passwordSha1: Buffer.from('f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd', 'hex') // sha1(changeuser1pass)
       });
     })
     .then(() => connResolved.query('select current_user()'))
     .then(result => {
-      console.log('AAAAAA', result);
       const rows = result[0];
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
       doneChangeUser = true;
@@ -470,5 +455,5 @@ process.on('exit', () => {
 });
 
 process.on('unhandledRejection', err => {
-  console.log('AAA', err.stack);
+  console.log('error:', err.stack);
 });

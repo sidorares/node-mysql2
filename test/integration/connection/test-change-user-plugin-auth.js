@@ -7,11 +7,20 @@ const onlyUsername = function(name) {
   return name.substring(0, name.indexOf('@'));
 };
 
+const allowCreateUserError = err => {
+  if (err.errno !== 1396) {
+    // ER_CANNOT_USER
+    throw err;
+  }
+};
+
 connection.query(
-  "CREATE USER 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
+  "CREATE USER 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'",
+  allowCreateUserError
 );
 connection.query(
-  "CREATE USER 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
+  "CREATE USER 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'",
+  allowCreateUserError
 );
 connection.query("GRANT ALL ON *.* TO 'changeuser1'@'%'");
 connection.query("GRANT ALL ON *.* TO 'changeuser2'@'%'");
@@ -52,7 +61,7 @@ connection.changeUser(
                   'hex'
                 ) // sha1(changeuser1pass)
               },
-              err => {
+              () => {
                 connection.query('select current_user()', (err, rows) => {
                   assert.ifError(err);
                   assert.deepEqual(

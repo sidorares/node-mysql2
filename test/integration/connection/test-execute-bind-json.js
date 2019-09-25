@@ -1,25 +1,25 @@
 'use strict';
 
-// TODO re enable
-return;
-
 const common = require('../../common');
 const connection = common.createConnection();
 const assert = require('assert');
 
+const table = 'jsontable';
+const testJson = [{ a: 1, b: true, c: ['foo'] }];
+
 let rows;
-connection.execute(
-  'SELECT ? AS result',
-  [{ a: 1, b: true, c: ['foo'] }],
-  (err, _rows) => {
-    if (err) {
-      throw err;
-    }
-    rows = _rows;
-    connection.end();
-  }
+connection.query(`CREATE TEMPORARY TABLE ${table} (data JSON)`);
+connection.query(
+  `INSERT INTO ${table} (data) VALUES ('${JSON.stringify(testJson)}')`
 );
+connection.execute(`SELECT * from ${table}`, (err, _rows) => {
+  if (err) {
+    throw err;
+  }
+  rows = _rows;
+  connection.end();
+});
 
 process.on('exit', () => {
-  assert.deepEqual(rows, [{ result: { a: 1, b: true, c: ['foo'] } }]);
+  assert.deepEqual(rows, [{ data: testJson }]);
 });
