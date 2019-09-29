@@ -14,9 +14,15 @@ matrix:
     - node_js: '11'
       env: LINT=0 DOCKER_MYSQL_VERSION=5.7
     - node_js: '12'
-      env: LINT=0 DOCKER_MYSQL_VERSION=5.7
+      env: MYSQL_USE_COMPRESSION=1 LINT=0 DOCKER_MYSQL_VERSION=5.7
     - node_js: '12'
       env: LINT=0 DOCKER_MYSQL_VERSION=8
+    - node_js: '12'
+      env: MYSQL_USE_COMPRESSION=1 LINT=0 DOCKER_MYSQL_VERSION=8
+    - node_js: '12'
+      env: MYSQL_USE_TLS=1 LINT=0 DOCKER_MYSQL_VERSION=8
+    - node_js: '12'
+      env: MYSQL_USE_TLS=1 MYSQL_USE_COMPRESSION=1 LINT=0 DOCKER_MYSQL_VERSION=8
 
 cache:
   yarn: true

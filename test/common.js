@@ -1,5 +1,8 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
   user: process.env.MYSQL_USER || 'root',
@@ -8,6 +11,13 @@ const config = {
   compress: process.env.MYSQL_USE_COMPRESSION,
   port: process.env.MYSQL_PORT || 3306
 };
+
+if (process.env.MYSQL_USE_TLS) {
+  config.ssl = {
+    rejectUnauthorized: false,
+    ca: fs.readFileSync(path.join(__dirname, '../examples/ssl/certs/ca-cert.pem'), 'utf-8')
+  };
+}
 
 const configURI = `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
@@ -50,10 +60,7 @@ exports.createConnection = function(args) {
       start = [0, 0] || start;
       const timestamp = Date.now();
       const seconds = Math.ceil(timestamp / 1000);
-      return [
-        seconds - start[0],
-        (timestamp - seconds * 1000) * 1000 - start[1]
-      ];
+      return [seconds - start[0], (timestamp - seconds * 1000) * 1000 - start[1]];
     };
   }
 
@@ -155,10 +162,7 @@ exports.createConnectionWithURI = function() {
 
 exports.createTemplate = function() {
   const jade = require('jade');
-  const template = require('fs').readFileSync(
-    `${__dirname}/template.jade`,
-    'ascii'
-  );
+  const template = require('fs').readFileSync(`${__dirname}/template.jade`, 'ascii');
   return jade.compile(template);
 };
 
