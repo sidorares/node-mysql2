@@ -15,7 +15,10 @@ const config = {
 if (process.env.MYSQL_USE_TLS) {
   config.ssl = {
     rejectUnauthorized: false,
-    ca: fs.readFileSync(path.join(__dirname, '../examples/ssl/certs/ca-cert.pem'), 'utf-8')
+    ca: fs.readFileSync(
+      path.join(__dirname, '../examples/ssl/certs/ca.pem'),
+      'utf-8'
+    )
   };
 }
 
@@ -60,7 +63,10 @@ exports.createConnection = function(args) {
       start = [0, 0] || start;
       const timestamp = Date.now();
       const seconds = Math.ceil(timestamp / 1000);
-      return [seconds - start[0], (timestamp - seconds * 1000) * 1000 - start[1]];
+      return [
+        seconds - start[0],
+        (timestamp - seconds * 1000) * 1000 - start[1]
+      ];
     };
   }
 
@@ -162,7 +168,10 @@ exports.createConnectionWithURI = function() {
 
 exports.createTemplate = function() {
   const jade = require('jade');
-  const template = require('fs').readFileSync(`${__dirname}/template.jade`, 'ascii');
+  const template = require('fs').readFileSync(
+    `${__dirname}/template.jade`,
+    'ascii'
+  );
   return jade.compile(template);
 };
 
