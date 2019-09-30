@@ -34,17 +34,14 @@ test('Test namedPlaceholder as command parameter', {
     const c = createConnection({ namedPlaceholders: false });
     c.execute({ sql: query, namedPlaceholders: true }, values, (err, rows) => {
       assert.ifError(err);
-      console.log('createConnection', err, rows);
       assert.equal(rows[0].result, 1);
       c.end();
     });
   },
   'Disabled in pool config, enable query command': () => {
     const c = createPool({ namedPlaceholders: false });
-    console.log(c);
     c.query({ sql: query, namedPlaceholders: false }, values, (err, rows) => {
       assert.ifError(err);
-      console.log('createPool', err, rows);
       assert.equal(rows[0].result, 1);
       c.end();
     });
