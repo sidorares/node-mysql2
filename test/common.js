@@ -9,9 +9,7 @@ const config = {
   port: process.env.MYSQL_PORT || 3306
 };
 
-const configURI = `mysql://${config.user}:${config.password}@${config.host}:${
-  config.port
-}/${config.database}`;
+const configURI = `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
 exports.SqlString = require('sqlstring');
 exports.config = config;
@@ -111,7 +109,8 @@ exports.createConnection = function(args) {
     timezone: args && args.timezone,
     dateStrings: args && args.dateStrings,
     authSwitchHandler: args && args.authSwitchHandler,
-    typeCast: args && args.typeCast
+    typeCast: args && args.typeCast,
+    namedPlaceholders: args && args.namedPlaceholders
   };
 
   // console.log('cc params', params);
@@ -156,13 +155,16 @@ exports.getConfig = function(input) {
   return params;
 };
 
-exports.createPool = function() {
+exports.createPool = function(args) {
+  if (!args) {
+    args = {};
+  }
   let driver = require('../index.js');
   if (process.env.BENCHMARK_MYSQL1) {
     driver = require('mysql');
   }
 
-  return driver.createPool(config);
+  return driver.createPool(exports.getConfig(args));
 };
 
 exports.createConnectionWithURI = function() {
