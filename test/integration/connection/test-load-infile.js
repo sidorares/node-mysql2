@@ -5,6 +5,7 @@ const connection = common.createConnection();
 const assert = require('assert');
 
 const table = 'load_data_test';
+connection.query('SET GLOBAL local_infile = true', assert.ifError);
 connection.query(
   [
     `CREATE TEMPORARY TABLE \`${table}\` (`,

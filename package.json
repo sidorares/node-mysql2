@@ -11,7 +11,7 @@
     "lint:code": "eslint index.js promise.js \"lib/**/*.js\" \"test/**/*.js\" \"benchmarks/**/*.js\"",
     "lint:docs": "eslint Contributing.md \"documentation/**/*.md\" \"examples/*.js\"",
     "test": "npm run lint && npm run test:raw",
-    "test:raw": "node ./test/run.js && MYSQL_USE_COMPRESSION=1 node ./test/run.js",
+    "test:raw": "node ./test/run.js",
     "benchmark": "./benchmarks/run-unit.js",
     "prettier": "prettier --single-quote --trailing-comma none --write \"{lib,examples,test}/**/*.js\"",
     "prettier:docs": "prettier-markdown README.md documentation/*",
@@ -45,6 +45,7 @@
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
+    "cardinal": "^2.1.1",
     "denque": "^1.4.1",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.5.0",
