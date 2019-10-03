@@ -90,9 +90,14 @@ class PromiseConnection extends EventEmitter {
   query(query, params) {
     const c = this.connection;
     const localErr = new Error();
+    if (typeof params === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      if (typeof params !== 'function') {
+      if (params) {
         c.query(query, params, done);
       } else {
         c.query(query, done);
@@ -103,9 +108,14 @@ class PromiseConnection extends EventEmitter {
   execute(query, params) {
     const c = this.connection;
     const localErr = new Error();
+    if (typeof params === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      if (typeof params !== 'function') {
+      if (params) {
         c.execute(query, params, done);
       } else {
         c.execute(query, done);
@@ -328,9 +338,14 @@ class PromisePool extends EventEmitter {
   query(sql, args) {
     const corePool = this.pool;
     const localErr = new Error();
+    if (typeof args === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      if (typeof args !== 'function') {
+      if (args) {
         corePool.query(sql, args, done);
       } else {
         corePool.query(sql, done);
@@ -341,9 +356,14 @@ class PromisePool extends EventEmitter {
   execute(sql, args) {
     const corePool = this.pool;
     const localErr = new Error();
+    if (typeof args === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      if (typeof args !== 'function') {
+      if (args) {
         corePool.execute(sql, args, done);
       } else {
         corePool.execute(sql, done);
