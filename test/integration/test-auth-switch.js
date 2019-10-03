@@ -54,7 +54,6 @@ class TestAuthSwitchHandshake extends Command {
     }
     connection.writeOk();
     return TestAuthSwitchHandshake.prototype.dispatchCommands;
-
   }
 
   dispatchCommands(packet, connection) {

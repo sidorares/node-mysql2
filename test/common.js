@@ -1,5 +1,8 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
   user: process.env.MYSQL_USER || 'root',
@@ -8,6 +11,16 @@ const config = {
   compress: process.env.MYSQL_USE_COMPRESSION,
   port: process.env.MYSQL_PORT || 3306
 };
+
+if (process.env.MYSQL_USE_TLS) {
+  config.ssl = {
+    rejectUnauthorized: false,
+    ca: fs.readFileSync(
+      path.join(__dirname, '../examples/ssl/certs/ca.pem'),
+      'utf-8'
+    )
+  };
+}
 
 const configURI = `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
@@ -21,11 +34,12 @@ exports.waitDatabaseReady = function(callback) {
     conn.once('error', err => {
       if (err.code !== 'PROTOCOL_CONNECTION_LOST' && err.code !== 'ETIMEDOUT') {
         console.log('Unexpected error waiting for connection', err);
+        process.exit(-1);
       }
       try {
         conn.close();
       } catch (err) {
-        // ignore
+        console.log(err);
       }
       console.log('not ready');
       setTimeout(tryConnect, 1000);
@@ -65,9 +79,6 @@ exports.createConnection = function(args) {
       password: config.password,
       db: config.database
     });
-    // c.on('connect', function() {
-    //
-    // });
     setTimeout(() => {
       console.log('altering client...');
       c.oldQuery = c.query;
@@ -113,21 +124,7 @@ exports.createConnection = function(args) {
     namedPlaceholders: args && args.namedPlaceholders
   };
 
-  // console.log('cc params', params);
   const conn = driver.createConnection(params);
-
-  /*
-  conn.query('create database IF NOT EXISTS test', function (err) {
-    if (err) {
-      console.log('error during "create database IF NOT EXISTS test"', err);
-    }
-  });
-  conn.query('use test', function (err) {
-    if (err) {
-      console.log('error during "use test"', err);
-    }
-  });
-  */
   return conn;
 };
 
