@@ -1,6 +1,7 @@
 'use strict';
 
 const createConnection = require('../common.js').createConnection;
+const createPool = require('../common.js').createPool;
 const test = require('utest');
 const assert = require('assert');
 
@@ -32,6 +33,14 @@ test('Test namedPlaceholder as command parameter', {
   'Disabled in connection config, enable execute command': () => {
     const c = createConnection({ namedPlaceholders: false });
     c.execute({ sql: query, namedPlaceholders: true }, values, (err, rows) => {
+      assert.ifError(err);
+      assert.equal(rows[0].result, 1);
+      c.end();
+    });
+  },
+  'Disabled in pool config, enable query command': () => {
+    const c = createPool({ namedPlaceholders: false });
+    c.query({ sql: query, namedPlaceholders: false }, values, (err, rows) => {
       assert.ifError(err);
       assert.equal(rows[0].result, 1);
       c.end();

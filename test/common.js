@@ -120,7 +120,8 @@ exports.createConnection = function(args) {
     timezone: args && args.timezone,
     dateStrings: args && args.dateStrings,
     authSwitchHandler: args && args.authSwitchHandler,
-    typeCast: args && args.typeCast
+    typeCast: args && args.typeCast,
+    namedPlaceholders: args && args.namedPlaceholders
   };
 
   const conn = driver.createConnection(params);
@@ -151,13 +152,16 @@ exports.getConfig = function(input) {
   return params;
 };
 
-exports.createPool = function() {
+exports.createPool = function(args) {
+  if (!args) {
+    args = {};
+  }
   let driver = require('../index.js');
   if (process.env.BENCHMARK_MYSQL1) {
     driver = require('mysql');
   }
 
-  return driver.createPool(config);
+  return driver.createPool(exports.getConfig(args));
 };
 
 exports.createConnectionWithURI = function() {
