@@ -36,5 +36,17 @@
     "no-var": "error",
     "no-use-before-define": "error",
     "strict": ["error", "global"]
-  }
+  },
+  "overrides": [
+    {
+      "files":  ["**/*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "extends": [
+        "plugin:@typescript-eslint/recommended",
+        "prettier",
+        "prettier/@typescript-eslint"
+      ],
+      "plugins": ["@typescript-eslint"]
+    }
+  ]
 }
