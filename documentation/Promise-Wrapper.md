@@ -44,6 +44,39 @@ async function example2 () {
 }
 ```
 
+## Creating a pool with promises as a db config
+
+This model can be created in a file and imported to other files to constantly use the same pool
+
+```js
+const connection = () => {
+  try {
+    const mysql = require("mysql2");
+
+    const pool = mysql.createPool({
+      database: test,
+      connectionLimit: 10,
+      queueLimit: 0,
+      waitForConnections: true
+    });
+
+    const promisePool = pool.promise();
+
+    return promisePool;
+  } catch (err) {
+    return console.log(err);
+  }
+}
+
+const pool = connection();
+
+module.exports = {
+  connection: async () => pool.getConnection(),
+  execute: (...params) => pool.execute(...params), // the fastest type of db query with some limitations
+  query: (...params) => pool.query(...params) // works for all db queries but slower than execute
+}
+```
+
 ## With [CO](https://github.com/tj/co)
 <!--eslint-disable-next-block-->
 ```js
