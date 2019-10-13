@@ -1,3 +1,15 @@
+2.0.0-alpha1
+  - MAJOR: new `authPlugins` api replacing 
+    `authSwitchHandler`, added caching_sha2_password 
+    and mysql_native_password as default plugins.
+    Added tests for mysql 8 and ssl. Mysql 8 server
+    now supported with default settings.              #1021, #906, #991
+  - MAJOR: LOCAL INFILE does not write to local 
+    fs now and requires `infileStreamFactory` option
+  - Update to 2019 CA Amazon RDS certificates         #1032
+  - Update SSL Profile for AWS Serverless Aurora      #1026
+  - fix pool ignoring namedPlaceholders config        #1022
+
 1.7.0
   - Fix crashing when session info packet does not 
     start with length-coded string                    #1004, #989
