@@ -4,7 +4,7 @@
     and mysql_native_password as default plugins.
     Added tests for mysql 8 and ssl. Mysql 8 server
     now supported with default settings.              #1021, #906, #991
-  - MAJOR: LOCAL INFILE does not write to local 
+  - MAJOR: LOCAL INFILE does read from to local       #1034
     fs now and requires `infileStreamFactory` option
   - Update to 2019 CA Amazon RDS certificates         #1032
   - Update SSL Profile for AWS Serverless Aurora      #1026
