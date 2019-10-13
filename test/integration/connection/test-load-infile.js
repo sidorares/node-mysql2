@@ -3,6 +3,7 @@
 const common = require('../../common');
 const connection = common.createConnection();
 const assert = require('assert');
+const fs = require('fs');
 
 const table = 'load_data_test';
 connection.query('SET GLOBAL local_infile = true', assert.ifError);
@@ -22,12 +23,19 @@ const sql =
   `FIELDS TERMINATED BY ? (id, title)`;
 
 let ok;
-connection.query(sql, [path, ','], (err, _ok) => {
-  if (err) {
-    throw err;
+connection.query(
+  {
+    sql,
+    values: [path, ','],
+    infileStreamFactory: () => fs.createReadStream(path)
+  },
+  (err, _ok) => {
+    if (err) {
+      throw err;
+    }
+    ok = _ok;
   }
-  ok = _ok;
-});
+);
 
 let rows;
 connection.query(`SELECT * FROM ${table}`, (err, _rows) => {
@@ -82,7 +90,10 @@ process.on('exit', () => {
   assert.equal(rows[0].id, 1);
   assert.equal(rows[0].title, 'Hello World');
 
-  assert.equal(loadErr.code, 'ENOENT');
+  assert.equal(
+    loadErr.message,
+    `As a result of LOCAL INFILE command server wants to read /does_not_exist.csv file, but as of v2.0 you must provide streamFactory option returning ReadStream.`
+  );
   assert.equal(loadResult.affectedRows, 0);
 
   assert.equal(streamResult.affectedRows, 2);
