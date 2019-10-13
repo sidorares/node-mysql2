@@ -92,7 +92,7 @@ process.on('exit', () => {
 
   assert.equal(
     loadErr.message,
-    `As a result of LOCAL INFILE commandgit st server wants to read /does_not_exist.csv file, but as of v2.0 you must provide streamFactory option returning ReadStream.`
+    `As a result of LOCAL INFILE command server wants to read /does_not_exist.csv file, but as of v2.0 you must provide streamFactory option returning ReadStream.`
   );
   assert.equal(loadResult.affectedRows, 0);
 
