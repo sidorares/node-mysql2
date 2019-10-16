@@ -69,6 +69,32 @@ npm run test
 npm run test:raw
 ```
 
+## Running test using .env and docker
+ 
+Create a `.env` file on the root of the project based on `.env.example`
+then just run the test as mentioned before.
+
+To isolate or non existing MySql DB (requires [docker-compose](https://docs.docker.com/compose/install/)) 
+
+```sh
+# start db + adminer
+docket-compose up 
+
+# start db only  ( `up -d` for detached)
+docker-compose up db
+
+# stop all
+docker-compose down
+
+# stop only one 
+docker-compose stop adminer 
+
+# clean up all 
+docker-compose down -v --rmi all --remove-orphans
+```
+note: [adminer](https://www.adminer.org/) 
+ 
+
 Use `FILTER` environment variable to run a subset of tests with matching names, e.g.
 
 ```sh
