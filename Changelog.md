@@ -31,6 +31,7 @@
   - Update to 2019 CA Amazon RDS certificates         #1032
   - Update SSL Profile for AWS Serverless Aurora      #1026
   - fix pool ignoring namedPlaceholders config        #1022
+  - fix datetime field with 00:00:00 time treated as date when using dateString        #1040
 
 1.7.0
   - Fix crashing when session info packet does not 
