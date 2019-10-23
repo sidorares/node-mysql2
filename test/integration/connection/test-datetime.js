@@ -5,6 +5,10 @@ const connection = common.createConnection();
 const connection1 = common.createConnection({ dateStrings: true });
 const connectionZ = common.createConnection({ timezone: 'Z' });
 const connection0930 = common.createConnection({ timezone: '+09:30' });
+const connection0000 = common.createConnection({
+  dateStrings: true,
+  timezone: '+00:00'
+});
 const assert = require('assert');
 
 let rows,
@@ -18,7 +22,8 @@ let rows,
   rows4,
   rows5,
   rows6,
-  rows7;
+  rows7,
+  rows8;
 
 const date = new Date('1990-01-01 08:15:11 UTC');
 const datetime = new Date('2010-12-10 14:12:09.019473');
@@ -28,6 +33,8 @@ const date2 = '2010-12-10 14:12:09.019473';
 const date3 = null;
 const date4 = '2010-12-10 14:12:09.123456';
 const date5 = '2010-12-10 14:12:09.019';
+const date6 = '2010-12-10 00:00:00';
+const date7 = '2010-12-10 00:00:00.000';
 
 function adjustTZ(d, offset) {
   if (offset === undefined) {
@@ -99,6 +106,18 @@ connection0930.query('INSERT INTO t set d1=?, d2=?, d3=?', [
   datetime
 ]);
 
+connection0000.query(
+  'CREATE TEMPORARY TABLE t (d1 DATE, d2 DATETIME, d3 TIMESTAMP, d4 DATETIME(3), d5 TIMESTAMP(3))'
+);
+connection0000.query("set time_zone = '+00:00'");
+connection0000.query('INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?', [
+  date,
+  date6,
+  date6,
+  date7,
+  date7
+]);
+
 const dateAsStringExpected = [
   {
     d1: formatUTCDate(adjustTZ(date)),
@@ -107,6 +126,16 @@ const dateAsStringExpected = [
     d4: date3,
     d5: date4,
     d6: date5
+  }
+];
+
+const dateAsStringExpected2 = [
+  {
+    d1: formatUTCDate(adjustTZ(date)),
+    d2: date6,
+    d3: date6,
+    d4: date7,
+    d5: date7
   }
 ];
 
@@ -223,6 +252,14 @@ connection0930.execute(
   }
 );
 
+connection0000.execute('select * from t', (err, _rows) => {
+  if (err) {
+    throw err;
+  }
+  rows8 = _rows;
+  connection0000.end();
+});
+
 process.on('exit', () => {
   const connBadTz = common.createConnection({ timezone: 'utc' });
   assert.equal(connBadTz.config.timezone, 'Z');
@@ -299,4 +336,7 @@ process.on('exit', () => {
   assert.equal(rows7[0].d4, formatUTCDate(adjustTZ(date, tzOffset)));
   assert.equal(rows7[0].d5, formatUTCDateTime(adjustTZ(datetime, tzOffset), 3));
   assert.equal(rows7[0].d6, formatUTCDateTime(adjustTZ(datetime, tzOffset), 6));
+
+  // +00:00 with dateStrings
+  assert.deepEqual(rows8, dateAsStringExpected2);
 });
