@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 
-const FieldFlags = require('../../../lib/constants/field_flags.js');
 const common = require('../../common');
 const conn = common.createConnection();
 
