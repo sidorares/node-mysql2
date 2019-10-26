@@ -65,6 +65,7 @@ conn.connect(err => {
       assert(flagNotNull && valueIsNull);
       */
 
+      const valueIsNull = rows[0][fields[0].name] === null;
       assert(valueIsNull);
       conn.end();
     }
