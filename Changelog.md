@@ -1,3 +1,9 @@
+2.0.0
+  - Mysql8 caching_sha2_password - fix bug in 
+    authenticating when password is longer 
+    than 19 chars                                     #1044 #1045
+  - Support ConnectionConfig.flags as an array        #1003
+
 2.0.0-alpha1
   - MAJOR: new `authPlugins` api replacing 
     `authSwitchHandler`, added caching_sha2_password 
