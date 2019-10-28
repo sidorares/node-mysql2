@@ -1,26 +1,27 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
-var Buffer = require('safe-buffer').Buffer;
+'use strict';
 
-var rows = undefined;
-var fields = undefined;
-var rows1 = undefined;
-var fields1 = undefined;
-var rows2 = undefined;
-var fields2 = undefined;
-var rows3 = undefined;
-var fields3 = undefined;
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-var rows4 = undefined;
-var fields4 = undefined;
-var rows5 = undefined;
-var fields5 = undefined;
+let rows = undefined;
+let fields = undefined;
+let rows1 = undefined;
+let fields1 = undefined;
+let rows2 = undefined;
+let fields2 = undefined;
+let rows3 = undefined;
+let fields3 = undefined;
 
-var query = "SELECT x'010203'";
-var query1 = "SELECT '010203'";
+let rows4 = undefined;
+let fields4 = undefined;
+let rows5 = undefined;
+let fields5 = undefined;
 
-connection.query(query, function(err, _rows, _fields) {
+const query = "SELECT x'010203'";
+const query1 = "SELECT '010203'";
+
+connection.query(query, (err, _rows, _fields) => {
   if (err) {
     throw err;
   }
@@ -28,7 +29,7 @@ connection.query(query, function(err, _rows, _fields) {
   fields = _fields;
 });
 
-connection.query(query, function(err, _rows, _fields) {
+connection.query(query, (err, _rows, _fields) => {
   if (err) {
     throw err;
   }
@@ -36,7 +37,7 @@ connection.query(query, function(err, _rows, _fields) {
   fields5 = _fields;
 });
 
-connection.query(query1, function(err, _rows, _fields) {
+connection.query(query1, (err, _rows, _fields) => {
   if (err) {
     throw err;
   }
@@ -44,7 +45,7 @@ connection.query(query1, function(err, _rows, _fields) {
   fields1 = _fields;
 });
 
-connection.execute(query, [], function(err, _rows, _fields) {
+connection.execute(query, [], (err, _rows, _fields) => {
   if (err) {
     throw err;
   }
@@ -53,7 +54,7 @@ connection.execute(query, [], function(err, _rows, _fields) {
 });
 
 // repeat same query - test cached fields and parser
-connection.execute(query, [], function(err, _rows, _fields) {
+connection.execute(query, [], (err, _rows, _fields) => {
   if (err) {
     throw err;
   }
@@ -61,7 +62,7 @@ connection.execute(query, [], function(err, _rows, _fields) {
   fields4 = _fields;
 });
 
-connection.execute(query1, [], function(err, _rows, _fields) {
+connection.execute(query1, [], (err, _rows, _fields) => {
   if (err) {
     throw err;
   }
@@ -70,7 +71,7 @@ connection.execute(query1, [], function(err, _rows, _fields) {
   connection.end();
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.deepEqual(rows, [{ "x'010203'": Buffer.from([1, 2, 3]) }]);
   assert.equal(fields[0].name, "x'010203'");
   assert.deepEqual(rows1, [{ '010203': '010203' }]);

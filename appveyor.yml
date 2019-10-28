@@ -7,8 +7,13 @@ environment:
   LINT: 0
 
   matrix:
-    - nodejs_version: "6.13"
-    - nodejs_version: "8.10"
+    - nodejs_version: '8'
+      LINT: 0
+    - nodejs_version: '10'
+      LINT: 0
+    - nodejs_version: '11'
+      LINT: 0
+    - nodejs_version: '12'
       LINT: 1
 
 services:
@@ -16,7 +21,7 @@ services:
 
 cache:
   - node_modules
-  - "%LOCALAPPDATA%/Yarn"
+  - '%LOCALAPPDATA%/Yarn'
 
 install:
   - ps: Install-Product node $env:nodejs_version
@@ -30,11 +35,9 @@ before_test:
 
 test_script:
   - mysql --version
-  - node --version
-  - yarn --version
   - if "%LINT%"=="1" (yarn run lint)
   - node test/run.js
   - SET MYSQL_USE_COMPRESSION=1
   - node test/run.js
 
-version: "{build}"
+version: '{build}'

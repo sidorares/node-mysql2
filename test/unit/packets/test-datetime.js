@@ -1,12 +1,13 @@
-var Buffer = require('safe-buffer').Buffer;
-var assert = require('assert');
-var packets = require('../../../lib/packets/index.js');
+'use strict';
 
-var buf = Buffer.from('0a000004000007dd070116010203', 'hex');
+const assert = require('assert');
+const packets = require('../../../lib/packets/index.js');
 
-var packet = new packets.Packet(4, buf, 0, buf.length);
-var i = packet.readInt16();
-var d = packet.readDateTime();
+let buf = Buffer.from('0a000004000007dd070116010203', 'hex');
+
+let packet = new packets.Packet(4, buf, 0, buf.length);
+packet.readInt16(); // unused
+let d = packet.readDateTime('Z');
 
 assert.equal(+d, 1358816523000);
 
@@ -16,12 +17,12 @@ buf = Buffer.from(
 );
 packet = new packets.Packet(6, buf, 0, buf.length);
 
-i = packet.readInt16();
-var s = packet.readLengthCodedString('cesu8');
+packet.readInt16(); // ignore
+const s = packet.readLengthCodedString('cesu8');
 assert.equal(s, 'foo1');
-d = packet.readDateTime();
+d = packet.readDateTime('Z');
 assert.equal(+d, 1455030069425);
 
-var s1 = packet.readLengthCodedString('cesu8');
+const s1 = packet.readLengthCodedString('cesu8');
 assert.equal(s1, 'bar1');
 assert.equal(packet.offset, packet.end);

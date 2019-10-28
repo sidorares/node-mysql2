@@ -1,6 +1,8 @@
-var mysql = require('mysql2');
+'use strict';
 
-var conn = mysql.createConnection({
+const mysql = require('mysql2');
+
+const conn = mysql.createConnection({
   user: process.env.USER,
   password: process.env.PASSWORD,
   database: process.env.DB,

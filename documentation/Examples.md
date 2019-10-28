@@ -3,10 +3,10 @@
 ## Simple SELECT
 
 ```js
-var mysql = require('mysql2');
-var connection = mysql.createConnection({user: 'test', database: 'test'});
+const mysql = require('mysql2');
+const connection = mysql.createConnection({user: 'test', database: 'test'});
 
-connection.query('SELECT 1+1 as test1', function (err, rows) {
+connection.query('SELECT 1+1 as test1', (err, rows) => {
   //
 });
 ```
@@ -14,10 +14,10 @@ connection.query('SELECT 1+1 as test1', function (err, rows) {
 ## Prepared statement and parameters
 
 ```js
-var mysql = require('mysql2');
-var connection = mysql.createConnection({user: 'test', database: 'test'});
+const mysql = require('mysql2');
+const connection = mysql.createConnection({user: 'test', database: 'test'});
 
-connection.execute('SELECT 1+? as test1', [10], function (err, rows) {
+connection.execute('SELECT 1+? as test1', [10], (err, rows) => {
   //
 });
 ```
@@ -25,9 +25,9 @@ connection.execute('SELECT 1+? as test1', [10], function (err, rows) {
 ## Connecting over encrypted connection
 
 ```js
-var fs = require('fs');
-var mysql = require('mysql2');
-var connection = mysql.createConnection({
+const fs = require('fs');
+const mysql = require('mysql2');
+const connection = mysql.createConnection({
   user: 'test',
   database: 'test',
   ssl: {
@@ -41,15 +41,15 @@ connection.query('SELECT 1+1 as test1', console.log);
 You can use 'Amazon RDS' string as value to ssl property to connect to Amazon RDS mysql over ssl (in that case http://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used)
 
 ```js
-var mysql = require('mysql2');
-var connection = mysql.createConnection({
+const mysql = require('mysql2');
+const connection = mysql.createConnection({
   user: 'foo',
   password: 'bar',
   host: 'db.id.ap-southeast-2.rds.amazonaws.com',
   ssl: 'Amazon RDS'
 });
 
-conn.query('show status like \'Ssl_cipher\'', function (err, res) {
+conn.query('show status like \'Ssl_cipher\'', (err, res) => {
   console.log(err, res);
   conn.end();
 });
@@ -59,11 +59,11 @@ conn.query('show status like \'Ssl_cipher\'', function (err, res) {
 ## Simple MySQL proxy server
 
 ```js
-var mysql = require('mysql2');
+const mysql = require('mysql2');
 
-var server = mysql.createServer();
+const server = mysql.createServer();
 server.listen(3307);
-server.on('connection', function (conn) {
+server.on('connection', conn => {
   console.log('connection');
 
   conn.serverHandshake({
@@ -75,27 +75,27 @@ server.on('connection', function (conn) {
     capabilityFlags: 0xffffff
   });
 
-  conn.on('field_list', function (table, fields) {
+  conn.on('field_list', (table, fields) => {
     console.log('field list:', table, fields);
     conn.writeEof();
   });
 
-  var remote = mysql.createConnection({user: 'root', database: 'dbname', host:'server.example.com', password: 'secret'});
+  const remote = mysql.createConnection({user: 'root', database: 'dbname', host:'server.example.com', password: 'secret'});
 
-  conn.on('query', function (sql) {
-    console.log('proxying query:' + sql);
+  conn.on('query', sql => {
+    console.log(`proxying query: ${sql}`);
     remote.query(sql, function (err) {
       // overloaded args, either (err, result :object)
       // or (err, rows :array, columns :array)
       if (Array.isArray(arguments[1])) {
         // response to a 'select', 'show' or similar
-        var rows = arguments[1], columns = arguments[2];
+        const rows = arguments[1], columns = arguments[2];
         console.log('rows', rows);
         console.log('columns', columns);
         conn.writeTextResult(rows, columns);
       } else {
         // response to an 'insert', 'update' or 'delete'
-        var result = arguments[1];
+        const result = arguments[1];
         console.log('result', result);
         conn.writeOk(result);
       }

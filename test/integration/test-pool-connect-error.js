@@ -1,11 +1,10 @@
-var util = require('util');
-var mysql = require('../../index.js');
-var Command = require('../../lib/commands/command.js');
-var Packets = require('../../lib/packets/index.js');
+'use strict';
 
-var assert = require('assert');
+const mysql = require('../../index.js');
 
-var server = mysql.createServer(function(conn) {
+const assert = require('assert');
+
+const server = mysql.createServer(conn => {
   conn.serverHandshake({
     protocolVersion: 10,
     serverVersion: '5.6.10',
@@ -19,36 +18,36 @@ var server = mysql.createServer(function(conn) {
   });
 });
 
-var err1, err2;
+let err1, err2;
 
-var portfinder = require('portfinder');
-portfinder.getPort(function(err, port) {
+const portfinder = require('portfinder');
+portfinder.getPort((err, port) => {
   server.listen(port);
-  var conn = mysql.createConnection({
+  const conn = mysql.createConnection({
     user: 'test_user',
     password: 'test',
     database: 'test_database',
     port: port
   });
-  conn.on('error', function(err) {
+  conn.on('error', err => {
     err1 = err;
   });
 
-  var pool = mysql.createPool({
+  const pool = mysql.createPool({
     user: 'test_user',
     password: 'test',
     database: 'test_database',
     port: port
   });
 
-  pool.query('test sql', function(err, res, rows) {
+  pool.query('test sql', err => {
     err2 = err;
     pool.end();
     server.close();
   });
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(err1.errno, 1040);
   assert.equal(err2.errno, 1040);
 });

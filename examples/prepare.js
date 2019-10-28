@@ -1,8 +1,10 @@
+'use strict';
+
 // get the client
-var mysql = require('mysql2');
+const mysql = require('mysql2');
 
 // create the connection to database
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   database: 'test'
@@ -12,7 +14,7 @@ var connection = mysql.createConnection({
 connection.execute(
   'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
   ['Rick C-137', 53],
-  function(err, results, fields) {
+  (err, results, fields) => {
     console.log(results); // results contains rows returned by server
     console.log(fields); // fields contains extra meta data about results, if available
 

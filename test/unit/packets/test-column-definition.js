@@ -1,10 +1,12 @@
-var assert = require('assert');
-var ColumnDefinition = require('../../../lib/packets/column_definition.js');
+'use strict';
 
-var sequenceId = 5;
+const assert = require('assert');
+const ColumnDefinition = require('../../../lib/packets/column_definition.js');
+
+const sequenceId = 5;
 
 // simple
-var packet = ColumnDefinition.toPacket(
+let packet = ColumnDefinition.toPacket(
   {
     catalog: 'def',
     schema: 'some_db',
@@ -27,7 +29,7 @@ assert.equal(
 );
 
 // Russian
-var packet = ColumnDefinition.toPacket(
+packet = ColumnDefinition.toPacket(
   {
     catalog: 'def',
     schema: 's_погоди',
@@ -50,7 +52,7 @@ assert.equal(
 );
 
 // Spec (from example: https://dev.mysql.com/doc/internals/en/protocoltext-resultset.html)
-var packet = ColumnDefinition.toPacket(
+packet = ColumnDefinition.toPacket(
   {
     catalog: 'def',
     schema: '',

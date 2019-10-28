@@ -1,42 +1,48 @@
-var cluster = require('cluster');
-var numCPUs = require('os').cpus().length;
+'use strict';
 
-if(cluster.isMaster) {
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
+
+if (cluster.isMaster) {
   // Fork workers.
-  for (var i = 0; i < numCPUs; i++) {
+  for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
   }
 
-  cluster.on('exit', function(worker, code, signal) {
-    console.log('worker ' + worker.pid + ' died');
+  cluster.on('exit', worker => {
+    console.log(`worker ${worker.pid} died`);
   });
 
   return;
 }
 
-var http     = require('http');
-var url      = require('url');
-var libmysql = require('mysql-libmysqlclient').createConnectionSync();
-var mysql2   = require('../..');
-var mysql    = require('mysql');
-var mariasql = require('mariasql');
-var async    = require('async');
-var Mapper   = require('mapper');
-var jade     = require('jade');
-var fs       = require('fs');
-var connMap  = { user: 'root', password: '', database: 'hello_world', host: 'localhost' };
+const http = require('http');
+const url = require('url');
+const libmysql = require('mysql-libmysqlclient').createConnectionSync();
+const mysql2 = require('../..');
+const mysql = require('mysql');
+const mariasql = require('mariasql');
+const async = require('async');
+const Mapper = require('mapper');
+const jade = require('jade');
+const fs = require('fs');
+const connMap = {
+  user: 'root',
+  password: '',
+  database: 'hello_world',
+  host: 'localhost'
+};
 
-Mapper.connect(connMap, {verbose: false, strict: false});
-var World = Mapper.map("World", "id", "randomNumber");
+Mapper.connect(connMap, { verbose: false, strict: false });
+const World = Mapper.map('World', 'id', 'randomNumber');
 
-var template = jade.compile(fs.readFileSync('./fortunes.jade'));
+const template = jade.compile(fs.readFileSync('./fortunes.jade'));
 
 libmysql.connectSync('localhost', 'root', '', 'hello_world');
-pool2 = mysql2.createPool(connMap);
-pool1 = mysql.createPool(connMap);
-mysql2conn = mysql2.createConnection(connMap);
-mysql1conn = mysql.createConnection(connMap);
-mariaconn = new mariasql();
+const pool2 = mysql2.createPool(connMap);
+const mysql2conn = mysql2.createConnection(connMap);
+const mysql1conn = mysql.createConnection(connMap);
+const mariaconn = new mariasql();
 mariaconn.connect({
   host: connMap.host,
   user: connMap.user,
@@ -49,244 +55,277 @@ function getRandomNumber() {
 }
 
 function sequelizeQuery(callback) {
-  World.findById(getRandomNumber(), function (err, world) {
+  World.findById(getRandomNumber(), (err, world) => {
     callback(null, world);
   });
 }
 
 function handlePrepared(req, res) {
-  var values = url.parse(req.url, true);
-  var queries = values.query.queries || 1;
-  var results = [];
-  for (var i=0; i < queries; ++i) {
-    mysql2conn.execute("SELECT * FROM world WHERE id = ?", [getRandomNumber()], function (err, rows) {
-      results.push(rows[0]);
-      if (results.length == queries)
-        res.end(JSON.stringify(results));
-    });
+  const values = url.parse(req.url, true);
+  const queries = values.query.queries || 1;
+  const results = [];
+  for (let i = 0; i < queries; ++i) {
+    mysql2conn.execute(
+      'SELECT * FROM world WHERE id = ?',
+      [getRandomNumber()],
+      (err, rows) => {
+        results.push(rows[0]);
+        if (results.length === queries) res.end(JSON.stringify(results));
+      }
+    );
   }
 }
 
 function handleMysqlIsh(conn, req, res) {
-    var values = url.parse(req.url, true);
-    var queries = values.query.queries || 1;
-    //pool.getConnection(function(err, conn) {
-      //console.log(conn, conn.query, '===============');
-      var results = [];
-      for (var i=0; i < queries; ++i) {
-        mysql2conn.query("SELECT * FROM world WHERE id = ?", [getRandomNumber()], function (err, rows) {
-          results.push(rows[0]);
-          if (results.length == queries)
-            res.end(JSON.stringify(results));
-        });
+  const values = url.parse(req.url, true);
+  const queries = values.query.queries || 1;
+  //pool.getConnection(function(err, conn) {
+  //console.log(conn, conn.query, '===============');
+  const results = [];
+  for (let i = 0; i < queries; ++i) {
+    mysql2conn.query(
+      'SELECT * FROM world WHERE id = ?',
+      [getRandomNumber()],
+      (err, rows) => {
+        results.push(rows[0]);
+        if (results.length === queries) res.end(JSON.stringify(results));
       }
-    //});
+    );
+  }
+  //});
 }
 
 function handleMysqlIshPool(pool, req, res) {
-    var values = url.parse(req.url, true);
-    var queries = values.query.queries || 1;
-    var results = [];
-    for (var i=0; i < queries; ++i) {
-      pool.getConnection(function(err, conn) {
-        mysql2conn.query("SELECT * FROM world WHERE id = " + getRandomNumber(), function (err, rows) {
+  const values = url.parse(req.url, true);
+  const queries = values.query.queries || 1;
+  const results = [];
+  for (let i = 0; i < queries; ++i) {
+    pool.getConnection(() => {
+      mysql2conn.query(
+        `SELECT * FROM world WHERE id = ${getRandomNumber()}`,
+        (err, rows) => {
           results.push(rows[0]);
-          if (results.length == queries)
-            res.end(JSON.stringify(results));
-        });
-      });
-    }
+          if (results.length === queries) res.end(JSON.stringify(results));
+        }
+      );
+    });
+  }
 }
 
-function handleMaria(req, res)
-{
-  var values = url.parse(req.url, true);
-  var queries = values.query.queries || 1;
-  var results = [];
-  for (var i=0; i < queries; ++i) {
-    mariaconn.query("SELECT * FROM world WHERE id = :id", { id: getRandomNumber() } )
-      .on('result', function (dbres) {
-        dbres.on('row', function(row) {
+function handleMaria(req, res) {
+  const values = url.parse(req.url, true);
+  const queries = values.query.queries || 1;
+  const results = [];
+  for (let i = 0; i < queries; ++i) {
+    mariaconn
+      .query('SELECT * FROM world WHERE id = :id', { id: getRandomNumber() })
+      .on('result', dbres => {
+        dbres.on('row', row => {
           results.push(row);
-          if (results.length == queries)
-            res.end(JSON.stringify(results));
+          if (results.length === queries) res.end(JSON.stringify(results));
         });
       });
   }
 }
 
+function sortFortunes(a, b) {
+  return a.message < b.message ? -1 : a.message > b.message ? 1 : 0;
+}
+
 function fortuneMysql(conn, res) {
-  var fortunes = [];
-  res.writeHead(200, {'Content-Type': 'text/html'});
-  conn.query('select * from Fortune', function(err, fortunes) {
-    fortunes.push({id: 0, message: "Additional fortune added at request time."});
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  conn.query('select * from Fortune', (err, fortunes) => {
+    fortunes.push({
+      id: 0,
+      message: 'Additional fortune added at request time.'
+    });
     fortunes.sort(sortFortunes);
-    res.end(template({fortunes: fortunes}));
+    res.end(template({ fortunes: fortunes }));
   });
 }
 
 function fortuneMaria(res) {
-  fortunes = [];
-  res.writeHead(200, {'Content-Type': 'text/html'});
-  mariaconn.query("SELECT * from Fortune")
-       .on('result', function (dbres) {
-         dbres.on('row', function(row) { fortunes.push(row); });
-         dbres.on('end', function() {
-           fortunes.push({id: 0, message: "Additional fortune added at request time."});
-           fortunes.sort(sortFortunes);
-           res.end(template({fortunes: fortunes}));
-         });
+  const fortunes = [];
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  mariaconn.query('SELECT * from Fortune').on('result', dbres => {
+    dbres.on('row', row => {
+      fortunes.push(row);
+    });
+    dbres.on('end', () => {
+      fortunes.push({
+        id: 0,
+        message: 'Additional fortune added at request time.'
+      });
+      fortunes.sort(sortFortunes);
+      res.end(template({ fortunes: fortunes }));
+    });
   });
 }
 
-function sortFortunes(a, b) {
-  return (a.message < b.message) ? -1 : (a.message > b.message) ? 1 : 0;
-}
+http
+  .createServer((req, res) => {
+    // JSON response object
+    const hello = { message: 'Hello, world' };
 
-http.createServer(function (req, res) {
-  // JSON response object
-  var hello = {message: "Hello, world"};
+    const path = url.parse(req.url).pathname;
 
-  var path = url.parse(req.url).pathname;
-
-  switch (path) {
-  case '/json':
-    // JSON Response Test
-    res.writeHead(200, {'Content-Type': 'application/json; charset=UTF-8'});
-    // Write JSON object to response
-    res.end(JSON.stringify(hello));
-    break;
-
-  case '/mysql-orm':
-    var values = url.parse(req.url, true);
-    var queries = values.query.queries || 1;
-    var queryFunctions = new Array(queries);
-
-    for (var i = 0; i < queries; i += 1) {
-      queryFunctions[i] = sequelizeQuery;
-    }
-
-    res.writeHead(200, {'Content-Type': 'application/json'});
-
-    async.parallel(queryFunctions, function(err, results) {
-      res.end(JSON.stringify(results));
-    });
-    break;
-
-  case '/mysql':
-    res.writeHead(200, {'Content-Type': 'application/json'});
-
-    function libmysqlQuery(callback) {
-      libmysql.query("SELECT * FROM world WHERE id = " + getRandomNumber(), function (err, res) {
-        if (err) {
-	        throw err;
-	      }
-
-	      res.fetchAll(function(err, rows) {
-      	  if (err) {
-      	    throw err;
-      	  }
-
-      	  res.freeSync();
-      	  callback(null, rows[0]);
+    let values;
+    let queries;
+    let queryFunctions;
+    /* eslint-disable no-case-declarations */
+    /* eslint-disable no-inner-declarations */
+    switch (path) {
+      case '/json':
+        // JSON Response Test
+        res.writeHead(200, {
+          'Content-Type': 'application/json; charset=UTF-8'
         });
-      });
-    }
+        // Write JSON object to response
+        res.end(JSON.stringify(hello));
+        break;
 
-    var values = url.parse(req.url, true);
-    var queries = values.query.queries || 1;
-    var queryFunctions = new Array(queries);
+      case '/mysql-orm':
+        values = url.parse(req.url, true);
+        queries = values.query.queries || 1;
+        queryFunctions = new Array(queries);
 
-    for (var i = 0; i < queries; i += 1) {
-      queryFunctions[i] = libmysqlQuery;
-    }
-    async.parallel(queryFunctions, function(err, results) {
-      if (err) {
-        res.writeHead(500);
-        return res.end('MYSQL CONNECTION ERROR.');
-      }
-      res.end(JSON.stringify(results));
-    });
-    break;
-
-  case '/mysql2':
-    handleMysqlIsh(mysql2conn, req, res);
-    break;
-
-  case '/fortunes-mysql2':
-    fortuneMysql(mysql2conn, res);
-    break;
-
-  case '/fortunes-mysql1':
-    fortuneMysql(mysql1conn, res);
-    break;
-
-  case '/fortunes-maria':
-    fortuneMaria(res);
-    break;
-
-  case '/mysql2pool':
-    handleMysqlIshPool(pool2, req, res);
-    break;
-
-  case '/mysql2ps':
-    handlePrepared(req, res);
-    break;
-
-  case '/mysql1':
-    handleMysqlIsh(mysql1conn, req, res);
-    break;
-
-  case '/maria':
-    handleMaria(req, res);
-    break;
-
-  case '/update':
-    res.writeHead(200, {'Content-Type': 'application/json'});
-
-    function libmysqlQuery(callback) {
-      libmysql.query("SELECT * FROM world WHERE id = " + getRandomNumber(), function (err, res) {
-        if (err) {
-          throw err;
+        for (let i = 0; i < queries; i += 1) {
+          queryFunctions[i] = sequelizeQuery;
         }
 
-        res.fetchAll(function(err, rows) {
-          if (err) {
-            throw err;
-          }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
 
-          res.freeSync();
-
-          rows[0].randomNumber = getRandomNumber();
-          libmysql.query("UPDATE World SET randomNumber = " + rows[0].randomNumber + " WHERE id = " + rows[0]['id'], function (err, res) {
-            if (err) {
-              throw err;
-            }
-          });
-          callback(null, rows[0]);
+        async.parallel(queryFunctions, (err, results) => {
+          res.end(JSON.stringify(results));
         });
-      });
+        break;
+
+      case '/mysql':
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+
+        function libmysqlQuery2(callback) {
+          libmysql.query(
+            `SELECT * FROM world WHERE id = ${getRandomNumber()}`,
+            (err, res) => {
+              if (err) {
+                throw err;
+              }
+
+              res.fetchAll((err, rows) => {
+                if (err) {
+                  throw err;
+                }
+
+                res.freeSync();
+                callback(null, rows[0]);
+              });
+            }
+          );
+        }
+
+        values = url.parse(req.url, true);
+        queries = values.query.queries || 1;
+        queryFunctions = new Array(queries);
+
+        for (let i = 0; i < queries; i += 1) {
+          queryFunctions[i] = libmysqlQuery2;
+        }
+        async.parallel(queryFunctions, (err, results) => {
+          if (err) {
+            res.writeHead(500);
+            return res.end('MYSQL CONNECTION ERROR.');
+          }
+          res.end(JSON.stringify(results));
+        });
+        break;
+
+      case '/mysql2':
+        handleMysqlIsh(mysql2conn, req, res);
+        break;
+
+      case '/fortunes-mysql2':
+        fortuneMysql(mysql2conn, res);
+        break;
+
+      case '/fortunes-mysql1':
+        fortuneMysql(mysql1conn, res);
+        break;
+
+      case '/fortunes-maria':
+        fortuneMaria(res);
+        break;
+
+      case '/mysql2pool':
+        handleMysqlIshPool(pool2, req, res);
+        break;
+
+      case '/mysql2ps':
+        handlePrepared(req, res);
+        break;
+
+      case '/mysql1':
+        handleMysqlIsh(mysql1conn, req, res);
+        break;
+
+      case '/maria':
+        handleMaria(req, res);
+        break;
+
+      case '/update':
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+
+        function libmysqlQuery(callback) {
+          libmysql.query(
+            `SELECT * FROM world WHERE id = ${getRandomNumber()}`,
+            (err, res) => {
+              if (err) {
+                throw err;
+              }
+
+              res.fetchAll((err, rows) => {
+                if (err) {
+                  throw err;
+                }
+
+                res.freeSync();
+
+                rows[0].randomNumber = getRandomNumber();
+                libmysql.query(
+                  `UPDATE World SET randomNumber = ${
+                    rows[0].randomNumber
+                  } WHERE id = ${rows[0]['id']}`,
+                  err => {
+                    if (err) {
+                      throw err;
+                    }
+                  }
+                );
+                callback(null, rows[0]);
+              });
+            }
+          );
+        }
+
+        values = url.parse(req.url, true);
+        queries = values.query.queries || 1;
+        queryFunctions = new Array(queries);
+
+        for (let i = 0; i < queries; i += 1) {
+          queryFunctions[i] = libmysqlQuery;
+        }
+        async.parallel(queryFunctions, (err, results) => {
+          if (err) {
+            res.writeHead(500);
+            return res.end('MYSQL CONNECTION ERROR.');
+          }
+          res.end(JSON.stringify(results));
+        });
+        break;
+
+      default:
+        // File not found handler
+        res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
+        res.end('NOT IMPLEMENTED');
     }
-
-    var values = url.parse(req.url, true);
-    var queries = values.query.queries || 1;
-    var queryFunctions = new Array(queries);
-
-    for (var i = 0; i < queries; i += 1) {
-      queryFunctions[i] = libmysqlQuery;
-    }
-    async.parallel(queryFunctions, function(err, results) {
-      if (err) {
-        res.writeHead(500);
-        return res.end('MYSQL CONNECTION ERROR.');
-      }
-      res.end(JSON.stringify(results));
-    });
-    break;
-
-  default:
-    // File not found handler
-    res.writeHead(404, {'Content-Type': 'text/html; charset=UTF-8'});
-    res.end("NOT IMPLEMENTED");
-  }
-}).listen(8080);
+  })
+  .listen(8080);

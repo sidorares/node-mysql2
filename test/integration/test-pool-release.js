@@ -1,20 +1,22 @@
-var createPool = require('../common.js').createPool;
-var assert = require('assert');
+'use strict';
 
-var pool = createPool();
+const createPool = require('../common.js').createPool;
+const assert = require('assert');
 
-pool.query('test sql', function(err, res, rows) {
-  pool.query('test sql', [], function(err, res, rows) {
-    pool.query('test sql', [], function(err, res, rows) {
-      pool.query('test sql', [], function(err, res, rows) {
-        pool.query('test sql', function(err, res, rows) {
-          pool.query('test sql').on('error', function(err) {
-            pool.query('test sql', function(err, res, rows) {
-              pool.execute('test sql', function(err, res, rows) {
-                pool.execute('test sql', function(err, res, rows) {
-                  pool.execute('test sql', [], function(err, res, rows) {
-                    pool.execute('test sql', function(err) {
-                      pool.execute('test sql', function(err, res, rows) {
+const pool = createPool();
+
+pool.query('test sql', () => {
+  pool.query('test sql', [], () => {
+    pool.query('test sql', [], () => {
+      pool.query('test sql', [], () => {
+        pool.query('test sql', () => {
+          pool.query('test sql').on('error', () => {
+            pool.query('test sql', () => {
+              pool.execute('test sql', () => {
+                pool.execute('test sql', () => {
+                  pool.execute('test sql', [], () => {
+                    pool.execute('test sql', () => {
+                      pool.execute('test sql', () => {
                         // TODO change order events are fires so that connection is released before callback
                         // that way this number will be more deterministic
                         assert(pool._allConnections.length < 3);

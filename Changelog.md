@@ -1,3 +1,67 @@
+2.0.0-alpha1
+  - MAJOR: new `authPlugins` api replacing 
+    `authSwitchHandler`, added caching_sha2_password 
+    and mysql_native_password as default plugins.
+    Added tests for mysql 8 and ssl. Mysql 8 server
+    now supported with default settings.              #1021, #906, #991
+  - MAJOR: LOCAL INFILE does not automatically read   #1034
+    from the local fs and now requires an explicit
+    `infileStreamFactory` to be specified in query options.
+  - Update to 2019 CA Amazon RDS certificates         #1032
+  - Update SSL Profile for AWS Serverless Aurora      #1026
+  - fix pool ignoring namedPlaceholders config        #1022
+
+1.7.0
+  - Fix crashing when session info packet does not 
+    start with length-coded string                    #1004, #989
+  - build: drop node 4 and 6 and add node v12         #997
+  - Add support for timezone connection option        #996, #15, #262, 
+                                                      #642, #877, #888
+  - Make mysql2 compatible with minification          #992, #890, #899, 
+                                                      #890
+  - fix serialisation of '00:00:00' time              #968, #967
+  - Allow to set minVersion ssl option                #961, #960
+  - Fix a MaxListenersExceededWarning with stream 
+    local infile                                      #965
+
+1.6.5 (08/02/2019)
+  - allow to use namedPlaceholders flag per query     #879
+  - migrate to more modern code style ( classes /
+   arrow functions )                                  #861, #870
+  - be more defencive about ssl config object         #895
+  - fix(debug): remove usage of callee                #882
+
+1.6.4 (08/11/2018)
+ - revert changes breaking node v4 and add v4 to 
+   build matrix                                       #872, #873
+
+1.6.3 (06/10/2018)
+ - Don't treat selector-making function as a class.   #869, #871
+
+1.6.2 (05/10/2018)
+ - Fix "Socket ended by other party" error            #447, #867, #868
+ - replace var with let/const                         #849
+ - Fix "close emitted before end" error               #711, #859
+ - fix docs                                           #856
+ - migrate to es6 classes where appropriate           #848
+
+1.6.1 (02/08/2018)
+ - Fix missing Promise option in checks for Pool      #826
+
+1.6.0 (01/08/2018)
+ - Fixed `PromiseConnection.ping()` ignoring errors   #813
+ - Added a uri parameter to the connection config     #815
+ - Added a `.promise()` method shortcut on Pool,
+   Connection and PoolConnection                      #810 
+ - Added more functions from node-mysql:
+   `createQuery`, `raw`, `escape`, `escapeId`,
+   `format`                                           #799
+ - Added `acquire` and `release` and release events
+   on Connection                                      #783
+ - Added support for a Japanese charset `ujis`        #772
+ - Improved error handling on `ECONNRESET`            #768
+ - Drop support for Node 4                            #791
+
 1.5.3 (19/03/2018)
  - fix incorrect denque dependency                     #740
  - build: bump to node 8.10 and 6.16

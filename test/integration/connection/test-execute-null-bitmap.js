@@ -1,20 +1,17 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var params = [1, 2];
-var query = 'select ? + ?';
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+const params = [1, 2];
+let query = 'select ? + ?';
 
 function dotest() {
-  connection.execute(query + ' as t', params, function(err, _rows, _fields) {
+  connection.execute(`${query} as t`, params, (err, _rows) => {
     assert.equal(err, null);
     if (params.length < 50) {
-      assert.equal(
-        _rows[0].t,
-        params.reduce(function(x, y) {
-          return x + y;
-        })
-      );
+      assert.equal(_rows[0].t, params.reduce((x, y) => x + y));
       query += ' + ?';
       params.push(params.length);
       dotest();

@@ -1,8 +1,10 @@
-var mysql = require('mysql2');
-var SocksConnection = require('socksjs');
+'use strict';
 
-// var socksProxy = new SocksConnection({ port: 3306 });
-// var conn = mysql.createConnection({
+const mysql = require('mysql2');
+const SocksConnection = require('socksjs');
+
+// const socksProxy = new SocksConnection({ port: 3306 });
+// const conn = mysql.createConnection({
 //   stream: socksProxy,
 // });
 
@@ -10,21 +12,21 @@ var SocksConnection = require('socksjs');
 //   console.log(err, rows, fields);
 // });
 
-var conn1 = mysql.createPool({
+const conn1 = mysql.createPool({
   debug: 1,
   stream: function() {
     return new SocksConnection({ port: 3306 });
   }
 });
 
-conn1.execute('select sleep(1.1) as www', function(err, rows, fields) {
+conn1.execute('select sleep(1.1) as www', (err, rows, fields) => {
   console.log(err, rows, fields);
 });
 
-conn1.execute('select sleep(1) as qqq', function(err, rows, fields) {
+conn1.execute('select sleep(1) as qqq', (err, rows, fields) => {
   console.log(err, rows, fields);
 });
 
-conn1.execute('select sleep(1) as qqq', function(err, rows, fields) {
+conn1.execute('select sleep(1) as qqq', (err, rows, fields) => {
   console.log(err, rows, fields);
 });

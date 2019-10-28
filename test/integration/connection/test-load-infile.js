@@ -1,11 +1,15 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var table = 'load_data_test';
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+const fs = require('fs');
+
+const table = 'load_data_test';
+connection.query('SET GLOBAL local_infile = true', assert.ifError);
 connection.query(
   [
-    'CREATE TEMPORARY TABLE `' + table + '` (',
+    `CREATE TEMPORARY TABLE \`${table}\` (`,
     '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
@@ -13,23 +17,28 @@ connection.query(
   ].join('\n')
 );
 
-var path = './test/fixtures/data.csv';
-var sql =
-  'LOAD DATA LOCAL INFILE ? INTO TABLE ' +
-  table +
-  ' ' +
-  'FIELDS TERMINATED BY ? (id, title)';
+const path = './test/fixtures/data.csv';
+const sql =
+  `LOAD DATA LOCAL INFILE ? INTO TABLE ${table} ` +
+  `FIELDS TERMINATED BY ? (id, title)`;
 
-var ok;
-connection.query(sql, [path, ','], function(err, _ok) {
-  if (err) {
-    throw err;
+let ok;
+connection.query(
+  {
+    sql,
+    values: [path, ','],
+    infileStreamFactory: () => fs.createReadStream(path)
+  },
+  (err, _ok) => {
+    if (err) {
+      throw err;
+    }
+    ok = _ok;
   }
-  ok = _ok;
-});
+);
 
-var rows;
-connection.query('SELECT * FROM ' + table, function(err, _rows) {
+let rows;
+connection.query(`SELECT * FROM ${table}`, (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -37,20 +46,20 @@ connection.query('SELECT * FROM ' + table, function(err, _rows) {
 });
 
 // Try to load a file that does not exist to see if we handle this properly
-var loadErr;
-var loadResult;
-var badPath = '/does_not_exist.csv';
+let loadErr;
+let loadResult;
+const badPath = '/does_not_exist.csv';
 
-connection.query(sql, [badPath, ','], function(err, result) {
+connection.query(sql, [badPath, ','], (err, result) => {
   loadErr = err;
   loadResult = result;
 });
 
 // test path mapping
-var createMyStream = function(path) {
-  var Stream = require('readable-stream').PassThrough;
-  var myStream = new Stream();
-  setTimeout(function() {
+const createMyStream = function() {
+  const Stream = require('stream').PassThrough;
+  const myStream = new Stream();
+  setTimeout(() => {
     myStream.write('11,Hello World\n');
     myStream.write('21,One ');
     myStream.write('more row\n');
@@ -59,14 +68,14 @@ var createMyStream = function(path) {
   return myStream;
 };
 
-var streamResult;
+let streamResult;
 connection.query(
   {
     sql: sql,
     values: [badPath, ','],
     infileStreamFactory: createMyStream
   },
-  function(err, result) {
+  (err, result) => {
     if (err) {
       throw err;
     }
@@ -75,13 +84,16 @@ connection.query(
   }
 );
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(ok.affectedRows, 4);
   assert.equal(rows.length, 4);
   assert.equal(rows[0].id, 1);
   assert.equal(rows[0].title, 'Hello World');
 
-  assert.equal(loadErr.code, 'ENOENT');
+  assert.equal(
+    loadErr.message,
+    `As a result of LOCAL INFILE command server wants to read /does_not_exist.csv file, but as of v2.0 you must provide streamFactory option returning ReadStream.`
+  );
   assert.equal(loadResult.affectedRows, 0);
 
   assert.equal(streamResult.affectedRows, 2);

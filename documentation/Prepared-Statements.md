@@ -5,7 +5,7 @@
 Similar to `connection.query()`.
 
 ```js
-connection.execute('select 1 + ? + ? as result', [5, 6], function (err, rows) {
+connection.execute('select 1 + ? + ? as result', [5, 6], (err, rows) => {
   // rows: [ { result: 12 } ]
   // internally 'select 1 + ? + ? as result' is prepared first. On subsequent calls cached statement is re-used
 });
@@ -17,13 +17,13 @@ connection.unprepare('select 1 + ? + ? as result');
 ## Manual prepare / execute
 
 ```js
-connection.prepare('select ? + ? as tests', function (err, statement) {
+connection.prepare('select ? + ? as tests', (err, statement) => {
   // statement.parameters - array of column definitions, length === number of params, here 2
   // statement.columns - array of result column definitions. Can be empty if result schema is dynamic / not known
   // statement.id
   // statement.query
 
-  statement.execute([1, 2], function (err, rows, columns) {
+  statement.execute([1, 2], (err, rows, columns) => {
     // -> [ { tests: 3 } ]
   });
 

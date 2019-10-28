@@ -1,43 +1,28 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var testTable = 'neg-ai-test';
-var testData = 'test negative ai';
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
-var selectResult, insertResult;
+const testTable = 'neg-ai-test';
+const testData = 'test negative ai';
 
-var prepareAndTest = function(cb) {
-  connection.query(
-    'CREATE TEMPORARY TABLE `' +
-      testTable +
-      '` (' +
-      '`id` int(11) signed NOT NULL AUTO_INCREMENT,' +
-      '`title` varchar(255),' +
-      'PRIMARY KEY (`id`)' +
-      ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-    testNegativeAI
-  );
-};
+let selectResult, insertResult;
 
-var testNegativeAI = function(err) {
+const testNegativeAI = function(err) {
   assert.ifError(err);
   // insert the negative AI
   connection.query(
-    'INSERT INTO `' +
-      testTable +
-      '`' +
-      ' (id, title) values (-999, "' +
-      testData +
-      '")',
-    function(err, result) {
+    `INSERT INTO \`${testTable}\`` +
+      ` (id, title) values (-999, "${testData}")`,
+    (err, result) => {
       assert.ifError(err);
       insertResult = result;
 
       // select the row with negative AI
       connection.query(
-        'SELECT * FROM `' + testTable + '`' + ' WHERE id = ' + result.insertId,
-        function(err, result_) {
+        `SELECT * FROM \`${testTable}\`` + ` WHERE id = ${result.insertId}`,
+        (err, result_) => {
           assert.ifError(err);
           selectResult = result_;
           connection.end();
@@ -47,9 +32,20 @@ var testNegativeAI = function(err) {
   );
 };
 
+const prepareAndTest = function() {
+  connection.query(
+    `CREATE TEMPORARY TABLE \`${testTable}\` (` +
+      `\`id\` int(11) signed NOT NULL AUTO_INCREMENT,` +
+      `\`title\` varchar(255),` +
+      `PRIMARY KEY (\`id\`)` +
+      `) ENGINE=InnoDB DEFAULT CHARSET=utf8`,
+    testNegativeAI
+  );
+};
+
 prepareAndTest();
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.strictEqual(insertResult.insertId, -999);
   assert.strictEqual(selectResult.length, 1);
 

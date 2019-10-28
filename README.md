@@ -16,6 +16,7 @@ __Table of contents__
   - [Installation](#installation)
   - [First Query](#first-query)
   - [Using Prepared Statements](#using-prepared-statements)
+  - [Using connection pools](#using-connection-pools)
   - [Using Promise Wrapper](#using-promise-wrapper)
   - [API and Configuration](#api-and-configuration)
   - [Documentation](#documentation)
@@ -37,7 +38,7 @@ MySQL2 is mostly API compatible with [mysqljs][node-mysql] and supports majority
  - Compression
  - SSL and [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/Authentication-Switch.md)
  - [Custom Streams](https://github.com/sidorares/node-mysql2/tree/master/documentation/Extras.md)
- - Pooling
+ - [Pooling](#using-connection-pools)
 
 ## Installation
 
@@ -106,11 +107,53 @@ connection.execute(
     console.log(results); // results contains rows returned by server
     console.log(fields); // fields contains extra meta data about results, if available
 
-    // If you execute same statement again, it will be picked form a LRU cache
+    // If you execute same statement again, it will be picked from a LRU cache
     // which will save query preparation time and give better performance
   }
 );
 ```
+
+## Using connection pools
+
+Connection pools help reduce the time spent connecting to the MySQL server by reusing a previous connection, leaving them open instead of closing when you are done with them.
+
+This improves the latency of queries as you avoid all of the overhead that comes with establishing a new connection.
+
+```js
+// get the client
+const mysql = require('mysql2');
+
+// Create the connection pool. The pool-specific settings are the defaults
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+```
+The pool does not create all connections upfront but creates them on demand until the connection limit is reached.
+
+You can use the pool in the same way as connections (using `pool.query()` and `pool.execute()`):
+```js
+// For pool initialization, see above
+pool.query("SELECT field FROM atable", function(err, rows, fields) {
+   // Connection is automatically released when query resolves
+})
+```
+
+Alternatively, there is also the possibility of manually acquiring a connection from the pool and returning it later:
+```js
+// For pool initialization, see above
+pool.getConnection(function(err, conn) {
+   // Do something with the connection
+   conn.query(/* ... */);
+   // Don't forget to release the connection when finished!
+   pool.releaseConnection(conn);
+})
+```
+
 ## Using Promise Wrapper
 
 MySQL2 also support Promise API. Which works very well with ES7 async await.
@@ -119,7 +162,7 @@ MySQL2 also support Promise API. Which works very well with ES7 async await.
 ```js
 async function main() {
   // get the client
-  const  mysql = require('mysql2/promise');
+  const mysql = require('mysql2/promise');
   // create the connection
   const connection = await mysql.createConnection({host:'localhost', user: 'root', database: 'test'});
   // query database
@@ -138,10 +181,39 @@ const mysql = require('mysql2/promise');
 const bluebird = require('bluebird');
 
 // create the connection, specify bluebird as Promise
-const connection =  mysql.createConnection({host:'localhost', user: 'root', database: 'test', Promise: bluebird});
+const connection = await mysql.createConnection({host:'localhost', user: 'root', database: 'test', Promise: bluebird});
 
 // query database
-const [rows, fields] =  connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+const [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+```
+
+MySQL2 also exposes a .promise() function on Pools, so you can create a promise/non-promise connections from the same pool
+```js
+async function main() {
+  // get the client
+  const mysql = require('mysql2');
+  // create the pool
+  const pool = mysql.createPool({host:'localhost', user: 'root', database: 'test'});
+  // now get a Promise wrapped instance of that pool
+  const promisePool = pool.promise();
+  // query database using promises
+  const [rows,fields] = await promisePool.query("SELECT 1");
+```
+
+MySQL2 exposes a .promise() function on Connections, to "upgrade" an existing non-promise connection to use promise
+```js
+// get the client
+const mysql = require('mysql2');
+// create the connection
+const con = mysql.createConnection(
+  {host:'localhost', user: 'root', database: 'test'}
+);
+con.promise().query("SELECT 1")
+  .then( ([rows,fields]) => {
+    console.log(rows);
+  })
+  .catch(console.log)
+  .then( () => con.end());
 ```
 
 ## API and Configuration

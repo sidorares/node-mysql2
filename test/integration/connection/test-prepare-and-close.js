@@ -1,22 +1,24 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
 
-var max = 500;
-var start = process.hrtime();
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
+
+const max = 500;
+const start = process.hrtime();
 function prepare(i) {
-  connection.prepare('select 1+' + i, function(err, stmt) {
+  connection.prepare(`select 1+${i}`, (err, stmt) => {
     assert.ifError(err);
     stmt.close();
     if (!err) {
       if (i > max) {
-        var end = process.hrtime(start);
-        var ns = end[0] * 1e9 + end[1];
-        console.log(max * 1e9 / ns + ' prepares/sec');
+        const end = process.hrtime(start);
+        const ns = end[0] * 1e9 + end[1];
+        console.log(`${(max * 1e9) / ns} prepares/sec`);
         connection.end();
         return;
       }
-      setTimeout(function() {
+      setTimeout(() => {
         prepare(i + 1);
       }, 2);
       return;
@@ -24,7 +26,7 @@ function prepare(i) {
     assert(0, 'Error in prepare!');
   });
 }
-connection.query('SET GLOBAL max_prepared_stmt_count=10', function(err) {
+connection.query('SET GLOBAL max_prepared_stmt_count=10', err => {
   assert.ifError(err);
   prepare(1);
 });

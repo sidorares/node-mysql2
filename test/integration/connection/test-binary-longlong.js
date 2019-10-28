@@ -1,8 +1,9 @@
-var assert = require('assert');
+'use strict';
 
-var FieldFlags = require('../../../lib/constants/field_flags.js');
-var common = require('../../common');
-var conn = common.createConnection();
+const assert = require('assert');
+
+const common = require('../../common');
+const conn = common.createConnection();
 
 conn.query(
   'CREATE TEMPORARY TABLE `tmp_longlong` ( ' +
@@ -13,7 +14,7 @@ conn.query(
     ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8'
 );
 
-var values = [
+const values = [
   ['10', '10'],
   ['-11', '11'],
   ['965432100123456789', '1965432100123456789'],
@@ -21,13 +22,13 @@ var values = [
   [null, null]
 ];
 
-conn.connect(function(err) {
+conn.connect(err => {
   if (err) {
     console.error(err);
     return;
   }
 
-  for (var i = 0; i < values.length; ++i) {
+  for (let i = 0; i < values.length; ++i) {
     conn.query('INSERT INTO `tmp_longlong` VALUES (?, ?, ?)', [
       i + 1,
       values[i][0],
@@ -35,7 +36,7 @@ conn.connect(function(err) {
     ]);
   }
 
-  var bigNums_bnStringsFalse = [
+  const bigNums_bnStringsFalse = [
     { id: 1, ls: 10, lu: 10 },
     { id: 2, ls: -11, lu: 11 },
     { id: 3, ls: 965432100123456800, lu: 1965432100123456800 },
@@ -43,7 +44,7 @@ conn.connect(function(err) {
     { id: 5, ls: null, lu: null }
   ];
 
-  var bigNums_bnStringsTrueFalse = [
+  const bigNums_bnStringsTrueFalse = [
     { id: 1, ls: 10, lu: 10 },
     { id: 2, ls: -11, lu: 11 },
     { id: 3, ls: '965432100123456789', lu: '1965432100123456789' },
@@ -51,7 +52,7 @@ conn.connect(function(err) {
     { id: 5, ls: null, lu: null }
   ];
 
-  var bigNums_bnStringsTrueTrue = [
+  const bigNums_bnStringsTrueTrue = [
     { id: 1, ls: 10, lu: 10 },
     { id: 2, ls: -11, lu: 11 },
     { id: 3, ls: '965432100123456789', lu: '1965432100123456789' },
@@ -59,15 +60,8 @@ conn.connect(function(err) {
     { id: 5, ls: null, lu: null }
   ];
 
-  function check() {
-    completed++;
-    if (completed === started) {
-      conn.end();
-    }
-  }
-
-  var completed = 0;
-  var started = 0;
+  let completed = 0;
+  let started = 0;
 
   function testQuery(supportBigNumbers, bigNumberStrings, expectation) {
     started++;
@@ -77,7 +71,7 @@ conn.connect(function(err) {
         supportBigNumbers: supportBigNumbers,
         bigNumberStrings: bigNumberStrings
       },
-      function(err, rows, fields) {
+      (err, rows) => {
         assert.ifError(err);
         assert.deepEqual(rows, expectation);
         completed++;
@@ -96,7 +90,7 @@ conn.connect(function(err) {
         supportBigNumbers: supportBigNumbers,
         bigNumberStrings: bigNumberStrings
       },
-      function(err, rows, fields) {
+      (err, rows) => {
         assert.ifError(err);
         assert.deepEqual(rows, expectation);
         completed++;

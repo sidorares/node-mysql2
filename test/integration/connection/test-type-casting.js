@@ -1,89 +1,81 @@
-var common = require('../../common');
-var connection = common.createConnection();
-var assert = require('assert');
+'use strict';
+
+const common = require('../../common');
+const connection = common.createConnection();
+const assert = require('assert');
 
 common.useTestDb(connection);
 
-var tests = require('./type-casting-tests')(connection);
+connection.query('select 1', waitConnectErr => {
+  assert.ifError(waitConnectErr);
 
-var table = 'type_casting';
+  const tests = require('./type-casting-tests')(connection);
 
-var schema = [];
-var inserts = [];
+  const table = 'type_casting';
 
-tests.forEach(function(test, index) {
-  var escaped = test.insertRaw || connection.escape(test.insert);
+  const schema = [];
+  const inserts = [];
 
-  test.columnName = test.type + '_' + index;
+  tests.forEach((test, index) => {
+    const escaped = test.insertRaw || connection.escape(test.insert);
 
-  schema.push('`' + test.columnName + '` ' + test.type + ',');
-  inserts.push('`' + test.columnName + '` = ' + escaped);
-});
+    test.columnName = `${test.type}_${index}`;
 
-var createTable = [
-  'CREATE TEMPORARY TABLE `' + table + '` (',
-  '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,'
-]
-  .concat(schema)
-  .concat(['PRIMARY KEY (`id`)', ') ENGINE=InnoDB DEFAULT CHARSET=utf8'])
-  .join('\n');
+    schema.push(`\`${test.columnName}\` ${test.type},`);
+    inserts.push(`\`${test.columnName}\` = ${escaped}`);
+  });
 
-connection.query(createTable);
+  const createTable = [
+    `CREATE TEMPORARY TABLE \`${table}\` (`,
+    '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,'
+  ]
+    .concat(schema)
+    .concat(['PRIMARY KEY (`id`)', ') ENGINE=InnoDB DEFAULT CHARSET=utf8'])
+    .join('\n');
 
-connection.query('INSERT INTO ' + table + ' SET' + inserts.join(',\n'));
+  connection.query(createTable);
 
-var row;
-connection.query('SELECT * FROM type_casting', function(err, rows) {
-  if (err) {
-    throw err;
-  }
+  connection.query(`INSERT INTO ${table} SET${inserts.join(',\n')}`);
 
-  row = rows[0];
-  connection.end();
-});
-
-process.on('exit', function() {
-  tests.forEach(function(test) {
-    var expected = test.expect || test.insert;
-    var got = row[test.columnName];
-    var message;
-
-    if (expected instanceof Date) {
-      assert.equal(got instanceof Date, true, test.type);
-
-      expected = String(expected);
-      got = String(got);
-    } else if (Buffer.isBuffer(expected)) {
-      assert.equal(Buffer.isBuffer(got), true, test.type);
-
-      expected = String(Array.prototype.slice.call(expected));
-      got = String(Array.prototype.slice.call(got));
+  let row;
+  connection.query('SELECT * FROM type_casting', (err, rows) => {
+    if (err) {
+      throw err;
     }
 
-    if (test.deep) {
-      message =
-        'got: "' +
-        JSON.stringify(got) +
-        '" expected: "' +
-        JSON.stringify(expected) +
-        '" test: ' +
-        test.type +
-        '';
-      assert.deepEqual(expected, got, message);
-    } else {
-      message =
-        'got: "' +
-        got +
-        '" (' +
-        typeof got +
-        ') expected: "' +
-        expected +
-        '" (' +
-        typeof expected +
-        ') test: ' +
-        test.type +
-        '';
-      assert.strictEqual(expected, got, message);
-    }
+    row = rows[0];
+    connection.end();
+  });
+
+  process.on('exit', () => {
+    tests.forEach(test => {
+      let expected = test.expect || test.insert;
+      let got = row[test.columnName];
+      let message;
+
+      if (expected instanceof Date) {
+        assert.equal(got instanceof Date, true, test.type);
+
+        expected = String(expected);
+        got = String(got);
+      } else if (Buffer.isBuffer(expected)) {
+        assert.equal(Buffer.isBuffer(got), true, test.type);
+
+        expected = String(Array.prototype.slice.call(expected));
+        got = String(Array.prototype.slice.call(got));
+      }
+
+      if (test.deep) {
+        message = `got: "${JSON.stringify(got)}" expected: "${JSON.stringify(
+          expected
+        )}" test: ${test.type}`;
+        assert.deepEqual(expected, got, message);
+      } else {
+        message = `got: "${got}" (${typeof got}) expected: "${expected}" (${typeof expected}) test: ${
+          test.type
+        }`;
+        assert.strictEqual(expected, got, message);
+      }
+    });
   });
 });

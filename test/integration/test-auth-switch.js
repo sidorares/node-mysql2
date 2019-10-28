@@ -1,116 +1,100 @@
-var util = require('util');
-var mysql = require('../../index.js');
-var Command = require('../../lib/commands/command.js');
-var Packets = require('../../lib/packets/index.js');
+'use strict';
 
-var Buffer = require('safe-buffer').Buffer;
-var assert = require('assert');
+const mysql = require('../../index.js');
+const Command = require('../../lib/commands/command.js');
+const Packets = require('../../lib/packets/index.js');
 
-function TestAuthSwitchHandshake(args) {
-  Command.call(this);
-  this.args = args;
-}
-util.inherits(TestAuthSwitchHandshake, Command);
+const assert = require('assert');
 
-var connectAttributes = { foo: 'bar', baz: 'foo' };
+const connectAttributes = { foo: 'bar', baz: 'foo' };
+let count = 0;
 
-TestAuthSwitchHandshake.prototype.start = function(packet, connection) {
-  var serverHelloPacket = new Packets.Handshake({
-    protocolVersion: 10,
-    serverVersion: 'node.js rocks',
-    connectionId: 1234,
-    statusFlags: 2,
-    characterSet: 8,
-    capabilityFlags: 0xffffff
-  });
-  this.serverHello = serverHelloPacket;
-  serverHelloPacket.setScrambleData(function(err) {
-    connection.writePacket(serverHelloPacket.toPacket(0));
-  });
-  return TestAuthSwitchHandshake.prototype.readClientReply;
-};
+class TestAuthSwitchHandshake extends Command {
+  constructor(args) {
+    super();
+    this.args = args;
+  }
 
-TestAuthSwitchHandshake.prototype.readClientReply = function(
-  packet,
-  connection
-) {
-  var clientHelloReply = new Packets.HandshakeResponse.fromPacket(packet);
+  start(packet, connection) {
+    const serverHelloPacket = new Packets.Handshake({
+      protocolVersion: 10,
+      serverVersion: 'node.js rocks',
+      connectionId: 1234,
+      statusFlags: 2,
+      characterSet: 8,
+      capabilityFlags: 0xffffff
+    });
+    this.serverHello = serverHelloPacket;
+    serverHelloPacket.setScrambleData(() => {
+      connection.writePacket(serverHelloPacket.toPacket(0));
+    });
+    return TestAuthSwitchHandshake.prototype.readClientReply;
+  }
 
-  assert.equal(clientHelloReply.user, 'test_user');
-  assert.equal(clientHelloReply.database, 'test_database');
-  assert.equal(clientHelloReply.authPluginName, 'mysql_native_password');
-  assert.deepEqual(clientHelloReply.connectAttributes, connectAttributes);
-
-  var asr = new Packets.AuthSwitchRequest(this.args);
-  connection.writePacket(asr.toPacket());
-  return TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse;
-};
-
-var count = 0;
-
-TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse = function(
-  packet,
-  connection
-) {
-  var authSwitchResponse = new Packets.AuthSwitchResponse.fromPacket(packet);
-
-  count++;
-  if (count < 10) {
-    var asrmd = new Packets.AuthSwitchRequestMoreData(
-      Buffer.from('hahaha ' + count)
-    );
-    connection.writePacket(asrmd.toPacket());
+  readClientReply(packet, connection) {
+    const clientHelloReply = Packets.HandshakeResponse.fromPacket(packet);
+    assert.equal(clientHelloReply.user, 'test_user');
+    assert.equal(clientHelloReply.database, 'test_database');
+    assert.equal(clientHelloReply.authPluginName, 'mysql_native_password');
+    assert.deepEqual(clientHelloReply.connectAttributes, connectAttributes);
+    const asr = new Packets.AuthSwitchRequest(this.args);
+    connection.writePacket(asr.toPacket());
     return TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse;
-  } else {
+  }
+
+  readClientAuthSwitchResponse(packet, connection) {
+    Packets.AuthSwitchResponse.fromPacket(packet);
+    count++;
+    if (count < 10) {
+      const asrmd = new Packets.AuthSwitchRequestMoreData(
+        Buffer.from(`hahaha ${count}`)
+      );
+      connection.writePacket(asrmd.toPacket());
+      return TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse;
+    }
     connection.writeOk();
     return TestAuthSwitchHandshake.prototype.dispatchCommands;
   }
-};
 
-TestAuthSwitchHandshake.prototype.dispatchCommands = function(
-  packet,
-  connection
-) {
-  // Quit command here
-  // TODO: assert it's actually Quit
-  connection.end();
-  return TestAuthSwitchHandshake.prototype.dispatchCommands;
-};
+  dispatchCommands(packet, connection) {
+    // Quit command here
+    // TODO: assert it's actually Quit
+    connection.end();
+    return TestAuthSwitchHandshake.prototype.dispatchCommands;
+  }
+}
 
-var server = mysql.createServer(function(conn) {
+const server = mysql.createServer(conn => {
   conn.serverConfig = {};
   conn.serverConfig.encoding = 'cesu8';
   conn.addCommand(
     new TestAuthSwitchHandshake({
       pluginName: 'auth_test_plugin',
-      pluginData: Buffer.from('f\{tU-{K@BhfHt/-4^Z,')
+      pluginData: Buffer.from('f{tU-{K@BhfHt/-4^Z,')
     })
   );
 });
 
-var fullAuthExchangeDone = false;
+// REVIEW: Unused var
 
-var portfinder = require('portfinder');
-portfinder.getPort(function(err, port) {
-  var makeSwitchHandler = function() {
-    var count = 0;
+const portfinder = require('portfinder');
+portfinder.getPort((err, port) => {
+  const makeSwitchHandler = function() {
+    let count = 0;
     return function(data, cb) {
-      if (count == 0) {
+      if (count === 0) {
         assert.equal(data.pluginName, 'auth_test_plugin');
       } else {
-        assert.equal(data.pluginData.toString(), 'hahaha ' + count);
+        assert.equal(data.pluginData.toString(), `hahaha ${count}`);
       }
 
-      if (count == 9) {
-        fullAuthExchangeDone = true;
-      }
       count++;
-      cb(null, 'some data back' + count);
+      cb(null, `some data back${count}`);
     };
   };
 
   server.listen(port);
-  var conn = mysql.createConnection({
+  const conn = mysql.createConnection({
     user: 'test_user',
     password: 'test',
     database: 'test_database',
@@ -119,7 +103,7 @@ portfinder.getPort(function(err, port) {
     connectAttributes: connectAttributes
   });
 
-  conn.on('connect', function(data) {
+  conn.on('connect', data => {
     assert.equal(data.serverVersion, 'node.js rocks');
     assert.equal(data.connectionId, 1234);
 

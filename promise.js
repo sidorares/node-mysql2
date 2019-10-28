@@ -1,73 +1,7 @@
-var core = require('./index.js');
-var EventEmitter = require('events').EventEmitter;
-var util = require('util');
+'use strict';
 
-function inheritEvents(source, target, events) {
-  var listeners = {};
-  target
-    .on('newListener', function(eventName) {
-      if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
-        source.on(
-          eventName,
-          (listeners[eventName] = function() {
-            var args = [].slice.call(arguments);
-            args.unshift(eventName);
-
-            target.emit.apply(target, args);
-          })
-        );
-      }
-    })
-    .on('removeListener', function(eventName) {
-      if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
-        source.removeListener(eventName, listeners[eventName]);
-        delete listeners[eventName];
-      }
-    });
-}
-
-function createConnection(opts) {
-  const coreConnection = core.createConnection(opts);
-  const createConnectionErr = new Error();
-  const Promise = opts.Promise || global.Promise;
-  if (!Promise) {
-    throw new Error(
-      'no Promise implementation available.' +
-        'Use promise-enabled node version or pass userland Promise' +
-        " implementation as parameter, for example: { Promise: require('bluebird') }"
-    );
-  }
-  return new Promise(function(resolve, reject) {
-    coreConnection.once('connect', function(connectParams) {
-      resolve(new PromiseConnection(coreConnection, Promise));
-    });
-    coreConnection.once('error', err => {
-      createConnectionErr.message = err.message;
-      createConnectionErr.code = err.code;
-      createConnectionErr.errno = err.errno;
-      createConnectionErr.sqlState = err.sqlState;
-      reject(createConnectionErr);
-    });
-  });
-}
-
-function PromiseConnection(connection, promiseImpl) {
-  this.connection = connection;
-  this.Promise = promiseImpl;
-
-  inheritEvents(connection, this, [
-    'error',
-    'drain',
-    'connect',
-    'end',
-    'enqueue'
-  ]);
-}
-util.inherits(PromiseConnection, EventEmitter);
-
-PromiseConnection.prototype.release = function() {
-  this.connection.release();
-};
+const core = require('./index.js');
+const EventEmitter = require('events').EventEmitter;
 
 function makeDoneCb(resolve, reject, localErr) {
   return function(err, rows, fields) {
@@ -84,162 +18,238 @@ function makeDoneCb(resolve, reject, localErr) {
   };
 }
 
-PromiseConnection.prototype.query = function(query, params) {
-  const c = this.connection;
-  const localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    const done = makeDoneCb(resolve, reject, localErr);
-    if (params) {
-      c.query(query, params, done);
-    } else {
-      c.query(query, done);
-    }
-  });
-};
+function inheritEvents(source, target, events) {
+  const listeners = {};
+  target
+    .on('newListener', eventName => {
+      if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
+        source.on(
+          eventName,
+          (listeners[eventName] = function() {
+            const args = [].slice.call(arguments);
+            args.unshift(eventName);
 
-PromiseConnection.prototype.execute = function(query, params) {
-  var c = this.connection;
-  const localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
-    if (params) {
-      c.execute(query, params, done);
-    } else {
-      c.execute(query, done);
-    }
-  });
-};
-
-PromiseConnection.prototype.end = function() {
-  var c = this.connection;
-  return new this.Promise(function(resolve, reject) {
-    c.end(function() {
-      resolve();
-    });
-  });
-};
-
-PromiseConnection.prototype.beginTransaction = function() {
-  var c = this.connection;
-  const localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
-    c.beginTransaction(done);
-  });
-};
-
-PromiseConnection.prototype.commit = function() {
-  var c = this.connection;
-  const localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
-    c.commit(done);
-  });
-};
-
-PromiseConnection.prototype.rollback = function() {
-  var c = this.connection;
-  const localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
-    c.rollback(done);
-  });
-};
-
-PromiseConnection.prototype.ping = function() {
-  var c = this.connection;
-  return new this.Promise(function(resolve, reject) {
-    c.ping(resolve);
-  });
-};
-
-PromiseConnection.prototype.connect = function() {
-  var c = this.connection;
-  const localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    c.connect(function(err, param) {
-      if (err) {
-        localErr.message = err.message;
-        localErr.code = err.code;
-        localErr.errno = err.errno;
-        localErr.sqlState = err.sqlState;
-        localErr.sqlMessage = err.sqlMessage;
-        reject(localErr);
-      } else {
-        resolve(param);
-      }
-    });
-  });
-};
-
-PromiseConnection.prototype.prepare = function(options) {
-  var c = this.connection;
-  var promiseImpl = this.Promise;
-  const localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    c.prepare(options, function(err, statement) {
-      if (err) {
-        localErr.message = err.message;
-        localErr.code = err.code;
-        localErr.errno = err.errno;
-        localErr.sqlState = err.sqlState;
-        localErr.sqlMessage = err.sqlMessage;
-        reject(localErr);
-      } else {
-        var wrappedStatement = new PromisePreparedStatementInfo(
-          statement,
-          promiseImpl
+            target.emit.apply(target, args);
+          })
         );
-        resolve(wrappedStatement);
+      }
+    })
+    .on('removeListener', eventName => {
+      if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
+        source.removeListener(eventName, listeners[eventName]);
+        delete listeners[eventName];
       }
     });
-  });
-};
-
-PromiseConnection.prototype.changeUser = function(options) {
-  var c = this.connection;
-  const localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    c.changeUser(options, function(err) {
-      if (err) {
-        localErr.message = err.message;
-        localErr.code = err.code;
-        localErr.errno = err.errno;
-        localErr.sqlState = err.sqlState;
-        localErr.sqlMessage = err.sqlMessage;
-        reject(localErr);
-      } else {
-        resolve();
-      }
-    });
-  });
-};
-
-function PromisePreparedStatementInfo(statement, promiseImpl) {
-  this.statement = statement;
-  this.Promise = promiseImpl;
 }
 
-PromisePreparedStatementInfo.prototype.execute = function(parameters) {
-  var s = this.statement;
-  var localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
-    if (parameters) {
-      s.execute(parameters, done);
-    } else {
-      s.execute(done);
-    }
-  });
-};
+class PromisePreparedStatementInfo {
+  constructor(statement, promiseImpl) {
+    this.statement = statement;
+    this.Promise = promiseImpl;
+  }
 
-PromisePreparedStatementInfo.prototype.close = function() {
-  var s = this.statement;
-  return new this.Promise(function(resolve, reject) {
-    s.close();
-    resolve();
+  execute(parameters) {
+    const s = this.statement;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      if (parameters) {
+        s.execute(parameters, done);
+      } else {
+        s.execute(done);
+      }
+    });
+  }
+
+  close() {
+    return new this.Promise(resolve => {
+      this.statement.close();
+      resolve();
+    });
+  }
+}
+
+class PromiseConnection extends EventEmitter {
+  constructor(connection, promiseImpl) {
+    super();
+    this.connection = connection;
+    this.Promise = promiseImpl || global.Promise;
+    inheritEvents(connection, this, [
+      'error',
+      'drain',
+      'connect',
+      'end',
+      'enqueue'
+    ]);
+  }
+
+  release() {
+    this.connection.release();
+  }
+
+  query(query, params) {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      if (params) {
+        c.query(query, params, done);
+      } else {
+        c.query(query, done);
+      }
+    });
+  }
+
+  execute(query, params) {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      if (params) {
+        c.execute(query, params, done);
+      } else {
+        c.execute(query, done);
+      }
+    });
+  }
+
+  end() {
+    return new this.Promise(resolve => {
+      this.connection.end(resolve);
+    });
+  }
+
+  beginTransaction() {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      c.beginTransaction(done);
+    });
+  }
+
+  commit() {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      c.commit(done);
+    });
+  }
+
+  rollback() {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      c.rollback(done);
+    });
+  }
+
+  ping() {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      c.ping(done);
+    });
+  }
+
+  connect() {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      c.connect((err, param) => {
+        if (err) {
+          localErr.message = err.message;
+          localErr.code = err.code;
+          localErr.errno = err.errno;
+          localErr.sqlState = err.sqlState;
+          localErr.sqlMessage = err.sqlMessage;
+          reject(localErr);
+        } else {
+          resolve(param);
+        }
+      });
+    });
+  }
+
+  prepare(options) {
+    const c = this.connection;
+    const promiseImpl = this.Promise;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      c.prepare(options, (err, statement) => {
+        if (err) {
+          localErr.message = err.message;
+          localErr.code = err.code;
+          localErr.errno = err.errno;
+          localErr.sqlState = err.sqlState;
+          localErr.sqlMessage = err.sqlMessage;
+          reject(localErr);
+        } else {
+          const wrappedStatement = new PromisePreparedStatementInfo(
+            statement,
+            promiseImpl
+          );
+          resolve(wrappedStatement);
+        }
+      });
+    });
+  }
+
+  changeUser(options) {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      c.changeUser(options, err => {
+        if (err) {
+          localErr.message = err.message;
+          localErr.code = err.code;
+          localErr.errno = err.errno;
+          localErr.sqlState = err.sqlState;
+          localErr.sqlMessage = err.sqlMessage;
+          reject(localErr);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  get config() {
+    return this.connection.config;
+  }
+
+  get threadId() {
+    return this.connection.threadId;
+  }
+}
+
+function createConnection(opts) {
+  const coreConnection = core.createConnection(opts);
+  const createConnectionErr = new Error();
+  const Promise = opts.Promise || global.Promise;
+  if (!Promise) {
+    throw new Error(
+      'no Promise implementation available.' +
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
+    );
+  }
+  return new Promise((resolve, reject) => {
+    coreConnection.once('connect', () => {
+      resolve(new PromiseConnection(coreConnection, Promise));
+    });
+    coreConnection.once('error', err => {
+      createConnectionErr.message = err.message;
+      createConnectionErr.code = err.code;
+      createConnectionErr.errno = err.errno;
+      createConnectionErr.sqlState = err.sqlState;
+      reject(createConnectionErr);
+    });
   });
-};
+}
 
 // note: the callback of "changeUser" is not called on success
 // hence there is no possibility to call "resolve"
@@ -250,8 +260,8 @@ PromisePreparedStatementInfo.prototype.close = function() {
 
 // proxy synchronous functions only
 (function(functionsToWrap) {
-  for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
-    var func = functionsToWrap[i];
+  for (let i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
+    const func = functionsToWrap[i];
 
     if (
       typeof core.Connection.prototype[func] === 'function' &&
@@ -281,9 +291,98 @@ PromisePreparedStatementInfo.prototype.close = function() {
   'unprepare'
 ]);
 
+class PromisePoolConnection extends PromiseConnection {
+  constructor(connection, promiseImpl) {
+    super(connection, promiseImpl);
+  }
+
+  destroy() {
+    return core.PoolConnection.prototype.destroy.apply(
+      this.connection,
+      arguments
+    );
+  }
+}
+
+class PromisePool extends EventEmitter {
+  constructor(pool, Promise) {
+    super();
+    this.pool = pool;
+    this.Promise = Promise || global.Promise;
+    inheritEvents(pool, this, ['acquire', 'connection', 'enqueue', 'release']);
+  }
+
+  getConnection() {
+    const corePool = this.pool;
+    return new this.Promise((resolve, reject) => {
+      corePool.getConnection((err, coreConnection) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(new PromisePoolConnection(coreConnection, this.Promise));
+        }
+      });
+    });
+  }
+
+  query(sql, args) {
+    const corePool = this.pool;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      if (args) {
+        corePool.query(sql, args, done);
+      } else {
+        corePool.query(sql, done);
+      }
+    });
+  }
+
+  execute(sql, values) {
+    const corePool = this.pool;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
+    });
+  }
+
+  end() {
+    const corePool = this.pool;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      corePool.end(err => {
+        if (err) {
+          localErr.message = err.message;
+          localErr.code = err.code;
+          localErr.errno = err.errno;
+          localErr.sqlState = err.sqlState;
+          localErr.sqlMessage = err.sqlMessage;
+          reject(localErr);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+}
+
+function createPool(opts) {
+  const corePool = core.createPool(opts);
+  const Promise = opts.Promise || global.Promise;
+  if (!Promise) {
+    throw new Error(
+      'no Promise implementation available.' +
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
+    );
+  }
+
+  return new PromisePool(corePool, Promise);
+}
+
 (function(functionsToWrap) {
-  for (var i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
-    var func = functionsToWrap[i];
+  for (let i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
+    const func = functionsToWrap[i];
 
     if (
       typeof core.Pool.prototype[func] === 'function' &&
@@ -303,96 +402,12 @@ PromisePreparedStatementInfo.prototype.close = function() {
   'format'
 ]);
 
-function PromisePoolConnection() {
-  PromiseConnection.apply(this, arguments);
-}
-
-util.inherits(PromisePoolConnection, PromiseConnection);
-
-PromisePoolConnection.prototype.destroy = function() {
-  return core.PoolConnection.prototype.destroy.apply(
-    this.connection,
-    arguments
-  );
-};
-
-function PromisePool(pool, Promise) {
-  this.pool = pool;
-  this.Promise = Promise;
-
-  inheritEvents(pool, this, ['acquire', 'connection', 'enqueue', 'release']);
-}
-util.inherits(PromisePool, EventEmitter);
-
-PromisePool.prototype.getConnection = function() {
-  var self = this;
-  var corePool = this.pool;
-
-  return new this.Promise(function(resolve, reject) {
-    corePool.getConnection(function(err, coreConnection) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(new PromisePoolConnection(coreConnection, self.Promise));
-      }
-    });
-  });
-};
-
-PromisePool.prototype.query = function(sql, args) {
-  const corePool = this.pool;
-  const localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    var done = makeDoneCb(resolve, reject, localErr);
-    if (args) {
-      corePool.query(sql, args, done);
-    } else {
-      corePool.query(sql, done);
-    }
-  });
-};
-
-PromisePool.prototype.execute = function(sql, values) {
-  var corePool = this.pool;
-  const localErr = new Error();
-
-  return new this.Promise(function(resolve, reject) {
-    corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
-  });
-};
-
-PromisePool.prototype.end = function() {
-  var corePool = this.pool;
-  const localErr = new Error();
-  return new this.Promise(function(resolve, reject) {
-    corePool.end(function(err) {
-      if (err) {
-        localErr.message = err.message;
-        localErr.code = err.code;
-        localErr.errno = err.errno;
-        localErr.sqlState = err.sqlState;
-        localErr.sqlMessage = err.sqlMessage;
-        reject(localErr);
-      } else {
-        resolve();
-      }
-    });
-  });
-};
-
-function createPool(opts) {
-  var corePool = core.createPool(opts);
-  var Promise = opts.Promise || global.Promise;
-  if (!Promise) {
-    throw new Error(
-      'no Promise implementation available.' +
-        'Use promise-enabled node version or pass userland Promise' +
-        " implementation as parameter, for example: { Promise: require('bluebird') }"
-    );
-  }
-
-  return new PromisePool(corePool, Promise);
-}
-
-module.exports.createConnection = createConnection;
-module.exports.createPool = createPool;
+exports.createConnection = createConnection;
+exports.createPool = createPool;
+exports.escape = core.escape;
+exports.escapeId = core.escapeId;
+exports.format = core.format;
+exports.raw = core.raw;
+exports.PromisePool = PromisePool;
+exports.PromiseConnection = PromiseConnection;
+exports.PromisePoolConnection = PromisePoolConnection;

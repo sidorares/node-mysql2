@@ -1,16 +1,18 @@
-var common = require('../../common');
+'use strict';
 
-var connection1 = common.createConnection({
+const common = require('../../common');
+
+const connection1 = common.createConnection({
   decimalNumbers: false
 });
-var connection2 = common.createConnection({
+const connection2 = common.createConnection({
   decimalNumbers: true
 });
-var assert = require('assert');
+const assert = require('assert');
 
-var largeDecimal = 900719.547409;
-var largeDecimalExpected = '900719.547409000000000000000000000000';
-var largeMoneyValue = 900719925474.99;
+const largeDecimal = 900719.547409;
+const largeDecimalExpected = '900719.547409000000000000000000000000';
+const largeMoneyValue = 900719925474.99;
 
 connection1.query('CREATE TEMPORARY TABLE t1 (d1 DECIMAL(65, 30))');
 connection1.query('INSERT INTO t1 set d1=?', [largeDecimal]);
@@ -18,7 +20,7 @@ connection1.query('INSERT INTO t1 set d1=?', [largeDecimal]);
 connection2.query('CREATE TEMPORARY TABLE t2 (d1 DECIMAL(14, 2))');
 connection2.query('INSERT INTO t2 set d1=?', [largeMoneyValue]);
 
-connection1.execute('select d1 from t1', function(err, _rows, _fields) {
+connection1.execute('select d1 from t1', (err, _rows) => {
   if (err) {
     throw err;
   }
@@ -27,7 +29,7 @@ connection1.execute('select d1 from t1', function(err, _rows, _fields) {
   connection1.end();
 });
 
-connection2.query('select d1 from t2', function(err, _rows, _fields) {
+connection2.query('select d1 from t2', (err, _rows) => {
   if (err) {
     throw err;
   }

@@ -1,33 +1,35 @@
-var common = require('../../common');
-var assert = require('assert');
+'use strict';
 
-var callCount = 0;
-var exceptionCount = 0;
+const common = require('../../common');
+const assert = require('assert');
 
-process.on('uncaughtException', function(err) {
+let callCount = 0;
+let exceptionCount = 0;
+
+process.on('uncaughtException', err => {
   assert.ifError(err);
   exceptionCount++;
 });
 
-var connection1 = common.createConnection({
+const connection1 = common.createConnection({
   password: 'lol'
 });
 
 // error will NOT bubble up to process level if `on` is used
-connection1.on('error', function() {
+connection1.on('error', () => {
   callCount++;
 });
 
-var connection2 = common.createConnection({
+const connection2 = common.createConnection({
   password: 'lol'
 });
 
 // error will bubble up to process level if `once` is used
-connection2.once('error', function() {
+connection2.once('error', () => {
   callCount++;
 });
 
-process.on('exit', function() {
+process.on('exit', () => {
   assert.equal(callCount, 2);
   assert.equal(exceptionCount, 0);
 });
