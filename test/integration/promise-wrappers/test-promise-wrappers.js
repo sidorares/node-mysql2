@@ -19,6 +19,7 @@ let doneCalledPool = false;
 let exceptionCaughtPool = false;
 let doneEventsPool = false;
 let doneChangeUser = false;
+let doneAwaitPool = false;
 
 function testBasic() {
   let connResolved;
@@ -445,6 +446,18 @@ function testPoolConnectionDestroy() {
     .then(() => pool.end());
 }
 
+async function testCatchSyncUndefinedError() {
+  const pool = createPool(config);
+  try {
+    await pool.execute('select 1+?', [undefined]);
+  } catch (e) {
+    console.log('It would be great if I could catch the ball!');
+  } finally {
+    await pool.end();
+    doneAwaitPool = true;
+  }
+}
+
 testBasic();
 testErrors();
 testObjParams();
@@ -458,6 +471,7 @@ testChangeUser();
 testConnectionProperties();
 testPoolConnectionDestroy();
 testPromiseLibrary();
+testCatchSyncUndefinedError();
 
 process.on('exit', () => {
   assert.equal(doneCalled, true, 'done not called');
@@ -467,6 +481,7 @@ process.on('exit', () => {
   assert.equal(exceptionCaughtPool, true, 'pool exception not caught');
   assert.equal(doneEventsPool, true, 'wrong number of pool connection events');
   assert.equal(doneChangeUser, true, 'user not changed');
+  assert.equal(doneAwaitPool, true, 'await error not caught');
 });
 
 process.on('unhandledRejection', err => {
