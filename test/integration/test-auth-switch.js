@@ -47,14 +47,13 @@ class TestAuthSwitchHandshake extends Command {
     count++;
     if (count < 10) {
       const asrmd = new Packets.AuthSwitchRequestMoreData(
-        Buffer.from('hahaha ' + count)
+        Buffer.from(`hahaha ${count}`)
       );
       connection.writePacket(asrmd.toPacket());
       return TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse;
-    } else {
-      connection.writeOk();
-      return TestAuthSwitchHandshake.prototype.dispatchCommands;
     }
+    connection.writeOk();
+    return TestAuthSwitchHandshake.prototype.dispatchCommands;
   }
 
   dispatchCommands(packet, connection) {
@@ -83,14 +82,14 @@ portfinder.getPort((err, port) => {
   const makeSwitchHandler = function() {
     let count = 0;
     return function(data, cb) {
-      if (count == 0) {
+      if (count === 0) {
         assert.equal(data.pluginName, 'auth_test_plugin');
       } else {
-        assert.equal(data.pluginData.toString(), 'hahaha ' + count);
+        assert.equal(data.pluginData.toString(), `hahaha ${count}`);
       }
 
       count++;
-      cb(null, 'some data back' + count);
+      cb(null, `some data back${count}`);
     };
   };
 

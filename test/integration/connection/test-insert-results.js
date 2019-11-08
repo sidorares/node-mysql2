@@ -11,7 +11,7 @@ const table = 'insert_test';
 const text = ' test test test ';
 connection.query(
   [
-    'CREATE TEMPORARY TABLE `' + table + '` (',
+    `CREATE TEMPORARY TABLE \`${table}\` (`,
     '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
@@ -20,22 +20,19 @@ connection.query(
 );
 
 let result, result2;
-connection.query(
-  'INSERT INTO ' + table + ' SET title="' + text + '"',
-  (err, _result) => {
-    if (err) {
-      throw err;
-    }
-    result = _result;
-    connection.query(
-      'SELECT * FROM ' + table + ' WHERE id = ' + result.insertId,
-      (err, _result2) => {
-        result2 = _result2;
-        connection.end();
-      }
-    );
+connection.query(`INSERT INTO ${table} SET title="${text}"`, (err, _result) => {
+  if (err) {
+    throw err;
   }
-);
+  result = _result;
+  connection.query(
+    `SELECT * FROM ${table} WHERE id = ${result.insertId}`,
+    (err, _result2) => {
+      result2 = _result2;
+      connection.end();
+    }
+  );
+});
 
 process.on('exit', () => {
   assert.strictEqual(result.insertId, 1);

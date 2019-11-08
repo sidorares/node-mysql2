@@ -6,10 +6,10 @@ const connection = common.createConnection();
 const table = 'insert_test';
 //const text = "本日は晴天なり";
 const text = 'test abc xyz';
-connection.query('drop table ' + table).on('error', () => {});
+connection.query(`drop table ${table}`).on('error', () => {});
 connection.query(
   [
-    'CREATE TABLE `' + table + '` (',
+    `CREATE TABLE \`${table}\` (`,
     '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
     '`title` varchar(255) NOT NULL,',
     'PRIMARY KEY (`id`)',
@@ -18,14 +18,11 @@ connection.query(
 );
 
 function benchmarkInsert(numLeft, callback) {
-  connection.query(
-    'INSERT INTO ' + table + ' SET title="' + text + '"',
-    err => {
-      if (err) throw err;
-      if (numLeft > 1) benchmarkInsert(numLeft - 1, callback);
-      else callback();
-    }
-  );
+  connection.query(`INSERT INTO ${table} SET title="${text}"`, err => {
+    if (err) throw err;
+    if (numLeft > 1) benchmarkInsert(numLeft - 1, callback);
+    else callback();
+  });
 }
 
 function benchmarkInserts(n, cb) {
@@ -34,7 +31,7 @@ function benchmarkInserts(n, cb) {
   benchmarkInsert(numInsert, () => {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
-    console.log((numInsert * 1e9) / diff + ' inserts/sec');
+    console.log(`${(numInsert * 1e9) / diff} inserts/sec`);
     if (n > 1) benchmarkInserts(n - 1, cb);
     else cb();
   });
@@ -51,12 +48,8 @@ function benchmarkParallelSelects(n, size, cb) {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
     console.log(
-      size +
-        ' rows: ' +
-        (n * 1e9) / diff +
-        ' results/sec, ' +
-        (size * n * 1e9) / diff +
-        ' rows/sec'
+      `${size} rows: ${(n * 1e9) / diff} results/sec, ${(size * n * 1e9) /
+        diff} rows/sec`
     );
     cb();
   }
@@ -66,7 +59,7 @@ function benchmarkParallelSelects(n, size, cb) {
     numRunning++;
     connections[i] = common.createConnection();
     const cmd = connections[i].execute(
-      'select * from ' + table + ' limit ' + size,
+      `select * from ${table} limit ${size}`,
       []
     );
     cmd.on('end', commandDone);

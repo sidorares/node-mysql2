@@ -8,7 +8,7 @@ connection.query(
   {
     sql: 'select "foo uppercase" as foo',
     typeCast: function(field, next) {
-      if (field.type == 'VAR_STRING') {
+      if (field.type === 'VAR_STRING') {
         return field.string().toUpperCase();
       }
       return next();

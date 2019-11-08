@@ -3,7 +3,7 @@
 const fs = require('fs');
 const ColumnDefinition = require('../../../lib/packets/column_definition.js');
 const Packet = require('../../../lib/packets/packet.js');
-const fixtureFile = __dirname + '/../fixtures/column_definition';
+const fixtureFile = `${__dirname}/../fixtures/column_definition`;
 
 const npackets = 43;
 const packets = [];
@@ -28,11 +28,7 @@ function bench(done) {
 }
 
 module.exports = bench;
-module.exports.comment =
-  'read ' +
-  npackets +
-  ' column definitions (select * from mysql.user) x ' +
-  repeats;
+module.exports.comment = `read ${npackets} column definitions (select * from mysql.user) x ${repeats}`;
 module.exports.toSpeed = function(timeAvg, timeStdev) {
   const value = (43 * repeats * 1e9) / timeAvg;
   return {

@@ -8,7 +8,7 @@ const table = 'insert_test';
 const text = 'test abc xyz';
 connection.query(
   [
-    'CREATE TEMPORARY TABLE `' + table + '` (',
+    `CREATE TEMPORARY TABLE \`${table}\` (`,
     '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
@@ -17,15 +17,11 @@ connection.query(
 );
 
 function benchmarkInsert(numLeft, callback) {
-  connection.execute(
-    'INSERT INTO ' + table + ' SET title="' + text + '"',
-    [],
-    err => {
-      if (err) throw err;
-      if (numLeft > 1) benchmarkInsert(numLeft - 1, callback);
-      else callback();
-    }
-  );
+  connection.execute(`INSERT INTO ${table} SET title="${text}"`, [], err => {
+    if (err) throw err;
+    if (numLeft > 1) benchmarkInsert(numLeft - 1, callback);
+    else callback();
+  });
 }
 
 function benchmarkInserts(n, cb) {
@@ -34,22 +30,18 @@ function benchmarkInserts(n, cb) {
   benchmarkInsert(numInsert, () => {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
-    console.log((numInsert * 1e9) / diff + ' inserts/sec');
+    console.log(`${(numInsert * 1e9) / diff} inserts/sec`);
     if (n > 1) benchmarkInserts(n - 1, cb);
     else cb();
   });
 }
 
 function benchmarkSelect(numLeft, numSelect, callback) {
-  connection.execute(
-    'select * from ' + table + ' limit ' + numSelect,
-    [],
-    err => {
-      if (err) throw err;
-      if (numLeft > 1) benchmarkSelect(numLeft - 1, numSelect, callback);
-      else callback();
-    }
-  );
+  connection.execute(`select * from ${table} limit ${numSelect}`, [], err => {
+    if (err) throw err;
+    if (numLeft > 1) benchmarkSelect(numLeft - 1, numSelect, callback);
+    else callback();
+  });
 }
 
 function benchmarkSelects(n, size, cb) {
@@ -59,12 +51,10 @@ function benchmarkSelects(n, size, cb) {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
     console.log(
-      size +
-        ' rows: ' +
-        (numSelects * 1e9) / diff +
-        ' results/sec, ' +
-        (size * numSelects * 1e9) / diff +
-        ' rows/sec'
+      `${size} rows: ${(numSelects * 1e9) / diff} results/sec, ${(size *
+        numSelects *
+        1e9) /
+        diff} rows/sec`
     );
     if (n > 1) benchmarkSelects(n - 1, size, cb);
     else cb();

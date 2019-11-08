@@ -30,3 +30,15 @@ assert.doesNotThrow(() => {
     ssl: sslProfile
   });
 }, 'Error, the constructor accepts a string but throws an exception');
+
+assert.doesNotThrow(() => {
+  new ConnectionConfig({
+    flags: '-FOUND_ROWS'
+  });
+}, 'Error, the constructor threw an exception due to a flags string');
+
+assert.doesNotThrow(() => {
+  new ConnectionConfig({
+    flags: ['-FOUND_ROWS']
+  });
+}, 'Error, the constructor threw an exception due to a flags array');

@@ -1,3 +1,35 @@
+2.0.0
+  - Mysql8 caching_sha2_password - fix bug in 
+    authenticating when password is longer 
+    than 19 chars                                     #1044 #1045
+  - Support ConnectionConfig.flags as an array        #1003
+
+2.0.0-alpha1
+  - MAJOR: new `authPlugins` api replacing 
+    `authSwitchHandler`, added caching_sha2_password 
+    and mysql_native_password as default plugins.
+    Added tests for mysql 8 and ssl. Mysql 8 server
+    now supported with default settings.              #1021, #906, #991
+  - MAJOR: LOCAL INFILE does not automatically read   #1034
+    from the local fs and now requires an explicit
+    `infileStreamFactory` to be specified in query options.
+  - Update to 2019 CA Amazon RDS certificates         #1032
+  - Update SSL Profile for AWS Serverless Aurora      #1026
+  - fix pool ignoring namedPlaceholders config        #1022
+
+1.7.0
+  - Fix crashing when session info packet does not 
+    start with length-coded string                    #1004, #989
+  - build: drop node 4 and 6 and add node v12         #997
+  - Add support for timezone connection option        #996, #15, #262, 
+                                                      #642, #877, #888
+  - Make mysql2 compatible with minification          #992, #890, #899, 
+                                                      #890
+  - fix serialisation of '00:00:00' time              #968, #967
+  - Allow to set minVersion ssl option                #961, #960
+  - Fix a MaxListenersExceededWarning with stream 
+    local infile                                      #965
+
 1.6.5 (08/02/2019)
   - allow to use namedPlaceholders flag per query     #879
   - migrate to more modern code style ( classes /

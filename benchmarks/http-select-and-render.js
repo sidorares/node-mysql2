@@ -11,7 +11,7 @@ const port = process.env.PORT;
 http
   .createServer((req, res) => {
     const q = url.parse(req.url, true);
-    if (q.pathname == '/render') {
+    if (q.pathname === '/render') {
       const sql = q.query.q;
       const n = q.query.n;
       let rowsTotal = [];

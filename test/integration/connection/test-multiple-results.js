@@ -103,23 +103,23 @@ function do_test(testIndex) {
   const expectation = entry[1];
   mysql.query(sql, (err, _rows, _columns) => {
     let _numResults = 0;
-    if (_rows.constructor.name == 'ResultSetHeader') {
+    if (_rows.constructor.name === 'ResultSetHeader') {
       _numResults = 1;
     } else if (_rows.length === 0) {
       // empty select
       _numResults = 1;
     } else if (_rows.length > 0) {
       if (
-        _rows.constructor.name == 'Array' &&
-        _rows[0].constructor.name == 'TextRow'
+        _rows.constructor.name === 'Array' &&
+        _rows[0].constructor.name === 'TextRow'
       ) {
         _numResults = 1;
       }
 
       if (
-        _rows.constructor.name == 'Array' &&
-        (_rows[0].constructor.name == 'Array' ||
-          _rows[0].constructor.name == 'ResultSetHeader')
+        _rows.constructor.name === 'Array' &&
+        (_rows[0].constructor.name === 'Array' ||
+          _rows[0].constructor.name === 'ResultSetHeader')
       ) {
         _numResults = _rows.length;
       }
@@ -133,7 +133,7 @@ function do_test(testIndex) {
         return c.map(arrOrColumn);
       }
 
-      if (typeof c == 'undefined') {
+      if (typeof c === 'undefined') {
         return void 0;
       }
 
@@ -150,19 +150,19 @@ function do_test(testIndex) {
 
     function checkRow(row) {
       const index = fieldIndex;
-      if (_numResults == 1) {
+      if (_numResults === 1) {
         assert.equal(fieldIndex, 0);
-        if (row.constructor.name == 'ResultSetHeader') {
+        if (row.constructor.name === 'ResultSetHeader') {
           assert.deepEqual(_rows, row);
         } else {
           assert.deepEqual(_rows[rowIndex], row);
         }
       } else {
-        if (resIndex != index) {
+        if (resIndex !== index) {
           rowIndex = 0;
           resIndex = index;
         }
-        if (row.constructor.name == 'ResultSetHeader') {
+        if (row.constructor.name === 'ResultSetHeader') {
           assert.deepEqual(_rows[index], row);
         } else {
           assert.deepEqual(_rows[index][rowIndex], row);
@@ -173,7 +173,7 @@ function do_test(testIndex) {
 
     function checkFields(fields) {
       fieldIndex++;
-      if (_numResults == 1) {
+      if (_numResults === 1) {
         assert.equal(fieldIndex, 0);
         assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
       } else {

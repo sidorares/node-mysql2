@@ -10,7 +10,7 @@ if (cluster.isMaster) {
   }
 
   cluster.on('exit', worker => {
-    console.log('worker ' + worker.pid + ' died');
+    console.log(`worker ${worker.pid} died`);
   });
 
   return;
@@ -73,7 +73,7 @@ function handlePrepared(req, res) {
       [getRandomNumber()],
       (err, rows) => {
         results.push(rows[0]);
-        if (results.length == queries) res.end(JSON.stringify(results));
+        if (results.length === queries) res.end(JSON.stringify(results));
       }
     );
   }
@@ -91,7 +91,7 @@ function handleMysqlIsh(conn, req, res) {
       [getRandomNumber()],
       (err, rows) => {
         results.push(rows[0]);
-        if (results.length == queries) res.end(JSON.stringify(results));
+        if (results.length === queries) res.end(JSON.stringify(results));
       }
     );
   }
@@ -105,10 +105,10 @@ function handleMysqlIshPool(pool, req, res) {
   for (let i = 0; i < queries; ++i) {
     pool.getConnection(() => {
       mysql2conn.query(
-        'SELECT * FROM world WHERE id = ' + getRandomNumber(),
+        `SELECT * FROM world WHERE id = ${getRandomNumber()}`,
         (err, rows) => {
           results.push(rows[0]);
-          if (results.length == queries) res.end(JSON.stringify(results));
+          if (results.length === queries) res.end(JSON.stringify(results));
         }
       );
     });
@@ -125,7 +125,7 @@ function handleMaria(req, res) {
       .on('result', dbres => {
         dbres.on('row', row => {
           results.push(row);
-          if (results.length == queries) res.end(JSON.stringify(results));
+          if (results.length === queries) res.end(JSON.stringify(results));
         });
       });
   }
@@ -175,7 +175,8 @@ http
     let values;
     let queries;
     let queryFunctions;
-    /* eslint-disable no-case-declarations, no-inner-declarations */
+    /* eslint-disable no-case-declarations */
+    /* eslint-disable no-inner-declarations */
     switch (path) {
       case '/json':
         // JSON Response Test
@@ -207,7 +208,7 @@ http
 
         function libmysqlQuery2(callback) {
           libmysql.query(
-            'SELECT * FROM world WHERE id = ' + getRandomNumber(),
+            `SELECT * FROM world WHERE id = ${getRandomNumber()}`,
             (err, res) => {
               if (err) {
                 throw err;
@@ -278,7 +279,7 @@ http
 
         function libmysqlQuery(callback) {
           libmysql.query(
-            'SELECT * FROM world WHERE id = ' + getRandomNumber(),
+            `SELECT * FROM world WHERE id = ${getRandomNumber()}`,
             (err, res) => {
               if (err) {
                 throw err;
@@ -293,10 +294,9 @@ http
 
                 rows[0].randomNumber = getRandomNumber();
                 libmysql.query(
-                  'UPDATE World SET randomNumber = ' +
-                    rows[0].randomNumber +
-                    ' WHERE id = ' +
-                    rows[0]['id'],
+                  `UPDATE World SET randomNumber = ${
+                    rows[0].randomNumber
+                  } WHERE id = ${rows[0]['id']}`,
                   err => {
                     if (err) {
                       throw err;
@@ -330,6 +330,5 @@ http
         res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
         res.end('NOT IMPLEMENTED');
     }
-    /* eslint-enable no-case-declarations no-inner-declarations */
   })
   .listen(8080);

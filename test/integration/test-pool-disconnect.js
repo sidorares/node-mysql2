@@ -15,7 +15,7 @@ let killCount = 0;
 function kill() {
   setTimeout(() => {
     const id = tids.shift();
-    if (typeof id != 'undefined') {
+    if (typeof id !== 'undefined') {
       // sleep required to give mysql time to close connection,
       // and callback called after connection with id is really closed
       conn.query('kill ?; select sleep(0.05)', id, err => {
@@ -47,7 +47,7 @@ for (let i = 0; i < numSelectToPerform; i++) {
     assert.equal(rows[0].value, 1);
 
     // after all queries complete start killing connections
-    if (numSelects == numSelectToPerform) {
+    if (numSelects === numSelectToPerform) {
       kill();
     }
   });

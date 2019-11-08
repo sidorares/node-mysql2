@@ -15,13 +15,9 @@ module.exports = function(next) {
   next();
 };
 
-module.exports.comment =
-  'read ' +
-  l +
-  ' chars strings from ' +
-  a.length +
-  ' bytes buffer x ' +
-  repeats;
+module.exports.comment = `read ${l} chars strings from ${
+  a.length
+} bytes buffer x ${repeats}`;
 module.exports.toSpeed = function(time, timeError) {
   const value = (1e9 * a.length * l * repeats) / time;
   return {

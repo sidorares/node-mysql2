@@ -9,8 +9,6 @@ const packet = packets.OK.toPacket({ affectedRows: 0, insertId: 1 });
 assert.equal(
   packet.length(),
   11,
-  'OK packets with 0 affectedRows and a minimal insertId should be ' +
-    '11 bytes long, got ' +
-    packet.length() +
-    ' byte(s)'
+  `${'OK packets with 0 affectedRows and a minimal insertId should be ' +
+    '11 bytes long, got '}${packet.length()} byte(s)`
 );

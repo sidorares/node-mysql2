@@ -36,18 +36,18 @@ let numRequests = 0;
         const curTime = Date.now();
         const last1000time = curTime - prev1000;
         prev1000 = curTime;
-        console.error(1000000 / last1000time + ' req/sec');
+        console.error(`${1000000 / last1000time} req/sec`);
       }
 
       if (left > 0) bench();
       else {
         console.error(
-          (numRequests * 1000) / (Date.now() - start) +
-            ' req/sec (average 10000 reqs)'
+          `${(numRequests * 1000) /
+            (Date.now() - start)} req/sec (average 10000 reqs)`
         );
         console.error(
-          (rowsReceived * 1000) / (Date.now() - start) +
-            ' row/sec (average 10000 reqs)'
+          `${(rowsReceived * 1000) /
+            (Date.now() - start)} row/sec (average 10000 reqs)`
         );
         db.end();
         if (cb) cb();

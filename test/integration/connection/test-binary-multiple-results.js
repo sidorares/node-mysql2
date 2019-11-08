@@ -100,7 +100,7 @@ function procedurise(sql) {
     'DROP PROCEDURE IF EXISTS _as_sp_call;',
     'CREATE PROCEDURE _as_sp_call()',
     'BEGIN',
-    sql + ';',
+    `${sql};`,
     'END'
   ].join('\n');
 }
@@ -136,7 +136,7 @@ function do_test(testIndex) {
           return c.map(arrOrColumn);
         }
 
-        if (typeof c == 'undefined') {
+        if (typeof c === 'undefined') {
           return void 0;
         }
 
@@ -153,19 +153,19 @@ function do_test(testIndex) {
 
       function checkRow(row) {
         const index = fieldIndex;
-        if (_numResults == 1) {
+        if (_numResults === 1) {
           assert.equal(index, 0);
-          if (row.constructor.name == 'ResultSetHeader') {
+          if (row.constructor.name === 'ResultSetHeader') {
             assert.deepEqual(_rows, row);
           } else {
             assert.deepEqual(_rows[rowIndex], row);
           }
         } else {
-          if (resIndex != index) {
+          if (resIndex !== index) {
             rowIndex = 0;
             resIndex = index;
           }
-          if (row.constructor.name == 'ResultSetHeader') {
+          if (row.constructor.name === 'ResultSetHeader') {
             assert.deepEqual(_rows[index], row);
           } else {
             assert.deepEqual(_rows[index][rowIndex], row);
@@ -177,7 +177,7 @@ function do_test(testIndex) {
       function checkFields(fields) {
         fieldIndex++;
         const index = fieldIndex;
-        if (_numResults == 1) {
+        if (_numResults === 1) {
           assert.equal(index, 0);
           assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
         } else {

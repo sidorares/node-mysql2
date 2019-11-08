@@ -16,7 +16,7 @@ function testListen(argsDescription, listenCaller) {
   setTimeout(() => {
     assert.ok(
       listenCallbackFired,
-      'Callback for call with ' + argsDescription + ' did not fire'
+      `Callback for call with ${argsDescription} did not fire`
     );
     server._server.close();
   }, 100);

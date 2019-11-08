@@ -36,19 +36,6 @@ You need to check corresponding field's zeroFill flag and convert to string manu
 ```
 **Note :** *This option could lose precision on the number as Javascript Number is a Float!*
 
-- `timezone` connection option is not supported by `Node-MySQL2`. You can emulate this by using `typeCast` option instead:
-```javascript
-const config = {
-  //...
-  typeCast: function (field, next) {
-    if (field.type == 'DATETIME') {
-      return new Date(field.string() + 'Z') // can be 'Z' for UTC or an offset in the form '+HH:MM' or '-HH:MM'
-  }
-    return next();
-  }
-}
-```
-
 ## Other Resources
 
   - [Wire protocol documentation](http://dev.mysql.com/doc/internals/en/client-server-protocol.html)
