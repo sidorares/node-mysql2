@@ -13,7 +13,7 @@ mysql.createConnection({ /* same parameters as for non-promise createConnection 
 ```
 
 ```js
-const pool = require('mysql2/promise').createPool({}); // or mysql.createPoolPromise({})
+const pool = require('mysql2/promise').createPool({}); // or require('mysql2').createPoolPromise({}) or require('mysql2').createPool({}).promise()
 pool.getConnection()
   .then(conn => {
     const res = conn.query('select foo from bar');
