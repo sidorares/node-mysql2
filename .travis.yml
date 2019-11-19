@@ -79,10 +79,10 @@ jobs:
     - stage: test
       name: test handshake datagrip/mysql:5.1
       node_js: 12
-      env: DOCKER_IMAGE=datagrip/mysql:5.1 MYSQL_PASSWORD=my-secret-pw
+      env: DOCKER_IMAGE=datagrip/mysql:5.1 MYSQL_PASSWORD=my-secret-pw FILTER=5.1only
 
 script:
-  - docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD -e MYSQL_DATABASE=test -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p 33306:3306 $DOCKER_IMAGE
+  - docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e FILTER=$FILTER -e MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD -e MYSQL_DATABASE=test -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p 33306:3306 $DOCKER_IMAGE
   - MYSQL_PORT=33306 node tools/wait-up.js
   - yarn --version
   - MYSQL_PORT=33306 yarn run test:raw
