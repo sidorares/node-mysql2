@@ -1,3 +1,9 @@
+2.0.1
+  - Add missing authPlugins assignment in 
+    ConnectionConfig                                 #1052
+  - Fix 4.1 auth on old servers not 
+    supporting PLUGIN_AUTH                           #1062, #1054, #1053
+
 2.0.0
   - Mysql8 caching_sha2_password - fix bug in 
     authenticating when password is longer 
