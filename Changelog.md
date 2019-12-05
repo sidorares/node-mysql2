@@ -1,3 +1,7 @@
+2.0.2
+  - Fix for clearing connection timeout state when 
+    connection is re-attempted (failure or success) #1075
+
 2.0.1
   - Add missing authPlugins assignment in 
     ConnectionConfig                                 #1052
