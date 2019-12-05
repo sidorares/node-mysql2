@@ -100,12 +100,14 @@ In addition to password `createConnection()`, `createPool()` and `changeUser()` 
 
 `idleTime` property in config to set the timeout in milliseconds,after which the connection with the pool will be destroyed.If property not added then it will executed as default.
 
+## Destroy pool connections:
+
 ```js
-  const pool = mysql.createPool({
-      host: 'localhost',
-      user: 'root',
-      password:'root',
-      database: 'dbname',
-      idleTime:5000
-    });
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password:'root',
+  database: 'dbname',
+  idleTime:5000
+});
 ```
