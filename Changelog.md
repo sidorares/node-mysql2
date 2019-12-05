@@ -1,6 +1,8 @@
 2.0.2
   - Fix for clearing connection timeout state when 
     connection is re-attempted (failure or success) #1075
+  - Avoid setting numeric config options to NaN     #1074, #721
+  - PoolCluster#end now accepts a callback function #1065, #1063
 
 2.0.1
   - Add missing authPlugins assignment in 
