@@ -1,3 +1,6 @@
+2.1.0
+  - added `enableKeepAlive` connection option      #1081, #683
+
 2.0.2
   - Fix for clearing connection timeout state when 
     connection is re-attempted (failure or success) #1075
