@@ -39,6 +39,9 @@
     "index.js",
     "promise.js"
   ],
+  "exports": {
+    "./promise": "./promise.js"
+  },
   "engines": {
     "node": ">= 8.0"
   },
