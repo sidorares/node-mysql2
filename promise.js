@@ -338,16 +338,28 @@ class PromisePool extends EventEmitter {
 
   query(sql, args) {
     const pool = this.pool;
-    return this.getConnection().then(conn => {
-      conn.once('done', () => conn.release());
-      return conn.query(pool, sql, args);
+    return this.getConnection().then(async conn => {
+      try {
+        const promise = conn.query(pool, sql, args);
+        conn.once('done', () => conn.release());
+        return await promise;
+      } catch (e) {
+        conn.release();
+        throw e;
+      }
     });
   }
 
   execute(sql, values) {
-    return this.getConnection().then(conn => {
-      conn.once('done', () => conn.release());
-      return conn.execute(sql, values);
+    return this.getConnection().then(async conn => {
+      try {
+        const promise = conn.execute(sql, values);
+        conn.once('done', () => conn.release());
+        return await promise;
+      } catch (e) {
+        conn.release();
+        throw e;
+      }
     });
   }
 
