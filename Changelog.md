@@ -1,3 +1,18 @@
+2.1.0
+  - added `enableKeepAlive` connection option      #1081, #683
+
+2.0.2
+  - Fix for clearing connection timeout state when 
+    connection is re-attempted (failure or success) #1075
+  - Avoid setting numeric config options to NaN     #1074, #721
+  - PoolCluster#end now accepts a callback function #1065, #1063
+
+2.0.1
+  - Add missing authPlugins assignment in 
+    ConnectionConfig                                 #1052
+  - Fix 4.1 auth on old servers not 
+    supporting PLUGIN_AUTH                           #1062, #1054, #1053
+
 2.0.0
   - Mysql8 caching_sha2_password - fix bug in 
     authenticating when password is longer 

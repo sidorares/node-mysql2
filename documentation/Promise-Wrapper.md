@@ -13,7 +13,7 @@ mysql.createConnection({ /* same parameters as for non-promise createConnection 
 ```
 
 ```js
-const pool = require('mysql2/promise').createPool({}); // or mysql.createPoolPromise({})
+const pool = require('mysql2/promise').createPool({}); // or require('mysql2').createPoolPromise({}) or require('mysql2').createPool({}).promise()
 pool.getConnection()
   .then(conn => {
     const res = conn.query('select foo from bar');
@@ -31,6 +31,7 @@ async function example1 () {
   const mysql = require('mysql2/promise');
   const conn = await mysql.createConnection({ database: test });
   const [rows, fields] = await conn.execute('select ?+? as sum', [2, 2]);
+  await conn.end();
 }
 
 async function example2 () {
@@ -40,7 +41,6 @@ async function example2 () {
   await Promise.all([pool.query('select sleep(2)'), pool.query('select sleep(3)')]);
   console.log('3 seconds after');
   await pool.end();
-  await conn.end();
 }
 ```
 
