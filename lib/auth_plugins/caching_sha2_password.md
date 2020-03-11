@@ -3,7 +3,7 @@
 https://mysqlserverteam.com/mysql-8-0-4-new-default-authentication-plugin-caching_sha2_password/
 
 ```js
-const mysql = require('mysq');
+const mysql = require('mysql');
 mysql.createConnection({
   authPlugins: {
     caching_sha2_password: mysql.authPlugins.caching_sha2_password({
