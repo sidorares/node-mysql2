@@ -92,7 +92,7 @@ class PromiseConnection extends EventEmitter {
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      if (params) {
+      if (params !== undefined) {
         c.query(query, params, done);
       } else {
         c.query(query, done);
@@ -105,7 +105,7 @@ class PromiseConnection extends EventEmitter {
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      if (params) {
+      if (params !== undefined) {
         c.execute(query, params, done);
       } else {
         c.execute(query, done);
@@ -330,7 +330,7 @@ class PromisePool extends EventEmitter {
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      if (args) {
+      if (args !== undefined) {
         corePool.query(sql, args, done);
       } else {
         corePool.query(sql, done);
