@@ -45,7 +45,6 @@
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "cardinal": "^2.1.1",
     "denque": "^1.4.1",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.5.0",
