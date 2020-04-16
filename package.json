@@ -52,7 +52,7 @@
     "lru-cache": "^5.1.1",
     "named-placeholders": "^1.1.2",
     "seq-queue": "^0.0.5",
-    "sqlstring": "^2.3.1"
+    "sqlstring": "^2.3.2"
   },
   "devDependencies": {
     "assert-diff": "^3.0.0",
