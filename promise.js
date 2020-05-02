@@ -73,7 +73,7 @@ class PromiseConnection extends EventEmitter {
   constructor(connection, promiseImpl) {
     super();
     this.connection = connection;
-    this.Promise = promiseImpl || global.Promise;
+    this.Promise = promiseImpl || Promise;
     inheritEvents(connection, this, [
       'error',
       'drain',
@@ -93,7 +93,7 @@ class PromiseConnection extends EventEmitter {
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      if (params) {
+      if (params !== undefined) {
         c.query(query, params, done);
       } else {
         c.query(query, done);
@@ -106,7 +106,7 @@ class PromiseConnection extends EventEmitter {
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      if (params) {
+      if (params !== undefined) {
         c.execute(query, params, done);
       } else {
         c.execute(query, done);
@@ -230,17 +230,17 @@ class PromiseConnection extends EventEmitter {
 function createConnection(opts) {
   const coreConnection = core.createConnection(opts);
   const createConnectionErr = new Error();
-  const Promise = opts.Promise || global.Promise;
-  if (!Promise) {
+  const thePromise = opts.Promise || Promise;
+  if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
         'Use promise-enabled node version or pass userland Promise' +
         " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
-  return new Promise((resolve, reject) => {
+  return new thePromise((resolve, reject) => {
     coreConnection.once('connect', () => {
-      resolve(new PromiseConnection(coreConnection, Promise));
+      resolve(new PromiseConnection(coreConnection, thePromise));
     });
     coreConnection.once('error', err => {
       createConnectionErr.message = err.message;
@@ -317,10 +317,10 @@ class PromisePoolConnection extends PromiseConnection {
 }
 
 class PromisePool extends EventEmitter {
-  constructor(pool, Promise) {
+  constructor(pool, thePromise) {
     super();
     this.pool = pool;
-    this.Promise = Promise || global.Promise;
+    this.Promise = thePromise || Promise;
     inheritEvents(pool, this, ['acquire', 'connection', 'enqueue', 'release']);
   }
 
@@ -386,8 +386,8 @@ class PromisePool extends EventEmitter {
 
 function createPool(opts) {
   const corePool = core.createPool(opts);
-  const Promise = opts.Promise || global.Promise;
-  if (!Promise) {
+  const thePromise = opts.Promise || Promise;
+  if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
         'Use promise-enabled node version or pass userland Promise' +
@@ -395,7 +395,7 @@ function createPool(opts) {
     );
   }
 
-  return new PromisePool(corePool, Promise);
+  return new PromisePool(corePool, thePromise);
 }
 
 (function(functionsToWrap) {
