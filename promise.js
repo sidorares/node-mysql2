@@ -293,8 +293,9 @@ function createConnection(opts) {
 ]);
 
 class PromisePoolConnection extends PromiseConnection {
-  constructor(connection, promiseImpl) {
+  constructor(pool, connection, promiseImpl) {
     super(connection, promiseImpl);
+    this.corePool = pool;
   }
 
   destroy() {
@@ -304,12 +305,12 @@ class PromisePoolConnection extends PromiseConnection {
     );
   }
 
-  query(pool, query, params) {
+  query(query, params) {
     const c = this.connection;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      query = pool._createQuery(query, params, done);
+      query = this.corePool._createQuery(query, params, done);
       c.query(query);
     });
   }
@@ -324,23 +325,23 @@ class PromisePool extends EventEmitter {
   }
 
   getConnection() {
-    const corePool = this.pool;
     return new this.Promise((resolve, reject) => {
-      corePool.getConnection((err, coreConnection) => {
+      this.pool.getConnection((err, coreConnection) => {
         if (err) {
           reject(err);
         } else {
-          resolve(new PromisePoolConnection(coreConnection, this.Promise));
+          resolve(
+            new PromisePoolConnection(this.pool, coreConnection, this.Promise)
+          );
         }
       });
     });
   }
 
   query(sql, args) {
-    const pool = this.pool;
     return this.getConnection().then(async conn => {
       try {
-        const promise = conn.query(pool, sql, args);
+        const promise = conn.query(sql, args);
         conn.once('done', () => conn.release());
         return await promise;
       } catch (e) {
