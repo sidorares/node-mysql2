@@ -39,13 +39,16 @@
     "index.js",
     "promise.js"
   ],
+  "exports": {
+    ".": "./index.js",
+    "./promise": "./promise.js"
+  },
   "engines": {
     "node": ">= 8.0"
   },
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "cardinal": "^2.1.1",
     "denque": "^1.4.1",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.5.0",
@@ -53,10 +56,10 @@
     "lru-cache": "^5.1.1",
     "named-placeholders": "^1.1.2",
     "seq-queue": "^0.0.5",
-    "sqlstring": "^2.3.1"
+    "sqlstring": "^2.3.2"
   },
   "devDependencies": {
-    "assert-diff": "^2.0.2",
+    "assert-diff": "^3.0.0",
     "error-stack-parser": "^2.0.3",
     "eslint": "^6.2.2",
     "eslint-config-prettier": "^6.1.0",
@@ -64,7 +67,7 @@
     "eslint-plugin-markdown": "^1.0.0",
     "husky": "^3.0.4",
     "is-async-supported": "^1.2.0",
-    "lint-staged": "^9.2.5",
+    "lint-staged": "^10.0.3",
     "portfinder": "^1.0.23",
     "prettier": "^1.18.2",
     "prettier-markdown": "^0.1.6",
