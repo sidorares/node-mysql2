@@ -3,6 +3,7 @@
 const common = require('../../common');
 const connection = common.createConnection();
 const connection1 = common.createConnection({ dateStrings: true });
+const connection2 = common.createConnection({ dateStrings: ['DATE'] });
 const connectionZ = common.createConnection({ timezone: 'Z' });
 const connection0930 = common.createConnection({ timezone: '+09:30' });
 const assert = require('assert');
@@ -18,7 +19,8 @@ let rows,
   rows4,
   rows5,
   rows6,
-  rows7;
+  rows7,
+  rows8;
 
 const date = new Date('1990-01-01 08:15:11 UTC');
 const datetime = new Date('2010-12-10 14:12:09.019473');
@@ -71,6 +73,18 @@ connection1.query(
   'CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME, d5 DATETIME(6), d6 DATETIME(3))'
 );
 connection1.query('INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?, d6=?', [
+  date,
+  date1,
+  date2,
+  date3,
+  date4,
+  date5
+]);
+
+connection2.query(
+  'CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME, d5 DATETIME(6), d6 DATETIME(3))'
+);
+connection2.query('INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?, d6=?', [
   date,
   date1,
   date2,
@@ -212,6 +226,14 @@ connection1.execute(
   }
 );
 
+connection2.execute('select * from t', (err, _rows) => {
+  if (err) {
+    throw err;
+  }
+  rows8 = _rows;
+  connection2.end();
+});
+
 connection0930.execute(
   'select *, cast(d1 as char) as d4, cast(d2 as char) as d5, cast(d3 as char) as d6 from t',
   (err, _rows) => {
@@ -290,6 +312,15 @@ process.on('exit', () => {
   assert.deepEqual(rows4, dateAsStringExpected);
   assert.deepEqual(rows5, dateAsStringExpected);
   assert.equal(rows6.length, 1);
+
+  // dateStrings as array
+  assert.equal(rows8[0].d1, '1990-01-01');
+  assert.equal(rows8[0].d1.constructor, String);
+  assert.equal(rows8[0].d2.constructor, Date);
+  assert.equal(rows8[0].d3.constructor, Date);
+  assert.equal(rows8[0].d4, null);
+  assert.equal(rows8[0].d5.constructor, Date);
+  assert.equal(rows8[0].d6.constructor, Date);
 
   // +09:30
   const tzOffset = -570;
