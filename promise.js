@@ -79,7 +79,8 @@ class PromiseConnection extends EventEmitter {
       'drain',
       'connect',
       'end',
-      'enqueue'
+      'enqueue',
+      'done'
     ]);
   }
 
@@ -292,8 +293,9 @@ function createConnection(opts) {
 ]);
 
 class PromisePoolConnection extends PromiseConnection {
-  constructor(connection, promiseImpl) {
+  constructor(pool, connection, promiseImpl) {
     super(connection, promiseImpl);
+    this.corePool = pool;
   }
 
   destroy() {
@@ -301,6 +303,16 @@ class PromisePoolConnection extends PromiseConnection {
       this.connection,
       arguments
     );
+  }
+
+  query(query, params) {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      query = this.corePool._createQuery(query, params, done);
+      c.query(query);
+    });
   }
 }
 
@@ -313,36 +325,42 @@ class PromisePool extends EventEmitter {
   }
 
   getConnection() {
-    const corePool = this.pool;
     return new this.Promise((resolve, reject) => {
-      corePool.getConnection((err, coreConnection) => {
+      this.pool.getConnection((err, coreConnection) => {
         if (err) {
           reject(err);
         } else {
-          resolve(new PromisePoolConnection(coreConnection, this.Promise));
+          resolve(
+            new PromisePoolConnection(this.pool, coreConnection, this.Promise)
+          );
         }
       });
     });
   }
 
   query(sql, args) {
-    const corePool = this.pool;
-    const localErr = new Error();
-    return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
-      if (args !== undefined) {
-        corePool.query(sql, args, done);
-      } else {
-        corePool.query(sql, done);
+    return this.getConnection().then(async conn => {
+      try {
+        const promise = conn.query(sql, args);
+        conn.once('done', () => conn.release());
+        return await promise;
+      } catch (e) {
+        conn.release();
+        throw e;
       }
     });
   }
 
   execute(sql, values) {
-    const corePool = this.pool;
-    const localErr = new Error();
-    return new this.Promise((resolve, reject) => {
-      corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
+    return this.getConnection().then(async conn => {
+      try {
+        const promise = conn.execute(sql, values);
+        conn.once('done', () => conn.release());
+        return await promise;
+      } catch (e) {
+        conn.release();
+        throw e;
+      }
     });
   }
 

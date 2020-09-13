@@ -44,11 +44,11 @@ const options3 = {
 const options4 = {
   nestTables: true,
   sql: `SELECT notNested.id, notNested.title, nested.title FROM ${table} notNested LEFT JOIN ${table}1 nested ON notNested.id = nested.id`
-}
+};
 const options5 = {
   nestTables: true,
   sql: `SELECT notNested.id, notNested.title, nested2.title FROM ${table} notNested LEFT JOIN ${table}1 nested2 ON notNested.id = nested2.id`
-}
+};
 let rows1, rows2, rows3, rows4, rows5, rows1e, rows2e, rows3e;
 
 connection.query(options1, (err, _rows) => {

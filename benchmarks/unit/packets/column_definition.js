@@ -28,8 +28,7 @@ function bench(done) {
 }
 
 module.exports = bench;
-module.exports.comment =
-  `read ${npackets} column definitions (select * from mysql.user) x ${repeats}`;
+module.exports.comment = `read ${npackets} column definitions (select * from mysql.user) x ${repeats}`;
 module.exports.toSpeed = function(timeAvg, timeStdev) {
   const value = (43 * repeats * 1e9) / timeAvg;
   return {

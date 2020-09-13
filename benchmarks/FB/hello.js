@@ -33,7 +33,10 @@ const connMap = {
   host: 'localhost'
 };
 
-Mapper.connect(connMap, { verbose: false, strict: false });
+Mapper.connect(
+  connMap,
+  { verbose: false, strict: false }
+);
 const World = Mapper.map('World', 'id', 'randomNumber');
 
 const template = jade.compile(fs.readFileSync('./fortunes.jade'));

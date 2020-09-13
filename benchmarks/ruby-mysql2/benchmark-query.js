@@ -42,10 +42,12 @@ let numRequests = 0;
       if (left > 0) bench();
       else {
         console.error(
-          `${(numRequests * 1000) / (Date.now() - start)} req/sec (average 10000 reqs)`
+          `${(numRequests * 1000) /
+            (Date.now() - start)} req/sec (average 10000 reqs)`
         );
         console.error(
-          `${(rowsReceived * 1000) / (Date.now() - start)} row/sec (average 10000 reqs)`
+          `${(rowsReceived * 1000) /
+            (Date.now() - start)} row/sec (average 10000 reqs)`
         );
         db.end();
         if (cb) cb();
