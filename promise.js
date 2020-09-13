@@ -119,13 +119,45 @@ class PromiseConnection extends EventEmitter {
     });
   }
 
-  beginTransaction() {
+  beginTransaction(options) {
     const c = this.connection;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
-      c.beginTransaction(done);
+      c.beginTransaction(options,done);
     });
+  }
+
+  transaction(options,promiseCallback) {
+    if (! promiseCallback) {
+      promiseCallback = options;
+      options = {};
+    }
+    options = options || {};
+  
+    let promiseChain = this.Promise.resolve();
+
+    if (options.autoCommit !== true) {
+      promiseChain = promiseChain.then(() => this.beginTransaction(options));
+    }
+  
+    promiseChain = promiseChain.then(() => promiseCallback(this));
+
+    if (options.autoCommit !== true) {
+      promiseChain = promiseChain
+      .then( res => 
+        this.commit()
+        .then(
+          () => res
+        )
+      )
+      .catch( err => 
+        this.rollback()
+        .catch(() => null)
+        .then(() => { throw err })
+      )
+    }
+    return promiseChain;
   }
 
   commit() {
@@ -338,6 +370,21 @@ class PromisePool extends EventEmitter {
     });
   }
 
+  transaction(options,promiseCallback) {
+    return this.getConnection()
+    .then(con => 
+      con.transaction(options,promiseCallback)
+      .then(res => {
+        con.release();
+        return res;
+      })
+      .catch(err => {
+        con.release();
+        throw err;
+      })
+    );
+  }
+
   execute(sql, values) {
     const corePool = this.pool;
     const localErr = new Error();
@@ -411,3 +458,4 @@ exports.raw = core.raw;
 exports.PromisePool = PromisePool;
 exports.PromiseConnection = PromiseConnection;
 exports.PromisePoolConnection = PromisePoolConnection;
+exports.ISOLATION_LEVEL = core.ISOLATION_LEVEL;
