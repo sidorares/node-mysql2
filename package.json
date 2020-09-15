@@ -68,7 +68,7 @@
     "husky": "^3.0.4",
     "is-async-supported": "^1.2.0",
     "lint-staged": "^10.0.3",
-    "portfinder": "^1.0.23",
+    "portfinder": "^1.0.28",
     "prettier": "^2.0.5",
     "prettier-markdown": "^0.1.6",
     "progress": "^2.0.3",
