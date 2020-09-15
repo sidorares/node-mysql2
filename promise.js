@@ -4,7 +4,7 @@ const core = require('./index.js');
 const EventEmitter = require('events').EventEmitter;
 
 function makeDoneCb(resolve, reject, localErr) {
-  return function(err, rows, fields) {
+  return function (err, rows, fields) {
     if (err) {
       localErr.message = err.message;
       localErr.code = err.code;
@@ -25,7 +25,7 @@ function inheritEvents(source, target, events) {
       if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
         source.on(
           eventName,
-          (listeners[eventName] = function() {
+          (listeners[eventName] = function () {
             const args = [].slice.call(arguments);
             args.unshift(eventName);
 
@@ -90,6 +90,11 @@ class PromiseConnection extends EventEmitter {
   query(query, params) {
     const c = this.connection;
     const localErr = new Error();
+    if (typeof params === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       if (params !== undefined) {
@@ -103,6 +108,11 @@ class PromiseConnection extends EventEmitter {
   execute(query, params) {
     const c = this.connection;
     const localErr = new Error();
+    if (typeof params === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       if (params !== undefined) {
@@ -233,8 +243,8 @@ function createConnection(opts) {
   if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
-        'Use promise-enabled node version or pass userland Promise' +
-        " implementation as parameter, for example: { Promise: require('bluebird') }"
+      'Use promise-enabled node version or pass userland Promise' +
+      " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
   return new thePromise((resolve, reject) => {
@@ -259,7 +269,7 @@ function createConnection(opts) {
 // implemented with PromiseConnection
 
 // proxy synchronous functions only
-(function(functionsToWrap) {
+(function (functionsToWrap) {
   for (let i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
     const func = functionsToWrap[i];
 
@@ -268,7 +278,7 @@ function createConnection(opts) {
       PromiseConnection.prototype[func] === undefined
     ) {
       PromiseConnection.prototype[func] = (function factory(funcName) {
-        return function() {
+        return function () {
           return core.Connection.prototype[funcName].apply(
             this.connection,
             arguments
@@ -328,6 +338,11 @@ class PromisePool extends EventEmitter {
   query(sql, args) {
     const corePool = this.pool;
     const localErr = new Error();
+    if (typeof args === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
     return new this.Promise((resolve, reject) => {
       const done = makeDoneCb(resolve, reject, localErr);
       if (args !== undefined) {
@@ -338,11 +353,21 @@ class PromisePool extends EventEmitter {
     });
   }
 
-  execute(sql, values) {
+  execute(sql, args) {
     const corePool = this.pool;
     const localErr = new Error();
+    if (typeof args === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
     return new this.Promise((resolve, reject) => {
-      corePool.execute(sql, values, makeDoneCb(resolve, reject, localErr));
+      const done = makeDoneCb(resolve, reject, localErr);
+      if (args) {
+        corePool.execute(sql, args, done);
+      } else {
+        corePool.execute(sql, done);
+      }
     });
   }
 
@@ -372,15 +397,15 @@ function createPool(opts) {
   if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
-        'Use promise-enabled node version or pass userland Promise' +
-        " implementation as parameter, for example: { Promise: require('bluebird') }"
+      'Use promise-enabled node version or pass userland Promise' +
+      " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
 
   return new PromisePool(corePool, thePromise);
 }
 
-(function(functionsToWrap) {
+(function (functionsToWrap) {
   for (let i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
     const func = functionsToWrap[i];
 
@@ -389,7 +414,7 @@ function createPool(opts) {
       PromisePool.prototype[func] === undefined
     ) {
       PromisePool.prototype[func] = (function factory(funcName) {
-        return function() {
+        return function () {
           return core.Pool.prototype[funcName].apply(this.pool, arguments);
         };
       })(func);
