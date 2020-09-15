@@ -16,9 +16,9 @@ cache:
 # we test only maintained LTS versions
 # and lastest dev version
 node_js:
-  - 10
   - 12
   - 13
+  - 14
 
 env:
   # use env `DOCKER_IMAGE to specify a docker image.
