@@ -142,7 +142,11 @@ export interface Pool extends mysql.Connection {
   on(event: 'enqueue', listener: () => any): this;
   promise(promiseImpl?: PromiseConstructor): PromisePool;
 }
-
+    
+type authPlugins =
+    (pluginMetadata: { connection: Connection; command: string }) =>
+        (pluginData: Buffer) => Promise<string>;
+    
 export interface ConnectionOptions extends mysql.ConnectionOptions {
   charsetNumber?: number;
   compress?: boolean;
@@ -162,6 +166,9 @@ export interface ConnectionOptions extends mysql.ConnectionOptions {
   Promise?: any;
   queueLimit?: number;
   waitForConnections?: boolean;
+  authPlugins?: {
+      [key: string]: authPlugins;
+  };
 }
 
 export interface PoolOptions extends mysql.PoolOptions, ConnectionOptions {}
