@@ -37,7 +37,9 @@
   "files": [
     "lib",
     "index.js",
-    "promise.js"
+    "index.d.ts",
+    "promise.js",
+    "promise.d.ts"
   ],
   "exports": {
     ".": "./index.js",
