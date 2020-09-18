@@ -1,5 +1,5 @@
 2.2.1 ( 18/09/2020 )
-  - update package.json files entry tu include 
+  - update package.json files entry to include 
     type definition files                          #1205
 
 2.2.0 ( 18/09/2020 )
