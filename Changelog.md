@@ -1,3 +1,7 @@
+2.2.1 ( 18/09/2020 )
+  - update package.json files entry tu include 
+    type definition files                          #1205
+
 2.2.0 ( 18/09/2020 )
   - added TS type definitions                      #1204, #1028
   - better error handling for invalid JSON row 
