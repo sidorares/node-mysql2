@@ -51,7 +51,7 @@
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "@types/mysql": "^2.15.7",
+    "@types/mysql": "types/mysql",
     "denque": "^1.4.1",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.6.2",
