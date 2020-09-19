@@ -1,3 +1,6 @@
+2.2.2 ( 19/09/2020 )
+  - Add the authPlugins types to ConnectionOptions #1206
+
 2.2.1 ( 18/09/2020 )
   - update package.json files entry to include 
     type definition files                          #1205
