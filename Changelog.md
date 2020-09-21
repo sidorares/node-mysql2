@@ -1,3 +1,6 @@
+2.2.3 ( 21/09/2020 )
+  - use github:types/mysql as base for types       #1208
+
 2.2.2 ( 19/09/2020 )
   - Add the authPlugins types to ConnectionOptions #1206
 
