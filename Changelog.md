@@ -1,3 +1,7 @@
+
+2.2.4 ( 21/09/2020 )
+  - use bundled types/mysql instead of dependency  #1211
+
 2.2.3 ( 21/09/2020 )
   - use github:types/mysql as base for types       #1208
 
