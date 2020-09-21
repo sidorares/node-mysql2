@@ -1,5 +1,6 @@
 
 2.2.4 ( 21/09/2020 )
+  - typings: add ResultSetHeader                   #1213
   - use bundled types/mysql instead of dependency  #1211
 
 2.2.3 ( 21/09/2020 )
