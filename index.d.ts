@@ -14,6 +14,7 @@ export interface Connection extends mysql.Connection {
       | mysql.RowDataPacket[]
       | mysql.OkPacket
       | mysql.OkPacket[]
+      | mysql.ResultSetHeader
   >(
     sql: string,
     callback?: (
@@ -28,6 +29,7 @@ export interface Connection extends mysql.Connection {
       | mysql.RowDataPacket[]
       | mysql.OkPacket
       | mysql.OkPacket[]
+      | mysql.ResultSetHeader
   >(
     sql: string,
     values: any | any[] | { [param: string]: any },
@@ -43,6 +45,7 @@ export interface Connection extends mysql.Connection {
       | mysql.RowDataPacket[]
       | mysql.OkPacket
       | mysql.OkPacket[]
+      | mysql.ResultSetHeader
   >(
     options: mysql.QueryOptions,
     callback?: (
@@ -57,6 +60,7 @@ export interface Connection extends mysql.Connection {
       | mysql.RowDataPacket[]
       | mysql.OkPacket
       | mysql.OkPacket[]
+      | mysql.ResultSetHeader
   >(
     options: mysql.QueryOptions,
     values: any | any[] | { [param: string]: any },
@@ -81,6 +85,7 @@ export interface Pool extends mysql.Connection {
       | mysql.RowDataPacket[]
       | mysql.OkPacket
       | mysql.OkPacket[]
+      | mysql.ResultSetHeader
   >(
     sql: string,
     callback?: (
@@ -95,6 +100,7 @@ export interface Pool extends mysql.Connection {
       | mysql.RowDataPacket[]
       | mysql.OkPacket
       | mysql.OkPacket[]
+      | mysql.ResultSetHeader
   >(
     sql: string,
     values: any | any[] | { [param: string]: any },
@@ -110,6 +116,7 @@ export interface Pool extends mysql.Connection {
       | mysql.RowDataPacket[]
       | mysql.OkPacket
       | mysql.OkPacket[]
+      | mysql.ResultSetHeader
   >(
     options: mysql.QueryOptions,
     callback?: (
@@ -124,6 +131,7 @@ export interface Pool extends mysql.Connection {
       | mysql.RowDataPacket[]
       | mysql.OkPacket
       | mysql.OkPacket[]
+      | mysql.ResultSetHeader
   >(
     options: mysql.QueryOptions,
     values: any | any[] | { [param: string]: any },
@@ -142,11 +150,11 @@ export interface Pool extends mysql.Connection {
   on(event: 'enqueue', listener: () => any): this;
   promise(promiseImpl?: PromiseConstructor): PromisePool;
 }
-    
+
 type authPlugins =
     (pluginMetadata: { connection: Connection; command: string }) =>
         (pluginData: Buffer) => Promise<string>;
-    
+
 export interface ConnectionOptions extends mysql.ConnectionOptions {
   charsetNumber?: number;
   compress?: boolean;
