@@ -4,8 +4,8 @@ import {
   PoolConnection as PromisePoolConnection
 } from './promise';
 
-import * as mysql from 'mysql';
-export * from 'mysql';
+import * as mysql from './typings/mysql';
+export * from './typings/mysql';
 
 export interface Connection extends mysql.Connection {
   execute<
@@ -142,11 +142,11 @@ export interface Pool extends mysql.Connection {
   on(event: 'enqueue', listener: () => any): this;
   promise(promiseImpl?: PromiseConstructor): PromisePool;
 }
-    
+
 type authPlugins =
     (pluginMetadata: { connection: Connection; command: string }) =>
         (pluginData: Buffer) => Promise<string>;
-    
+
 export interface ConnectionOptions extends mysql.ConnectionOptions {
   charsetNumber?: number;
   compress?: boolean;
