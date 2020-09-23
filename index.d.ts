@@ -78,7 +78,7 @@ export interface PoolConnection extends mysql.PoolConnection, Connection {
   promise(promiseImpl?: PromiseConstructor): PromisePoolConnection;
 }
 
-export interface Pool extends mysql.Connection {
+export interface Pool extends mysql.Pool {
   execute<
     T extends
       | mysql.RowDataPacket[][]
