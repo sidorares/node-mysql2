@@ -44,7 +44,8 @@
   ],
   "exports": {
     ".": "./index.js",
-    "./promise": "./promise.js"
+    "./promise": "./promise.js",
+    "./promise.js": "./promise.js"
   },
   "engines": {
     "node": ">= 8.0"
