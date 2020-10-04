@@ -151,9 +151,12 @@ export interface Pool extends mysql.Connection {
   promise(promiseImpl?: PromiseConstructor): PromisePool;
 }
 
-type authPlugins =
-    (pluginMetadata: { connection: Connection; command: string }) =>
-        (pluginData: Buffer) => Promise<string>;
+type authPlugins = (pluginMetadata: {
+  connection: Connection;
+  command: string;
+}) => (
+  pluginData: Buffer
+) => Promise<string> | string | Buffer | Promise<Buffer> | null;
 
 export interface ConnectionOptions extends mysql.ConnectionOptions {
   charsetNumber?: number;
@@ -175,7 +178,7 @@ export interface ConnectionOptions extends mysql.ConnectionOptions {
   queueLimit?: number;
   waitForConnections?: boolean;
   authPlugins?: {
-      [key: string]: authPlugins;
+    [key: string]: authPlugins;
   };
 }
 
