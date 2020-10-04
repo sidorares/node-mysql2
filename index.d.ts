@@ -154,7 +154,9 @@ export interface Pool extends mysql.Connection {
 type authPlugins = (pluginMetadata: {
   connection: Connection;
   command: string;
-}) => (pluginData: Buffer) => Promise<string> | string;
+}) => (
+  pluginData: Buffer
+) => Promise<string> | string | Buffer | Promise<Buffer> | null;
 
 export interface ConnectionOptions extends mysql.ConnectionOptions {
   charsetNumber?: number;
