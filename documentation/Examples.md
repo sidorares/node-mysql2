@@ -49,9 +49,9 @@ const connection = mysql.createConnection({
   ssl: 'Amazon RDS'
 });
 
-conn.query('show status like \'Ssl_cipher\'', (err, res) => {
+connection.query('show status like \'Ssl_cipher\'', (err, res) => {
   console.log(err, res);
-  conn.end();
+  connection.end();
 });
 ```
 
