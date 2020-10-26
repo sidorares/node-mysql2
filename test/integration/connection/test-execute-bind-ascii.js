@@ -16,7 +16,7 @@ connection.query(`INSERT INTO ${table} (a, b) VALUES ('super', 2)`);
 connection.execute(
   `SELECT a FROM ${table} WHERE a=? AND b=?`,
   ['DE', 1],
-  (err) => {
+  err => {
     if (err) {
       throw err;
     }
