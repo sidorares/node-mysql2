@@ -15,15 +15,6 @@ connection.query(`INSERT INTO ${table} (a, b) VALUES ('test', 1)`);
 connection.query(`INSERT INTO ${table} (a, b) VALUES ('super', 2)`);
 connection.execute(
   `SELECT a FROM ${table} WHERE a=? AND b=?`,
-  ['DE', 1],
-  err => {
-    if (err) {
-      throw err;
-    }
-  }
-);
-connection.execute(
-  `SELECT a FROM ${table} WHERE a=? AND b=?`,
   ['test', 1],
   (err, _rows) => {
     if (err) {
