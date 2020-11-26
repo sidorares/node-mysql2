@@ -2,7 +2,7 @@
 
 ## Named placeholders
 
-You can use named placeholders for parameters by setting `namedPlaceholders` config value or query/execute time option. Named placeholders are converted to unnamed `?` on the client (mysql protocol does not support named parameters). If you reference parameter multiple times under the same name it is sent to server multiple times.
+You can use named placeholders for parameters by setting `namedPlaceholders` config value or query/execute time option. Named placeholders are converted to unnamed `?` on the client (mysql protocol does not support named parameters). If you reference parameter multiple times under the same name it is sent to server multiple times. Unnamed placeholders can still be used by providing the values as an array instead of an object.
 
 ```js
 connection.config.namedPlaceholders = true;
@@ -18,7 +18,13 @@ connection.execute('select :x + :x as z', { x: 1 }, (err, rows) => {
 connection.query('select :x + :x as z', { x: 1 }, (err, rows) => {
   // query select 1 + 1 as z
 });
+
+// unnamed placeholders are still valid if the values are provided in an array
+connection.query('select ? + ? as z', [1, 1], (err, rows) => {
+  // query select 1 + 1 as z
+});
 ```
+
 
 ## Receiving rows as array of columns instead of hash with column name as key:
 
