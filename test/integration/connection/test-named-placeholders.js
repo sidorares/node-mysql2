@@ -71,11 +71,23 @@ connection.query('SELECT :a + :a as sum', { a: 2 }, (err, rows) => {
   connection.end();
 });
 
-const sql = connection.format(
+const namedSql = connection.format(
   'SELECT * from test_table where num1 < :numParam and num2 > :lParam',
   { lParam: 100, numParam: 2 }
 );
-assert.equal(sql, 'SELECT * from test_table where num1 < 2 and num2 > 100');
+assert.equal(
+  namedSql,
+  'SELECT * from test_table where num1 < 2 and num2 > 100'
+);
+
+const unnamedSql = connection.format(
+  'SELECT * from test_table where num1 < ? and num2 > ?',
+  [2, 100]
+);
+assert.equal(
+  unnamedSql,
+  'SELECT * from test_table where num1 < 2 and num2 > 100'
+);
 
 const pool = common.createPool();
 pool.config.connectionConfig.namedPlaceholders = true;
