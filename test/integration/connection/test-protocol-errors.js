@@ -18,17 +18,17 @@ const server = common.createServer(
       fields = _fields;
     });
 
-    connection.on('error', err => {
+    connection.on('error', (err) => {
       error = err;
       if (server._server._handle) {
         server.close();
       }
     });
   },
-  conn => {
+  (conn) => {
     conn.on('query', () => {
       conn.writeTextResult(
-        [{ '1': '1' }],
+        [{ 1: '1' }],
         [
           {
             catalog: 'def',
@@ -47,6 +47,9 @@ const server = common.createServer(
       );
       // this is extra (incorrect) packet - client should emit error on receiving it
       conn.writeOk();
+    });
+    conn.on('warn', (err) => {
+      assert.fail(err);
     });
   }
 );

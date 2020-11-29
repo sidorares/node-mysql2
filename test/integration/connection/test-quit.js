@@ -21,7 +21,7 @@ const server = common.createServer(
       connection.end();
     });
   },
-  conn => {
+  (conn) => {
     conn.on('quit', () => {
       // COM_QUIT
       quitReceived = true;
@@ -29,10 +29,10 @@ const server = common.createServer(
       server.close();
     });
 
-    conn.on('query', q => {
+    conn.on('query', (q) => {
       queryServ = q;
       conn.writeTextResult(
-        [{ '1': '1' }],
+        [{ 1: '1' }],
         [
           {
             catalog: 'def',
@@ -49,6 +49,10 @@ const server = common.createServer(
           }
         ]
       );
+    });
+
+    conn.on('warn', (err) => {
+      assert.fail(err);
     });
   }
 );
