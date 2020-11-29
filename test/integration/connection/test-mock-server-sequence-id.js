@@ -25,14 +25,14 @@ const server = common.createServer(
       });
     });
   },
-  (conn) => {
+  conn => {
     conn.on('quit', () => {
       // COM_QUIT
       conn.stream.end();
       server.close();
     });
 
-    conn.on('query', (q) => {
+    conn.on('query', q => {
       const d = q.match(/SELECT (\d+)/);
       const req = d[1];
       const seq = String(conn.sequenceId);
@@ -69,7 +69,7 @@ const server = common.createServer(
       );
     });
 
-    conn.on('warn', (err) => {
+    conn.on('warn', err => {
       assert.fail(err);
     });
   }
