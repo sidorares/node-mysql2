@@ -53,6 +53,7 @@ class TestAuthSwitchHandshake extends Command {
       return TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse;
     }
     connection.writeOk();
+    connection._resetSequenceId();
     return TestAuthSwitchHandshake.prototype.dispatchCommands;
   }
 
@@ -64,7 +65,7 @@ class TestAuthSwitchHandshake extends Command {
   }
 }
 
-const server = mysql.createServer(conn => {
+const server = mysql.createServer((conn) => {
   conn.serverConfig = {};
   conn.serverConfig.encoding = 'cesu8';
   conn.addCommand(
@@ -79,9 +80,9 @@ const server = mysql.createServer(conn => {
 
 const portfinder = require('portfinder');
 portfinder.getPort((err, port) => {
-  const makeSwitchHandler = function() {
+  const makeSwitchHandler = function () {
     let count = 0;
-    return function(data, cb) {
+    return function (data, cb) {
       if (count === 0) {
         assert.equal(data.pluginName, 'auth_test_plugin');
       } else {
@@ -103,7 +104,7 @@ portfinder.getPort((err, port) => {
     connectAttributes: connectAttributes
   });
 
-  conn.on('connect', data => {
+  conn.on('connect', (data) => {
     assert.equal(data.serverVersion, 'node.js rocks');
     assert.equal(data.connectionId, 1234);
 
