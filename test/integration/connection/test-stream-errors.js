@@ -13,20 +13,20 @@ const query = 'SELECT 1';
 const server = common.createServer(
   () => {
     clientConnection = common.createConnection({ port: server._port });
-    clientConnection.query(query, (err) => {
+    clientConnection.query(query, err => {
       receivedError1 = err;
     });
     clientConnection.query('second query, should not be executed', () => {
       receivedError2 = err;
       clientConnection.query(
         'trying to enqueue command to a connection which is already in error state',
-        (err1) => {
+        err1 => {
           receivedError3 = err1;
         }
       );
     });
   },
-  (conn) => {
+  conn => {
     conn.on('query', () => {
       conn.writeColumns([
         {
@@ -48,7 +48,7 @@ const server = common.createServer(
       clientConnection.stream.end();
       server.close();
     });
-    conn.on('warn', (err) => {
+    conn.on('warn', err => {
       assert.fail(err);
     });
   }

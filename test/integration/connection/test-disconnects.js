@@ -18,11 +18,11 @@ const server = common.createServer(
 
       rows = _rows;
       fields = _fields;
-      connection.on('error', (_err) => {
+      connection.on('error', _err => {
         err = _err;
       });
 
-      connections.forEach((conn) => {
+      connections.forEach(conn => {
         conn.stream.end();
       });
       server._server.close(() => {
@@ -31,11 +31,11 @@ const server = common.createServer(
     });
     // TODO: test connection.end() etc where we expect disconnect to happen
   },
-  (conn) => {
+  conn => {
     connections.push(conn);
     conn.on('query', () => {
       conn.writeTextResult(
-        [{ 1: '1' }],
+        [{ '1': '1' }],
         [
           {
             catalog: 'def',
@@ -53,7 +53,7 @@ const server = common.createServer(
         ]
       );
     });
-    conn.on('warn', (err) => {
+    conn.on('warn', err => {
       assert.fail(err);
     });
   }
