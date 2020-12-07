@@ -28,8 +28,12 @@ Its better to discuss an API before actually start implementing it. You can open
 ## Development
 
 We assume you already have these tools installed on your system
- - MySQL Server
+ - MySQL Server (or MySQL running in Docker)
  - Node.JS
+
+#### **Note**
+If running MySQL in Docker, make sure that the timezone is set to your local timezone before running tests. You can do this by passing a `TZ`
+environment variable when starting the MySQL container. e.g. `docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -e TZ=America/Detroit mysql:latest`
 
 As `node-mysql2` is purely JS based you can develop it on Linux, Mac or Windows. Please follow these steps
 
