@@ -6,6 +6,7 @@ const assert = require('assert');
 
 const createConnection = require('../../../promise.js').createConnection;
 const createPool = require('../../../promise.js').createPool;
+const createPoolCluster = require('../../../promise.js').createPoolCluster;
 
 // it's lazy exported from main index.js as well. Test that it's same function
 const mainExport = require('../../../index.js').createConnectionPromise;
@@ -20,25 +21,29 @@ let exceptionCaughtPool = false;
 let doneEventsPool = false;
 let doneChangeUser = false;
 
+let doneCalledPoolCluster = false;
+let exceptionCaughtPoolCluster = false;
+let exceptionCaughtPoolDoesNotExist = false;
+
 function testBasic() {
   let connResolved;
   createConnection(config)
-    .then(conn => {
+    .then((conn) => {
       connResolved = conn;
       return conn.query('select 1+2 as ttt');
     })
-    .then(result1 => {
+    .then((result1) => {
       assert.equal(result1[0][0].ttt, 3);
       return connResolved.query('select 2+2 as qqq');
     })
-    .then(result2 => {
+    .then((result2) => {
       assert.equal(result2[0][0].qqq, 4);
       return connResolved.end();
     })
     .then(() => {
       doneCalled = true;
     })
-    .catch(err => {
+    .catch((err) => {
       throw err;
     });
 }
@@ -48,15 +53,15 @@ function testErrors() {
   const connPromise = createConnection(config);
 
   connPromise
-    .then(conn => {
+    .then((conn) => {
       connResolved = conn;
       return conn.query('select 1+2 as ttt');
     })
-    .then(result1 => {
+    .then((result1) => {
       assert.equal(result1[0][0].ttt, 3);
       return connResolved.query('bad sql');
     })
-    .then(result2 => {
+    .then((result2) => {
       assert.equal(result2[0][0].ttt, 3);
       return connResolved.query('select 2+2 as qqq');
     })
@@ -73,25 +78,25 @@ function testErrors() {
 function testObjParams() {
   let connResolved;
   createConnection(config)
-    .then(conn => {
+    .then((conn) => {
       connResolved = conn;
       return conn.query({
         sql: 'select ?-? as ttt',
         values: [5, 2]
       });
     })
-    .then(result1 => {
+    .then((result1) => {
       assert.equal(result1[0][0].ttt, 3);
       return connResolved.execute({
         sql: 'select ?-? as ttt',
         values: [8, 5]
       });
     })
-    .then(result2 => {
+    .then((result2) => {
       assert.equal(result2[0][0].ttt, 3);
       return connResolved.end();
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
     });
 }
@@ -99,17 +104,17 @@ function testObjParams() {
 function testPrepared() {
   let connResolved;
   createConnection(config)
-    .then(conn => {
+    .then((conn) => {
       connResolved = conn;
       return conn.prepare('select ?-? as ttt, ? as uuu');
     })
-    .then(statement => statement.execute([11, 3, 'test']))
-    .then(result => {
+    .then((statement) => statement.execute([11, 3, 'test']))
+    .then((result) => {
       assert.equal(result[0][0].ttt, 8);
       assert.equal(result[0][0].uuu, 'test');
       return connResolved.end();
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       if (connResolved) {
         connResolved.end();
@@ -126,7 +131,7 @@ function testPrepared() {
 function testEventsConnect() {
   let connResolved;
   createConnection(config)
-    .then(conn => {
+    .then((conn) => {
       connResolved = conn;
       let events = 0;
 
@@ -147,23 +152,23 @@ function testEventsConnect() {
 
       /* eslint-disable no-invalid-this */
       conn
-        .once('error', function() {
+        .once('error', function () {
           assert.equal(this, conn);
           ++events;
         })
-        .once('drain', function() {
+        .once('drain', function () {
           assert.equal(this, conn);
           ++events;
         })
-        .once('connect', function() {
+        .once('connect', function () {
           assert.equal(this, conn);
           ++events;
         })
-        .once('enqueue', function() {
+        .once('enqueue', function () {
           assert.equal(this, conn);
           ++events;
         })
-        .once('end', function() {
+        .once('end', function () {
           assert.equal(this, conn);
           ++events;
 
@@ -188,7 +193,7 @@ function testEventsConnect() {
 
       conn.end();
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       if (connResolved) {
         connResolved.end();
@@ -204,18 +209,18 @@ function testBasicPool() {
   const pool = createPool(config);
   pool
     .query('select 1+2 as ttt')
-    .then(result1 => {
+    .then((result1) => {
       assert.equal(result1[0][0].ttt, 3);
       return pool.query('select 2+2 as qqq');
     })
-    .then(result2 => {
+    .then((result2) => {
       assert.equal(result2[0][0].qqq, 4);
       return pool.end();
     })
     .then(() => {
       doneCalledPool = true;
     })
-    .catch(err => {
+    .catch((err) => {
       throw err;
     });
 }
@@ -224,11 +229,11 @@ function testErrorsPool() {
   const pool = createPool(config);
   pool
     .query('select 1+2 as ttt')
-    .then(result1 => {
+    .then((result1) => {
       assert.equal(result1[0][0].ttt, 3);
       return pool.query('bad sql');
     })
-    .then(result2 => {
+    .then((result2) => {
       assert.equal(result2[0][0].ttt, 3);
       return pool.query('select 2+2 as qqq');
     })
@@ -245,18 +250,18 @@ function testObjParamsPool() {
       sql: 'select ?-? as ttt',
       values: [5, 2]
     })
-    .then(result1 => {
+    .then((result1) => {
       assert.equal(result1[0][0].ttt, 3);
       return pool.execute({
         sql: 'select ?-? as ttt',
         values: [8, 5]
       });
     })
-    .then(result2 => {
+    .then((result2) => {
       assert.equal(result2[0][0].ttt, 3);
       return pool.end();
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
     });
 }
@@ -274,7 +279,7 @@ function testPromiseLibrary() {
       promise = pool.end();
       assert.ok(promise instanceof pool.Promise);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
     });
 }
@@ -299,19 +304,19 @@ function testEventsPool() {
 
   /* eslint-disable no-invalid-this */
   pool
-    .once('acquire', function() {
+    .once('acquire', function () {
       assert.equal(this, pool);
       ++events;
     })
-    .once('connection', function() {
+    .once('connection', function () {
       assert.equal(this, pool);
       ++events;
     })
-    .once('enqueue', function() {
+    .once('enqueue', function () {
       assert.equal(this, pool);
       ++events;
     })
-    .once('release', function() {
+    .once('release', function () {
       assert.equal(this, pool);
       ++events;
 
@@ -334,13 +339,13 @@ function testEventsPool() {
 }
 
 function testChangeUser() {
-  const onlyUsername = function(name) {
+  const onlyUsername = function (name) {
     return name.substring(0, name.indexOf('@'));
   };
   let connResolved;
 
   createConnection(config)
-    .then(conn => {
+    .then((conn) => {
       connResolved = conn;
       return connResolved.query(
         "CREATE USER IF NOT EXISTS 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
@@ -361,7 +366,7 @@ function testChangeUser() {
       });
     })
     .then(() => connResolved.query('select current_user()'))
-    .then(result => {
+    .then((result) => {
       const rows = result[0];
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
       return connResolved.changeUser({
@@ -370,7 +375,7 @@ function testChangeUser() {
       });
     })
     .then(() => connResolved.query('select current_user()'))
-    .then(result => {
+    .then((result) => {
       const rows = result[0];
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser2');
       return connResolved.changeUser({
@@ -381,13 +386,13 @@ function testChangeUser() {
       });
     })
     .then(() => connResolved.query('select current_user()'))
-    .then(result => {
+    .then((result) => {
       const rows = result[0];
       assert.deepEqual(onlyUsername(rows[0]['current_user()']), 'changeuser1');
       doneChangeUser = true;
       return connResolved.end();
     })
-    .catch(err => {
+    .catch((err) => {
       console.log('AAAA', err);
       if (connResolved) {
         connResolved.end();
@@ -399,14 +404,14 @@ function testChangeUser() {
 function testConnectionProperties() {
   let connResolved;
   createConnection(config)
-    .then(conn => {
+    .then((conn) => {
       connResolved = conn;
       assert.equal(typeof conn.config, 'object');
       assert.ok('queryFormat' in conn.config);
       assert.equal(typeof conn.threadId, 'number');
       return connResolved.end();
     })
-    .catch(err => {
+    .catch((err) => {
       if (connResolved) {
         connResolved.end();
       }
@@ -438,11 +443,59 @@ function testPoolConnectionDestroy() {
 
   pool
     .getConnection()
-    .then(connection => connection.destroy())
+    .then((connection) => connection.destroy())
     .then(bomb.arm)
     .then(() => pool.getConnection())
     .then(bomb.defuse)
     .then(() => pool.end());
+}
+
+function testBasicPoolCluster() {
+  const cluster = createPoolCluster();
+  cluster.add('test', config);
+  const selectedCluster = cluster.of('test', 'ORDER');
+  selectedCluster
+    .query('select 1+2 as ttt')
+    .then((result1) => {
+      assert.equal(result1[0][0].ttt, 3);
+      return cluster.end();
+    })
+    .then(() => {
+      doneCalledPoolCluster = true;
+    });
+}
+
+function testPoolClusterError() {
+  const cluster = createPoolCluster();
+  cluster.add('test', config);
+  const selectedCluster = cluster.of('test', 'ORDER');
+  selectedCluster
+    .query('select 1+2 as ttt')
+    .then((result1) => {
+      assert.equal(result1[0][0].ttt, 3);
+      return selectedCluster.query('not gonna work');
+    })
+    .then(() => selectedCluster.query('select 2+2 as ttt'))
+    .catch(() => {
+      exceptionCaughtPoolCluster = true;
+      cluster.end();
+    });
+}
+
+function testPoolClusterOfError() {
+  const cluster = createPoolCluster();
+  cluster.add('test', config);
+  const pool = cluster.of('doesntexist', 'ORDER');
+  pool
+    .query('select 1+1 as aaa')
+    .then(() => cluster.end())
+    .catch((err) => {
+      if (err.message === 'Pool does Not exists.') {
+        exceptionCaughtPoolDoesNotExist = true;
+      } else {
+        console.log(err);
+      }
+    });
 }
 
 testBasic();
@@ -458,6 +511,9 @@ testChangeUser();
 testConnectionProperties();
 testPoolConnectionDestroy();
 testPromiseLibrary();
+testBasicPoolCluster();
+testPoolClusterError();
+testPoolClusterOfError();
 
 process.on('exit', () => {
   assert.equal(doneCalled, true, 'done not called');
@@ -467,8 +523,19 @@ process.on('exit', () => {
   assert.equal(exceptionCaughtPool, true, 'pool exception not caught');
   assert.equal(doneEventsPool, true, 'wrong number of pool connection events');
   assert.equal(doneChangeUser, true, 'user not changed');
+  assert.equal(doneCalledPoolCluster, true, 'pool cluster done was not called');
+  assert.equal(
+    exceptionCaughtPoolCluster,
+    true,
+    'pool cluster exception not caught'
+  );
+  assert.equal(
+    exceptionCaughtPoolDoesNotExist,
+    true,
+    'pool does not exist exception not caught'
+  );
 });
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
   console.log('error:', err.stack);
 });

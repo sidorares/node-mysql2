@@ -21,7 +21,7 @@ function makeDoneCb(resolve, reject, localErr) {
 function inheritEvents(source, target, events) {
   const listeners = {};
   target
-    .on('newListener', eventName => {
+    .on('newListener', (eventName) => {
       if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
         source.on(
           eventName,
@@ -34,7 +34,7 @@ function inheritEvents(source, target, events) {
         );
       }
     })
-    .on('removeListener', eventName => {
+    .on('removeListener', (eventName) => {
       if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
         source.removeListener(eventName, listeners[eventName]);
         delete listeners[eventName];
@@ -62,7 +62,7 @@ class PromisePreparedStatementInfo {
   }
 
   close() {
-    return new this.Promise(resolve => {
+    return new this.Promise((resolve) => {
       this.statement.close();
       resolve();
     });
@@ -124,7 +124,7 @@ class PromiseConnection extends EventEmitter {
   }
 
   end() {
-    return new this.Promise(resolve => {
+    return new this.Promise((resolve) => {
       this.connection.end(resolve);
     });
   }
@@ -212,7 +212,7 @@ class PromiseConnection extends EventEmitter {
     const c = this.connection;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      c.changeUser(options, err => {
+      c.changeUser(options, (err) => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -243,15 +243,15 @@ function createConnection(opts) {
   if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
-      'Use promise-enabled node version or pass userland Promise' +
-      " implementation as parameter, for example: { Promise: require('bluebird') }"
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
   return new thePromise((resolve, reject) => {
     coreConnection.once('connect', () => {
       resolve(new PromiseConnection(coreConnection, thePromise));
     });
-    coreConnection.once('error', err => {
+    coreConnection.once('error', (err) => {
       createConnectionErr.message = err.message;
       createConnectionErr.code = err.code;
       createConnectionErr.errno = err.errno;
@@ -375,7 +375,7 @@ class PromisePool extends EventEmitter {
     const corePool = this.pool;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      corePool.end(err => {
+      corePool.end((err) => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -397,8 +397,8 @@ function createPool(opts) {
   if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
-      'Use promise-enabled node version or pass userland Promise' +
-      " implementation as parameter, for example: { Promise: require('bluebird') }"
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
 
@@ -427,8 +427,86 @@ function createPool(opts) {
   'format'
 ]);
 
+class PromisePoolCluster extends EventEmitter {
+  constructor(poolCluster, thePromise) {
+    super();
+    this.poolCluster = poolCluster;
+    this.Promise = thePromise || Promise;
+    inheritEvents(poolCluster, this, [
+      'acquire',
+      'connection',
+      'enqueue',
+      'release'
+    ]);
+  }
+
+  of(pattern, selector) {
+    return new PromisePoolCluster(
+      this.poolCluster.of(pattern, selector),
+      this.Promise
+    );
+  }
+
+  add(id, config) {
+    this.poolCluster.add(id, config);
+  }
+
+  query(sql, args) {
+    const coreCluster = this.poolCluster;
+    const localErr = new Error();
+    if (typeof args === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+
+      if (args !== undefined) {
+        coreCluster.query(sql, args, done);
+      } else {
+        coreCluster.query(sql, null, done);
+      }
+    });
+  }
+
+  end() {
+    const coreCluster = this.poolCluster;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      coreCluster.end((err) => {
+        if (err) {
+          localErr.message = err.message;
+          localErr.code = err.code;
+          localErr.errno = err.errno;
+          localErr.sqlState = err.sqlState;
+          localErr.sqlMessage = err.sqlMessage;
+          reject(localErr);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+}
+
+function createPoolCluster(opts) {
+  const coreCluster = core.createPoolCluster(opts);
+  const thePromise = (opts && opts.Promise) || Promise;
+  if (!thePromise) {
+    throw new Error(
+      'no Promise implementation available.' +
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
+    );
+  }
+
+  return new PromisePoolCluster(coreCluster, thePromise);
+}
+
 exports.createConnection = createConnection;
 exports.createPool = createPool;
+exports.createPoolCluster = createPoolCluster;
 exports.escape = core.escape;
 exports.escapeId = core.escapeId;
 exports.format = core.format;
@@ -436,3 +514,4 @@ exports.raw = core.raw;
 exports.PromisePool = PromisePool;
 exports.PromiseConnection = PromiseConnection;
 exports.PromisePoolConnection = PromisePoolConnection;
+exports.PromisePoolCluster = PromisePoolCluster;
