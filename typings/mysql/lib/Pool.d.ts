@@ -9,12 +9,6 @@ declare namespace Pool {
 
     export interface PoolOptions extends Connection.ConnectionOptions {
         /**
-         * The milliseconds before a timeout occurs during the connection acquisition. This is slightly different from connectTimeout,
-         * because acquiring a pool connection does not always involve making a connection. (Default: 10 seconds)
-         */
-        acquireTimeout?: number;
-
-        /**
          * Determines the pool's action when no connections are available and the limit has been reached. If true, the pool will queue
          * the connection request and call it when one becomes available. If false, the pool will immediately call back with an error.
          * (Default: true)
