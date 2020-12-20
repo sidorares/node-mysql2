@@ -6,7 +6,7 @@ declare interface ResultSetHeader {
     affectedRows: number;
     fieldCount: number;
     info: string;
-    insertId: number;
+    insertId: number | string;
     serverStatus: number;
     warningStatus: number;
 }
