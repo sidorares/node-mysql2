@@ -13,10 +13,8 @@ export function createConnection(connectionUri: string): Connection;
 export function createConnection(config: BaseConnection.ConnectionOptions): Connection;
 export function createPool(config: BasePool.PoolOptions): Pool;
 export function createPoolCluster(config?: BasePoolCluster.PoolClusterOptions): PoolCluster;
-export function escape(value: any): string;
-export function format(sql: string): string;
-export function format(sql: string, values: any[]): string;
-export function format(sql: string, values: any): string;
+
+export {escape, escapeId, format, raw} from 'sqlstring'
 
 export {
     ConnectionOptions,
