@@ -21,7 +21,7 @@ function makeDoneCb(resolve, reject, localErr) {
 function inheritEvents(source, target, events) {
   const listeners = {};
   target
-    .on('newListener', eventName => {
+    .on('newListener', (eventName) => {
       if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
         source.on(
           eventName,
@@ -34,7 +34,7 @@ function inheritEvents(source, target, events) {
         );
       }
     })
-    .on('removeListener', eventName => {
+    .on('removeListener', (eventName) => {
       if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
         source.removeListener(eventName, listeners[eventName]);
         delete listeners[eventName];
@@ -62,7 +62,7 @@ class PromisePreparedStatementInfo {
   }
 
   close() {
-    return new this.Promise(resolve => {
+    return new this.Promise((resolve) => {
       this.statement.close();
       resolve();
     });
@@ -124,7 +124,7 @@ class PromiseConnection extends EventEmitter {
   }
 
   end() {
-    return new this.Promise(resolve => {
+    return new this.Promise((resolve) => {
       this.connection.end(resolve);
     });
   }
@@ -212,7 +212,7 @@ class PromiseConnection extends EventEmitter {
     const c = this.connection;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      c.changeUser(options, err => {
+      c.changeUser(options, (err) => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -251,7 +251,7 @@ function createConnection(opts) {
     coreConnection.once('connect', () => {
       resolve(new PromiseConnection(coreConnection, thePromise));
     });
-    coreConnection.once('error', err => {
+    coreConnection.once('error', (err) => {
       createConnectionErr.message = err.message;
       createConnectionErr.code = err.code;
       createConnectionErr.errno = err.errno;
@@ -375,7 +375,7 @@ class PromisePool extends EventEmitter {
     const corePool = this.pool;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      corePool.end(err => {
+      corePool.end((err) => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -470,11 +470,29 @@ class PromisePoolCluster extends EventEmitter {
     });
   }
 
+  execute(sql, args) {
+    const coreCluster = this.poolCluster;
+    const localErr = new Error();
+    if (typeof args === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      if (args) {
+        coreCluster.execute(sql, args, done);
+      } else {
+        coreCluster.execute(sql, done);
+      }
+    });
+  }
+
   end() {
     const coreCluster = this.poolCluster;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      coreCluster.end(err => {
+      coreCluster.end((err) => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
