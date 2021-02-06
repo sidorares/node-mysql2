@@ -21,7 +21,7 @@ function makeDoneCb(resolve, reject, localErr) {
 function inheritEvents(source, target, events) {
   const listeners = {};
   target
-    .on('newListener', eventName => {
+    .on('newListener', (eventName) => {
       if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
         source.on(
           eventName,
@@ -34,7 +34,7 @@ function inheritEvents(source, target, events) {
         );
       }
     })
-    .on('removeListener', eventName => {
+    .on('removeListener', (eventName) => {
       if (events.indexOf(eventName) >= 0 && !target.listenerCount(eventName)) {
         source.removeListener(eventName, listeners[eventName]);
         delete listeners[eventName];
@@ -62,7 +62,7 @@ class PromisePreparedStatementInfo {
   }
 
   close() {
-    return new this.Promise(resolve => {
+    return new this.Promise((resolve) => {
       this.statement.close();
       resolve();
     });
@@ -124,7 +124,7 @@ class PromiseConnection extends EventEmitter {
   }
 
   end() {
-    return new this.Promise(resolve => {
+    return new this.Promise((resolve) => {
       this.connection.end(resolve);
     });
   }
@@ -212,7 +212,7 @@ class PromiseConnection extends EventEmitter {
     const c = this.connection;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      c.changeUser(options, err => {
+      c.changeUser(options, (err) => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -243,15 +243,15 @@ function createConnection(opts) {
   if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
-      'Use promise-enabled node version or pass userland Promise' +
-      " implementation as parameter, for example: { Promise: require('bluebird') }"
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
   return new thePromise((resolve, reject) => {
     coreConnection.once('connect', () => {
       resolve(new PromiseConnection(coreConnection, thePromise));
     });
-    coreConnection.once('error', err => {
+    coreConnection.once('error', (err) => {
       createConnectionErr.message = err.message;
       createConnectionErr.code = err.code;
       createConnectionErr.errno = err.errno;
@@ -302,8 +302,16 @@ function createConnection(opts) {
 ]);
 
 class PromisePoolConnection extends PromiseConnection {
-  constructor(connection, promiseImpl) {
+  constructor(connection, promiseImpl, promissePool) {
     super(connection, promiseImpl);
+    if (promissePool) {
+      this.once('end', () => {
+        promissePool.pool._removeConnection(this.connection);
+      });
+      this.once('error', () => {
+        promissePool.pool._removeConnection(this.connection);
+      });
+    }
   }
 
   destroy() {
@@ -329,7 +337,9 @@ class PromisePool extends EventEmitter {
         if (err) {
           reject(err);
         } else {
-          resolve(new PromisePoolConnection(coreConnection, this.Promise));
+          resolve(
+            new PromisePoolConnection(coreConnection, this.Promise, this)
+          );
         }
       });
     });
@@ -375,7 +385,7 @@ class PromisePool extends EventEmitter {
     const corePool = this.pool;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      corePool.end(err => {
+      corePool.end((err) => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -397,8 +407,8 @@ function createPool(opts) {
   if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
-      'Use promise-enabled node version or pass userland Promise' +
-      " implementation as parameter, for example: { Promise: require('bluebird') }"
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
 
