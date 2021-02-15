@@ -51,6 +51,12 @@ declare namespace Query {
          * You can find which field function you need to use by looking at: RowDataPacket.prototype._typeCast
          */
         typeCast?: any;
+
+        /**
+         * This overrides the same option set at the connection level.
+         * 
+         */
+        rowsAsArray?: boolean
     }
 
     export interface StreamOptions {

@@ -216,6 +216,32 @@ con.promise().query("SELECT 1")
   .then( () => con.end());
 ```
 
+## Array results
+
+If you have two columns with the same name, you might want to get results as an array rather than an object to prevent them from clashing. This is a deviation from the [Node MySQL][node-mysql] library.
+
+For example: `select 1 as foo, 2 as foo`.
+
+You can enable this setting at either the connection level (applies to all queries), or at the query level (applies only to that specific query).
+
+### Connection Option
+```js
+const con = mysql.createConnection(
+  { host: 'localhost', database: 'test', user: 'root', rowsAsArray: true }
+);
+
+```
+
+### Query Option
+
+```js
+con.query({ sql: 'select 1 as foo, 2 as foo', rowsAsArray: true }, function(err, results, fields) {
+  console.log(results) // will be an array of arrays rather than an array of objects
+  console.log(fields) // these are unchanged
+});
+
+```
+
 ## API and Configuration
 
 MySQL2 is mostly API compatible with [Node MySQL][node-mysql]. You should check their API documentation to see all available API options.
