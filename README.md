@@ -242,10 +242,6 @@ con.query({ sql: 'select 1 as foo, 2 as foo', rowsAsArray: true }, function(err,
 
 ```
 
-
-### Query
-
-
 ## API and Configuration
 
 MySQL2 is mostly API compatible with [Node MySQL][node-mysql]. You should check their API documentation to see all available API options.
