@@ -147,6 +147,14 @@ declare namespace Connection {
          * object with ssl parameters or a string containing name of ssl profile
          */
         ssl?: string | SslOptions;
+
+
+        /**
+         * Return each row as an array, not as an object.
+         * This is useful when you have duplicate column names.
+         * This can also be set in the `QueryOption` object to be applied per-query.
+         */
+        rowsAsArray?: boolean
     }
 
     export interface SslOptions {
