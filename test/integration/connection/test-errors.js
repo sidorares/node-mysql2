@@ -15,6 +15,7 @@ connection
   .execute('error in execute', [], err => {
     assert.equal(err.errno, 1064);
     assert.equal(err.code, 'ER_PARSE_ERROR');
+    assert.equal(err.sql, 'error in execute');
     if (err) {
       onExecuteResultError = true;
     }
@@ -26,6 +27,7 @@ connection
   .query('error in query', [], err => {
     assert.equal(err.errno, 1064);
     assert.equal(err.code, 'ER_PARSE_ERROR');
+    assert.equal(err.sql, 'error in query');
     if (err) {
       onQueryResultError = true;
     }
