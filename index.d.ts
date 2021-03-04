@@ -3,6 +3,7 @@ import {
   Pool as PromisePool,
   PoolConnection as PromisePoolConnection
 } from './promise';
+export { Pool as PromisePool } from './promise';
 
 import * as mysql from './typings/mysql';
 export * from './typings/mysql';
