@@ -1,7 +1,7 @@
 {
-  "name": "mysql2",
-  "version": "2.2.5",
-  "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
+  "name": "@vlasky/mysql2",
+  "version": "2.2.6",
+  "description": "Fork of mysql2 with interim fixes for various issues, namely breaking changes in MySQL 8.0.22 affecting prepared statements.",
   "main": "index.js",
   "directories": {
     "example": "examples"
@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sidorares/node-mysql2"
+    "url": "https://github.com/vlasky/node-mysql2"
   },
   "keywords": [
     "mysql",
@@ -50,7 +50,10 @@
   "engines": {
     "node": ">= 8.0"
   },
-  "author": "Andrey Sidorov <sidorares@yandex.ru>",
+  "author": "Vlad Lasky <github@vladlasky.com> (https://github.com/vlasky)",
+  "contributors": [
+    "Andrey Sidorov <sidorares@yandex.ru> (https://github.com/sidorares)"
+  ],
   "license": "MIT",
   "dependencies": {
     "denque": "^1.4.1",
