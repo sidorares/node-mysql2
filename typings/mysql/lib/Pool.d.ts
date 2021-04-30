@@ -36,7 +36,7 @@ declare namespace Pool {
          * Enable keep-alive on the socket.  It's disabled by default, but the
          * user can enable it and supply an initial delay.
          */
-        enableKeepAlive?: true;
+        enableKeepAlive?: boolean;
 
         /**
          * If keep-alive is enabled users can supply an initial delay.

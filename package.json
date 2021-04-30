@@ -1,6 +1,6 @@
 {
   "name": "@vlasky/mysql2",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "Fork of mysql2 with interim fixes for various issues, namely breaking changes in MySQL 8.0.22 affecting prepared statements.",
   "main": "index.js",
   "directories": {
