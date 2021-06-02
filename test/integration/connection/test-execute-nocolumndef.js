@@ -1,3 +1,8 @@
+// This file was modified by Oracle on June 2, 2021.
+// The test has been updated to remove all expectations with regards to the
+// "columnLength" metadata field.
+// Modifications copyright (c) 2021, Oracle and/or its affiliates.
+
 'use strict';
 
 const common = require('../../common');
@@ -47,7 +52,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 63,
-    columnLength: 3,
     columnType: 8,
     flags: 161,
     decimals: 0
@@ -60,7 +64,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnLength: 76,
     columnType: 253,
     flags: 1,
     decimals: 31
@@ -73,7 +76,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnLength: 256,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -86,7 +88,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnLength: 25264128,
     columnType: 250,
     flags: 0,
     decimals: 31
@@ -99,7 +100,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnLength: 40,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -112,7 +112,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnLength: 16384,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -125,7 +124,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnLength: 256,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -138,7 +136,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnLength: 16384,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -151,7 +148,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnLength: 4096,
     columnType: 253,
     flags: 0,
     decimals: 31
@@ -164,7 +160,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 63,
-    columnLength: 10,
     columnType: 8,
     flags: 160,
     decimals: 0
@@ -177,7 +172,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 63,
-    columnLength: 4,
     columnType: 5,
     flags: 128,
     decimals: 2
@@ -190,7 +184,6 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnLength: 1020,
     columnType: 253,
     flags: 1,
     decimals: 31
@@ -201,6 +194,9 @@ process.on('exit', () => {
   assert.deepEqual(rows, expectedRows);
   fields.forEach((f, index) => {
     const fi = f.inspect();
+    // "columnLength" is non-deterministic
+    delete fi.columnLength;
+
     assert.deepEqual(
       Object.keys(fi).sort(),
       Object.keys(expectedFields[index]).sort()
