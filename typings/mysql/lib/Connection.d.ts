@@ -240,7 +240,7 @@ declare class Connection extends EventEmitter {
 
     on(event: string, listener: Function): this;
 
-    rollback(callback: () => void): void;
+    rollback(callback: (err: Query.QueryError | null) => void): void;
 }
 
 export = Connection;
