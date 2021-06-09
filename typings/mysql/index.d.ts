@@ -16,8 +16,11 @@ export function createPoolCluster(config?: BasePoolCluster.PoolClusterOptions): 
 export function escape(value: any): string;
 export function escapeId(value: any): string;
 export function format(sql: string): string;
-export function format(sql: string, values: any[]): string;
-export function format(sql: string, values: any): string;
+export function format(sql: string, values: any[], stringifyObjects?: boolean, timeZone?: string): string;
+export function format(sql: string, values: any, stringifyObjects?: boolean, timeZone?: string): string;
+export function raw(sql: string): {
+    toSqlString: () => string
+};
 
 export {
     ConnectionOptions,

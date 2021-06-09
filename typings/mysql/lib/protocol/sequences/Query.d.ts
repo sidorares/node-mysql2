@@ -54,7 +54,7 @@ declare namespace Query {
 
         /**
          * This overrides the same option set at the connection level.
-         * 
+         *
          */
         rowsAsArray?: boolean
     }
@@ -126,7 +126,7 @@ declare class Query extends Sequence {
      *
      * @param options The options for the stream.
      */
-    stream(options: Query.StreamOptions): Readable;
+    stream(options?: Query.StreamOptions): Readable;
 
     on(event: string, listener: Function): this;
     on(event: 'error', listener: (err: Query.QueryError) => any): this;
