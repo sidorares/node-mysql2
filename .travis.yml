@@ -1,3 +1,7 @@
+# This file was modified by Oracle on June 14, 2021.
+# The changes involve the introduction of a local cache for Docker images.
+# Modifications copyright (c) 2021, Oracle and/or its affiliates.
+
 sudo: required
 dist: trusty
 
@@ -9,8 +13,18 @@ language: node_js
 cache:
   yarn: true
   directories:
+    - docker_images
     - node_modules
     - $HOME/.yarn-cache
+
+before_cache:
+  # save all docker images to a local cache in order to avoid the rate limit
+  # on Docker Hub
+  - docker save -o docker_images/images.tar $(docker images -a -q)
+
+before_install:
+  # load docker images from the local cache
+  - docker load -i docker_images/images.tar || true
 
 # Node.js version:
 # we test only maintained LTS versions
