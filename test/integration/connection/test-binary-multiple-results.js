@@ -1,3 +1,8 @@
+// This file was modified by Oracle on June 2, 2021.
+// The test has been updated to remove all expectations with regards to the
+// "columnLength" metadata field.
+// Modifications copyright (c) 2021, Oracle and/or its affiliates.
+
 'use strict';
 
 const mysql = require('../../common.js').createConnection({
@@ -33,7 +38,6 @@ const fields1 = [
   {
     catalog: 'def',
     characterSet: 63,
-    columnLength: 1,
     columnType: 8,
     decimals: 0,
     flags: 129,
@@ -48,7 +52,6 @@ const nr_fields = [
   {
     catalog: 'def',
     characterSet: 63,
-    columnLength: 11,
     columnType: 3,
     decimals: 0,
     flags: 0,
@@ -140,7 +143,13 @@ function do_test(testIndex) {
           return void 0;
         }
 
-        return c.inspect();
+        const column = c.inspect();
+        // "columnLength" is non-deterministic and the display width for integer
+        // data types was deprecated on MySQL 8.0.17.
+        // https://dev.mysql.com/doc/refman/8.0/en/numeric-type-syntax.html
+        delete column.columnLength;
+
+        return column;
       };
 
       assert.deepEqual(expectation[0], _rows);
