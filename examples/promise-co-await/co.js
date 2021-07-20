@@ -3,7 +3,7 @@
 const mysql = require('mysql2/promise');
 const co = require('co');
 
-co(function*() {
+co(function* () {
   const c = yield mysql.createConnection({
     port: 3306,
     user: 'root',
@@ -14,10 +14,10 @@ co(function*() {
   console.log(yield c.execute('select 1+:toAdd as qqq', { toAdd: 10 }));
   yield c.end();
 })
-  .then(function() {
+  .then(() => {
     console.log('done');
   })
-  .catch(function(err) {
+  .catch((err) => {
     console.log(err);
     throw err;
   });
