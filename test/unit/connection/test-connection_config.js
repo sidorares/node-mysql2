@@ -11,7 +11,7 @@ assert.throws(
     new ConnectionConfig({
       ssl: true
     }),
-  (err) => err instanceof TypeError && err.message === expectedMessage,
+  err => err instanceof TypeError && err.message === expectedMessage,
   'Error, the constructor accepts a boolean without throwing the right exception'
 );
 
