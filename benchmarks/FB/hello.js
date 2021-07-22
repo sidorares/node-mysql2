@@ -61,8 +61,8 @@ function sequelizeQuery(callback) {
 }
 
 function handlePrepared(req, res) {
-  const values = url.parse(req.url, true);
-  const queries = values.query.queries || 1;
+  const values = new url.URL(req.url);
+  const queries = values.searchParams.get('queries') || 1;
   const results = [];
   for (let i = 0; i < queries; ++i) {
     mysql2conn.execute(

@@ -10,10 +10,10 @@ const port = process.env.PORT;
 
 http
   .createServer((req, res) => {
-    const q = url.parse(req.url, true);
+    const q = new url.URL(req.url);
     if (q.pathname === '/render') {
-      const sql = q.query.q;
-      const n = q.query.n;
+      const sql = q.searchParams.get('q');
+      const n = q.searchParams.get('n');
       let rowsTotal = [];
       const doQueries = function(number) {
         if (number === 0) {
