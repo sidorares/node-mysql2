@@ -1,6 +1,7 @@
 
 import Connection = require('./Connection');
 import PoolConnection = require('./PoolConnection');
+import Pool = require('./Pool')
 import {EventEmitter} from 'events';
 
 declare namespace PoolCluster {
@@ -39,6 +40,7 @@ declare class PoolCluster extends EventEmitter {
 
     add(config: PoolCluster.PoolClusterOptions): void;
     add(group: string, config: PoolCluster.PoolClusterOptions): void;
+    add(group: string, config: Pool.PoolOptions): void;
 
     end(): void;
 

@@ -5,7 +5,8 @@ import {
   FieldPacket,
   QueryOptions,
   ConnectionOptions,
-  PoolOptions
+  PoolOptions,
+  PoolClusterOptions
 } from './index';
 
 import { EventEmitter } from 'events';
@@ -131,8 +132,52 @@ export interface Pool extends EventEmitter {
   end(): Promise<void>;
 }
 
+export interface PoolCluster extends EventEmitter {
+  of(pattern: string, selector?: string): PoolCluster;
+  add(group: string, config: Pool.PoolOptions): void;
+
+  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    sql: string
+  ): Promise<[T, FieldPacket[]]>;
+  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    sql: string,
+    values: any | any[] | { [param: string]: any }
+  ): Promise<[T, FieldPacket[]]>;
+  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    options: QueryOptions
+  ): Promise<[T, FieldPacket[]]>;
+  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    options: QueryOptions,
+    values: any | any[] | { [param: string]: any }
+  ): Promise<[T, FieldPacket[]]>;
+
+  execute<
+    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+  >(
+    sql: string
+  ): Promise<[T, FieldPacket[]]>;
+  execute<
+    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+  >(
+    sql: string,
+    values: any | any[] | { [param: string]: any }
+  ): Promise<[T, FieldPacket[]]>;
+  execute<
+    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+  >(
+    options: QueryOptions
+  ): Promise<[T, FieldPacket[]]>;
+  execute<
+    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+  >(
+    options: QueryOptions,
+    values: any | any[] | { [param: string]: any }
+  ): Promise<[T, FieldPacket[]]>;
+}
+
 export function createConnection(connectionUri: string): Promise<Connection>;
 export function createConnection(
   config: ConnectionOptions
 ): Promise<Connection>;
 export function createPool(config: PoolOptions): Pool;
+export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;

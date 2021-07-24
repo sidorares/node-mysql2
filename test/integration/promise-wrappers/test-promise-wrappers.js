@@ -6,6 +6,7 @@ const assert = require('assert');
 
 const createConnection = require('../../../promise.js').createConnection;
 const createPool = require('../../../promise.js').createPool;
+const createPoolCluster = require('../../../promise.js').createPoolCluster;
 
 // it's lazy exported from main index.js as well. Test that it's same function
 const mainExport = require('../../../index.js').createConnectionPromise;
@@ -19,6 +20,11 @@ let doneCalledPool = false;
 let exceptionCaughtPool = false;
 let doneEventsPool = false;
 let doneChangeUser = false;
+
+let doneCalledPoolCluster = false;
+let exceptionCaughtPoolCluster = false;
+let exceptionCaughtPoolDoesNotExist = false;
+let exceptionCaughtPoolClusterExecute = false;
 
 function testBasic() {
   let connResolved;
@@ -147,23 +153,23 @@ function testEventsConnect() {
 
       /* eslint-disable no-invalid-this */
       conn
-        .once('error', function() {
+        .once('error', function () {
           assert.equal(this, conn);
           ++events;
         })
-        .once('drain', function() {
+        .once('drain', function () {
           assert.equal(this, conn);
           ++events;
         })
-        .once('connect', function() {
+        .once('connect', function () {
           assert.equal(this, conn);
           ++events;
         })
-        .once('enqueue', function() {
+        .once('enqueue', function () {
           assert.equal(this, conn);
           ++events;
         })
-        .once('end', function() {
+        .once('end', function () {
           assert.equal(this, conn);
           ++events;
 
@@ -299,19 +305,19 @@ function testEventsPool() {
 
   /* eslint-disable no-invalid-this */
   pool
-    .once('acquire', function() {
+    .once('acquire', function () {
       assert.equal(this, pool);
       ++events;
     })
-    .once('connection', function() {
+    .once('connection', function () {
       assert.equal(this, pool);
       ++events;
     })
-    .once('enqueue', function() {
+    .once('enqueue', function () {
       assert.equal(this, pool);
       ++events;
     })
-    .once('release', function() {
+    .once('release', function () {
       assert.equal(this, pool);
       ++events;
 
@@ -334,7 +340,7 @@ function testEventsPool() {
 }
 
 function testChangeUser() {
-  const onlyUsername = function(name) {
+  const onlyUsername = function (name) {
     return name.substring(0, name.indexOf('@'));
   };
   let connResolved;
@@ -445,6 +451,94 @@ function testPoolConnectionDestroy() {
     .then(() => pool.end());
 }
 
+function testBasicPoolCluster() {
+  const cluster = createPoolCluster();
+  cluster.add('test', config);
+  const selectedCluster = cluster.of('test', 'ORDER');
+  selectedCluster
+    .query('select 1+2 as ttt')
+    .then(result1 => {
+      assert.equal(result1[0][0].ttt, 3);
+      return cluster.end();
+    })
+    .then(() => {
+      doneCalledPoolCluster = true;
+    });
+}
+
+function testPoolClusterError() {
+  const cluster = createPoolCluster();
+  cluster.add('test', config);
+  const selectedCluster = cluster.of('test', 'ORDER');
+  selectedCluster
+    .query('select 1+2 as ttt')
+    .then(result1 => {
+      assert.equal(result1[0][0].ttt, 3);
+      return selectedCluster.query('not gonna work');
+    })
+    .then(() => selectedCluster.query('select 2+2 as ttt'))
+    .catch(() => {
+      exceptionCaughtPoolCluster = true;
+      cluster.end();
+    });
+}
+
+function testPoolClusterOfError() {
+  const cluster = createPoolCluster();
+  cluster.add('test', config);
+  const pool = cluster.of('doesntexist', 'ORDER');
+  pool
+    .query('select 1+1 as aaa')
+    .then(() => cluster.end())
+    .catch(err => {
+      if (err.message === 'Pool does Not exists.') {
+        exceptionCaughtPoolDoesNotExist = true;
+      } else {
+        console.log(err);
+      }
+    });
+}
+
+function testPoolClusterExecute() {
+  const cluster = createPoolCluster();
+  cluster.add('test', config);
+  const selectedCluster = cluster.of('test', 'ORDER');
+  selectedCluster
+    .query('select ?-? as ttt', [5, 2])
+    .then(result1 => {
+      assert.equal(result1[0][0].ttt, 3);
+      return selectedCluster.execute('select ?-? as ttt', [8, 5]);
+    })
+    .then(result2 => {
+      assert.equal(result2[0][0].ttt, 3);
+      return cluster.end();
+    })
+    .catch(err => {
+      console.log(err);
+      cluster.end();
+    });
+}
+
+function testPoolClusterExecuteError() {
+  const cluster = createPoolCluster();
+  cluster.add('test', config);
+  const selectedCluster = cluster.of('test', 'ORDER');
+  selectedCluster
+    .query('select ?-? as ttt', [5, 2])
+    .then(result1 => {
+      assert.equal(result1[0][0].ttt, 3);
+      return selectedCluster.execute('not gonna work', [8, 5]);
+    })
+    .then(result2 => {
+      assert.equal(result2[0][0].ttt, 3);
+      return cluster.end();
+    })
+    .catch(() => {
+      exceptionCaughtPoolClusterExecute = true;
+      cluster.end();
+    });
+}
+
 testBasic();
 testErrors();
 testObjParams();
@@ -458,6 +552,11 @@ testChangeUser();
 testConnectionProperties();
 testPoolConnectionDestroy();
 testPromiseLibrary();
+testBasicPoolCluster();
+testPoolClusterError();
+testPoolClusterOfError();
+testPoolClusterExecute();
+testPoolClusterExecuteError();
 
 process.on('exit', () => {
   assert.equal(doneCalled, true, 'done not called');
@@ -467,6 +566,22 @@ process.on('exit', () => {
   assert.equal(exceptionCaughtPool, true, 'pool exception not caught');
   assert.equal(doneEventsPool, true, 'wrong number of pool connection events');
   assert.equal(doneChangeUser, true, 'user not changed');
+  assert.equal(doneCalledPoolCluster, true, 'pool cluster done was not called');
+  assert.equal(
+    exceptionCaughtPoolCluster,
+    true,
+    'pool cluster exception not caught'
+  );
+  assert.equal(
+    exceptionCaughtPoolDoesNotExist,
+    true,
+    'pool does not exist exception not caught'
+  );
+  assert.equal(
+    exceptionCaughtPoolClusterExecute,
+    true,
+    'pool cluster execute exception not caught'
+  );
 });
 
 process.on('unhandledRejection', err => {

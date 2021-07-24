@@ -56,13 +56,30 @@ async function test() {
   end = +new Date();
   console.log(end - start);
   await p.end();
+
+  const cluster = mysql.createPoolCluster();
+  cluster.add('test', {
+    port: 3306,
+    user: 'testuser',
+    namedPlaceholders: true,
+    password: 'testpassword'
+  });
+  const selected = cluster.of('test', 'ORDER');
+  console.log(
+    await Promise.all([
+      selected.query('select 1+1 as aaa'),
+      selected.query('select 2+2 as bbb')
+    ])
+  );
+
+  await cluster.end();
 }
 
 test()
   .then(() => {
     console.log('done');
   })
-  .catch(err => {
+  .catch((err) => {
     console.log('error!', err);
     throw err;
   });
