@@ -13,9 +13,9 @@ const packets = require('../../../lib/packets/index.js');
   ['-121:23:45', '0b000004000008010500000001172d'], // CONVERT('-121:23:45', TIME)
   ['-01:23:44.88', '0f00000400000c010000000001172c806d0d00'] //DATE_ADD(CONVERT('-01:23:45', TIME), INTERVAL 0.12 SECOND)
 ].forEach(([expected, buffer]) => {
-  let buf = Buffer.from(buffer, 'hex');
-  let packet = new packets.Packet(4, buf, 0, buf.length);
+  const buf = Buffer.from(buffer, 'hex');
+  const packet = new packets.Packet(4, buf, 0, buf.length);
   packet.readInt16(); // unused
-  let d = packet.readTimeString(false);
+  const d = packet.readTimeString(false);
   assert.equal(d, expected);
 });
