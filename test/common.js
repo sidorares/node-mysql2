@@ -121,7 +121,8 @@ exports.createConnection = function(args) {
     dateStrings: args && args.dateStrings,
     authSwitchHandler: args && args.authSwitchHandler,
     typeCast: args && args.typeCast,
-    namedPlaceholders: args && args.namedPlaceholders
+    namedPlaceholders: args && args.namedPlaceholders,
+    connectTimeout: args && args.connectTimeout,
   };
 
   const conn = driver.createConnection(params);

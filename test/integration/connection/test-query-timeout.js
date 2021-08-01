@@ -34,3 +34,17 @@ connection.execute('SELECT sleep(1) as a', (err, res) => {
   assert.deepEqual(res, [{ a: 0 }]);
   connection.end();
 });
+
+const connectionTimeout = common.createConnection({ 
+  host: '10.255.255.1',
+  debug: false,
+  connectTimeout: 100, 
+});
+
+// return connect timeout error first
+connectionTimeout.query({ sql: 'SELECT sleep(3) as a', timeout: 50 }, (err, res) => {
+  assert.equal(res, null);
+  assert.ok(err);
+  assert.equal(err.code, 'ETIMEDOUT');
+  assert.equal(err.message, 'connect ETIMEDOUT');
+});
