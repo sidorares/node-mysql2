@@ -17,5 +17,20 @@ connection.query({ sql: 'SELECT sleep(1) as a', timeout: 5000 }, (err, res) => {
 
 connection.query('SELECT sleep(1) as a', (err, res) => {
   assert.deepEqual(res, [{ a: 0 }]);
+});
+
+connection.execute({ sql: 'SELECT sleep(3) as a', timeout: 500 }, (err, res) => {
+  assert.equal(res, null);
+  assert.ok(err);
+  assert.equal(err.code, 'PROTOCOL_SEQUENCE_TIMEOUT');
+  assert.equal(err.message, 'Query inactivity timeout');
+});
+
+connection.execute({ sql: 'SELECT sleep(1) as a', timeout: 5000 }, (err, res) => {
+  assert.deepEqual(res, [{ a: 0 }]);
+});
+
+connection.execute('SELECT sleep(1) as a', (err, res) => {
+  assert.deepEqual(res, [{ a: 0 }]);
   connection.end();
 });
