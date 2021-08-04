@@ -463,6 +463,20 @@ class PromisePoolCluster extends EventEmitter {
     });
   }
 
+  execute(sql, args) {
+    const corePoolCluster = this.poolCluster;
+    const localErr = new Error();
+    if (typeof args === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.'
+      );
+    }
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      corePoolCluster.execute(sql, args, done);
+    });
+  }
+
   of(pattern, selector) {
     return new PromisePoolCluster(
       this.poolCluster.of(pattern, selector),
