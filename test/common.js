@@ -165,6 +165,14 @@ exports.createPool = function(args) {
   return driver.createPool(exports.getConfig(args));
 };
 
+exports.createPoolCluster = function(args = {}) {
+  let driver = require('../index.js');
+  if (process.env.BENCHMARK_MYSQL1) {
+    driver = require('mysql');
+  }
+  return driver.createPoolCluster(args)
+}
+
 exports.createConnectionWithURI = function() {
   const driver = require('../index.js');
 
