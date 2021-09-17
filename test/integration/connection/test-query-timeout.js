@@ -35,6 +35,12 @@ connection.execute({ sql: 'SELECT sleep(1) as a', timeout: 5000 }, (err, res) =>
   assert.deepEqual(res, [{ a: 0 }]);
 });
 
+connection.query({ sql: 'select 1 from non_existing_table', timeout: 500 }, (err, res) => {
+  assert.equal(res, null);
+  assert.ok(err);
+  assert.equal(err.code, 'ER_NO_SUCH_TABLE');
+});
+
 connection.execute('SELECT sleep(1) as a', (err, res) => {
   assert.deepEqual(res, [{ a: 0 }]);
   connection.end();
