@@ -14,7 +14,7 @@
     "test:raw": "node ./test/run.js",
     "benchmark": "./benchmarks/run-unit.js",
     "prettier": "prettier --single-quote --trailing-comma none --write \"{lib,examples,test}/**/*.js\"",
-    "prettier:docs": "prettier-markdown README.md documentation/*",
+    "prettier:docs": "prettier --single-quote --trailing-comma none --write README.md documentation/*",
     "precommit": "lint-staged",
     "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check",
     "wait-port": "wait-on"
@@ -76,7 +76,6 @@
     "lint-staged": "^11.2.0",
     "portfinder": "^1.0.28",
     "prettier": "^2.4.1",
-    "prettier-markdown": "^0.1.6",
     "progress": "^2.0.3",
     "typescript": "^4.4.3",
     "urun": "0.0.8",
