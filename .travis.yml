@@ -31,8 +31,8 @@ before_install:
 # and lastest dev version
 node_js:
   - 12
-  - 13
   - 14
+  - 16
 
 env:
   # use env `DOCKER_IMAGE to specify a docker image.
@@ -49,6 +49,7 @@ env:
   # - DOCKER_IMAGE=datagrip/mysql:5.1
   #
   # add more or remove any below
+  - DOCKER_IMAGE=mysql:8.0.22
   - DOCKER_IMAGE=mysql:8.0.18
   - DOCKER_IMAGE=mysql:8.0.18 MYSQL_USE_TLS=1
   - DOCKER_IMAGE=mysql:8.0.18 MYSQL_USE_COMPRESSION=1
@@ -72,15 +73,15 @@ jobs:
   include:
     - &lint-staging
       stage: lint
-      node_js: 8
+      node_js: 12
       env: # no env
       script: &lint
         - yarn --version
         - yarn run lint
     - <<: *lint-staging
-      node_js: 10
+      node_js: 14
     - <<: *lint-staging
-      node_js: 12
+      node_js: 16
     # - stage: test
     #   name: test handshake reducible/mysql:5.0.95
     #   node_js: 12
@@ -91,7 +92,7 @@ jobs:
     # for later version, use this test handshake with auth 41
     - stage: test
       name: test handshake datagrip/mysql:5.1
-      node_js: 12
+      node_js: 14
       env: DOCKER_IMAGE=datagrip/mysql:5.1 MYSQL_PASSWORD=my-secret-pw FILTER=5.1only
 
 script:
