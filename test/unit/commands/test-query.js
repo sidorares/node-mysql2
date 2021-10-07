@@ -9,11 +9,9 @@ const testQuery = new Query({}, (err, res) => {
   assert.equal(res, null);
 });
 
-testQuery._rowParser = class FailingRowParser {
-  constructor() {
-    throw testError;
-  }
-};
+testQuery._rowParser = function FailingRowParser() {
+  throw testError;
+}
 
 testQuery.row({
   isEOF: () => false
