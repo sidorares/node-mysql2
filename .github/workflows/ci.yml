@@ -44,7 +44,6 @@ jobs:
         uses: shogo82148/actions-setup-mysql@v1
         with: 
           mysql-version: ${{ matrix.mysql-version }} 
-          user: root
           root-password: ${{ env.MYSQL_PASSWORD }}
       - run: npm install
 
