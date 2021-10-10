@@ -13,7 +13,7 @@ env:
   MYSQL_DATABASE: test
 
 jobs:
-  tests-linux:
+  tests-windows:
     runs-on: windows-latest
     strategy:
       fail-fast: false
