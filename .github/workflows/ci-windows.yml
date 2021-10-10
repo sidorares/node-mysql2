@@ -18,8 +18,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16.x]
-        mysql-version: ["mysql:5.7"]
+        node-version: [14.x, 16.x]
+        mysql-version: ['5.7']
         use-compression: [0]
         use-tls: [0]
 
@@ -28,7 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up MySQL
-        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=${{ env.MYSQL_PASSWORD }} -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          mysql version: ${{ matrix.mysql-version }}
+          mysql database: 'test'
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -45,4 +48,4 @@ jobs:
       - name: Wait mysql server is ready
         run: node tools/wait-up.js
       - name: Run tests
-        run: FILTER=${{matrix.filter}} npm test
+        run: npm test
