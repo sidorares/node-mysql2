@@ -20,8 +20,8 @@ jobs:
       matrix:
         node-version: [16.x]
         mysql-version: ['8.0']
-        use-compression: [0]
-        use-tls: [0]
+        use-compression: [0, 1]
+        use-tls: [0, 1]
 
     name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
