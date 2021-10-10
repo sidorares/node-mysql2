@@ -30,7 +30,7 @@ exports.config = config;
 exports.waitDatabaseReady = function(callback) {
   const start = Date.now();
   const tryConnect = function() {
-    const conn = exports.createConnection();
+    const conn = exports.createConnection({ database: 'mysql' });
     conn.once('error', err => {
       if (err.code !== 'PROTOCOL_CONNECTION_LOST' && err.code !== 'ETIMEDOUT') {
         console.log('Unexpected error waiting for connection', err);
