@@ -14,23 +14,14 @@ env:
 
 jobs:
   tests-linux:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
         node-version: [16.x]
-        mysql-version: ["mysql:8.0.18", "8.0.22", "mysql:5.7", "mariadb:10.0.21"]
+        mysql-version: ["mysql:5.7"]
         use-compression: [0]
         use-tls: [0]
-        include:
-          - node-version: "14.x"
-            mysql-version: "mysql:5.7"
-          - node-version: "12.x"
-            mysql-version: "mysql:5.7"
-          - filter: "5.1only"
-            node-version: "16.x"
-            mysql-version: "datagrip/mysql:5.1"
     steps:
       - uses: actions/checkout@v2
       - name: Set up MySQL
