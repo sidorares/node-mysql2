@@ -26,16 +26,16 @@ jobs:
         include:
           - node-version: "16.x"
             mysql-version: "mysql:8.0.18"
-            use-compression: [1]
-            use-tls: [0]
+            use-compression: 1
+            use-tls: 0
           - node-version: "16.x"
             mysql-version: "mysql:8.0.18"
-            use-compression: [0]
-            use-tls: [1]
+            use-compression: 0
+            use-tls: 1
           - node-version: "16.x"
             mysql-version: "mysql:8.0.18"
-            use-compression: [1]
-            use-tls: [1]
+            use-compression: 1
+            use-tls: 1
           - node-version: "14.x"
             mysql-version: "mysql:5.7"
           - node-version: "12.x"
