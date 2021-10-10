@@ -20,7 +20,7 @@ connection.query(
 const path = './test/fixtures/data.csv';
 const sql =
   `LOAD DATA LOCAL INFILE ? INTO TABLE ${table} ` +
-  `FIELDS TERMINATED BY ? LINES TERMINATED BY '\n'  (id, title)`;
+  `FIELDS TERMINATED BY ? LINES TERMINATED BY '\r'  (id, title)`;
 
 let ok;
 connection.query(
@@ -88,7 +88,7 @@ process.on('exit', () => {
   assert.equal(ok.affectedRows, 4);
   assert.equal(rows.length, 4);
   assert.equal(rows[0].id, 1);
-  assert.equal(rows[0].title, 'Hello World');
+  assert.equal(rows[0].title.trim(), 'Hello World');
 
   assert.equal(
     loadErr.message,
