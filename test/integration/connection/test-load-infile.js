@@ -20,8 +20,7 @@ connection.query(
 const path = './test/fixtures/data.csv';
 const sql =
   `LOAD DATA LOCAL INFILE ? INTO TABLE ${table} ` +
-  `LINES TERMINATED BY '\n' ` +
-  `FIELDS TERMINATED BY ? (id, title)`;
+  `FIELDS TERMINATED BY ? LINES TERMINATED BY '\n'  (id, title)`;
 
 let ok;
 connection.query(
