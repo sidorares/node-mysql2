@@ -22,8 +22,20 @@ jobs:
         mysql-version: ["mysql:8.0.18", "mysql:8.0.22", "mysql:5.7"]
         use-compression: [0]
         use-tls: [0]
-        # TODO - add mariadb to the matrix. currently few tasts are broken due to mariadb incompatibilities
+        # TODO - add mariadb to the matrix. currently few tests are broken due to mariadb incompatibilities
         include:
+          - node-version: "16.x"
+            mysql-version: "mysql:8.0.18"
+            use-compression: [1]
+            use-tls: [0]
+          - node-version: "16.x"
+            mysql-version: "mysql:8.0.18"
+            use-compression: [0]
+            use-tls: [1]
+          - node-version: "16.x"
+            mysql-version: "mysql:8.0.18"
+            use-compression: [1]
+            use-tls: [1]
           - node-version: "14.x"
             mysql-version: "mysql:5.7"
           - node-version: "12.x"
@@ -54,4 +66,4 @@ jobs:
       - name: Wait mysql server is ready
         run: node tools/wait-up.js
       - name: Run tests
-        run: FILTER=${{matrix.filter}} npm test
+        run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm test
