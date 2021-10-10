@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [16.x]
-        mysql-version: ["mysql:8.0.18", "8.0.22", "mysql:5.7", "mariadb:10.0.21"]
+        mysql-version: ["mysql:8.0.18", "mysql:8.0.22", "mysql:5.7", "mariadb:10.0.21"]
         use-compression: [0]
         use-tls: [0]
         include:

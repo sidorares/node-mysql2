@@ -22,6 +22,9 @@ jobs:
         mysql-version: ["mysql:5.7"]
         use-compression: [0]
         use-tls: [0]
+        
+    name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.mysql-version}} Compression=${{matrix.use-compression}}
+
     steps:
       - uses: actions/checkout@v2
       - name: Set up MySQL
