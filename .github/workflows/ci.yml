@@ -51,4 +51,4 @@ jobs:
       - name: Wait mysql server is ready
         run: node tools/wait-up.js
       - name: Run tests
-        run: npm tests:raw
+        run: npm test
