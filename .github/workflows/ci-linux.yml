@@ -32,7 +32,7 @@ jobs:
             node-version: "16.x"
             mysql-version: "datagrip/mysql:5.1"
 
-    name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
+    name: Linux - Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
     steps:
       - uses: actions/checkout@v2
