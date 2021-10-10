@@ -10,8 +10,7 @@ on:
 env:
   MYSQL_PORT: 3306
   MYSQL_USER: root
-  MYSQL_PASSWORD: test
-
+  MYSQL_DATABASE: test
 
 jobs:
   tests-linux:
@@ -21,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [16.x]
-        mysql-version: ["8.0"]
+        mysql-version: ["mysql:8.0"]
 
         #node-version: [10.16.0, 10.x, 12.x, 14.x, 16.x]
         #mysql-version: ["mysql:5.7", "mysql:8.0", "mariadb:10.6"]
@@ -29,6 +28,8 @@ jobs:
         #use-tls: [0]
 
     steps:
+      - name: Set up MySQL
+        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=${{ env.MYSQL_PASSWORD }} -e MYSQL_DATABASE= ${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p 33306:3306 ${{ matrix.mysql-version }}
       - uses: actions/checkout@v2
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
@@ -40,13 +41,9 @@ jobs:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
-      - name: Set up MySQL
-        uses: shogo82148/actions-setup-mysql@v1
-        with: 
-          mysql-version: ${{ matrix.mysql-version }} 
-          root-password: ${{ env.MYSQL_PASSWORD }}
-      - run: npm install
-
+          
+      - name: Install npm dependencies
+        run: npm install
       - name: Wait mysql server is ready
         run: node tools/wait-up.js
       - name: Run tests
