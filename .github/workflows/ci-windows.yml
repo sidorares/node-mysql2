@@ -48,4 +48,7 @@ jobs:
         run: node tools/wait-up.js
       - run: node tools/create-db.js
       - name: Run tests
-        run: MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm test
+        run: npm test
+        env:
+          MYSQL_USE_TLS: ${{ matrix.use-tls }}
+          MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
