@@ -19,11 +19,11 @@ module.exports = [
   {
     name: `read ${npackets} column definitions (select * from mysql.user)`,
     fn: function() {
-      let useit = 0;
-        for (let j = 0; j < npackets; ++j) {
-          packets[j].offset = 0;
-          const c = new ColumnDefinition(packets[j], 'utf8');
-        }
+      const useit = 0;
+      for (let j = 0; j < npackets; ++j) {
+        packets[j].offset = 0;
+        new ColumnDefinition(packets[j], 'utf8');
+      }
       return useit;
     }  
   },
