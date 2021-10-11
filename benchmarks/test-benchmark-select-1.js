@@ -1,6 +1,6 @@
 'use strict';
 
-const createConnection = require('../common').createConnection;
+const createConnection = require('../test/common').createConnection;
 
 (function(cb) {
   const db = createConnection();
