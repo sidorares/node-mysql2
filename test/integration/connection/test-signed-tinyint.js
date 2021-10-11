@@ -12,7 +12,7 @@ connection.query(
 connection.query('INSERT INTO signed_ints values (-3, -120, 500)');
 connection.query('INSERT INTO signed_ints values (3,  -110, -500)');
 
-connection.execute('SELECT * from signed_ints', [5], (err, _rows) => {
+connection.execute('SELECT * from signed_ints', [], (err, _rows) => {
   if (err) {
     throw err;
   }
