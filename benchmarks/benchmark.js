@@ -1,3 +1,5 @@
+'use strict';
+
 const Benchmark = require('benchmark')
 const suite = new Benchmark.Suite;
 
@@ -13,5 +15,5 @@ addFile('./unit/packets/column_definition.js');
 suite.on('start', async () => {
 }).on('complete', () => {
 }).on('cycle', event => {
-    console.log(String(event.target));
+  console.log(String(event.target));
 }).run();
