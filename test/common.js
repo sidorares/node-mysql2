@@ -81,7 +81,7 @@ exports.createConnection = function(args) {
   };
 
   // previously we had an adapter logic to benchmark against mysqljs/mysql and libmariaclient
-  let driver = require('../index.js');
+  const driver = require('../index.js');
   const conn = driver.createConnection(params);
   return conn;
 };
