@@ -65,7 +65,7 @@ jobs:
           external-data-json-path: ./cache/benchmark-data.json
           fail-on-alert: false
           auto-push: false
-          alert-threshold: '130%'
+          alert-threshold: '150%'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
           alert-comment-cc-users: '@sidorares'
