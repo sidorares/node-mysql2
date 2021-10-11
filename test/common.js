@@ -57,51 +57,6 @@ exports.createConnection = function(args) {
   if (!args) {
     args = {};
   }
-  // hrtime polyfill for old node versions:
-  if (!process.hrtime) {
-    process.hrtime = function(start) {
-      start = [0, 0] || start;
-      const timestamp = Date.now();
-      const seconds = Math.ceil(timestamp / 1000);
-      return [
-        seconds - start[0],
-        (timestamp - seconds * 1000) * 1000 - start[1]
-      ];
-    };
-  }
-
-  if (process.env.BENCHMARK_MARIA) {
-    const Client = require('mariasql');
-    const c = new Client();
-    c.connect({
-      host: config.host,
-      user: config.user,
-      password: config.password,
-      db: config.database
-    });
-    setTimeout(() => {
-      console.log('altering client...');
-      c.oldQuery = c.query;
-      c.query = function(sql, callback) {
-        const rows = [];
-        const q = c.oldQuery(sql);
-        q.on('result', res => {
-          res.on('row', row => {
-            rows.push(row);
-          });
-          res.on('end', () => {
-            callback(null, rows);
-          });
-        });
-      };
-    }, 1000);
-    return c;
-  }
-
-  let driver = require('../index.js');
-  if (process.env.BENCHMARK_MYSQL1) {
-    driver = require('mysql');
-  }
 
   const params = {
     host: args.host || config.host,

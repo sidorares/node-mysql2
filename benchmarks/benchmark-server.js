@@ -15,7 +15,7 @@ function prepareReply(columns, row, n) {
   });
   const eof = Packets.EOF.toPacket();
   length += 2 * eof.length();
-  const rowPacket = Packets.TextRow.toPacket(row);
+  const rowPacket = Packets.TextRow.toPacket(row, 'utf8');
   length += n * rowPacket.length();
 
   const replyBuffer = Buffer.allocUnsafe(length);
