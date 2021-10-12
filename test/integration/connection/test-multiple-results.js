@@ -113,8 +113,7 @@ function do_test(testIndex) {
       _numResults = 1;
     } else if (_rows.length > 0) {
       if (
-        _rows.constructor.name === 'Array' &&
-        _rows[0].constructor.name === 'TextRow'
+        _rows.constructor.name === 'Array'
       ) {
         _numResults = 1;
       }
