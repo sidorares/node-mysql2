@@ -49,18 +49,31 @@ connection.query(
   }
 );
 
+
 connection.query(
   {
     sql: 'SELECT * from json_test',
     typeCast: function(_field, next) {
-      return next();
+     return next();
     }
   },
   (err, _rows) => {
     assert.ifError(err);
-    assert.equal(_rows[0].test.test, 42);
+    assert.equal(_rows[0].json_test.test, 42);
   }
 );
 
+connection.execute(
+  {
+    sql: 'SELECT * from json_test',
+    typeCast: function(_field, next) {
+     return next();
+    }
+  },
+  (err, _rows) => {
+    assert.ifError(err);
+    assert.equal(_rows[0].json_test.test, 42);
+  }
+);
 
 connection.end();
