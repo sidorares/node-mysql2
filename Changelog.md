@@ -1,4 +1,18 @@
-2.3.0
+2.3.1 ( 15/10/2021 )
+  - Update error codes up to mysql 8.0.26          #1411
+  - perf: optimize Query.row call                  #1408
+  - build: update to node 12/14/16, migrate from 
+    travis-ci and appveyor to GH actions, add perf
+    benchmarking workflow                          #1406, #1399
+  - perf: avoid leaking TextRow/BinaryRow object   #1402
+  - perf: optimize string decoding by removing 
+    the use of slice()                             #1401
+  - perf: cache lazy-evaluated fields              #1400
+  - fix: clear timeout after error                 #1390
+  - TS: adds the optional column changedRows to 
+    ResultSetHeader                                #1377
+
+2.3.0 ( 5/08/2021 )
   - Add PoolCluster promise wrappers               #1369, #1363
   - support for connect and query timeouts         #1364
   - add missing query() method on PoolCluster      #1362
