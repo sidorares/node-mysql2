@@ -54,7 +54,7 @@ connection.query(
   {
     sql: 'SELECT * from json_test',
     typeCast: function(_field, next) {
-     return next();
+      return next();
     }
   },
   (err, _rows) => {
@@ -67,7 +67,7 @@ connection.execute(
   {
     sql: 'SELECT * from json_test',
     typeCast: function(_field, next) {
-     return next();
+      return next();
     }
   },
   (err, _rows) => {
