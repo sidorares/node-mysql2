@@ -11,7 +11,7 @@
     "lint:code": "eslint index.js promise.js \"lib/**/*.js\" \"test/**/*.js\" \"benchmarks/**/*.js\"",
     "lint:docs": "eslint Contributing.md \"documentation/**/*.md\" \"examples/*.js\"",
     "test": "node ./test/run.js",
-    "benchmark": "./benchmarks/run-unit.js",
+    "benchmark": "node ./benchmarks/benchmark.js",
     "prettier": "prettier --single-quote --trailing-comma none --write \"{lib,examples,test}/**/*.js\"",
     "prettier:docs": "prettier --single-quote --trailing-comma none --write README.md documentation/*",
     "precommit": "lint-staged",
