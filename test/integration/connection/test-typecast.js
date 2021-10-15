@@ -4,6 +4,9 @@ const common = require('../../common');
 const connection = common.createConnection();
 const assert = require('assert');
 
+connection.query('CREATE TEMPORARY TABLE json_test (json_test JSON)');
+connection.query('INSERT INTO json_test VALUES (?)', JSON.stringify({ test: 42 }));
+
 connection.query(
   {
     sql: 'select "foo uppercase" as foo',
@@ -43,6 +46,33 @@ connection.query(
     assert.ifError(err);
     assert.equal(_rows[0].test, null);
     assert.equal(_rows[0].value, 6);
+  }
+);
+
+
+connection.query(
+  {
+    sql: 'SELECT * from json_test',
+    typeCast: function(_field, next) {
+      return next();
+    }
+  },
+  (err, _rows) => {
+    assert.ifError(err);
+    assert.equal(_rows[0].json_test.test, 42);
+  }
+);
+
+connection.execute(
+  {
+    sql: 'SELECT * from json_test',
+    typeCast: function(_field, next) {
+      return next();
+    }
+  },
+  (err, _rows) => {
+    assert.ifError(err);
+    assert.equal(_rows[0].json_test.test, 42);
   }
 );
 
