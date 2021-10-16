@@ -1,3 +1,7 @@
+2.3.2 ( 16/10/2021 )
+  - fix regression causing typeCast + JSON field
+    to error                                      #1418, #1420
+
 2.3.1 ( 15/10/2021 )
   - Update error codes up to mysql 8.0.26          #1411
   - perf: optimize Query.row call                  #1408
