@@ -52,24 +52,28 @@ assert.equal(
 );
 
 // Spec (from example: https://dev.mysql.com/doc/internals/en/protocoltext-resultset.html)
-packet = ColumnDefinition.toPacket(
-  {
-    catalog: 'def',
-    schema: '',
-    name: '@@version_comment',
-    orgName: '',
-    table: '',
-    orgTable: '',
+const inputColDef = {
+  catalog: 'def',
+  schema: '',
+  name: '@@version_comment',
+  orgName: '',
+  table: '',
+  orgTable: '',
 
-    characterSet: 0x08, // latin1_swedish_ci
-    columnLength: 0x1c,
-    flags: 0,
-    columnType: 0xfd,
-    decimals: 0x1f
-  },
-  sequenceId
-);
+  characterSet: 0x08, // latin1_swedish_ci
+  columnLength: 0x1c,
+  flags: 0,
+  columnType: 0xfd,
+  decimals: 0x1f
+}
+packet = ColumnDefinition.toPacket(inputColDef, sequenceId);
 assert.equal(
   packet.buffer.toString('hex', 4),
   '0364656600000011404076657273696f6e5f636f6d6d656e74000c08001c000000fd00001f0000'
 );
+
+packet.offset = 4;
+const colDef = new ColumnDefinition(packet, "utf8");
+const inspect = colDef.inspect();
+assert.deepEqual(inspect, inputColDef);
+assert.equal(colDef.db, inputColDef.schema);
