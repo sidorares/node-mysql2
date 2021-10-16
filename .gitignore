@@ -10,6 +10,7 @@ lib-cov
 .idea/
 .vscode/
 .npmrc
+coverage/
 mysqldata/
 
 tmp
