@@ -84,7 +84,7 @@ jobs:
       
   coverage:
     needs: [ tests-linux ]
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Restore coverage
         uses: actions/download-artifact@v2
