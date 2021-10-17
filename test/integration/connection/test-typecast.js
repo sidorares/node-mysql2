@@ -11,7 +11,9 @@ connection.query(
   {
     sql: 'select "foo uppercase" as foo',
     typeCast: function(field, next) {
+      assert.equal("number", typeof field.length);
       if (field.type === 'VAR_STRING') {
+
         return field.string().toUpperCase();
       }
       return next();
