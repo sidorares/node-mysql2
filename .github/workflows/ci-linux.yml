@@ -88,9 +88,9 @@ jobs:
     steps:
       - name: Restore coverage
         uses: actions/download-artifact@v2
-          with:
-            name: coverage-${{github.sha}}
-            path: coverage
+        with:
+          name: coverage-${{github.sha}}
+          path: coverage
       - name: list coverage files
         run: find coverage
         id: find-coverage | grep xml
