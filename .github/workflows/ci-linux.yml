@@ -103,11 +103,11 @@ jobs:
         id: get_coverage_files
         run: find coverage | grep xml | paste -s -d, -
 
-      - name: test files
       - name: Dump steps context
         env:
           STEPS_CONTEXT: ${{ toJSON(steps) }}
         run: echo "$STEPS_CONTEXT"
+
       - run: echo ${{join(steps.get_coverage_files.outputs.*)}}
       
 
