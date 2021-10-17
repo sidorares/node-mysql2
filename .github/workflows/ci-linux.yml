@@ -64,12 +64,6 @@ jobs:
     name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
     steps:
-      - name: Dump github context
-        env:
-          STEPS_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$STEPS_CONTEXT"
-
-
       - uses: actions/checkout@v2
       - name: Set up MySQL
         run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=${{ env.MYSQL_PASSWORD }} -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
@@ -94,7 +88,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: coverage-${{github.run_id}}
+          name: coverage-${{github.run_id}}-${{ matrix.node-version }}-${{ matrix.mysql-version }}-${{matrix.use-tls}}-${{matrix.use-compression}}
           path: coverage/cobertura-coverage.xml
       
   coverage:
