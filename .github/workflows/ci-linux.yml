@@ -84,11 +84,11 @@ jobs:
     needs: [ tests-linux ]
     runs-on: ubuntu-latest
     steps:
-      # - name: Restore coverage
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: coverage-${{github.sha}}
-      #     path: coverage
+      - name: Restore coverage
+        uses: actions/download-artifact@v2
+        with:
+          path: coverage
+          
       # - name: list coverage files
       #   id: get_coverage_files
       #   run: echo '::set-output name=COVERAGE_FILES::`find coverage | grep xml | paste -s -d, -`'
