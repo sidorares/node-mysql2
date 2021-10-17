@@ -13,7 +13,18 @@ env:
   MYSQL_DATABASE: test
 
 jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete artifacts
+        uses: jimschubert/delete-artifacts-action@v1
+        with:
+          log_level: 'debug'
+          min_bytes: '0'
+          pattern: '\.xml'
+
   tests-linux:
+    needs: [ cleanup ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
