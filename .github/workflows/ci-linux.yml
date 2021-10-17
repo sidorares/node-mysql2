@@ -72,43 +72,43 @@ jobs:
       - name: Wait mysql server is ready
         run: node tools/wait-up.js
 
-      # - name: Restore coverage
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: coverage-${{github.sha}}
-      #     path: coverage
-
       - name: Run tests
         run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run coverage-test
 
-      - run: mkdir coverage-tmp
-      - run: mv coverage coverage-tmp/${{github.run_id}}
-      - run: mv coverage-tmp coverage
-
       - uses: actions/upload-artifact@v2
         with:
-          name: coverage-${{github.sha}}
-          path: coverage
+          name: coverage-${{github.run_id}}
+          path: coverage/cobertura-coverage.xml
       
   coverage:
     needs: [ tests-linux ]
     runs-on: ubuntu-latest
     steps:
-      - name: Restore coverage
-        uses: actions/download-artifact@v2
-        with:
-          name: coverage-${{github.sha}}
-          path: coverage
-      - name: list coverage files
-        id: get_coverage_files
-        run: echo '::set-output name=COVERAGE_FILES::`find coverage | grep xml | paste -s -d, -`'
+      # - name: Restore coverage
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: coverage-${{github.sha}}
+      #     path: coverage
+      # - name: list coverage files
+      #   id: get_coverage_files
+      #   run: echo '::set-output name=COVERAGE_FILES::`find coverage | grep xml | paste -s -d, -`'
 
       - name: Dump steps context
         env:
           STEPS_CONTEXT: ${{ toJSON(steps) }}
         run: echo "$STEPS_CONTEXT"
 
-      - run: echo ${{join(steps.get_coverage_files.outputs.*)}}
+      - name: List artifacts
+        id: list-artifacts
+        uses: chiaretto/github-action-list-artifacts-pr@1.0.0
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Print variables
+        run: |
+          echo artifact-name: ${{ steps.list-artifacts.outputs.artifact-name }}
+
+      # - run: echo ${{join(steps.get_coverage_files.outputs.*)}}
       
 
 
