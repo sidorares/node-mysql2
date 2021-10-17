@@ -97,7 +97,7 @@ jobs:
         run: find coverage | grep xml | paste -s -d, -
 
       - name: test files
-        run: echo ${{steps.get_coverage_files.outputs.*}}"
+        run: echo ${{join(steps.get_coverage_files.outputs)}}
       
 
 
