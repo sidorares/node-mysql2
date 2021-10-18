@@ -107,7 +107,21 @@ jobs:
       
       - run: echo "{{ env.coverage-files }}"
 
-      - uses: ewjoachim/multi-coverage-comment-action@master
+      # - uses: ewjoachim/multi-coverage-comment-action@master
+      #   with:
+      #     COVERAGE_FILES: ${{ env.coverage-files }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
         with:
-          COVERAGE_FILES: ${{ env.coverage-files }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          reports: "${{ env.coverage-files }}"
+          targetdir: '.'
+          reporttypes: 'Cobertura'
+
+      - name: Debug
+        run: cat Cobertura.xml
+
+      - name: Display coverage
+        uses: ewjoachim/coverage-comment-action@v1
+        with:
+          COVERAGE_FILE: "Cobertura.xml"
