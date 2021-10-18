@@ -102,28 +102,9 @@ jobs:
         with:
           path: coverage
 
-      - run: find coverage
+      # - name: get list of coverage files
+      #   run: echo "coverage-files=`find coverage | grep xml | paste -s -d, -`"  >> $GITHUB_ENV
 
-      # - name: list coverage files
-      #   id: get_coverage_files
-      #   run: echo '::set-output name=COVERAGE_FILES::`find coverage | grep xml | paste -s -d, -`'
-
-      # - name: Dump steps context
-      #   env:
-      #     STEPS_CONTEXT: ${{ toJSON(steps) }}
-      #   run: echo "$STEPS_CONTEXT"
-
-      # - name: List artifacts
-      #   id: list-artifacts
-      #   uses: chiaretto/github-action-list-artifacts-pr@1.0.0
-      #   with:
-      #     github-token: "${{ secrets.GITHUB_TOKEN }}"
-
-      # - name: Print variables
-      #   run: |
-      #     echo artifact-name: ${{ steps.list-artifacts.outputs.artifact-name }}
-
-      # - run: echo ${{join(steps.get_coverage_files.outputs.*)}}
-      
-
-
+      - uses: ewjoachim/multi-coverage-comment-action@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
