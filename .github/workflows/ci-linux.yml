@@ -121,7 +121,7 @@ jobs:
       - name: Debug
         run: cat Cobertura.xml
 
-      - name: Display coverage
-        uses: ewjoachim/coverage-comment-action@v1
-        with:
-          COVERAGE_FILE: "Cobertura.xml"
+      # - name: Display coverage
+      #   uses: ewjoachim/coverage-comment-action@v1
+      #   with:
+      #     COVERAGE_FILE: "Cobertura.xml"
