@@ -109,5 +109,5 @@ jobs:
 
       - uses: ewjoachim/multi-coverage-comment-action@master
         with:
-          COVERAGE_FILES: {{ env.coverage-files }}
+          COVERAGE_FILES: ${{ env.coverage-files }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
