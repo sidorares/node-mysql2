@@ -86,8 +86,7 @@ jobs:
       - name: Run tests
         run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run coverage-test
 
-      - run: echo "coverage-artifact-name=`echo -n "${{github.run_id}}-${{ matrix.node-version }}-${{ matrix.mysql-version }}-${{matrix.use-tls}}-${{matrix.use-compression}}" | shasum | cut -d " " -f 1`"  >> $GITHUB_ENV
-      
+      - run: echo "coverage-artifact-name=`echo -n "${{github.run_id}}-${{ matrix.node-version }}-${{ matrix.mysql-version }}-${{matrix.use-tls}}-${{matrix.use-compression}}" | shasum | cut -d " " -f 1`"  >> $GITHUB_ENV   
       - uses: actions/upload-artifact@v2
         with:
           name: coverage-${{env.coverage-artifact-name}}
@@ -106,12 +105,6 @@ jobs:
       - name: get list of coverage files
         run: echo "coverage-files=`find coverage | grep xml | paste -s -d\; -`"  >> $GITHUB_ENV
       
-      - run: echo "${{ env.coverage-files }}"
-
-      # - uses: ewjoachim/multi-coverage-comment-action@master
-      #   with:
-      #     COVERAGE_FILES: ${{ env.coverage-files }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: ReportGenerator
         uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
         with:
@@ -122,7 +115,7 @@ jobs:
       - name: Debug
         run: cat Cobertura.xml
 
-      # - name: Display coverage
-      #   uses: ewjoachim/coverage-comment-action@v1
-      #   with:
-      #     COVERAGE_FILE: "Cobertura.xml"
+      - name: Display coverage
+        uses: ewjoachim/coverage-comment-action@v1
+        with:
+          COVERAGE_FILE: "Cobertura.xml"
