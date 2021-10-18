@@ -13,7 +13,18 @@ env:
   MYSQL_DATABASE: test
 
 jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete artifacts
+        uses: jimschubert/delete-artifacts-action@v1
+        with:
+          log_level: 'debug'
+          min_bytes: '0'
+          pattern: '\.xml'
+
   tests-linux:
+    needs: [ cleanup ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -71,5 +82,41 @@ jobs:
         run: npm ci
       - name: Wait mysql server is ready
         run: node tools/wait-up.js
+
       - name: Run tests
-        run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm test
+        run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run coverage-test
+
+      - run: echo "coverage-artifact-name=`echo -n "${{github.run_id}}-${{ matrix.node-version }}-${{ matrix.mysql-version }}-${{matrix.use-tls}}-${{matrix.use-compression}}" | shasum | cut -d " " -f 1`"  >> $GITHUB_ENV   
+      - uses: actions/upload-artifact@v2
+        with:
+          name: coverage-${{env.coverage-artifact-name}}
+          path: coverage/cobertura-coverage.xml
+      
+  coverage:
+    needs: [ tests-linux ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore coverage
+        uses: actions/download-artifact@v2
+        with:
+          path: coverage
+
+      - name: get list of coverage files
+        run: echo "coverage-files=`find coverage | grep xml | paste -s -d\; -`"  >> $GITHUB_ENV
+      
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
+        with:
+          reports: "${{ env.coverage-files }}"
+          targetdir: '.'
+          reporttypes: 'Cobertura'
+
+      - name: Debug
+        run: cat Cobertura.xml
+
+      - name: Display coverage
+        uses: ewjoachim/coverage-comment-action@v1
+        with:
+          COVERAGE_FILE: "Cobertura.xml"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
