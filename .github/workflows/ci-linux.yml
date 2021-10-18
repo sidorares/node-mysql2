@@ -101,6 +101,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: coverage
+          
+      - uses: actions/checkout@v2
 
       - name: get list of coverage files
         run: echo "coverage-files=`find coverage | grep xml | paste -s -d\; -`"  >> $GITHUB_ENV
