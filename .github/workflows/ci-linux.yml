@@ -97,12 +97,11 @@ jobs:
     needs: [ tests-linux ]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Restore coverage
         uses: actions/download-artifact@v2
         with:
           path: coverage
-          
-      - uses: actions/checkout@v2
 
       - name: get list of coverage files
         run: echo "coverage-files=`find coverage | grep xml | paste -s -d\; -`"  >> $GITHUB_ENV
