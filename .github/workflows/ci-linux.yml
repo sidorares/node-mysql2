@@ -119,3 +119,4 @@ jobs:
         uses: ewjoachim/coverage-comment-action@v1
         with:
           COVERAGE_FILE: "Cobertura.xml"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
