@@ -103,9 +103,9 @@ jobs:
           path: coverage
 
       - name: get list of coverage files
-        run: echo "coverage-files=`find coverage | grep xml | paste -s -d, -`"  >> $GITHUB_ENV
+        run: echo "coverage-files=`find coverage | grep xml | paste -s -d; -`"  >> $GITHUB_ENV
       
-      - run: echo "{{ env.coverage-files }}"
+      - run: echo "${{ env.coverage-files }}"
 
       # - uses: ewjoachim/multi-coverage-comment-action@master
       #   with:
