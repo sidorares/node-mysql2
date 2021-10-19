@@ -42,3 +42,10 @@ assert.doesNotThrow(() => {
     flags: ['-FOUND_ROWS']
   });
 }, 'Error, the constructor threw an exception due to a flags array');
+
+assert.strictEqual(
+  ConnectionConfig.parseUrl(
+    String.raw`fml://test:pass!@$%^&*()\word:@www.example.com/database`
+  ).password,
+  'pass!%40$%%5E&*()%5Cword%3A'
+);

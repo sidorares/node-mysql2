@@ -9,6 +9,7 @@ declare interface ResultSetHeader {
     insertId: number;
     serverStatus: number;
     warningStatus: number;
+    changedRows?: number;
 }
 
 export = ResultSetHeader;

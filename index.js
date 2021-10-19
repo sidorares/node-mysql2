@@ -14,6 +14,7 @@ exports.connect = exports.createConnection;
 exports.Connection = Connection;
 
 const Pool = require('./lib/pool.js');
+const PoolCluster = require('./lib/pool_cluster.js');
 
 exports.createPool = function(config) {
   const PoolConfig = require('./lib/pool_config.js');
@@ -28,6 +29,8 @@ exports.createPoolCluster = function(config) {
 exports.createQuery = Connection.createQuery;
 
 exports.Pool = Pool;
+
+exports.PoolCluster = PoolCluster;
 
 exports.createServer = function(handler) {
   const Server = require('./lib/server.js');

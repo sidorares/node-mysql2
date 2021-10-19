@@ -1,0 +1,71 @@
+name: Benchmark
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+env:
+  MYSQL_PORT: 3306
+  MYSQL_USER: root
+  MYSQL_DATABASE: test
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16.x]
+        mysql-version: ["mysql:8.0.18"]
+        use-compression: [0]
+        use-tls: [0]
+
+    name: Performance regression check
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # - name: Set up MySQL
+      #   run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=${{ env.MYSQL_PASSWORD }} -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+          
+      - name: Install npm dependencies
+        run: npm ci
+
+      # - name: Wait mysql server is ready
+      #   run: node tools/wait-up.js
+
+      - name: Run benchmark
+        run:  node benchmarks/benchmark.js | tee output.txt
+
+      - name: Download previous benchmark data
+        uses: actions/cache@v1
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'benchmarkjs'
+          output-file-path: output.txt
+          external-data-json-path: ./cache/benchmark-data.json
+          fail-on-alert: false
+          auto-push: false
+          alert-threshold: '150%'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-on-alert: true
+          alert-comment-cc-users: '@sidorares'

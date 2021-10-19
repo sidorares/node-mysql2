@@ -1,0 +1,54 @@
+name: CI - Windows
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+env:
+  MYSQL_PORT: 3306
+  MYSQL_USER: root
+  MYSQL_DATABASE: test
+
+jobs:
+  tests-windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16.x]
+        mysql-version: ['8.0']
+        use-compression: [0, 1]
+        use-tls: [0, 1]
+
+    name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up MySQL
+        uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: ${{ matrix.mysql-version }}
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+          
+      - name: Install npm dependencies
+        run: npm install
+      - name: Wait mysql server is ready
+        run: node tools/wait-up.js
+      - run: node tools/create-db.js
+      - name: Run tests
+        run: npm test
+        env:
+          MYSQL_USE_TLS: ${{ matrix.use-tls }}
+          MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
