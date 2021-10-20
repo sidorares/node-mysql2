@@ -388,7 +388,7 @@ function testChangeUser() {
       return connResolved.end();
     })
     .catch(err => {
-      console.log('AAAA', err);
+      console.log(err);
       if (connResolved) {
         connResolved.end();
       }

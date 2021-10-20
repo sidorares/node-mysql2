@@ -62,11 +62,8 @@ export MYSQL_DATABASE='test';
 
 # If test user has no password, unset the `CI` variable.
 
-# Run the full test suite and linting
+# Run the full test suite
 npm run test
-
-# Run only tests without linting
-npm run test:raw
 ```
 
 Use `FILTER` environment variable to run a subset of tests with matching names, e.g.
@@ -74,5 +71,5 @@ Use `FILTER` environment variable to run a subset of tests with matching names, 
 ```sh
 FILTER='test-timestamp' npm run test
 # or
-FILTER='timeout' npm run test:raw
+FILTER='timeout' npm run test
 ```

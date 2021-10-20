@@ -1,0 +1,122 @@
+name: CI - Linux
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+env:
+  MYSQL_PORT: 3306
+  MYSQL_USER: root
+  MYSQL_DATABASE: test
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete artifacts
+        uses: jimschubert/delete-artifacts-action@v1
+        with:
+          log_level: 'debug'
+          min_bytes: '0'
+          pattern: '\.xml'
+
+  tests-linux:
+    needs: [ cleanup ]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16.x]
+        mysql-version: ["mysql:8.0.18", "mysql:8.0.22", "mysql:5.7"]
+        use-compression: [0]
+        use-tls: [0]
+        # TODO - add mariadb to the matrix. currently few tests are broken due to mariadb incompatibilities
+        include:
+          - node-version: "16.x"
+            mysql-version: "mysql:8.0.18"
+            use-compression: 1
+            use-tls: 0
+          - node-version: "16.x"
+            mysql-version: "mysql:8.0.18"
+            use-compression: 0
+            use-tls: 1
+          - node-version: "16.x"
+            mysql-version: "mysql:8.0.18"
+            use-compression: 1
+            use-tls: 1
+          - node-version: "14.x"
+            mysql-version: "mysql:5.7"
+            use-compression: 0
+            use-tls: 0
+          - node-version: "12.x"
+            mysql-version: "mysql:5.7"
+            use-compression: 0
+            use-tls: 0
+          - filter: "5.1only"
+            node-version: "16.x"
+            mysql-version: "datagrip/mysql:5.1"
+            use-compression: 0
+            use-tls: 0
+
+    name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up MySQL
+        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=${{ env.MYSQL_PASSWORD }} -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+          
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Wait mysql server is ready
+        run: node tools/wait-up.js
+
+      - name: Run tests
+        run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run coverage-test
+
+      - run: echo "coverage-artifact-name=`echo -n "${{github.run_id}}-${{ matrix.node-version }}-${{ matrix.mysql-version }}-${{matrix.use-tls}}-${{matrix.use-compression}}" | shasum | cut -d " " -f 1`"  >> $GITHUB_ENV   
+      - uses: actions/upload-artifact@v2
+        with:
+          name: coverage-${{env.coverage-artifact-name}}
+          path: coverage/cobertura-coverage.xml
+      
+  coverage:
+    needs: [ tests-linux ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore coverage
+        uses: actions/download-artifact@v2
+        with:
+          path: coverage
+
+      - name: get list of coverage files
+        run: echo "coverage-files=`find coverage | grep xml | paste -s -d\; -`"  >> $GITHUB_ENV
+      
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
+        with:
+          reports: "${{ env.coverage-files }}"
+          targetdir: '.'
+          reporttypes: 'Cobertura'
+
+      - name: Debug
+        run: cat Cobertura.xml
+
+      - name: Display coverage
+        uses: ewjoachim/coverage-comment-action@v1
+        with:
+          COVERAGE_FILE: "Cobertura.xml"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
