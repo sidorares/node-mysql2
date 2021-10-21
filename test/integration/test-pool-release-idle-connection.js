@@ -1,19 +1,16 @@
 'use strict';
 
-const mysql = require('../../index');
+const createPool = require('../common.js').createPool;
+const config = require('../common.js').config;
 const assert = require('assert');
 
-const poolConfig = {
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: 'test',
-  connectionLimit: 10,
-  maxIdle: 1,
-  idleTimeout: 5000
-};
+const options = Object.assign({
+  connectionLimit: 5, // 5 connections
+  maxIdle: 1, // 1 idle connection
+  idleTimeout: 5000, // 5 seconds
+}, config);
+const pool = new createPool(options);
 
-const pool = new mysql.createPool(poolConfig);
 pool.getConnection((err1, connection1) => {
   assert.ifError(err1);
   assert.ok(connection1);

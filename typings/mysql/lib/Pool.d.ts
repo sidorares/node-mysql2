@@ -27,6 +27,16 @@ declare namespace Pool {
         connectionLimit?: number;
 
         /**
+         * The minimum number of idle connections. (Default: 10)
+         */
+         maxIdle?: number;
+
+        /**
+         * The idle connections timeout, in milliseconds. (Default: 60000)
+         */
+         idleTimeout?: number;
+
+        /**
          * The maximum number of connection requests the pool will queue before returning an error from getConnection. If set to 0, there
          * is no limit to the number of queued connection requests. (Default: 0)
          */
