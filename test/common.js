@@ -105,7 +105,10 @@ exports.getConfig = function(input) {
     timezone: args && args.timezone,
     dateStrings: args && args.dateStrings,
     authSwitchHandler: args && args.authSwitchHandler,
-    typeCast: args && args.typeCast
+    typeCast: args && args.typeCast,
+    connectionLimit: args && args.connectionLimit,
+    maxIdle: args && args.maxIdle,
+    idleTimeout: args && args.idleTimeout,
   };
   return params;
 };

@@ -1,15 +1,13 @@
 'use strict';
 
 const createPool = require('../common.js').createPool;
-const config = require('../common.js').config;
 const assert = require('assert');
 
-const options = Object.assign({
+const pool = new createPool({
   connectionLimit: 5, // 5 connections
   maxIdle: 1, // 1 idle connection
   idleTimeout: 5000, // 5 seconds
-}, config);
-const pool = new createPool(options);
+});
 
 pool.getConnection((err1, connection1) => {
   assert.ifError(err1);
