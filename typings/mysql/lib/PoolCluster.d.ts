@@ -1,7 +1,7 @@
 
 import PoolConnection = require('./PoolConnection');
 import {EventEmitter} from 'events';
-import { PoolOptions } from './Pool';
+import {PoolOptions} from './Pool';
 
 declare namespace PoolCluster {
 
