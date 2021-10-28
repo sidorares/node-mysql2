@@ -166,6 +166,15 @@ class PromiseConnection extends EventEmitter {
     });
   }
 
+  reset() {
+    const c = this.connection;
+    const localErr = new Error();
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      c.reset(done);
+    });
+  }
+
   connect() {
     const c = this.connection;
     const localErr = new Error();
