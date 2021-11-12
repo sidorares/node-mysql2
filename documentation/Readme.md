@@ -41,7 +41,7 @@ You need to check corresponding field's zeroFill flag and convert to string manu
   - [Wire protocol documentation](http://dev.mysql.com/doc/internals/en/client-server-protocol.html)
   - [node-mysql](https://github.com/mysqljs/mysql) - Most popular node.js mysql client library
   - [node-mariasql](https://github.com/mscdex/node-mariasql/) - Bindings to libmariasql. One of the fastest clients
-  - [node-libmysqlclident](https://github.com/Sannis/node-mysql-libmysqlclient) - Bindings to libmysqlclient
+  - [node-libmysqlclient](https://github.com/Sannis/node-mysql-libmysqlclient) - Bindings to libmysqlclient
   - [go-mysql](https://github.com/siddontang/go-mysql) - MySQL Go client (prepared statements, binlog protocol, server)
 
 ## Benchmarks
