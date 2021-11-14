@@ -1,6 +1,6 @@
 {
   "name": "mysql2",
-  "version": "2.3.3-rc.0",
+  "version": "2.3.3",
   "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
   "directories": {
