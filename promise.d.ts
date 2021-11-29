@@ -5,7 +5,8 @@ import {
   FieldPacket,
   QueryOptions,
   ConnectionOptions,
-  PoolOptions
+  PoolOptions,
+  Connection as BaseConnection
 } from './index';
 
 import { EventEmitter } from 'events';
@@ -81,6 +82,7 @@ export interface Connection extends EventEmitter {
 }
 
 export interface PoolConnection extends Connection {
+  connection: BaseConnection;
   release(): void;
 }
 
