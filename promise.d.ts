@@ -81,6 +81,7 @@ export interface Connection extends EventEmitter {
 }
 
 export interface PoolConnection extends Connection {
+  connection: Connection;
   release(): void;
 }
 
