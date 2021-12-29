@@ -62,6 +62,11 @@ declare namespace Query {
          *
          */
         rowsAsArray?: boolean
+
+        /**
+         * By specifying a function that returns a readable stream, an arbitrary stream can be sent when sending a local fs file.
+         */
+        infileStreamFactory?: (path: string) => Readable;
     }
 
     export interface StreamOptions {
