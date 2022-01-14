@@ -62,7 +62,8 @@ export interface Connection extends EventEmitter {
     values: any | any[] | { [param: string]: any }
   ): Promise<[T, FieldPacket[]]>;
 
-  unprepare(sql: string): void;
+  prepare(options: string | QueryOptions): Promise<PreparedStatementInfo>;
+  unprepare(sql: string | QueryOptions): void;
 
   end(options?: any): Promise<void>;
 
@@ -137,3 +138,11 @@ export function createConnection(
   config: ConnectionOptions
 ): Promise<Connection>;
 export function createPool(config: PoolOptions): Pool;
+
+export interface PreparedStatementInfo {
+  /**
+   * Close the prepared statement. This method DO NOT REMOVE the statement cache, and should only be used internally. Use {@link Connection.unprepare} instead when you've done with prepared statement.
+   */
+  close(): Promise<void>;
+  execute(parameters: any[]): Promise<[RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader, FieldPacket[]]>;
+}

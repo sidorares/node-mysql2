@@ -27,8 +27,9 @@ connection.prepare('select ? + ? as tests', (err, statement) => {
     // -> [ { tests: 3 } ]
   });
 
+  // do not use statement.close(), use connection.unprepare() to remove lru cache properly.
   // note that there is no callback here. There is no statement close ack at protocol level.
-  statement.close();
+  connection.unprepare('select ? + ? as tests');
 });
 ```
 Note that you should not use statement after connection reset (`changeUser()` or disconnect). Statement scope is connection, you need to prepare statement for each new connection in order to use it.
