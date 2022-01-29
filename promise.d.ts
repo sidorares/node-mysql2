@@ -140,9 +140,6 @@ export function createConnection(
 export function createPool(config: PoolOptions): Pool;
 
 export interface PreparedStatementInfo {
-  /**
-   * Close the prepared statement. This method DO NOT REMOVE the statement cache, and should only be used internally. Use {@link Connection.unprepare} instead when you've done with prepared statement.
-   */
   close(): Promise<void>;
   execute(parameters: any[]): Promise<[RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader, FieldPacket[]]>;
 }
