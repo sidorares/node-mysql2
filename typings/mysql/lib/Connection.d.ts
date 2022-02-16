@@ -6,6 +6,7 @@
 import Query = require('./protocol/sequences/Query');
 import {OkPacket, FieldPacket, RowDataPacket, ResultSetHeader} from './protocol/packets/index';
 import {EventEmitter} from 'events';
+import { SecureContextOptions } from 'tls';
 
 declare namespace Connection {
 
@@ -170,7 +171,7 @@ declare namespace Connection {
         /**
          * object with ssl parameters or a string containing name of ssl profile
          */
-        ssl?: string | SslOptions;
+        ssl?: string | SslOptions | SecureContextOptions;
 
 
         /**
