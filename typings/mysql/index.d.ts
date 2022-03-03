@@ -14,9 +14,13 @@ export function createConnection(config: BaseConnection.ConnectionOptions): Conn
 export function createPool(config: BasePool.PoolOptions): Pool;
 export function createPoolCluster(config?: BasePoolCluster.PoolClusterOptions): PoolCluster;
 export function escape(value: any): string;
+export function escapeId(value: any): string;
 export function format(sql: string): string;
-export function format(sql: string, values: any[]): string;
-export function format(sql: string, values: any): string;
+export function format(sql: string, values: any[], stringifyObjects?: boolean, timeZone?: string): string;
+export function format(sql: string, values: any, stringifyObjects?: boolean, timeZone?: string): string;
+export function raw(sql: string): {
+    toSqlString: () => string
+};
 
 export {
     ConnectionOptions,
