@@ -124,6 +124,13 @@ class PromiseConnection extends EventEmitter {
     });
   }
 
+  taggedExecute() {
+    return (strings, ...keys) => {
+      const statementQuery = strings.join('?');
+      return this.execute(statementQuery, keys).then(result => result[0])
+    }
+  }
+
   end() {
     return new this.Promise(resolve => {
       this.connection.end(resolve);
@@ -370,6 +377,13 @@ class PromisePool extends EventEmitter {
         corePool.execute(sql, done);
       }
     });
+  }
+
+  taggedExecute() {
+    return (strings, ...keys) => {
+      const statementQuery = strings.join('?');
+      return this.execute(statementQuery, keys).then(result => result[0]);
+    }
   }
 
   end() {
