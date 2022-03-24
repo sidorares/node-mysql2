@@ -7,7 +7,7 @@ const assert = require('assert');
 const date = new Date(2018, 2, 10, 15, 12, 34, 1234);
 
 let rows;
-connection.execute('SELECT ? AS result', [date], (err, _rows) => {
+connection.execute('SELECT CAST(? AS DATETIME(6)) AS result', [date], (err, _rows) => {
   if (err) {
     throw err;
   }
