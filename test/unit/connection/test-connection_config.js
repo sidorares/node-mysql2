@@ -47,5 +47,5 @@ assert.strictEqual(
   ConnectionConfig.parseUrl(
     String.raw`fml://test:pass!@$%^&*()\word:@www.example.com/database`
   ).password,
-  'pass!%40$%%5E&*()%5Cword%3A'
+  'pass!@$%^&*()\\word:'
 );
