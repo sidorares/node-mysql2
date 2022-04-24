@@ -7,7 +7,9 @@ import {PoolOptions} from './lib/Pool';
 import BasePoolCluster = require('./lib/PoolCluster');
 import {PoolClusterOptions} from './lib/PoolCluster';
 import BaseQuery = require('./lib/protocol/sequences/Query');
+import BasePrepare = require('./lib/protocol/sequences/Prepare');
 import {QueryOptions, StreamOptions, QueryError} from './lib/protocol/sequences/Query';
+import {PrepareStatementInfo} from 'mysql2/typings/mysql/lib/protocol/sequences/Prepare';
 
 export function createConnection(connectionUri: string): Connection;
 export function createConnection(config: BaseConnection.ConnectionOptions): Connection;
@@ -28,7 +30,8 @@ export {
     PoolOptions,
     PoolClusterOptions,
     QueryOptions,
-    QueryError
+    QueryError,
+    PrepareStatementInfo
 };
 export * from './lib/protocol/packets/index';
 
@@ -38,3 +41,4 @@ export interface PoolConnection extends BasePoolConnection {}
 export interface Pool extends BasePool {}
 export interface PoolCluster extends BasePoolCluster {}
 export interface Query extends BaseQuery {}
+export interface Prepare extends BasePrepare {}
