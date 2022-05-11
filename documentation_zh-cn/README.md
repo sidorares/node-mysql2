@@ -12,16 +12,16 @@
 
 __目录__
 
-  - [MySQL2的历史以及选择原因](#history-and-why-mysql2)
-  - [安装](#installation)
-  - [查询数据](#first-query)
-  - [SQL预处理的使用](#using-prepared-statements)
-  - [连接池的使用](#using-connection-pools)
-  - [Promise封装的使用](#using-promise-wrapper)
-  - [API配置项](#api-and-configuration)
-  - [文档](#documentation)
-  - [鸣谢](#acknowledgements)
-  - [贡献](#contributing)
+  - [MySQL2的历史以及选择原因](#MySQL2的历史以及选择原因)
+  - [安装](#安装)
+  - [查询数据](#查询数据)
+  - [SQL预处理的使用](#SQL预处理的使用)
+  - [连接池的使用](#连接池的使用)
+  - [Promise封装](#Promise封装)
+  - [API配置项](#API配置项)
+  - [文档](#文档)
+  - [鸣谢](#鸣谢)
+  - [贡献](#贡献)
 
 ## MySQL2的历史以及选择原因
 
@@ -36,8 +36,8 @@ MySQL2 大部分 API 与 [mysqljs][node-mysql] 兼容，并支持大部分功能
  -  对编码和排序规则有很好的支持
  - [Promise封装](https://github.com/sidorares/node-mysql2/tree/master/documentation/Promise-Wrapper.md)
  - 支持压缩
- - SSL and [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/Authentication-Switch.md)
- - [Custom Streams](https://github.com/sidorares/node-mysql2/tree/master/documentation/Extras.md)
+ - SSL 和 [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/Authentication-Switch.md)
+ - [自定义流](https://github.com/sidorares/node-mysql2/tree/master/documentation/Extras.md)
  - [连接池](#using-connection-pools)
 
 ## 安装
@@ -86,7 +86,6 @@ connection.query(
 
 - [如何防止预处理语句SQL注入攻击](http://stackoverflow.com/questions/8263371/how-can-prepared-statements-protect-from-sql-injection-attacks)
 
-MySQL provides `execute` helper which will prepare and query the statement. You can also manually prepare / unprepare statement with `prepare` / `unprepare` methods.
 MySQL 提供了 `execute` 辅助函数，它将准备和查询语句。 您还可以使用 `prepare` / `unprepare` 方法手动准备/取消准备。
 
 ```js
@@ -114,7 +113,7 @@ connection.execute(
 );
 ```
 
-## 使用连接池
+## 连接池的使用
 
 连接池通过重用以前的连接来帮助减少连接到 MySQL 服务器所花费的时间，当你完成它们时让它们保持打开而不是关闭。
 
@@ -253,13 +252,13 @@ MySQL2大部分的API与 [Node MySQL][node-mysql] 基本上相同，你应该查
 
 你可以在[这里](https://github.com/sidorares/node-mysql2/tree/master/documentation)获得更多的详细文档，并且你应该查阅各种代码[示例](https://github.com/sidorares/node-mysql2/tree/master/examples)来获得更高级的概念。
 
-## 致谢
+## 鸣谢
 
-  - Internal protocol is written by @sidorares [MySQL-Native](https://github.com/sidorares/nodejs-mysql-native)
-  - Constants, SQL parameters interpolation, Pooling, `ConnectionConfig` class taken from [node-mysql](https://github.com/mysqljs/mysql)
-  - SSL upgrade code based on @TooTallNate [code](https://gist.github.com/TooTallNate/848444)
-  - Secure connection / compressed connection api flags compatible to [MariaSQL](https://github.com/mscdex/node-mariasql/) client.
-  - [Contributors](https://github.com/sidorares/node-mysql2/graphs/contributors)
+  - 内部协议由@sidorares编写 [MySQL-Native](https://github.com/sidorares/nodejs-mysql-native)
+  - 常量、SQL参数插值、连接池、`ConnectionConfig` 类取自[node-mysql](https://github.com/mysqljs/mysql)
+  - 基于@TooTallNate的SSL代码升级[代码地址](https://gist.github.com/TooTallNate/848444)
+  - 与[MariaSQL](https://github.com/mscdex/node-mariasql/)客户端兼容安全连接/压缩连接 API。
+  - [贡献者](https://github.com/sidorares/node-mysql2/graphs/contributors)
 
 ## 贡献
 
