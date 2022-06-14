@@ -19,6 +19,7 @@ let packet = ColumnDefinition.toPacket(
     columnLength: 500,
     flags: 32896,
     columnType: 0x8,
+    type: 0x8,
     decimals: 1
   },
   sequenceId
@@ -42,6 +43,7 @@ packet = ColumnDefinition.toPacket(
     columnLength: 500,
     flags: 32896,
     columnType: 0x8,
+    type: 0x8,
     decimals: 1
   },
   sequenceId
@@ -64,6 +66,7 @@ const inputColDef = {
   columnLength: 0x1c,
   flags: 0,
   columnType: 0xfd,
+  type: 0xfd,
   decimals: 0x1f
 }
 packet = ColumnDefinition.toPacket(inputColDef, sequenceId);

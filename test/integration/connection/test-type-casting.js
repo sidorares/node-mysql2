@@ -1,6 +1,7 @@
 'use strict';
 
 const common = require('../../common');
+const driver = require('../../../index.js'); //needed to check driver.Types
 const connection = common.createConnection();
 const assert = require('assert');
 
@@ -38,17 +39,26 @@ connection.query('select 1', waitConnectErr => {
   connection.query(`INSERT INTO ${table} SET${inserts.join(',\n')}`);
 
   let row;
-  connection.query('SELECT * FROM type_casting', (err, rows) => {
+  let fieldData; // to lookup field types
+  connection.query(`SELECT * FROM ${table}`, (err, rows, fields) => {
     if (err) {
       throw err;
     }
 
     row = rows[0];
+    // build a fieldName: fieldType lookup table
+    fieldData = fields.reduce((a,v) => {
+      a[v['name']] = v['type'];
+      return a;
+    }, {} );
     connection.end();
   });
 
   process.on('exit', () => {
     tests.forEach(test => {
+      // check that the column type matches the type name stored in driver.Types
+      const columnType = fieldData[test.columnName];
+      assert.equal(test.columnType === driver.Types[columnType], true, test.columnName);
       let expected = test.expect || test.insert;
       let got = row[test.columnName];
       let message;

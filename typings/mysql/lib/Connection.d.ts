@@ -1,3 +1,7 @@
+// This file was modified by Oracle on November 04, 2021.
+// Type definitions and corresponding descriptions were introduced for the
+// connection options relevant for multifactor authentication.
+// Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
 import Query = require('./protocol/sequences/Query');
 import {OkPacket, FieldPacket, RowDataPacket, ResultSetHeader} from './protocol/packets/index';
@@ -15,6 +19,26 @@ declare namespace Connection {
          * The password of that MySQL user
          */
         password?: string;
+
+        /**
+         * Alias for the MySQL user password. Makes a bit more sense in a multifactor authentication setup (see
+         * "password2" and "password3")
+         */
+        password1?: string;
+
+        /**
+         * 2nd factor authentication password. Mandatory when the authentication policy for the MySQL user account
+         * requires an additional authentication method that needs a password.
+         * https://dev.mysql.com/doc/refman/8.0/en/multifactor-authentication.html
+         */
+        password2?: string;
+
+        /**
+         * 3rd factor authentication password. Mandatory when the authentication policy for the MySQL user account
+         * requires two additional authentication methods and the last one needs a password.
+         * https://dev.mysql.com/doc/refman/8.0/en/multifactor-authentication.html
+         */
+        password3?: string;
 
         /**
          * Name of the database to use for this connection
@@ -197,6 +221,11 @@ declare namespace Connection {
          * You can also connect to a MySQL server without properly providing the appropriate CA to trust. You should not do this.
          */
         rejectUnauthorized?: boolean;
+      
+        /**
+         * Configure the minimum supported version of SSL, the default is TLSv1.2.
+         */
+        minVersion?: string;
     }
 }
 
@@ -240,7 +269,7 @@ declare class Connection extends EventEmitter {
 
     on(event: string, listener: Function): this;
 
-    rollback(callback: () => void): void;
+    rollback(callback: (err: Query.QueryError | null) => void): void;
 }
 
 export = Connection;

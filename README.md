@@ -6,7 +6,9 @@
 [![Node.js Version][node-version-image]][node-version-url]
 [![Linux Build][travis-image]][travis-url]
 [![Windows Build][appveyor-image]][appveyor-url]
-[![License][license-image]][license-url]
+[![License][license-image]][license-url]  
+
+[简体中文 Simplified Chinese](./documentation_zh-cn/)
 
 > MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more](https://github.com/sidorares/node-mysql2/tree/master/documentation)
 

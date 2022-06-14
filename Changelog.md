@@ -1,3 +1,15 @@
+2.3.3 ( 14/11/2021 )
+  - no changes compared to 2.3.3-rc.0
+
+2.3.3-rc.0 ( 5/11/2021 )
+  - fix ColumnDefinition.db is broken when 
+    encoding is not utf-8                         #1423                 
+  - typeCast: Fix field.length to be number       #1427, #1426
+  - initiall support for coverage reporting in CI #1425
+  - fix performance regression for results with   #1445, #1432
+    large (300+) number of columns                
+                                                  
+
 2.3.2 ( 16/10/2021 )
   - fix regression causing typeCast + JSON field
     to error                                      #1418, #1420

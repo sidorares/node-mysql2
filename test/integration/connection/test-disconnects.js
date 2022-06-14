@@ -61,6 +61,7 @@ const server = common.createServer(
             characterSet: 63,
             columnLength: 1,
             columnType: 8,
+            type: 8,
             flags: 129,
             decimals: 0
           }

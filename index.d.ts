@@ -182,6 +182,14 @@ export interface ConnectionOptions extends mysql.ConnectionOptions {
   };
 }
 
+export interface ConnectionConfig extends ConnectionOptions {
+  static mergeFlags(defaultFlags: string[], userFlags: string[] | string): number;
+  static getDefaultFlags(options?: ConnectionOptions): string[];
+  static getCharsetNumber(charset: string): number;
+  static getSSLProfile(name: string): { ca: string[] };
+  static parseUrl(url: string): { host: string, port: number, database: string, user: string, password: string, [key: string]: any };
+}
+
 export interface PoolOptions extends mysql.PoolOptions, ConnectionOptions {}
 
 export function createConnection(connectionUri: string): Connection;
