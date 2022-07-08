@@ -336,6 +336,11 @@ class PromisePool extends EventEmitter {
     });
   }
 
+  releaseConnection(poolConnection) {
+    const coreConnection = poolConnection.connection;
+    this.pool.releaseConnection(coreConnection);
+  }
+
   query(sql, args) {
     const corePool = this.pool;
     const localErr = new Error();
