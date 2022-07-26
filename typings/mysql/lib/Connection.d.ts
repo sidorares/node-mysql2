@@ -188,9 +188,9 @@ declare namespace Connection {
         pfx?: string;
 
         /**
-         * A string holding the PEM encoded private key
+         * Either a string/buffer or list of strings/Buffers holding the PEM encoded private key(s) to use
          */
-        key?: string;
+        key?: string | string[] | Buffer | Buffer[];
 
         /**
          * A string of passphrase for the private key or pfx
@@ -198,14 +198,14 @@ declare namespace Connection {
         passphrase?: string;
 
         /**
-         * A string holding the PEM encoded certificate
+         * A string/buffer or list of strings/Buffers holding the PEM encoded certificate(s)
          */
-        cert?: string;
+        cert?: string | string[] | Buffer | Buffer[];
 
         /**
-         * Either a string or list of strings of PEM encoded CA certificates to trust.
+         * Either a string/Buffer or list of strings/Buffers of PEM encoded CA certificates to trust.
          */
-        ca?: string | string[];
+        ca?: string | string[] | Buffer | Buffer[];
 
         /**
          * Either a string or list of strings of PEM encoded CRLs (Certificate Revocation List)
