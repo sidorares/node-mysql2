@@ -72,6 +72,8 @@ export interface Connection extends mysql.Connection {
   ): mysql.Query;
   ping(callback?: (err: mysql.QueryError | null) => any): void;
   promise(promiseImpl?: PromiseConstructor): PromiseConnection;
+  unprepare(sql: string): mysql.PrepareStatementInfo;
+  prepare(sql: string, callback?: (err: mysql.QueryError | null, statement: mysql.PrepareStatementInfo) => any): mysql.Prepare;
 }
 
 export interface PoolConnection extends mysql.PoolConnection, Connection {
@@ -149,6 +151,8 @@ export interface Pool extends mysql.Connection {
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
   on(event: 'enqueue', listener: () => any): this;
   promise(promiseImpl?: PromiseConstructor): PromisePool;
+  unprepare(sql: string): mysql.PrepareStatementInfo;
+  prepare(sql: string, callback?: (err: mysql.QueryError | null, statement: mysql.PrepareStatementInfo) => any): mysql.Prepare;
 }
 
 type authPlugins = (pluginMetadata: {
@@ -183,11 +187,11 @@ export interface ConnectionOptions extends mysql.ConnectionOptions {
 }
 
 export interface ConnectionConfig extends ConnectionOptions {
-  static mergeFlags(defaultFlags: string[], userFlags: string[] | string): number;
-  static getDefaultFlags(options?: ConnectionOptions): string[];
-  static getCharsetNumber(charset: string): number;
-  static getSSLProfile(name: string): { ca: string[] };
-  static parseUrl(url: string): { host: string, port: number, database: string, user: string, password: string, [key: string]: any };
+  mergeFlags(defaultFlags: string[], userFlags: string[] | string): number;
+  getDefaultFlags(options?: ConnectionOptions): string[];
+  getCharsetNumber(charset: string): number;
+  getSSLProfile(name: string): { ca: string[] };
+  parseUrl(url: string): { host: string, port: number, database: string, user: string, password: string, [key: string]: any };
 }
 
 export interface PoolOptions extends mysql.PoolOptions, ConnectionOptions {}

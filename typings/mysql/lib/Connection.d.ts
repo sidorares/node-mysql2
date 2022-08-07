@@ -4,6 +4,7 @@
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
 import Query = require('./protocol/sequences/Query');
+import Prepare = require('./protocol/sequences/Prepare');
 import {OkPacket, FieldPacket, RowDataPacket, ResultSetHeader} from './protocol/packets/index';
 import {EventEmitter} from 'events';
 
