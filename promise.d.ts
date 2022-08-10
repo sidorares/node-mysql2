@@ -62,7 +62,8 @@ export interface Connection extends EventEmitter {
     values: any | any[] | { [param: string]: any }
   ): Promise<[T, FieldPacket[]]>;
 
-  unprepare(sql: string): void;
+  prepare(options: string | QueryOptions): Promise<PreparedStatementInfo>;
+  unprepare(sql: string | QueryOptions): void;
 
   end(options?: any): Promise<void>;
 
@@ -137,3 +138,8 @@ export function createConnection(
   config: ConnectionOptions
 ): Promise<Connection>;
 export function createPool(config: PoolOptions): Pool;
+
+export interface PreparedStatementInfo {
+  close(): Promise<void>;
+  execute(parameters: any[]): Promise<[RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader, FieldPacket[]]>;
+}

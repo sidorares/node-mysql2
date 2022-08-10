@@ -13,8 +13,11 @@ connection.execute('select 1 + ? + ? as result', [5, 6], (err, rows) => {
 // close cached statement for 'select 1 + ? + ? as result'. noop if not in cache
 connection.unprepare('select 1 + ? + ? as result');
 ```
+Note that `connection.execute()` will cache the prepared statement for better performance, remove the cache with `connection.unprepare()` when you're done.
 
 ## Manual prepare / execute
+
+Manually prepared statements doesn't comes with LRU cache and SHOULD be closed using `statement.close()` instead of `connection.unprepare()`.
 
 ```js
 connection.prepare('select ? + ? as tests', (err, statement) => {
@@ -27,6 +30,7 @@ connection.prepare('select ? + ? as tests', (err, statement) => {
     // -> [ { tests: 3 } ]
   });
 
+  // don't use connection.unprepare(), it won't work!
   // note that there is no callback here. There is no statement close ack at protocol level.
   statement.close();
 });
