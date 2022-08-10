@@ -9,7 +9,7 @@ import {PoolClusterOptions} from './lib/PoolCluster';
 import BaseQuery = require('./lib/protocol/sequences/Query');
 import BasePrepare = require('./lib/protocol/sequences/Prepare');
 import {QueryOptions, StreamOptions, QueryError} from './lib/protocol/sequences/Query';
-import {PrepareStatementInfo} from 'mysql2/typings/mysql/lib/protocol/sequences/Prepare';
+import {PrepareStatementInfo} from './lib/protocol/sequences/Prepare';
 import Server from './lib/Server';
 
 export function createConnection(connectionUri: string): Connection;
