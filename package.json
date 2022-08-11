@@ -63,6 +63,7 @@
     "sqlstring": "^2.3.2"
   },
   "devDependencies": {
+    "@types/node": "^18.7.1",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "assert-diff": "^3.0.2",
