@@ -10,7 +10,7 @@ import BaseQuery = require('./lib/protocol/sequences/Query');
 import BasePrepare = require('./lib/protocol/sequences/Prepare');
 import {QueryOptions, StreamOptions, QueryError} from './lib/protocol/sequences/Query';
 import {PrepareStatementInfo} from './lib/protocol/sequences/Prepare';
-import * as Server from './lib/Server';
+import Server = require('./lib/Server');
 
 export function createConnection(connectionUri: string): Connection;
 export function createConnection(config: BaseConnection.ConnectionOptions): Connection;

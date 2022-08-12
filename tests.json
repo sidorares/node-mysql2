@@ -1,0 +1,19 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"rootDir": ".",
+		"outDir": ".",
+		"listEmittedFiles": false
+	},
+	"files": [
+		"typings/test/server.ts"
+	],
+	"typeRoots": [
+		"./typings",
+		"./node_modules/@types"
+	],
+	"exclude": [
+		"./node_modules",
+		"./typings"
+	]
+} 
