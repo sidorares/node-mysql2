@@ -14,7 +14,7 @@ import Server = require('./lib/Server');
 
 export function createConnection(connectionUri: string): Connection;
 export function createConnection(config: BaseConnection.ConnectionOptions): Connection;
-export function createPool(config: BasePool.PoolOptions): Pool;
+export function createPool(config: BasePool.PoolOptions): BasePool;
 export function createPoolCluster(config?: BasePoolCluster.PoolClusterOptions): PoolCluster;
 export function escape(value: any): string;
 export function escapeId(value: any): string;
