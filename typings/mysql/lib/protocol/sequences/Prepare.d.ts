@@ -1,6 +1,6 @@
-import Sequence = require('mysql2/typings/mysql/lib/protocol/sequences/Sequence');
-import Query = require('mysql2/typings/mysql/lib/protocol/sequences/Query');
-import {OkPacket, FieldPacket, RowDataPacket, ResultSetHeader} from 'mysql2/typings/mysql/lib/protocol/packets';
+import Sequence = require('../sequences/Sequence');
+import Query = require('../sequences/Query');
+import {OkPacket, FieldPacket, RowDataPacket, ResultSetHeader} from '../packets';
 import {Readable} from 'stream';
 
 declare namespace Prepare {

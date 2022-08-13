@@ -7,8 +7,6 @@ import {
 import * as mysql from './typings/mysql';
 export * from './typings/mysql';
 
-import Server from './lib/server.js';
-
 export interface Connection extends mysql.Connection {
   execute<
     T extends
@@ -201,4 +199,3 @@ export interface PoolOptions extends mysql.PoolOptions, ConnectionOptions {}
 export function createConnection(connectionUri: string): Connection;
 export function createConnection(config: ConnectionOptions): Connection;
 export function createPool(config: PoolOptions): Pool;
-export function createServer(handler: (conn: Connection) => any): Server;
