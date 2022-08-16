@@ -6,7 +6,9 @@
 		"listEmittedFiles": false
 	},
 	"files": [
-		"typings/test/server.ts"
+		"typings/test/server.ts",
+		"typings/test/connection.ts",
+		"typings/test/pool.ts"
 	],
 	"typeRoots": [
 		"./typings",

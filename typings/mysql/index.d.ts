@@ -24,6 +24,7 @@ export function format(sql: string, values: any, stringifyObjects?: boolean, tim
 export function raw(sql: string): {
     toSqlString: () => string
 };
+export function createServer(handler: (conn: BaseConnection) => any): Server;
 
 export {
     ConnectionOptions,
@@ -43,5 +44,3 @@ export interface Pool extends BasePool {}
 export interface PoolCluster extends BasePoolCluster {}
 export interface Query extends BaseQuery {}
 export interface Prepare extends BasePrepare {}
-
-export function createServer(handler: (conn: BaseConnection) => any): Server;

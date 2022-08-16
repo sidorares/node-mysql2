@@ -61,7 +61,7 @@ declare class Pool extends EventEmitter {
     on(event: string, listener: Function): this;
     on(event: 'connection', listener: (connection: PoolConnection) => any): this;
 
-    promise(promiseImpl?: any): any
+    promise(promiseImpl?: any): any;
 }
 
 export = Pool;

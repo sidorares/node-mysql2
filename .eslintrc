@@ -9,6 +9,13 @@
     "es6": true
   },
   "rules": {
+    "@typescript-eslint/typedef": [
+      "error",
+      {
+        "arrowParameter": true,
+        "variableDeclaration": true
+      }
+    ],
     "template-curly-spacing": ["error", "never"],
     "prefer-template": "error",
     "no-useless-call": "error",
