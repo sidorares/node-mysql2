@@ -19,7 +19,7 @@
     "precommit": "lint-staged",
     "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check",
     "wait-port": "wait-on",
-    "type-test": "node ./node_modules/typescript/bin/tsc -p tests.json && mocha typings/test"
+    "type-test": "node ./node_modules/typescript/bin/tsc -p tests.json && mocha typings/test --timeout 10000"
   },
   "lint-staged": {
     "*.js": [
