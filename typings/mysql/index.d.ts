@@ -14,7 +14,7 @@ import Server = require('./lib/Server');
 
 export function createConnection(connectionUri: string): Connection;
 export function createConnection(config: BaseConnection.ConnectionOptions): Connection;
-export function createPool(config: BasePool.PoolOptions): Pool;
+export function createPool(config: BasePool.PoolOptions): BasePool;
 export function createPoolCluster(config?: BasePoolCluster.PoolClusterOptions): PoolCluster;
 export function escape(value: any): string;
 export function escapeId(value: any): string;
@@ -24,6 +24,7 @@ export function format(sql: string, values: any, stringifyObjects?: boolean, tim
 export function raw(sql: string): {
     toSqlString: () => string
 };
+export function createServer(handler: (conn: BaseConnection) => any): Server;
 
 export {
     ConnectionOptions,
@@ -43,5 +44,3 @@ export interface Pool extends BasePool {}
 export interface PoolCluster extends BasePoolCluster {}
 export interface Query extends BaseQuery {}
 export interface Prepare extends BasePrepare {}
-
-export function createServer(handler: (conn: BaseConnection) => any): Server;

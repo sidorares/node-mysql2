@@ -1,7 +1,7 @@
 import {
   Connection as PromiseConnection,
   Pool as PromisePool,
-  PoolConnection as PromisePoolConnection
+  PoolConnection as PromisePoolConnection,
 } from './promise';
 
 import * as mysql from './typings/mysql';
@@ -74,6 +74,13 @@ export interface Connection extends mysql.Connection {
   promise(promiseImpl?: PromiseConstructor): PromiseConnection;
   unprepare(sql: string): mysql.PrepareStatementInfo;
   prepare(sql: string, callback?: (err: mysql.QueryError | null, statement: mysql.PrepareStatementInfo) => any): mysql.Prepare;
+  serverHandshake(args: any): any;
+  writeOk(args?: mysql.OkPacketParams): void;
+  writeError(args?: mysql.ErrorPacketParams): void;
+  writeEof(warnings?: number, statusFlags?: number): void;
+  writeTextResult(rows?: Array<any>, columns?: Array<any>): void;
+  writePacket(packet: any): void;
+  sequenceId: number;
 }
 
 export interface PoolConnection extends mysql.PoolConnection, Connection {
@@ -153,6 +160,8 @@ export interface Pool extends mysql.Connection {
   promise(promiseImpl?: PromiseConstructor): PromisePool;
   unprepare(sql: string): mysql.PrepareStatementInfo;
   prepare(sql: string, callback?: (err: mysql.QueryError | null, statement: mysql.PrepareStatementInfo) => any): mysql.Prepare;
+
+  config: mysql.PoolOptions;
 }
 
 type authPlugins = (pluginMetadata: {
