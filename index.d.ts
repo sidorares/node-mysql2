@@ -83,7 +83,7 @@ export interface Connection extends mysql.Connection {
   sequenceId: number;
 }
 
-export interface PoolConnection extends Connection {
+export interface PoolConnection extends mysql.PoolConnection, Connection {
   promise(promiseImpl?: PromiseConstructor): PromisePoolConnection;
 }
 
