@@ -57,9 +57,9 @@
   "dependencies": {
     "@types/chai": "^4.3.3",
     "chai": "^4.3.6",
-    "denque": "^2.0.1",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.6.3",
+    "js-sdsl": "^4.1.4",
     "long": "^4.0.0",
     "lru-cache": "^6.0.0",
     "mocha": "^10.0.0",
