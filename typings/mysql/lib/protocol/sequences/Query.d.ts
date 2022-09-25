@@ -17,6 +17,11 @@ declare namespace Query {
         values?: any | any[] | { [param: string]: any };
 
         /**
+         * This overrides the namedPlaceholders option set at the connection level.
+         */
+        namedPlaceholders?: boolean;
+
+        /**
          * Every operation takes an optional inactivity timeout option. This allows you to specify appropriate timeouts for
          * operations. It is important to note that these timeouts are not part of the MySQL protocol, and rather timeout
          * operations through the client. This means that when a timeout is reached, the connection it occurred on will be
@@ -54,9 +59,14 @@ declare namespace Query {
 
         /**
          * This overrides the same option set at the connection level.
-         * 
+         *
          */
         rowsAsArray?: boolean
+
+        /**
+         * By specifying a function that returns a readable stream, an arbitrary stream can be sent when sending a local fs file.
+         */
+        infileStreamFactory?: (path: string) => Readable;
     }
 
     export interface StreamOptions {
@@ -126,7 +136,7 @@ declare class Query extends Sequence {
      *
      * @param options The options for the stream.
      */
-    stream(options: Query.StreamOptions): Readable;
+    stream(options?: Query.StreamOptions): Readable;
 
     on(event: string, listener: Function): this;
     on(event: 'error', listener: (err: Query.QueryError) => any): this;

@@ -12,6 +12,7 @@ exports.createConnection = function(opts) {
 
 exports.connect = exports.createConnection;
 exports.Connection = Connection;
+exports.ConnectionConfig = ConnectionConfig;
 
 const Pool = require('./lib/pool.js');
 const PoolCluster = require('./lib/pool_cluster.js');

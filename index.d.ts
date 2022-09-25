@@ -1,7 +1,7 @@
 import {
   Connection as PromiseConnection,
   Pool as PromisePool,
-  PoolConnection as PromisePoolConnection
+  PoolConnection as PromisePoolConnection,
 } from './promise';
 
 import * as mysql from './typings/mysql';
@@ -72,6 +72,15 @@ export interface Connection extends mysql.Connection {
   ): mysql.Query;
   ping(callback?: (err: mysql.QueryError | null) => any): void;
   promise(promiseImpl?: PromiseConstructor): PromiseConnection;
+  unprepare(sql: string): mysql.PrepareStatementInfo;
+  prepare(sql: string, callback?: (err: mysql.QueryError | null, statement: mysql.PrepareStatementInfo) => any): mysql.Prepare;
+  serverHandshake(args: any): any;
+  writeOk(args?: mysql.OkPacketParams): void;
+  writeError(args?: mysql.ErrorPacketParams): void;
+  writeEof(warnings?: number, statusFlags?: number): void;
+  writeTextResult(rows?: Array<any>, columns?: Array<any>): void;
+  writePacket(packet: any): void;
+  sequenceId: number;
 }
 
 export interface PoolConnection extends mysql.PoolConnection, Connection {
@@ -149,6 +158,10 @@ export interface Pool extends mysql.Connection {
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
   on(event: 'enqueue', listener: () => any): this;
   promise(promiseImpl?: PromiseConstructor): PromisePool;
+  unprepare(sql: string): mysql.PrepareStatementInfo;
+  prepare(sql: string, callback?: (err: mysql.QueryError | null, statement: mysql.PrepareStatementInfo) => any): mysql.Prepare;
+
+  config: mysql.PoolOptions;
 }
 
 type authPlugins = (pluginMetadata: {
@@ -182,6 +195,14 @@ export interface ConnectionOptions extends mysql.ConnectionOptions {
   authPlugins?: {
     [key: string]: authPlugins;
   };
+}
+
+export interface ConnectionConfig extends ConnectionOptions {
+  mergeFlags(defaultFlags: string[], userFlags: string[] | string): number;
+  getDefaultFlags(options?: ConnectionOptions): string[];
+  getCharsetNumber(charset: string): number;
+  getSSLProfile(name: string): { ca: string[] };
+  parseUrl(url: string): { host: string, port: number, database: string, user: string, password: string, [key: string]: any };
 }
 
 export interface PoolOptions extends mysql.PoolOptions, ConnectionOptions {}
