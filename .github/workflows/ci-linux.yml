@@ -93,6 +93,7 @@ jobs:
           path: coverage/cobertura-coverage.xml
       
   coverage:
+    permissions: write-all
     needs: [ tests-linux ]
     runs-on: ubuntu-latest
     steps:
