@@ -248,7 +248,9 @@ con.query({ sql: 'select 1 as foo, 2 as foo', rowsAsArray: true }, function(err,
 
 MySQL2 is mostly API compatible with [Node MySQL][node-mysql]. You should check their API documentation to see all available API options.
 
-If you find any incompatibility with [Node MySQL][node-mysql], Please report via Issue tracker. We will fix reported incompatibility on priority basis.
+One known incompatibility is that `sum` and `avg` results are returned as strings rather than numbers. This is deliberate to avoid loss of precision - see https://github.com/sidorares/node-mysql2/issues/935.
+
+If you find any other incompatibility with [Node MySQL][node-mysql], Please report via Issue tracker. We will fix reported incompatibility on priority basis.
 
 ## Documentation
 
