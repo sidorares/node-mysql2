@@ -161,8 +161,18 @@ class PromiseConnection extends EventEmitter {
     const c = this.connection;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
-      c.ping(done);
+      c.ping(err => {
+        if (err) {
+          localErr.message = err.message;
+          localErr.code = err.code;
+          localErr.errno = err.errno;
+          localErr.sqlState = err.sqlState;
+          localErr.sqlMessage = err.sqlMessage;
+          reject(localErr);
+        } else {
+          resolve(true);
+        }
+      });
     });
   }
 
