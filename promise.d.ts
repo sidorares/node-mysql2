@@ -5,12 +5,13 @@ import {
   FieldPacket,
   QueryOptions,
   ConnectionOptions,
-  PoolOptions,
-  Pool as CorePool
+  PoolOptions
 } from './index';
 
 import { EventEmitter } from 'events';
 export * from './index';
+
+type QueryOrExecuteResult = RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader;
 
 export interface Connection extends EventEmitter {
   config: ConnectionOptions;
@@ -25,46 +26,45 @@ export interface Connection extends EventEmitter {
 
   changeUser(options: ConnectionOptions): Promise<void>;
 
-  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+  query<T extends QueryOrExecuteResult = any[]>(
     sql: string
   ): Promise<[T, FieldPacket[]]>;
-  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+  query<T extends QueryOrExecuteResult = any[]>(
     sql: string,
     values: any | any[] | { [param: string]: any }
   ): Promise<[T, FieldPacket[]]>;
-  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+  query<T extends QueryOrExecuteResult = any[]>(
     options: QueryOptions
   ): Promise<[T, FieldPacket[]]>;
-  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+  query<T extends QueryOrExecuteResult = any[]>(
     options: QueryOptions,
     values: any | any[] | { [param: string]: any }
   ): Promise<[T, FieldPacket[]]>;
 
   execute<
-    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+    T extends QueryOrExecuteResult = any[]
   >(
     sql: string
   ): Promise<[T, FieldPacket[]]>;
   execute<
-    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+    T extends QueryOrExecuteResult = any[]
   >(
     sql: string,
     values: any | any[] | { [param: string]: any }
   ): Promise<[T, FieldPacket[]]>;
   execute<
-    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+    T extends QueryOrExecuteResult = any[]
   >(
     options: QueryOptions
   ): Promise<[T, FieldPacket[]]>;
   execute<
-    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+    T extends QueryOrExecuteResult = any[]
   >(
     options: QueryOptions,
     values: any | any[] | { [param: string]: any }
   ): Promise<[T, FieldPacket[]]>;
 
-  prepare(options: string | QueryOptions): Promise<PreparedStatementInfo>;
-  unprepare(sql: string | QueryOptions): void;
+  unprepare(sql: string): void;
 
   end(options?: any): Promise<void>;
 
@@ -83,44 +83,43 @@ export interface Connection extends EventEmitter {
 }
 
 export interface PoolConnection extends Connection {
-  connection: Connection;
   release(): void;
 }
 
 export interface Pool extends EventEmitter {
-  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+  query<T extends QueryOrExecuteResult = any[]>(
     sql: string
   ): Promise<[T, FieldPacket[]]>;
-  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+  query<T extends QueryOrExecuteResult = any[]>(
     sql: string,
     values: any | any[] | { [param: string]: any }
   ): Promise<[T, FieldPacket[]]>;
-  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+  query<T extends QueryOrExecuteResult = any[]>(
     options: QueryOptions
   ): Promise<[T, FieldPacket[]]>;
-  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+  query<T extends QueryOrExecuteResult = any[]>(
     options: QueryOptions,
     values: any | any[] | { [param: string]: any }
   ): Promise<[T, FieldPacket[]]>;
 
   execute<
-    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+    T extends QueryOrExecuteResult = any[]
   >(
     sql: string
   ): Promise<[T, FieldPacket[]]>;
   execute<
-    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+    T extends QueryOrExecuteResult = any[]
   >(
     sql: string,
     values: any | any[] | { [param: string]: any }
   ): Promise<[T, FieldPacket[]]>;
   execute<
-    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+    T extends QueryOrExecuteResult = any[]
   >(
     options: QueryOptions
   ): Promise<[T, FieldPacket[]]>;
   execute<
-    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+    T extends QueryOrExecuteResult = any[]
   >(
     options: QueryOptions,
     values: any | any[] | { [param: string]: any }
@@ -132,13 +131,6 @@ export interface Pool extends EventEmitter {
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
   on(event: 'enqueue', listener: () => any): this;
   end(): Promise<void>;
-
-  escape(value: any): string;
-  escapeId(value: string): string;
-  escapeId(values: string[]): string;
-  format(sql: string, values?: any | any[] | { [param: string]: any }): string;
-
-  pool: CorePool;
 }
 
 export function createConnection(connectionUri: string): Promise<Connection>;
@@ -146,12 +138,3 @@ export function createConnection(
   config: ConnectionOptions
 ): Promise<Connection>;
 export function createPool(config: PoolOptions): Pool;
-
-export interface PreparedStatementInfo {
-  close(): Promise<void>;
-  execute(parameters: any[]): Promise<[RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader, FieldPacket[]]>;
-}
-
-export interface PromisePoolConnection extends Connection {
-  destroy(): any;
-} 
