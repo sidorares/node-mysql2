@@ -1,3 +1,18 @@
+# Changelog
+
+## [3.0.0-rc.1](https://github.com/sidorares/node-mysql2/compare/v2.3.3...v3.0.0-rc.1) (2022-11-06)
+
+
+### Bug Fixes
+
+* **typings:** Add the infileStreamFactory option to the type definition ([bf9cc4c](https://github.com/sidorares/node-mysql2/commit/bf9cc4c41e72f4a9014659a22b131739524bda1c))
+* webpack projects no longer show warning for cardinal dependency ([26c56ae](https://github.com/sidorares/node-mysql2/commit/26c56ae64846814eb8234c0d352871a7b6651d66))
+
+
+### Miscellaneous Chores
+
+* v3.0.0-rc.1 changes ([1b684bb](https://github.com/sidorares/node-mysql2/commit/1b684bbf8047200e5de5dd18874872880237de2f))
+
 3.0.0-rc.1 ( 6/11/2021 )
   - fix .ping() return value signature #1650
   - documentation: clarify `SUM()` and `AVG()` 
