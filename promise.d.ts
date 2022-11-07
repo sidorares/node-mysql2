@@ -145,6 +145,7 @@ export function createConnection(connectionUri: string): Promise<Connection>;
 export function createConnection(
   config: ConnectionOptions
 ): Promise<Connection>;
+export function createPool(connectionUri: string): Pool;
 export function createPool(config: PoolOptions): Pool;
 
 export interface PreparedStatementInfo {
