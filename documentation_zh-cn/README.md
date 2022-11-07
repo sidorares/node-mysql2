@@ -8,6 +8,8 @@
 [![Windows Build][appveyor-image]][appveyor-url]
 [![License][license-image]][license-url]
 
+[English](../README.md) | 简体中文
+
 > 适用于Node.js的MySQL客户端，专注于性能优化。支持SQL预处理、非UTF-8编码支持、二进制文件编码支持、压缩和SSL等等 [查看更多](https://github.com/sidorares/node-mysql2/tree/master/documentation)
 
 __目录__
