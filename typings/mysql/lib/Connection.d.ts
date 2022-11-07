@@ -272,7 +272,9 @@ declare class Connection extends EventEmitter {
 
     rollback(callback: (err: Query.QueryError | null) => void): void;
 
-    execute(sql: string, values: Array<any>, cb: (err: any, rows: Array<any>, fields: Array<any>) => any): any;
+    execute(sql: string, callback?: (err: any, rows: Array<any>, fields: Array<any>) => any): any;
+
+    execute(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: any, rows: Array<any>, fields: Array<any>) => any): any;
 
     unprepare(sql: string): any;
 
