@@ -227,6 +227,12 @@ declare namespace Connection {
          * Configure the minimum supported version of SSL, the default is TLSv1.2.
          */
         minVersion?: string;
+
+        /**
+         * You can verify the server name identity presented on the server certificate when connecting to a MySQL server.
+         * You should enable this but it is disabled by default right now for backwards compatibility.
+         */
+         verifyIdentity?: boolean;
     }
 }
 
