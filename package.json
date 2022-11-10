@@ -60,7 +60,7 @@
     "denque": "^2.0.1",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.6.3",
-    "long": "^4.0.0",
+    "long": "^5.2.1",
     "lru-cache": "^6.0.0",
     "mocha": "^10.0.0",
     "named-placeholders": "^1.1.2",
