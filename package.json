@@ -60,7 +60,7 @@
     "denque": "^2.0.1",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.6.3",
-    "long": "^4.0.0",
+    "long": "^5.2.1",
     "lru-cache": "^6.0.0",
     "mocha": "^10.0.0",
     "named-placeholders": "^1.1.2",
@@ -68,7 +68,7 @@
     "sqlstring": "^2.3.2"
   },
   "devDependencies": {
-    "@types/mocha": "^9.1.1",
+    "@types/mocha": "^10.0.0",
     "@types/node": "^18.7.1",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
@@ -82,7 +82,7 @@
     "eslint-plugin-markdown": "^3.0.0",
     "husky": "^8.0.2",
     "is-async-supported": "^1.2.0",
-    "lint-staged": "^11.2.0",
+    "lint-staged": "^13.0.3",
     "portfinder": "^1.0.28",
     "prettier": "^2.4.1",
     "progress": "^2.0.3",
