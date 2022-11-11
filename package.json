@@ -61,7 +61,7 @@
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.6.3",
     "long": "^5.2.1",
-    "lru-cache": "^6.0.0",
+    "lru-cache": "^7.14.1",
     "mocha": "^10.0.0",
     "named-placeholders": "^1.1.2",
     "seq-queue": "^0.0.5",
