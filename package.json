@@ -70,8 +70,8 @@
   "devDependencies": {
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.7.1",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
+    "@typescript-eslint/eslint-plugin": "^5.42.1",
+    "@typescript-eslint/parser": "^5.42.1",
     "assert-diff": "^3.0.2",
     "benchmark": "^2.1.4",
     "c8": "^7.10.0",
