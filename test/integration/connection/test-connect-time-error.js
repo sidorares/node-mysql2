@@ -10,7 +10,6 @@ portfinder.getPort((err, port) => {
   const server = mysql.createServer();
   server.listen(port);
   server.on('connection', conn => {
-    console.log('Here!');
     conn.writeError(new Error(ERROR_TEXT));
     conn.close();
   });
