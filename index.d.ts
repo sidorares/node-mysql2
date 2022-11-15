@@ -164,13 +164,6 @@ export interface Pool extends mysql.Connection {
   config: mysql.PoolOptions;
 }
 
-type authPlugins = (pluginMetadata: {
-  connection: Connection;
-  command: string;
-}) => (
-  pluginData: Buffer
-) => Promise<string> | string | Buffer | Promise<Buffer> | null;
-
 export interface ConnectionOptions extends mysql.ConnectionOptions {
   charsetNumber?: number;
   compress?: boolean;
@@ -191,7 +184,7 @@ export interface ConnectionOptions extends mysql.ConnectionOptions {
   queueLimit?: number;
   waitForConnections?: boolean;
   authPlugins?: {
-    [key: string]: authPlugins;
+    [key: string]: mysql.AuthPlugin;
   };
 }
 
