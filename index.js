@@ -43,6 +43,7 @@ exports.createServer = function(handler) {
 };
 
 exports.PoolConnection = require('./lib/pool_connection');
+exports.authPlugins = require('./lib/auth_plugins');
 exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
 exports.format = SqlString.format;
