@@ -76,6 +76,7 @@
     "assert-diff": "^3.0.2",
     "benchmark": "^2.1.4",
     "c8": "^7.10.0",
+    "cross-env": "^7.0.3",
     "error-stack-parser": "^2.0.3",
     "eslint": "^8.27.0",
     "eslint-plugin-async-await": "0.0.0",
