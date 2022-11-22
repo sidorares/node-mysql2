@@ -1,7 +1,6 @@
 'use strict';
 
 const createConnection = require('../../common.js').createConnection;
-const createPool = require('../../common.js').createPool;
 const test = require('utest');
 const assert = require('assert');
 
