@@ -6,7 +6,8 @@ import {
   QueryOptions,
   ConnectionOptions,
   PoolOptions,
-  Pool as CorePool
+  Pool as CorePool,
+  PoolCluster as CorePoolCluster
 } from './index';
 
 import { EventEmitter } from 'events';
@@ -141,12 +142,69 @@ export interface Pool extends EventEmitter {
   pool: CorePool;
 }
 
+export interface PoolCluster extends EventEmitter {
+  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    sql: string
+  ): Promise<[T, FieldPacket[]]>;
+  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    sql: string,
+    values: any | any[] | { [param: string]: any }
+  ): Promise<[T, FieldPacket[]]>;
+  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    options: QueryOptions
+  ): Promise<[T, FieldPacket[]]>;
+  query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    options: QueryOptions,
+    values: any | any[] | { [param: string]: any }
+  ): Promise<[T, FieldPacket[]]>;
+
+  execute<
+    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+  >(
+    sql: string
+  ): Promise<[T, FieldPacket[]]>;
+  execute<
+    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+  >(
+    sql: string,
+    values: any | any[] | { [param: string]: any }
+  ): Promise<[T, FieldPacket[]]>;
+  execute<
+    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+  >(
+    options: QueryOptions
+  ): Promise<[T, FieldPacket[]]>;
+  execute<
+    T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader
+  >(
+    options: QueryOptions,
+    values: any | any[] | { [param: string]: any }
+  ): Promise<[T, FieldPacket[]]>;
+
+  getConnection(): Promise<PoolConnection>;
+  on(event: 'connection', listener: (connection: PoolConnection) => any): this;
+  on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
+  on(event: 'release', listener: (connection: PoolConnection) => any): this;
+  on(event: 'enqueue', listener: () => any): this;
+  end(): Promise<void>;
+
+  escape(value: any): string;
+  escapeId(value: string): string;
+  escapeId(values: string[]): string;
+  format(sql: string, values?: any | any[] | { [param: string]: any }): string;
+  
+  of(pattern: string, selector?: string): PoolCluster;
+
+  poolCluster: CorePoolCluster;
+}
+
 export function createConnection(connectionUri: string): Promise<Connection>;
 export function createConnection(
   config: ConnectionOptions
 ): Promise<Connection>;
 export function createPool(connectionUri: string): Pool;
 export function createPool(config: PoolOptions): Pool;
+export function createPoolCluster(config: PoolClusterOptions): PoolCluster;
 
 export interface PreparedStatementInfo {
   close(): Promise<void>;
