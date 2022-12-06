@@ -1,3 +1,53 @@
+# Changelog
+
+## [3.0.0-rc.1](https://github.com/sidorares/node-mysql2/compare/v2.3.3...v3.0.0-rc.1) (2022-11-06)
+
+
+### Bug Fixes
+
+* **typings:** Add the infileStreamFactory option to the type definition ([bf9cc4c](https://github.com/sidorares/node-mysql2/commit/bf9cc4c41e72f4a9014659a22b131739524bda1c))
+* webpack projects no longer show warning for cardinal dependency ([26c56ae](https://github.com/sidorares/node-mysql2/commit/26c56ae64846814eb8234c0d352871a7b6651d66))
+
+
+### Miscellaneous Chores
+
+* v3.0.0-rc.1 changes ([1b684bb](https://github.com/sidorares/node-mysql2/commit/1b684bbf8047200e5de5dd18874872880237de2f))
+
+3.0.0-rc.1 ( 6/11/2021 )
+  - fix .ping() return value signature #1650
+  - documentation: clarify `SUM()` and `AVG()` 
+    return types difference with mysqljs/myql    #1649
+  - misc: add release-please action              #1631, #1647
+  - fix: .end() callback is not called 
+    when connection is in closed state           #1642, #1638
+  - typescript: getConnection typings fix        #1620
+  - fix uncatchable exception                    #1359
+  - add mysql_clear_password built in support    #1552
+  - typescript: typings unit test, variouts type 
+    improvements, server protocol additions      #1610, #1610
+  - typescript: more complete way of adding 
+    typings for the Server module                #1606
+  - typescript, documentation: improve prepared 
+    typings statements                           #1493
+  - typescript: add type declarations for Prepare 
+    & PrepareStatementInfo                       #1565
+  - fix: webpack projects no longer show warning 
+    for cardinal dependency                      #1589
+  - typescript: accept Buffer and Buffer[] in 
+    typings for key, cert, and ca                #1599
+  - fix: use rotatingXor instead of xor in 
+    sha256_password plugin                       #1592, #1044
+  - documentation: add Simplified Chinese        #1572
+  - fix: add type as an alias to columnType      #1546, #1549
+  - Update collation list up to MySQL 8.0.26     #1410
+  - typescript: Add minVersion for ssl option.   #1517
+  - Add support for multi-factor authentication  #1436
+  - typescript: add namedPlaceholders option to 
+    QueryOptions interface                       #1475
+  - fix: update how the ECONNRESET error is 
+    caught when connection already closing       #1438
+
+
 2.3.3 ( 14/11/2021 )
   - no changes compared to 2.3.3-rc.0
 

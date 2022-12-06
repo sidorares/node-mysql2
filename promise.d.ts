@@ -5,7 +5,8 @@ import {
   FieldPacket,
   QueryOptions,
   ConnectionOptions,
-  PoolOptions
+  PoolOptions,
+  Pool as CorePool
 } from './index';
 
 import { EventEmitter } from 'events';
@@ -62,7 +63,8 @@ export interface Connection extends EventEmitter {
     values: any | any[] | { [param: string]: any }
   ): Promise<[T, FieldPacket[]]>;
 
-  unprepare(sql: string): void;
+  prepare(options: string | QueryOptions): Promise<PreparedStatementInfo>;
+  unprepare(sql: string | QueryOptions): void;
 
   end(options?: any): Promise<void>;
 
@@ -130,10 +132,27 @@ export interface Pool extends EventEmitter {
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
   on(event: 'enqueue', listener: () => any): this;
   end(): Promise<void>;
+
+  escape(value: any): string;
+  escapeId(value: string): string;
+  escapeId(values: string[]): string;
+  format(sql: string, values?: any | any[] | { [param: string]: any }): string;
+
+  pool: CorePool;
 }
 
 export function createConnection(connectionUri: string): Promise<Connection>;
 export function createConnection(
   config: ConnectionOptions
 ): Promise<Connection>;
+export function createPool(connectionUri: string): Pool;
 export function createPool(config: PoolOptions): Pool;
+
+export interface PreparedStatementInfo {
+  close(): Promise<void>;
+  execute(parameters: any[]): Promise<[RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader, FieldPacket[]]>;
+}
+
+export interface PromisePoolConnection extends Connection {
+  destroy(): any;
+} 

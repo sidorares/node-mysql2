@@ -1,11 +1,12 @@
 {
   "name": "mysql2",
-  "version": "2.3.3",
+  "version": "3.0.0-rc.1",
   "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
   "directories": {
     "example": "examples"
   },
+  "typings": "typings/mysql/index",
   "scripts": {
     "lint": "npm run lint:docs && npm run lint:code",
     "lint:code": "eslint index.js promise.js \"lib/**/*.js\" \"test/**/*.js\" \"benchmarks/**/*.js\"",
@@ -17,7 +18,8 @@
     "prettier:docs": "prettier --single-quote --trailing-comma none --write README.md documentation/*",
     "precommit": "lint-staged",
     "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check",
-    "wait-port": "wait-on"
+    "wait-port": "wait-on",
+    "type-test": "node ./node_modules/typescript/bin/tsc -p tests.json && mocha typings/test --timeout 10000"
   },
   "lint-staged": {
     "*.js": [
@@ -53,29 +55,34 @@
   "author": "Andrey Sidorov <sidorares@yandex.ru>",
   "license": "MIT",
   "dependencies": {
-    "denque": "^2.0.1",
+    "@types/chai": "^4.3.4",
+    "chai": "^4.3.7",
+    "denque": "^2.1.0",
+    "eslint-config-prettier": "^8.5.0",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.6.3",
-    "long": "^4.0.0",
-    "lru-cache": "^6.0.0",
+    "long": "^5.2.1",
+    "lru-cache": "^7.14.1",
+    "mocha": "^10.0.0",
     "named-placeholders": "^1.1.2",
     "seq-queue": "^0.0.5",
     "sqlstring": "^2.3.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.7.1",
+    "@typescript-eslint/eslint-plugin": "^5.42.1",
+    "@typescript-eslint/parser": "^5.42.1",
     "assert-diff": "^3.0.2",
     "benchmark": "^2.1.4",
     "c8": "^7.10.0",
     "error-stack-parser": "^2.0.3",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint": "^8.27.0",
     "eslint-plugin-async-await": "0.0.0",
-    "eslint-plugin-markdown": "^2.2.1",
-    "husky": "^7.0.2",
+    "eslint-plugin-markdown": "^3.0.0",
+    "husky": "^8.0.2",
     "is-async-supported": "^1.2.0",
-    "lint-staged": "^11.2.0",
+    "lint-staged": "^13.0.3",
     "portfinder": "^1.0.28",
     "prettier": "^2.4.1",
     "progress": "^2.0.3",

@@ -49,7 +49,7 @@ declare class Pool extends EventEmitter {
 
     config: Pool.PoolOptions;
 
-    getConnection(callback: (err: NodeJS.ErrnoException, connection: PoolConnection) => any): void;
+    getConnection(callback: (err: NodeJS.ErrnoException | null, connection: PoolConnection) => any): void;
 
     query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
     query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
@@ -60,6 +60,8 @@ declare class Pool extends EventEmitter {
 
     on(event: string, listener: Function): this;
     on(event: 'connection', listener: (connection: PoolConnection) => any): this;
+
+    promise(promiseImpl?: any): any;
 }
 
 export = Pool;

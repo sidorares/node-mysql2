@@ -4,6 +4,7 @@
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
 import Query = require('./protocol/sequences/Query');
+import Prepare = require('./protocol/sequences/Prepare');
 import {OkPacket, FieldPacket, RowDataPacket, ResultSetHeader} from './protocol/packets/index';
 import {EventEmitter} from 'events';
 
@@ -188,9 +189,9 @@ declare namespace Connection {
         pfx?: string;
 
         /**
-         * A string holding the PEM encoded private key
+         * Either a string/buffer or list of strings/Buffers holding the PEM encoded private key(s) to use
          */
-        key?: string;
+        key?: string | string[] | Buffer | Buffer[];
 
         /**
          * A string of passphrase for the private key or pfx
@@ -198,14 +199,14 @@ declare namespace Connection {
         passphrase?: string;
 
         /**
-         * A string holding the PEM encoded certificate
+         * A string/buffer or list of strings/Buffers holding the PEM encoded certificate(s)
          */
-        cert?: string;
+        cert?: string | string[] | Buffer | Buffer[];
 
         /**
-         * Either a string or list of strings of PEM encoded CA certificates to trust.
+         * Either a string/Buffer or list of strings/Buffers of PEM encoded CA certificates to trust.
          */
-        ca?: string | string[];
+        ca?: string | string[] | Buffer | Buffer[];
 
         /**
          * Either a string or list of strings of PEM encoded CRLs (Certificate Revocation List)
@@ -221,6 +222,17 @@ declare namespace Connection {
          * You can also connect to a MySQL server without properly providing the appropriate CA to trust. You should not do this.
          */
         rejectUnauthorized?: boolean;
+      
+        /**
+         * Configure the minimum supported version of SSL, the default is TLSv1.2.
+         */
+        minVersion?: string;
+
+        /**
+         * You can verify the server name identity presented on the server certificate when connecting to a MySQL server.
+         * You should enable this but it is disabled by default right now for backwards compatibility.
+         */
+         verifyIdentity?: boolean;
     }
 }
 
@@ -264,7 +276,15 @@ declare class Connection extends EventEmitter {
 
     on(event: string, listener: Function): this;
 
-    rollback(callback: () => void): void;
+    rollback(callback: (err: Query.QueryError | null) => void): void;
+
+    execute(sql: string, callback?: (err: any, rows: Array<any>, fields: Array<any>) => any): any;
+
+    execute(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: any, rows: Array<any>, fields: Array<any>) => any): any;
+
+    unprepare(sql: string): any;
+
+    serverHandshake(args: any): any;
 }
 
 export = Connection;
