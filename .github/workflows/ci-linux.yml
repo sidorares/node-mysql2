@@ -77,7 +77,7 @@ jobs:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
-
+          
       - name: Install npm dependencies
         run: npm ci
       - name: Wait mysql server is ready
@@ -91,7 +91,7 @@ jobs:
         with:
           name: coverage-${{env.coverage-artifact-name}}
           path: coverage/cobertura-coverage.xml
-
+      
   coverage:
     permissions: write-all
     needs: [ tests-linux ]
@@ -105,7 +105,7 @@ jobs:
 
       - name: get list of coverage files
         run: echo "coverage-files=`find coverage | grep xml | paste -s -d\; -`"  >> $GITHUB_ENV
-
+      
       - name: ReportGenerator
         uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
         with:
