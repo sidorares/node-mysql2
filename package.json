@@ -38,7 +38,7 @@
   ],
   "files": [
     "lib",
-    "typings",
+    "typings/mysql",
     "index.js",
     "index.d.ts",
     "promise.js",
