@@ -130,7 +130,7 @@ declare namespace Connection {
          * Enabling both supportBigNumbers and bigNumberStrings forces big numbers (BIGINT and DECIMAL columns) to be
          * always returned as JavaScript String objects (Default: false). Enabling supportBigNumbers but leaving
          * bigNumberStrings disabled will return big numbers as String objects only when they cannot be accurately
-         * represented with [JavaScript Number objects] (http://ecma262-5.com/ELS5_HTML.htm#Section_8.5)
+         * represented with [JavaScript Number objects](https://262.ecma-international.org/5.1/#sec-8.5)
          * (which happens when they exceed the [-2^53, +2^53] range), otherwise they will be returned as Number objects.
          * This option is ignored if supportBigNumbers is disabled.
          */
