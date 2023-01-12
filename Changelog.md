@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.0](https://github.com/sidorares/node-mysql2/compare/v3.0.0-rc.1...v3.0.0) (2023-01-12)
+
+
+### Miscellaneous Chores
+
+* release 3.0.0 ([11692b2](https://github.com/sidorares/node-mysql2/commit/11692b223ff26784089f444ca6291295bd0e405e))
+
 ## [3.0.0-rc.1](https://github.com/sidorares/node-mysql2/compare/v2.3.3...v3.0.0-rc.1) (2022-11-06)
 
 
