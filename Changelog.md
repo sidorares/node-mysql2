@@ -2,6 +2,12 @@
 
 ## [3.0.0](https://github.com/sidorares/node-mysql2/compare/v3.0.0-rc.1...v3.0.0) (2023-01-12)
 
+* named-placeholders library is updated to use newer `lru-cache` dependency, allowing it do dedupe and be shared between mysql2 and named-placeholders - https://github.com/sidorares/node-mysql2/issues/1711, https://github.com/mysqljs/named-placeholders/pull/19
+* `chai` and `mocha` moved to devDependencies #1774
+* Amazon RDS ssl certificates updated including AWS China #1754
+* `TCP_NODELAY` flag enabled, avoiding long connect timeout in some scenarios #1751
+* typing improvements: #1675, #1674
+* fix:  ensure pooled connections get released #1666
 
 ### Miscellaneous Chores
 
