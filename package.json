@@ -56,7 +56,6 @@
   "license": "MIT",
   "dependencies": {
     "denque": "^2.1.0",
-    "eslint-config-prettier": "^8.5.0",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.6.3",
     "long": "^5.2.1",
@@ -77,6 +76,7 @@
     "chai": "^4.3.7",
     "error-stack-parser": "^2.0.3",
     "eslint": "^8.27.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-async-await": "0.0.0",
     "eslint-plugin-markdown": "^3.0.0",
     "husky": "^8.0.2",
