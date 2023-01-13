@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/sidorares/node-mysql2/compare/v3.0.0...v3.0.1) (2023-01-13)
+
+
+### Miscellaneous Chores
+
+* release 3.0.1 ([d5a6b2c](https://github.com/sidorares/node-mysql2/commit/d5a6b2ccccc7db4176c880e83c70ccd0be4ad81e))
+
 ## [3.0.0](https://github.com/sidorares/node-mysql2/compare/v3.0.0-rc.1...v3.0.0) (2023-01-12)
 
 * named-placeholders library is updated to use newer `lru-cache` dependency, allowing it do dedupe and be shared between mysql2 and named-placeholders - https://github.com/sidorares/node-mysql2/issues/1711, https://github.com/mysqljs/named-placeholders/pull/19
