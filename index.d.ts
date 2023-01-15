@@ -180,6 +180,8 @@ export interface ConnectionOptions extends mysql.ConnectionOptions {
   stream?: any;
   uri?: string;
   connectionLimit?: number;
+  maxIdle?: number;
+  idleTimeout?: number;
   Promise?: any;
   queueLimit?: number;
   waitForConnections?: boolean;
