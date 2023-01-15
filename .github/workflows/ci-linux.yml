@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16.x]
+        node-version: [16.x, 18.x]
         mysql-version: ["mysql:8.0.18", "mysql:8.0.22", "mysql:5.7"]
         use-compression: [0]
         use-tls: [0]
@@ -64,15 +64,15 @@ jobs:
     name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up MySQL
         run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=${{ env.MYSQL_PASSWORD }} -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
       - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
@@ -93,6 +93,7 @@ jobs:
           path: coverage/cobertura-coverage.xml
       
   coverage:
+    permissions: write-all
     needs: [ tests-linux ]
     runs-on: ubuntu-latest
     steps:
@@ -117,6 +118,7 @@ jobs:
 
       - name: Display coverage
         uses: ewjoachim/coverage-comment-action@v1
+        continue-on-error: true
         with:
           COVERAGE_FILE: "Cobertura.xml"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

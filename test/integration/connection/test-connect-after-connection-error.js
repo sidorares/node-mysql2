@@ -11,7 +11,6 @@ portfinder.getPort((err, port) => {
   let serverConnection;
   server.listen(port);
   server.on('connection', conn => {
-    console.log('Here!');
     conn.serverHandshake({
       serverVersion: '5.6.10',
       capabilityFlags: 2181036031
