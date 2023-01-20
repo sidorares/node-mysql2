@@ -8,7 +8,8 @@
 	"files": [
 		"typings/test/server.ts",
 		"typings/test/connection.ts",
-		"typings/test/pool.ts"
+		"typings/test/pool.ts",
+		"typings/test/promise.ts"
 	],
 	"typeRoots": [
 		"./typings",
@@ -18,4 +19,4 @@
 		"./node_modules",
 		"./typings"
 	]
-} 
+}
