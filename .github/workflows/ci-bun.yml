@@ -37,6 +37,10 @@ jobs:
         with:
           bun-version: ${{ matrix.bun-version }}
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
@@ -45,10 +49,14 @@ jobs:
           restore-keys: npm-
           
       - name: Install npm dependencies
-        run: bun install
+        run: npm ci
+  
+      # - name: Install npm dependencies
+      #   run: bun install
+
       - name: Wait mysql server is ready
-        run: bun tools/wait-up.js
+        run: node tools/wait-up.js
 
       - name: Run tests
         # todo: run full test suite once test createServer is implemented using Bun.listen
-        run: MYSQL_PORT=3306 MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} bun test/integration/connection/test-select-1.js
+        run: DEBUG=1 MYSQL_PORT=3306 bun test/integration/connection/test-select-1.js
