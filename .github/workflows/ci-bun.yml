@@ -59,4 +59,4 @@ jobs:
 
       - name: Run tests
         # todo: run full test suite once test createServer is implemented using Bun.listen
-        run: DEBUG=1 MYSQL_PORT=3306 bun test/integration/connection/test-select-1.js
+        run: FILTER=test-select MYSQL_PORT=3306 bun run test
