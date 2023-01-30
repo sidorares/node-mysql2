@@ -1,7 +1,7 @@
 'use strict';
 
 if (process.platform === 'win32') {
-  console.log('This test is known to fail on windows. FIXME: investi=gate why');
+  console.log('This test is known to fail on windows. FIXME: investigate why');
   process.exit(0);
 }
 

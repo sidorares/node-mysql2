@@ -130,7 +130,7 @@ function do_test(testIndex) {
     }
     if (err) {
       console.log(err);
-      process.exit(-1);
+      process.exit(1);
     }
     const arrOrColumn = function(c) {
       if (Array.isArray(c)) {

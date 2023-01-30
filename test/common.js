@@ -34,7 +34,7 @@ exports.waitDatabaseReady = function(callback) {
     conn.once('error', err => {
       if (err.code !== 'PROTOCOL_CONNECTION_LOST' && err.code !== 'ETIMEDOUT') {
         console.log('Unexpected error waiting for connection', err);
-        process.exit(-1);
+        process.exit(1);
       }
       try {
         conn.close();
