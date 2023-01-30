@@ -55,7 +55,7 @@ jobs:
             mysql-version: "mysql:5.7"
             use-compression: 0
             use-tls: 0
-          - filter: "5.1only"
+          - filter: "test-select-1"
             node-version: "16.x"
             mysql-version: "datagrip/mysql:5.1"
             use-compression: 0
