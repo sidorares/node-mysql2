@@ -80,6 +80,8 @@ exports.createConnection = function(args) {
     connectTimeout: args && args.connectTimeout,
   };
 
+  console.log('create connection:', params)
+
   // previously we had an adapter logic to benchmark against mysqljs/mysql and libmariaclient
   const driver = require('../index.js');
   const conn = driver.createConnection(params);
