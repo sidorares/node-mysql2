@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.1.0](https://github.com/sidorares/node-mysql2/compare/v3.0.1...v3.1.0) (2023-01-30)
+
+
+### Features
+
+* cleanup buffer/string conversions in hashing/xor helpers that were failing in Bun ([a2392e2](https://github.com/sidorares/node-mysql2/commit/a2392e27de64630affb6e3f6af26f5c59e2e95f9))
+
+
+### Bug Fixes
+
+* when port is pased as a string convert it to a number (Bun's net.connect does not automatically convert this) ([703ecb2](https://github.com/sidorares/node-mysql2/commit/703ecb2f788cf32acb1b49c7786ff6845640e215))
+
 ## [3.0.1](https://github.com/sidorares/node-mysql2/compare/v3.0.0...v3.0.1) (2023-01-13)
 
 
