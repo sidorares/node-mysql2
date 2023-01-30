@@ -1,5 +1,11 @@
 'use strict';
 
+// TODO: reach out to PlanetScale to clarify charset support
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test for planetscale');
+  process.exit(0);
+}
+
 const common = require('../../common');
 const connection = common.createConnection({ charset: 'KOI8R_GENERAL_CI' });
 const assert = require('assert');

@@ -1,7 +1,7 @@
 {
   "extends": ["prettier", "eslint:recommended",  "plugin:markdown/recommended"],
   "parserOptions": {
-    "ecmaVersion": 2017
+    "ecmaVersion": 2022
   },
   "plugins": ["markdown", "async-await"],
   "env": {

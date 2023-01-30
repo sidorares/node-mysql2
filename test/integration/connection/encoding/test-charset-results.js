@@ -1,5 +1,10 @@
 'use strict';
 
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test for planetscale (unsupported non utf8 charsets)');
+  process.exit(0);
+}
+
 const mysql = require('../../../../index.js');
 const common = require('../../../common');
 const connection = common.createConnection();
