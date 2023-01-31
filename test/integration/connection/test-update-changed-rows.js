@@ -1,5 +1,13 @@
 'use strict';
 
+// "changedRows" is not part of the mysql protocol and extracted from "info string" response
+// while valid for most mysql servers, it's not guaranteed to be present in all cases
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test for planetscale');
+  process.exit(0);
+}
+
+
 /**
  * <plusmancn@gmail.com> created at 2016.09.17 15:24:34
  *

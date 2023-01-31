@@ -54,6 +54,12 @@ exports.waitDatabaseReady = function(callback) {
 };
 
 exports.createConnection = function(args) {
+
+  const driver = require('../index.js');
+  if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
+    return driver.createConnection({ ...args, uri: process.env.MYSQL_CONNECTION_URL })
+  }
+
   if (!args) {
     args = {};
   }
@@ -80,8 +86,6 @@ exports.createConnection = function(args) {
     connectTimeout: args && args.connectTimeout,
   };
 
-  // previously we had an adapter logic to benchmark against mysqljs/mysql and libmariaclient
-  const driver = require('../index.js');
   const conn = driver.createConnection(params);
   return conn;
 };
@@ -114,10 +118,15 @@ exports.getConfig = function(input) {
 };
 
 exports.createPool = function(args) {
+  let driver = require('../index.js');
+  if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
+    return driver.createPool({ ...args, uri: process.env.MYSQL_CONNECTION_URL })
+  }
+
   if (!args) {
     args = {};
   }
-  let driver = require('../index.js');
+
   if (process.env.BENCHMARK_MYSQL1) {
     driver = require('mysql');
   }
@@ -126,9 +135,9 @@ exports.createPool = function(args) {
 };
 
 exports.createPoolCluster = function(args = {}) {
-  let driver = require('../index.js');
-  if (process.env.BENCHMARK_MYSQL1) {
-    driver = require('mysql');
+  const driver = require('../index.js');
+  if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
+    return driver.createPoolCluster({ ...args, uri: process.env.MYSQL_CONNECTION_URL })
   }
   return driver.createPoolCluster(args)
 }

@@ -1,5 +1,10 @@
 'use strict';
 
+if (process.env.MYSQL_CONNECTION_URL) {
+  console.log('skipping test when mysql server is configured using MYSQL_CONNECTION_URL');
+  process.exit(0);
+}
+
 const common = require('../../common');
 const connection = common.createConnectionWithURI();
 const assert = require('assert');

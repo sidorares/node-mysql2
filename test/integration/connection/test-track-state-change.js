@@ -1,5 +1,10 @@
 'use strict';
 
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test for planetscale');
+  process.exit(0);
+}
+
 const common = require('../../common');
 const connection = common.createConnection();
 const assert = require('assert');
