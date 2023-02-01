@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Set up MySQL
-        if: ${{ !startsWith(env.MYSQL_CONNECTION_URL, 'mysql://') }}
+        if: ${{ matrix.mysql-version }}
         run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
 
       - name: Set up Node.js ${{ matrix.node-version }}
@@ -89,13 +89,13 @@ jobs:
         run: npm ci
 
       - name: Wait mysql server is ready
-        if: ${{ !startsWith(env.MYSQL_CONNECTION_URL, 'mysql://') }}
+        if: ${{ matrix.mysql-version }}
         run: node tools/wait-up.js
 
       - name: Run tests
         run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run coverage-test
 
-      - run: echo "coverage-artifact-name=`echo -n "${{github.run_id}}-${{ matrix.node-version }}-${{ matrix.mysql-version }}-${{matrix.use-tls}}-${{matrix.use-compression}}" | shasum | cut -d " " -f 1`"  >> $GITHUB_ENV   
+      - run: echo "coverage-artifact-name=`echo -n "${{github.run_id}}-${{ matrix.node-version }}-${{ matrix.mysql-version }}-{${{ matrix.mysql_connection_url_key }}-${{matrix.use-tls}}-${{matrix.use-compression}}" | shasum | cut -d " " -f 1`"  >> $GITHUB_ENV   
       - uses: actions/upload-artifact@v3
         with:
           name: coverage-${{env.coverage-artifact-name}}
