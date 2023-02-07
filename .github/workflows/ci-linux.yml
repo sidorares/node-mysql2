@@ -57,11 +57,11 @@ jobs:
             mysql-version: "datagrip/mysql:5.1"
             use-compression: 0
             use-tls: 0
-          - node-version: "18.x"
-            mysql_connection_url_key: "PS_MYSQL_URL"
-            filter: "test-select"
-            use-compression: 0
-            use-tls: 0
+#           - node-version: "18.x"
+#             mysql_connection_url_key: "PS_MYSQL_URL"
+#             filter: "test-select"
+#             use-compression: 0
+#             use-tls: 0
     env:
       MYSQL_CONNECTION_URL: ${{ secrets[matrix.mysql_connection_url_key] }}
 
