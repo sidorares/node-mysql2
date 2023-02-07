@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/sidorares/node-mysql2/compare/v3.1.0...v3.1.1) (2023-02-07)
+
+
+### Bug Fixes
+
+* remove accidental log in caching_sha2_password.js ([c1202b6](https://github.com/sidorares/node-mysql2/commit/c1202b673c8ba9f709c3ebc0d1717ccffca1bd4b))
+
 ## [3.1.0](https://github.com/sidorares/node-mysql2/compare/v3.0.1...v3.1.0) (2023-01-30)
 
 
