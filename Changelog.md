@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.2](https://github.com/sidorares/node-mysql2/compare/v3.1.1...v3.1.2) (2023-02-08)
+
+
+### Bug Fixes
+
+* update `lru-cache` reset method to clear ([114f266](https://github.com/sidorares/node-mysql2/commit/114f266b18802e52d6b130c2cf379f61a996c2b0))
+
 ## [3.1.1](https://github.com/sidorares/node-mysql2/compare/v3.1.0...v3.1.1) (2023-02-07)
 
 
