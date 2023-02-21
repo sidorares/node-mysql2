@@ -1,6 +1,6 @@
-'use strict';
 
 // get the client
+// @ts-ignore
 import * as mysql from 'mysql2';
 import ConnectionType = require('../mysql/lib/Connection');
 import { expect } from 'chai'
