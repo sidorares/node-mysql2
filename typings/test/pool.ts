@@ -1,4 +1,3 @@
-'use strict';
 
 const portfinder = require('portfinder');
 import { createPool } from '../../index';
