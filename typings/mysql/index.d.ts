@@ -14,6 +14,15 @@ import {QueryOptions, QueryError} from './lib/protocol/sequences/Query';
 import {PrepareStatementInfo} from './lib/protocol/sequences/Prepare';
 import Server = require('./lib/Server');
 
+// Expose class interfaces
+export interface Connection extends BaseConnection {}
+export interface PoolConnection extends BasePoolConnection {}
+export interface PoolConnectionBase extends IPoolConnectionBase {}
+export interface Pool extends BasePool {}
+export interface PoolCluster extends BasePoolCluster {}
+export interface Query extends BaseQuery {}
+export interface Prepare extends BasePrepare {}
+
 export function createConnection(connectionUri: string): Connection;
 export function createConnection(config: BaseConnection.ConnectionOptions): Connection;
 export function createPool(config: BasePool.PoolOptions): BasePool;
@@ -38,15 +47,6 @@ export {
     PrepareStatementInfo
 };
 export * from './lib/protocol/packets/index';
-
-// Expose class interfaces
-export interface Connection extends BaseConnection {}
-export interface PoolConnection extends BasePoolConnection {}
-export interface PoolConnectionBase extends IPoolConnectionBase {}
-export interface Pool extends BasePool {}
-export interface PoolCluster extends BasePoolCluster {}
-export interface Query extends BaseQuery {}
-export interface Prepare extends BasePrepare {}
 
 export type AuthPlugin = (pluginMetadata: {
   connection: Connection;
