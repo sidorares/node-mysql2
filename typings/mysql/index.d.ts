@@ -3,13 +3,14 @@ import * as crypto from 'crypto';
 import BaseConnection = require('./lib/Connection');
 import {ConnectionOptions, SslOptions} from './lib/Connection';
 import BasePoolConnection = require('./lib/PoolConnection');
+import IPoolConnectionBase = require('./lib/PoolConnectionBase');
 import BasePool = require('./lib/Pool');
 import {PoolOptions} from './lib/Pool';
 import BasePoolCluster = require('./lib/PoolCluster');
 import {PoolClusterOptions} from './lib/PoolCluster';
 import BaseQuery = require('./lib/protocol/sequences/Query');
 import BasePrepare = require('./lib/protocol/sequences/Prepare');
-import {QueryOptions, StreamOptions, QueryError} from './lib/protocol/sequences/Query';
+import {QueryOptions, QueryError} from './lib/protocol/sequences/Query';
 import {PrepareStatementInfo} from './lib/protocol/sequences/Prepare';
 import Server = require('./lib/Server');
 
@@ -41,6 +42,7 @@ export * from './lib/protocol/packets/index';
 // Expose class interfaces
 export interface Connection extends BaseConnection {}
 export interface PoolConnection extends BasePoolConnection {}
+export interface PoolConnectionBase extends IPoolConnectionBase {}
 export interface Pool extends BasePool {}
 export interface PoolCluster extends BasePoolCluster {}
 export interface Query extends BaseQuery {}
