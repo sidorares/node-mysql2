@@ -27,7 +27,7 @@ declare namespace Pool {
         connectionLimit?: number;
 
         /**
-         * The minimum number of idle connections. (Default: 10)
+         * The maximum number of idle connections. (Default: 10)
          */
          maxIdle?: number;
 
