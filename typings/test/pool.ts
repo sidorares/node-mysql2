@@ -1,7 +1,7 @@
 
 const portfinder = require('portfinder');
 import { createPool } from '../../index';
-import { Pool, PoolOptions, PromisePoolConnection } from '../../promise';
+import { Pool, PoolOptions, PromisePoolConnection, PoolConnection } from '../../promise';
 import { expect } from 'chai'
 
 portfinder.getPort(async (err: any, port: number) => {
@@ -34,4 +34,13 @@ portfinder.getPort(async (err: any, port: number) => {
 			}).catch(done);
 		})
 	});
+
+  describe('Pool.getConnection', () => {
+    it('get a pool connection', (done) => {
+      pool.getConnection().then((connection: PoolConnection) => {
+        expect(connection.config.user).to.equal('test_user');
+        done();
+      }).catch(done);
+    });
+  });
 });
