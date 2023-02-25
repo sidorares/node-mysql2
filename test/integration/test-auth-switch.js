@@ -3,10 +3,17 @@
 const mysql = require('../../index.js');
 const Command = require('../../lib/commands/command.js');
 const Packets = require('../../lib/packets/index.js');
+const {version} = require('../../package.json')
 
 const assert = require('assert');
 
-const connectAttributes = { foo: 'bar', baz: 'foo' };
+const connectAttributes = {foo: 'bar', baz: 'foo'};
+
+const defaultConnectAttributes = {
+  _client_name: 'Node-MySQL-2',
+  _client_version: version
+};
+
 let count = 0;
 
 class TestAuthSwitchHandshake extends Command {
@@ -36,7 +43,8 @@ class TestAuthSwitchHandshake extends Command {
     assert.equal(clientHelloReply.user, 'test_user');
     assert.equal(clientHelloReply.database, 'test_database');
     assert.equal(clientHelloReply.authPluginName, 'mysql_native_password');
-    assert.deepEqual(clientHelloReply.connectAttributes, connectAttributes);
+    assert.deepEqual(clientHelloReply.connectAttributes,
+      {...connectAttributes, ...defaultConnectAttributes});
     const asr = new Packets.AuthSwitchRequest(this.args);
     connection.writePacket(asr.toPacket());
     return TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse;
