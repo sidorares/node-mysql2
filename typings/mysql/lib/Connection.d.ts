@@ -229,6 +229,11 @@ declare namespace Connection {
         minVersion?: string;
 
         /**
+	 * Configure the maximum supported version of SSL, the default is TLSv1.3.
+         */
+        maxVersion?: string; 
+
+        /**
          * You can verify the server name identity presented on the server certificate when connecting to a MySQL server.
          * You should enable this but it is disabled by default right now for backwards compatibility.
          */
