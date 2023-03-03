@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/sidorares/node-mysql2/compare/v3.1.2...v3.2.0) (2023-03-03)
+
+
+### Features
+
+* maxVersion ssl option to tls.createSecureContext ([0c40ef9](https://github.com/sidorares/node-mysql2/commit/0c40ef9f596fa3bc4f046f523c3595fe7065fde3))
+
 ## [3.1.2](https://github.com/sidorares/node-mysql2/compare/v3.1.1...v3.1.2) (2023-02-08)
 
 
