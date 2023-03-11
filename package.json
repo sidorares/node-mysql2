@@ -52,7 +52,7 @@
   "engines": {
     "node": ">= 8.0"
   },
-  "author": "Andrey Sidorov <sidorares@yandex.ru>",
+  "author": "Andrey Sidorov <andrey.sidorov@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "denque": "^2.1.0",
