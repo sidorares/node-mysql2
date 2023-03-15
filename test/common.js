@@ -53,9 +53,7 @@ exports.waitDatabaseReady = function(callback) {
   tryConnect();
 };
 
-exports.createConnection = function(args) {
-
-  const driver = require('../index.js');
+function createConnectionFromDriver(driver, args) {
   if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
     return driver.createConnection({ ...args, uri: process.env.MYSQL_CONNECTION_URL })
   }
@@ -88,6 +86,18 @@ exports.createConnection = function(args) {
 
   const conn = driver.createConnection(params);
   return conn;
+}
+
+exports.createConnection = function(args) {
+
+  const driver = require('../index.js');
+  return createConnectionFromDriver(driver, args);
+};
+
+exports.createConnectionPromise = function(args) {
+
+  const driver = require('../promise.js');
+  return createConnectionFromDriver(driver, args);
 };
 
 exports.getConfig = function(input) {

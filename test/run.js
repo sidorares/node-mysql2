@@ -7,7 +7,7 @@ const options = {
 };
 
 if (process.env.FILTER) {
-  options.include = new RegExp(`${process.env.FILTER}.*\\.js$`);
+  options.include = new RegExp(`${process.env.FILTER}.*\\.m?js$`);
 }
 
 require('urun')(__dirname, options);
