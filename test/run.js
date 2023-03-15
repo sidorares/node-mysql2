@@ -8,6 +8,8 @@ const options = {
 
 if (process.env.FILTER) {
   options.include = new RegExp(`${process.env.FILTER}.*\\.m?js$`);
+} else {
+  options.include = /test-.+\.m?js$/
 }
 
 require('urun')(__dirname, options);
