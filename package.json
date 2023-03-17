@@ -85,7 +85,7 @@
     "portfinder": "^1.0.28",
     "prettier": "^2.4.1",
     "progress": "^2.0.3",
-    "typescript": "^4.4.3",
+    "typescript": "^5.0.2",
     "urun": "0.0.8",
     "utest": "0.0.8"
   }
