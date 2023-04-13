@@ -1,7 +1,7 @@
 'use strict';
 
 // get the client
-import * as mysql from 'mysql2';
+import * as mysql from '../../index';
 import ConnectionType = require('../mysql/lib/Connection');
 import { expect } from 'chai'
 
