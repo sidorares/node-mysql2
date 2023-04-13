@@ -290,6 +290,8 @@ declare class Connection extends EventEmitter {
     unprepare(sql: string): any;
 
     serverHandshake(args: any): any;
+
+    promise(): Promise<Connection>;
 }
 
 export = Connection;
