@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.1](https://github.com/sidorares/node-mysql2/compare/v3.2.0...v3.2.1) (2023-04-13)
+
+
+### Bug Fixes
+
+* Add typings for Connection.promise(). ([#1949](https://github.com/sidorares/node-mysql2/issues/1949)) ([e3ca310](https://github.com/sidorares/node-mysql2/commit/e3ca3107cbae0050d307f02514598aff4e8ecd60))
+* PoolConnection redundancy when extending Connection interface in TypeScript ([7c62d11](https://github.com/sidorares/node-mysql2/commit/7c62d1177e79b5063a11fa15a2ac4e3dc3e2a2ed))
+
 ## [3.2.0](https://github.com/sidorares/node-mysql2/compare/v3.1.2...v3.2.0) (2023-03-03)
 
 
