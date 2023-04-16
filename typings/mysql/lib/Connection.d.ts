@@ -11,6 +11,12 @@ import {EventEmitter} from 'events';
 declare namespace Connection {
 
     export interface ConnectionOptions {
+
+        /**
+         * DECIMAL and NEWDECIMAL types will be returned as numbers if this option is set to `true` ( default: `false`).
+         */
+        decimalNumbers?: boolean;
+
         /**
          * The MySQL user to authenticate as
          */
