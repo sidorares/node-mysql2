@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/sidorares/node-mysql2/compare/v3.2.1...v3.2.2) (2023-04-16)
+
+
+### Bug Fixes
+
+* `ConnectionOptions` conflict between `mysql` and `mysql/promise` ([#1955](https://github.com/sidorares/node-mysql2/issues/1955)) ([eca8bda](https://github.com/sidorares/node-mysql2/commit/eca8bda9305ab07cf0e46f16f3f13bf1fd82787d))
+
 ## [3.2.1](https://github.com/sidorares/node-mysql2/compare/v3.2.0...v3.2.1) (2023-04-13)
 
 
