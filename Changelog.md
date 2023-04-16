@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.3](https://github.com/sidorares/node-mysql2/compare/v3.2.2...v3.2.3) (2023-04-16)
+
+
+### Bug Fixes
+
+* **types:** add decimalNumbers to createConnection/createPool typings. fixes [#1803](https://github.com/sidorares/node-mysql2/issues/1803) ([#1817](https://github.com/sidorares/node-mysql2/issues/1817)) ([bb48462](https://github.com/sidorares/node-mysql2/commit/bb48462db7b83bd4825a3d53e192e5363139ec3c))
+
 ## [3.2.2](https://github.com/sidorares/node-mysql2/compare/v3.2.1...v3.2.2) (2023-04-16)
 
 
