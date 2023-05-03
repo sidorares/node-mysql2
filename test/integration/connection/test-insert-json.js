@@ -20,7 +20,7 @@ connection.query('INSERT INTO json_test VALUES (?)', ['{"k": "v"'], err => {
   errorNumInvalidJSON = err.errno;
 });
 
-connection.query('INSERT INTO json_test VALUES (?)', ['{"k": "v"}'], (err, res) => {
+connection.query('INSERT INTO json_test VALUES (?)', ['{"k": "v"}'], err => {
   if (err) throw err;
 });
 
