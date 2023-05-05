@@ -68,7 +68,7 @@
   "devDependencies": {
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.0",
-    "@types/node": "^18.7.1",
+    "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "assert-diff": "^3.0.2",
