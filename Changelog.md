@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/sidorares/node-mysql2/compare/v3.2.4...v3.3.0) (2023-05-06)
+
+
+### Features
+
+* Added updated/new error codes gathered from MySQL 8.0 source code ([#1990](https://github.com/sidorares/node-mysql2/issues/1990)) ([85dc6e5](https://github.com/sidorares/node-mysql2/commit/85dc6e56310db1d78078588f48714f574873eec3))
+
 ## [3.2.4](https://github.com/sidorares/node-mysql2/compare/v3.2.3...v3.2.4) (2023-04-25)
 
 
