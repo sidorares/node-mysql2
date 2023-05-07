@@ -153,6 +153,4 @@ export interface PreparedStatementInfo {
   execute(parameters: any[]): Promise<[RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader, FieldPacket[]]>;
 }
 
-export interface PromisePoolConnection extends Connection {
-  destroy(): any;
-} 
+export interface PromisePoolConnection extends Pool {}
