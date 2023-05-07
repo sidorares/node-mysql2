@@ -4,6 +4,7 @@ import {OkPacket, RowDataPacket, FieldPacket, ResultSetHeader} from './protocol/
 import Connection = require('./Connection');
 import PoolConnection = require('./PoolConnection');
 import {EventEmitter} from 'events';
+import { PromisePoolConnection } from '../../../promise';
 
 declare namespace Pool {
 
@@ -65,6 +66,9 @@ declare class Pool extends EventEmitter {
     query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
     query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, callback?: (err: Query.QueryError | null, result: T, fields?: FieldPacket[]) => any): Query;
     query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+
+    execute(sql: string, callback?: (err: any, rows: RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[] | ResultSetHeader, fields: FieldPacket[]) => void): void;
+    execute(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: any, rows: RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[] | ResultSetHeader, fields: FieldPacket[]) => void): void;
 
     end(callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any): void;
 
