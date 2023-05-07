@@ -289,9 +289,8 @@ declare class Connection extends EventEmitter {
 
     rollback(callback: (err: Query.QueryError | null) => void): void;
 
-    execute(sql: string, callback?: (err: any, rows: Array<any>, fields: Array<any>) => any): any;
-
-    execute(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: any, rows: Array<any>, fields: Array<any>) => any): any;
+    execute(sql: string, callback?: (err: any, rows: RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[] | ResultSetHeader, fields: FieldPacket[]) => void): void;
+    execute(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: any, rows: RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[] | ResultSetHeader, fields: FieldPacket[]) => void): void;
 
     unprepare(sql: string): any;
 
