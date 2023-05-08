@@ -78,6 +78,7 @@ export interface Connection extends mysql.Connection {
   writeEof(warnings?: number, statusFlags?: number): void;
   writeTextResult(rows?: Array<any>, columns?: Array<any>): void;
   writePacket(packet: any): void;
+  promise(promiseImpl?: PromiseConstructor): PromiseConnection;
   sequenceId: number;
 }
 
@@ -157,7 +158,7 @@ export interface Pool extends mysql.Connection {
   on(event: 'enqueue', listener: () => any): this;
   unprepare(sql: string): mysql.PrepareStatementInfo;
   prepare(sql: string, callback?: (err: mysql.QueryError | null, statement: mysql.PrepareStatementInfo) => any): mysql.Prepare;
-
+  promise(promiseImpl?: PromiseConstructor): PromisePoolConnection;
   config: mysql.PoolOptions;
 }
 
