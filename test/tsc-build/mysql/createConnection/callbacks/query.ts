@@ -20,12 +20,12 @@ import { access, sql, sqlPS, values } from '../../baseConnection';
   });
 
   /** Overload: query(QueryOptions, () => {}}) II */
-  db.query({ sql, values }, (err, result, fields) => {
+  db.query({ sql: sqlPS, values }, (err, result, fields) => {
     console.log(err, result, fields);
   });
 
   /** Overload: query(QueryOptions, values, () => {}}) */
-  db.query({ sql }, values, (err, result, fields) => {
+  db.query({ sql: sqlPS }, values, (err, result, fields) => {
     console.log(err, result, fields);
   });
 }
@@ -49,12 +49,12 @@ import { access, sql, sqlPS, values } from '../../baseConnection';
     });
 
     /** Overload: query(QueryOptions, () => {}}) II */
-    connection.query({ sql, values }, (err, result, fields) => {
+    connection.query({ sql: sqlPS, values }, (err, result, fields) => {
       console.log(err, result, fields);
     });
 
     /** Overload: query(QueryOptions, values, () => {}}) */
-    connection.query({ sql }, values, (err, result, fields) => {
+    connection.query({ sql: sqlPS }, values, (err, result, fields) => {
       console.log(err, result, fields);
     });
   });

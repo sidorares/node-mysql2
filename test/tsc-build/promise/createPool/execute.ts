@@ -1,8 +1,8 @@
-import { mysql } from '../../../index';
-import { access, sql, sqlPS, values } from '../../baseConnection';
+import { mysqlp as mysql } from '../../index';
+import { access, sql, sqlPS, values } from '../baseConnection';
 
 (async () => {
-  const db = mysql.createPool(access).promise();
+  const db = mysql.createPool(access);
 
   {
     /** Overload: execute(sql) */
@@ -39,7 +39,7 @@ import { access, sql, sqlPS, values } from '../../baseConnection';
 
 /** getConnection */
 (async () => {
-  const db = await mysql.createPool(access).promise().getConnection();
+  const db = await mysql.createPool(access).getConnection();
 
   {
     /** Overload: execute(sql) */
