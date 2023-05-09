@@ -12,7 +12,7 @@ import BasePrepare = require('./lib/protocol/sequences/Prepare');
 import {QueryOptions, StreamOptions, QueryError} from './lib/protocol/sequences/Query';
 import {PrepareStatementInfo} from './lib/protocol/sequences/Prepare';
 import Server = require('./lib/Server');
-import { Pool as PromisePool } from '../../promise';
+import { Pool as PromisePool, Connection as PromiseConnection } from '../../promise';
 
 export function createConnection(connectionUri: string): Connection;
 export function createConnection(config: BaseConnection.ConnectionOptions): Connection;
@@ -41,7 +41,7 @@ export * from './lib/protocol/packets/index';
 
 // Expose class interfaces
 export interface Connection extends BaseConnection {
-  promise(promiseImpl?: PromiseConstructor): PromisePool;
+  promise(promiseImpl?: PromiseConstructor): PromiseConnection;
 }
 export interface PoolConnection extends BasePoolConnection {}
 export interface Pool extends BasePool {}

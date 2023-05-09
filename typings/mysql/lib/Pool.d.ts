@@ -4,6 +4,7 @@ import {OkPacket, RowDataPacket, FieldPacket, ResultSetHeader} from './protocol/
 import Connection = require('./Connection');
 import PoolConnection = require('./PoolConnection');
 import {EventEmitter} from 'events';
+import {PoolConnection as PromisePoolConnection} from '../../../promise';
 
 declare namespace Pool {
 
@@ -66,12 +67,17 @@ declare class Pool extends EventEmitter {
     query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, callback?: (err: Query.QueryError | null, result: T, fields?: FieldPacket[]) => any): Query;
     query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
 
+    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, callback?: (err: Query.QueryError | null, result: T, fields?: FieldPacket[]) => any): Query;
+    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+
     end(callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any): void;
 
     on(event: string, listener: Function): this;
     on(event: 'connection', listener: (connection: PoolConnection) => any): this;
 
-    promise(promiseImpl?: any): any;
+    promise(promiseImpl?: PromiseConstructor): PromisePoolConnection;
 }
 
 export = Pool;
