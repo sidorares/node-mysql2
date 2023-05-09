@@ -2,7 +2,7 @@ import { mysqlp as mysql } from '../../index';
 import { access, sql, sqlPS, values } from '../baseConnection';
 
 (async () => {
-  const db = mysql.createPool(access);
+  const db = await mysql.createConnection(access);
 
   {
     /** Overload: query(sql) */
