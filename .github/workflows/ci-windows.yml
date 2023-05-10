@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x, 20.x]
         mysql-version: ['8.0']
         use-compression: [0, 1]
         use-tls: [0, 1]
