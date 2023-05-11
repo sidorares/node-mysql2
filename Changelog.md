@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.3.1](https://github.com/sidorares/node-mysql2/compare/v3.3.0...v3.3.1) (2023-05-11)
+
+
+### Bug Fixes
+
+* LRU constructor ([#2004](https://github.com/sidorares/node-mysql2/issues/2004)) ([fd3d117](https://github.com/sidorares/node-mysql2/commit/fd3d117da82cc5c5fa5a3701d7b33ca77691bc61))
+* Missing types in "mysql" import ([#1995](https://github.com/sidorares/node-mysql2/issues/1995)) ([b8c79d0](https://github.com/sidorares/node-mysql2/commit/b8c79d055762e927da147d08fb375cd11d303868))
+
 ## [3.3.0](https://github.com/sidorares/node-mysql2/compare/v3.2.4...v3.3.0) (2023-05-06)
 
 
