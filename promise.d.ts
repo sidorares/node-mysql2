@@ -84,6 +84,7 @@ export interface Connection extends EventEmitter {
 
 export interface PoolConnection extends Connection {
   connection: Connection;
+  getConnection(): Promise<PoolConnection>;
   release(): void;
 }
 
@@ -153,6 +154,3 @@ export interface PreparedStatementInfo {
   execute(parameters: any[]): Promise<[RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader, FieldPacket[]]>;
 }
 
-export interface PromisePoolConnection extends Connection {
-  destroy(): any;
-} 

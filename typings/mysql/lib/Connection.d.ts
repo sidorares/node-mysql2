@@ -289,9 +289,11 @@ declare class Connection extends EventEmitter {
 
     rollback(callback: (err: Query.QueryError | null) => void): void;
 
-    execute(sql: string, callback?: (err: any, rows: Array<any>, fields: Array<any>) => any): any;
+    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, callback?: (err: Query.QueryError | null, result: T, fields?: FieldPacket[]) => any): Query;
+    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
 
-    execute(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: any, rows: Array<any>, fields: Array<any>) => any): any;
 
     unprepare(sql: string): any;
 
