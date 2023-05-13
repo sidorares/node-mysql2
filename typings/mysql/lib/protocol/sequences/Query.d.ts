@@ -89,19 +89,9 @@ declare namespace Query {
          */
         code: string;
 
-        /**
-         * The sql state marker
-         */
         sqlStateMarker?: string;
-
-        /**
-         * The sql state
-         */
         sqlState?: string;
-
-        /**
-         * The field count
-         */
+        sqlMessage?: string;
         fieldCount?: number;
 
         /**
