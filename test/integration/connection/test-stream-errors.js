@@ -62,6 +62,9 @@ const server = common.createServer(
       clientConnection.stream.end();
       server.close();
     });
+    conn.on('warn', err => {
+      assert.fail(err);
+    });
   }
 );
 

@@ -62,6 +62,9 @@ const server = common.createServer(
       // this is extra (incorrect) packet - client should emit error on receiving it
       conn.writeOk();
     });
+    conn.on('warn', err => {
+      assert.fail(err);
+    });
   }
 );
 

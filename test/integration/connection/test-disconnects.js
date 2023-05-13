@@ -68,6 +68,9 @@ const server = common.createServer(
         ]
       );
     });
+    conn.on('warn', err => {
+      assert.fail(err);
+    });
   }
 );
 

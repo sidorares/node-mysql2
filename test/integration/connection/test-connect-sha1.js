@@ -40,6 +40,9 @@ portfinder.getPort((err, port) => {
       queryCalls++;
       conn.close();
     });
+    conn.on('warn', err => {
+      assert.fail(err);
+    });
   });
 
   const connection = mysql.createConnection({

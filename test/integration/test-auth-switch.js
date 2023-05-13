@@ -61,6 +61,7 @@ class TestAuthSwitchHandshake extends Command {
       return TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse;
     }
     connection.writeOk();
+    connection._resetSequenceId();
     return TestAuthSwitchHandshake.prototype.dispatchCommands;
   }
 
