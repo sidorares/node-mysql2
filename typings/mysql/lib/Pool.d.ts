@@ -49,7 +49,7 @@ declare namespace Pool {
         enableKeepAlive?: boolean;
 
         /**
-         * If keep-alive is enabled users can supply an initial delay.
+         * If keep-alive is enabled users can supply an initial delay. (Default: 0)
          */
         keepAliveInitialDelay?: number;
     }
