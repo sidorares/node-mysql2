@@ -132,7 +132,8 @@ const pool = mysql.createPool({
   database: 'test',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  enableKeepAlive: true
 });
 ```
 该池不会预先创建所有连接，而是根据需要创建它们，直到达到连接限制。
