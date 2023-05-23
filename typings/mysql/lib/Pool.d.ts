@@ -44,13 +44,12 @@ declare namespace Pool {
         queueLimit?: number;
 
         /**
-         * Enable keep-alive on the socket.  It's disabled by default, but the
-         * user can enable it and supply an initial delay.
+         * Enable keep-alive on the socket. (Default: true)
          */
         enableKeepAlive?: boolean;
 
         /**
-         * If keep-alive is enabled users can supply an initial delay.
+         * If keep-alive is enabled users can supply an initial delay. (Default: 0)
          */
         keepAliveInitialDelay?: number;
     }
