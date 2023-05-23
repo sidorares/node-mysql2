@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.2](https://github.com/sidorares/node-mysql2/compare/v3.3.1...v3.3.2) (2023-05-23)
+
+
+### Bug Fixes
+
+* respect enableKeepAlive option ([#2016](https://github.com/sidorares/node-mysql2/issues/2016)) ([f465c3e](https://github.com/sidorares/node-mysql2/commit/f465c3edc707d34a11d9b1796b9472824fdb35df))
+
 ## [3.3.1](https://github.com/sidorares/node-mysql2/compare/v3.3.0...v3.3.1) (2023-05-11)
 
 
