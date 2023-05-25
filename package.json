@@ -47,6 +47,7 @@
   ],
   "exports": {
     ".": "./index.js",
+    "./package.json": "./package.json",
     "./promise": "./promise.js",
     "./promise.js": "./promise.js"
   },
