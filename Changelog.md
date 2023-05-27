@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.3](https://github.com/sidorares/node-mysql2/compare/v3.3.2...v3.3.3) (2023-05-27)
+
+
+### Bug Fixes
+
+* add package.json to exports ([#2026](https://github.com/sidorares/node-mysql2/issues/2026)) ([09fd305](https://github.com/sidorares/node-mysql2/commit/09fd3059cd91c655e494e40dc4365e58ed069b13))
+
 ## [3.3.2](https://github.com/sidorares/node-mysql2/compare/v3.3.1...v3.3.2) (2023-05-23)
 
 
