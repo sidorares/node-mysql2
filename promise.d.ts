@@ -5,6 +5,8 @@ import {
   FieldPacket,
   QueryOptions,
   ConnectionOptions,
+  PoolCluster,
+  PoolClusterOptions,
   PoolOptions,
   Pool as CorePool
 } from './index';
@@ -142,12 +144,33 @@ export interface Pool extends EventEmitter {
   pool: CorePool;
 }
 
+declare class PromisePoolCluster extends EventEmitter {
+
+  config: PoolClusterOptions;
+
+  add(config: PoolClusterOptions): Promise<void>;
+  add(group: string, config: PoolClusterOptions): Promise<void>;
+
+  end(): Promise<void>;
+
+  getConnection(): Promise<PoolConnection>;
+  getConnection(group: string): Promise<PoolConnection>;
+  getConnection(group: string): Promise<PoolConnection>;
+
+  of(pattern: string, selector?: string): PromisePoolCluster;
+
+  on(event: string, listener: Function): this;
+  on(event: 'remove', listener: (nodeId: number) => void): this;
+  on(event: 'connection', listener: (connection: PoolConnection) => void): this;
+}
+
 export function createConnection(connectionUri: string): Promise<Connection>;
 export function createConnection(
   config: ConnectionOptions
 ): Promise<Connection>;
 export function createPool(connectionUri: string): Pool;
 export function createPool(config: PoolOptions): Pool;
+export function createPoolCluster(config: PoolClusterOptions): PoolCluster;
 
 export interface PreparedStatementInfo {
   close(): Promise<void>;
