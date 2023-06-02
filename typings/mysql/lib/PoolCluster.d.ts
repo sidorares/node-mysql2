@@ -2,6 +2,8 @@
 import PoolConnection = require('./PoolConnection');
 import {EventEmitter} from 'events';
 import {PoolOptions} from './Pool';
+import {OkPacket, RowDataPacket, FieldPacket, ResultSetHeader} from './protocol/packets/index';
+import Query = require('./protocol/sequences/Query');
 
 declare namespace PoolCluster {
 
@@ -31,6 +33,20 @@ declare namespace PoolCluster {
          */
         defaultSelector?: string;
     }
+    
+    export interface PoolNamespace {
+        getConnection(callback: (err: NodeJS.ErrnoException | null, connection: PoolConnection) => any): void;
+    
+        query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+        query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+        query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, callback?: (err: Query.QueryError | null, result: T, fields?: FieldPacket[]) => any): Query;
+        query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+    
+        execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+        execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+        execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, callback?: (err: Query.QueryError | null, result: T, fields?: FieldPacket[]) => any): Query;
+        execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+    }
 }
 
 declare class PoolCluster extends EventEmitter {
@@ -46,11 +62,11 @@ declare class PoolCluster extends EventEmitter {
     getConnection(group: string, callback: (err: NodeJS.ErrnoException | null, connection: PoolConnection) => void): void;
     getConnection(group: string, selector: string, callback: (err: NodeJS.ErrnoException | null, connection: PoolConnection) => void): void;
 
-    of(pattern: string, selector?: string): PoolCluster;
+    of(pattern: string, selector?: string): PoolCluster.PoolNamespace;
 
     on(event: string, listener: Function): this;
     on(event: 'remove', listener: (nodeId: number) => void): this;
     on(event: 'connection', listener: (connection: PoolConnection) => void): this;
 }
 
-export = PoolCluster;
+export = PoolCluster
