@@ -51,18 +51,6 @@ jobs:
             use-tls: 1
 
           # 18.x
-          - node-version: "18.x"
-            mysql-version: "mysql:8.0.18"
-            use-compression: 1
-            use-tls: 0
-          - node-version: "18.x"
-            mysql-version: "mysql:8.0.18"
-            use-compression: 0
-            use-tls: 1
-          - node-version: "18.x"
-            mysql-version: "mysql:8.0.18"
-            use-compression: 1
-            use-tls: 1
           # - node-version: "18.x"
           #   mysql_connection_url_key: "PS_MYSQL_URL"
           #   filter: "test-select"
