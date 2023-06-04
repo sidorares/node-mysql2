@@ -29,13 +29,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [16.x, 18.x, 20.x]
         mysql-version: ["mysql:8.0.18", "mysql:8.0.22", "mysql:5.7"]
         use-compression: [0]
         use-tls: [0]
         mysql_connection_url_key: [""]
         # TODO - add mariadb to the matrix. currently few tests are broken due to mariadb incompatibilities
         include:
+          # 20.x 
+          - node-version: "20.x"
+            mysql-version: "mysql:8.0.18"
+            use-compression: 1
+            use-tls: 0
+          - node-version: "20.x"
+            mysql-version: "mysql:8.0.18"
+            use-compression: 0
+            use-tls: 1
+
+          # 18.x
+          # - node-version: "18.x"
+          #   mysql_connection_url_key: "PS_MYSQL_URL"
+          #   filter: "test-select"
+          #   use-compression: 0
+          #   use-tls: 0
+
+          # 16.x 
           - node-version: "16.x"
             mysql-version: "mysql:8.0.18"
             use-compression: 1
@@ -48,20 +66,19 @@ jobs:
             mysql-version: "mysql:8.0.18"
             use-compression: 1
             use-tls: 1
+
+          # 14.x 
           - node-version: "14.x"
             mysql-version: "mysql:5.7"
             use-compression: 0
             use-tls: 0
+
+          # filter
           - filter: "test-select-1" # a number of tests does not work with mysql 5.1 due to old sql syntax, just testing basic connection
             node-version: "16.x"
             mysql-version: "datagrip/mysql:5.1"
             use-compression: 0
             use-tls: 0
-#           - node-version: "18.x"
-#             mysql_connection_url_key: "PS_MYSQL_URL"
-#             filter: "test-select"
-#             use-compression: 0
-#             use-tls: 0
     env:
       MYSQL_CONNECTION_URL: ${{ secrets[matrix.mysql_connection_url_key] }}
 
