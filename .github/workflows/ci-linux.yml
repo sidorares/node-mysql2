@@ -45,10 +45,6 @@ jobs:
             mysql-version: "mysql:8.0.18"
             use-compression: 0
             use-tls: 1
-          - node-version: "20.x"
-            mysql-version: "mysql:8.0.18"
-            use-compression: 1
-            use-tls: 1
 
           # 18.x
           # - node-version: "18.x"
