@@ -131,6 +131,7 @@ const pool = mysql.createPool({
   user: 'root',
   database: 'test',
   waitForConnections: true,
+  acquireTimeout: 10000,
   connectionLimit: 10,
   queueLimit: 0,
   enableKeepAlive: true,
