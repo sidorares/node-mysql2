@@ -274,6 +274,8 @@ declare class Connection extends EventEmitter {
 
     destroy(): void;
 
+    close(): void;
+
     pause(): void;
 
     resume(): void;
