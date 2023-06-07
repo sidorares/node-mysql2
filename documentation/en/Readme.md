@@ -8,11 +8,11 @@
 
 Not only `Node-MySQL2` offers better performance over `node-mysql`, we also support these additional features.
 
-- [Prepared Statements](https://github.com/sidorares/node-mysql2/tree/master/documentation/Prepared-Statements.md)
-- [Promise Wrapper](https://github.com/sidorares/node-mysql2/tree/master/documentation/Promise-Wrapper.md)
-- [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/Authentication-Switch.md)
-- [More Features](https://github.com/sidorares/node-mysql2/tree/master/documentation/Extras.md)
-- [MySQL Server](https://github.com/sidorares/node-mysql2/tree/master/documentation/MySQL-Server.md)
+- [Prepared Statements](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Prepared-Statements.md)
+- [Promise Wrapper](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Promise-Wrapper.md)
+- [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Authentication-Switch.md)
+- [More Features](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Extras.md)
+- [MySQL Server](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/MySQL-Server.md)
 - Pooling
 - SSL
 - MySQL Compression
@@ -20,7 +20,7 @@ Not only `Node-MySQL2` offers better performance over `node-mysql`, we also supp
 
 ## Examples
 
-Please check these [examples](https://github.com/sidorares/node-mysql2/tree/master/documentation/Examples.md) for `node-mysql2`.
+Please check these [examples](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Examples.md) for `node-mysql2`.
 
 
 ## Known incompatibilities with `node-mysql`
