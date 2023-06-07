@@ -8,9 +8,9 @@
 [![Windows Build][appveyor-image]][appveyor-url]
 [![License][license-image]][license-url]  
 
-English | [简体中文](./documentation_zh-cn/)
+English | [简体中文](./documentation/zh-cn/)
 
-> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more](https://github.com/sidorares/node-mysql2/tree/master/documentation)
+> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more](./documentation/en)
 
 __Table of contents__
 
@@ -32,14 +32,14 @@ MySQL2 project is a continuation of [MySQL-Native][mysql-native]. Protocol parse
 MySQL2 is mostly API compatible with [mysqljs][node-mysql] and supports majority of features. MySQL2 also offers these additional features
 
  - Faster / Better Performance
- - [Prepared Statements](https://github.com/sidorares/node-mysql2/tree/master/documentation/Prepared-Statements.md)
+ - [Prepared Statements](./documentation/en/Prepared-Statements.md)
  - MySQL Binary Log Protocol
- - [MySQL Server](https://github.com/sidorares/node-mysql2/tree/master/documentation/MySQL-Server.md)
+ - [MySQL Server](./documentation/en/MySQL-Server.md)
  - Extended support for Encoding and Collation
- - [Promise Wrapper](https://github.com/sidorares/node-mysql2/tree/master/documentation/Promise-Wrapper.md)
+ - [Promise Wrapper](./documentation/en/Promise-Wrapper.md)
  - Compression
- - SSL and [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/Authentication-Switch.md)
- - [Custom Streams](https://github.com/sidorares/node-mysql2/tree/master/documentation/Extras.md)
+ - SSL and [Authentication Switch](./documentation/en/Authentication-Switch.md)
+ - [Custom Streams](./documentation/en/Extras.md)
  - [Pooling](#using-connection-pools)
 
 ## Installation
@@ -145,7 +145,7 @@ You can use the pool in the same way as connections (using `pool.query()` and `p
 ```js
 // For pool initialization, see above
 pool.query("SELECT field FROM atable", function(err, rows, fields) {
-   // Connection is automatically released when query resolves
+  // Connection is automatically released when query resolves
 })
 ```
 
@@ -153,10 +153,10 @@ Alternatively, there is also the possibility of manually acquiring a connection 
 ```js
 // For pool initialization, see above
 pool.getConnection(function(err, conn) {
-   // Do something with the connection
-   conn.query(/* ... */);
-   // Don't forget to release the connection when finished!
-   pool.releaseConnection(conn);
+  // Do something with the connection
+  conn.query(/* ... */);
+  // Don't forget to release the connection when finished!
+  pool.releaseConnection(conn);
 })
 ```
 
@@ -204,6 +204,7 @@ async function main() {
   const promisePool = pool.promise();
   // query database using promises
   const [rows,fields] = await promisePool.query("SELECT 1");
+}
 ```
 
 MySQL2 exposes a .promise() function on Connections, to "upgrade" an existing non-promise connection to use promise
@@ -258,7 +259,7 @@ If you find any other incompatibility with [Node MySQL][node-mysql], Please repo
 
 ## Documentation
 
-You can find more detailed documentation [here](https://github.com/sidorares/node-mysql2/tree/master/documentation). You should also check various code [examples](https://github.com/sidorares/node-mysql2/tree/master/examples) to understand advanced concepts.
+You can find more detailed documentation [here](./documentation/en). You should also check various code [examples](./examples) to understand advanced concepts.
 
 ## Acknowledgements
 

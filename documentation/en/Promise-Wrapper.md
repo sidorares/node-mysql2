@@ -57,4 +57,4 @@ co(function * () {
   yield c.end();
 });
 ```
-Examples in [/examples/promise-co-await](https://github.com/sidorares/node-mysql2/tree/master/examples/promise-co-await)
+Examples in [/examples/promise-co-await](../../examples/promise-co-await)

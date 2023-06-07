@@ -46,6 +46,20 @@
         "prettier"
       ],
       "plugins": ["@typescript-eslint"]
+    },
+    {
+      "files":  ["**/*.md/*js"],
+      "rules": {
+        "no-undef": "off",
+        "no-unused-vars": "off",
+        "no-console": "off",
+        "no-unused-labels": "off",
+        "strict": "off",
+        "prefer-arrow-callback": "off"
+      },
+      "parserOptions": {
+        "sourceType": "module"
+      }
     }
   ]
 }
