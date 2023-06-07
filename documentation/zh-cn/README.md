@@ -8,9 +8,9 @@
 [![Windows Build][appveyor-image]][appveyor-url]
 [![License][license-image]][license-url]
 
-[English](../../README.md) | 简体中文
+[English](../..) | 简体中文
 
-> 适用于Node.js的MySQL客户端，专注于性能优化。支持SQL预处理、非UTF-8编码支持、二进制文件编码支持、压缩和SSL等等 [查看更多](https://github.com/sidorares/node-mysql2/tree/master/documentation/en)
+> 适用于Node.js的MySQL客户端，专注于性能优化。支持SQL预处理、非UTF-8编码支持、二进制文件编码支持、压缩和SSL等等 [查看更多](../en)
 
 __目录__
 
@@ -32,14 +32,14 @@ MySQL2 项目是 [MySQL-Native][mysql-native] 的延续。 协议解析器代码
 MySQL2 大部分 API 与 [mysqljs][node-mysql] 兼容，并支持大部分功能。 MySQL2 还提供了更多的附加功能
 
  - 更快、更好的性能
- - [支持预处理](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Prepared-Statements.md)
+ - [支持预处理](../en/documentation/en/Prepared-Statements.md)
  - MySQL二进制日志协议
- - [MySQL Server](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/MySQL-Server.md)
+ - [MySQL Server](../en/documentation/en/MySQL-Server.md)
  -  对编码和排序规则有很好的支持
- - [Promise封装](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Promise-Wrapper.md)
+ - [Promise封装](../en/documentation/en/Promise-Wrapper.md)
  - 支持压缩
- - SSL 和 [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Authentication-Switch.md)
- - [自定义流](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Extras.md)
+ - SSL 和 [Authentication Switch](../en/documentation/en/Authentication-Switch.md)
+ - [自定义流](../en/documentation/en/Extras.md)
  - [连接池](#using-connection-pools)
 
 ## 安装
@@ -254,7 +254,7 @@ MySQL2大部分的API与 [Node MySQL][node-mysql] 基本上相同，你应该查
 
 ## 文档
 
-你可以在[这里](https://github.com/sidorares/node-mysql2/tree/master/documentation/en)获得更多的详细文档，并且你应该查阅各种代码[示例](https://github.com/sidorares/node-mysql2/tree/master/examples)来获得更高级的概念。
+你可以在[这里](../en/documentation/en)获得更多的详细文档，并且你应该查阅各种代码[示例](../en/examples)来获得更高级的概念。
 
 ## 鸣谢
 
