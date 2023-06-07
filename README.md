@@ -10,7 +10,7 @@
 
 English | [简体中文](./documentation/zh-cn/)
 
-> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more](./documentation)
+> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more](./documentation/en)
 
 __Table of contents__
 
