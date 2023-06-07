@@ -8,11 +8,11 @@
 
 Not only `Node-MySQL2` offers better performance over `node-mysql`, we also support these additional features.
 
-- [Prepared Statements](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Prepared-Statements.md)
-- [Promise Wrapper](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Promise-Wrapper.md)
-- [Authentication Switch](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Authentication-Switch.md)
-- [More Features](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Extras.md)
-- [MySQL Server](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/MySQL-Server.md)
+- [Prepared Statements](./Prepared-Statements.md)
+- [Promise Wrapper](./Promise-Wrapper.md)
+- [Authentication Switch](./Authentication-Switch.md)
+- [More Features](./Extras.md)
+- [MySQL Server](./MySQL-Server.md)
 - Pooling
 - SSL
 - MySQL Compression
@@ -20,7 +20,7 @@ Not only `Node-MySQL2` offers better performance over `node-mysql`, we also supp
 
 ## Examples
 
-Please check these [examples](https://github.com/sidorares/node-mysql2/tree/master/documentation/en/Examples.md) for `node-mysql2`.
+Please check these [examples](./Examples.md) for `node-mysql2`.
 
 
 ## Known incompatibilities with `node-mysql`
@@ -48,4 +48,4 @@ You need to check corresponding field's zeroFill flag and convert to string manu
   - https://gist.github.com/sidorares/ffe9ee9c423f763e3b6b
   - `npm run benchmarks`
   - [node-mysql-benchmarks](https://github.com/mscdex/node-mysql-benchmarks)
-  - try to run example [benchmarks](https://github.com/sidorares/node-mysql2/tree/master/benchmarks) on your system
+  - try to run example [benchmarks](../../benchmarks) on your system
