@@ -143,7 +143,7 @@ const pool = mysql.createPool({
 ```js
 // For pool initialization, see above
 pool.query("SELECT field FROM atable", function(err, rows, fields) {
-   // Connection is automatically released when query resolves
+  // Connection is automatically released when query resolves
 })
 ```
 
@@ -151,10 +151,10 @@ pool.query("SELECT field FROM atable", function(err, rows, fields) {
 ```js
 // For pool initialization, see above
 pool.getConnection(function(err, conn) {
-   // Do something with the connection
-   conn.query(/* ... */);
-   // Don't forget to release the connection when finished!
-   pool.releaseConnection(conn);
+  // Do something with the connection
+  conn.query(/* ... */);
+  // Don't forget to release the connection when finished!
+  pool.releaseConnection(conn);
 })
 ```
 
@@ -202,6 +202,7 @@ async function main() {
   const promisePool = pool.promise();
   // query database using promises
   const [rows,fields] = await promisePool.query("SELECT 1");
+}
 ```
 
 MySQL2 在 Connections 上公开了一个 .promise*()函数，以“升级”现有的 non-promise 连接以使用 Promise

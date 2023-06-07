@@ -145,7 +145,7 @@ You can use the pool in the same way as connections (using `pool.query()` and `p
 ```js
 // For pool initialization, see above
 pool.query("SELECT field FROM atable", function(err, rows, fields) {
-   // Connection is automatically released when query resolves
+  // Connection is automatically released when query resolves
 })
 ```
 
@@ -153,10 +153,10 @@ Alternatively, there is also the possibility of manually acquiring a connection 
 ```js
 // For pool initialization, see above
 pool.getConnection(function(err, conn) {
-   // Do something with the connection
-   conn.query(/* ... */);
-   // Don't forget to release the connection when finished!
-   pool.releaseConnection(conn);
+  // Do something with the connection
+  conn.query(/* ... */);
+  // Don't forget to release the connection when finished!
+  pool.releaseConnection(conn);
 })
 ```
 
@@ -204,6 +204,7 @@ async function main() {
   const promisePool = pool.promise();
   // query database using promises
   const [rows,fields] = await promisePool.query("SELECT 1");
+}
 ```
 
 MySQL2 exposes a .promise() function on Connections, to "upgrade" an existing non-promise connection to use promise
