@@ -8,9 +8,9 @@
 [![Windows Build][appveyor-image]][appveyor-url]
 [![License][license-image]][license-url]  
 
-English | [简体中文](./documentation/zh-cn/)
+English | [简体中文](./documentation/zh-cn/) | [Português (BR)](./documentation/pt-br/)
 
-> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more](./documentation/en)
+> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more](./documentation/en).
 
 __Table of contents__
 
@@ -20,6 +20,9 @@ __Table of contents__
   - [Using Prepared Statements](#using-prepared-statements)
   - [Using connection pools](#using-connection-pools)
   - [Using Promise Wrapper](#using-promise-wrapper)
+  - [Array Results](#array-results)
+    - [Connection Level](#connection-level)
+    - [Query Level](#query-level)
   - [API and Configuration](#api-and-configuration)
   - [Documentation](#documentation)
   - [Acknowledgements](#acknowledgements)
@@ -29,7 +32,7 @@ __Table of contents__
 
 MySQL2 project is a continuation of [MySQL-Native][mysql-native]. Protocol parser code was rewritten from scratch and api changed to match popular [mysqljs/mysql][node-mysql]. MySQL2 team is working together with [mysqljs/mysql][node-mysql] team to factor out shared code and move it under [mysqljs][node-mysql] organisation.
 
-MySQL2 is mostly API compatible with [mysqljs][node-mysql] and supports majority of features. MySQL2 also offers these additional features
+MySQL2 is mostly API compatible with [mysqljs][node-mysql] and supports majority of features. MySQL2 also offers these additional features:
 
  - Faster / Better Performance
  - [Prepared Statements](./documentation/en/Prepared-Statements.md)
@@ -51,7 +54,6 @@ npm install --save mysql2
 ```
 
 ## First Query
-
 ```js
 // get the client
 const mysql = require('mysql2');
@@ -84,11 +86,11 @@ connection.query(
 
 ## Using Prepared Statements
 
-With MySQL2 you also get the prepared statements. With prepared statements MySQL doesn't have to prepare plan for same query everytime, this results in better performance. If you don't know why they are important, please check these discussions
+With MySQL2 you also get the prepared statements. With prepared statements MySQL doesn't have to prepare plan for same query every time, this results in better performance. If you don't know why they are important, please check these discussions:
 
 - [How prepared statements can protect from SQL Injection attacks](http://stackoverflow.com/questions/8263371/how-can-prepared-statements-protect-from-sql-injection-attacks)
 
-MySQL provides `execute` helper which will prepare and query the statement. You can also manually prepare / unprepare statement with `prepare` / `unprepare` methods.
+MySQL2 provides `execute` helper which will prepare and query the statement. You can also manually prepare / unprepare statement with `prepare` / `unprepare` methods.
 
 ```js
 // get the client
@@ -144,9 +146,9 @@ The pool does not create all connections upfront but creates them on demand unti
 You can use the pool in the same way as connections (using `pool.query()` and `pool.execute()`):
 ```js
 // For pool initialization, see above
-pool.query("SELECT field FROM atable", function(err, rows, fields) {
+pool.query("SELECT `field` FROM `table`", function(err, rows, fields) {
   // Connection is automatically released when query resolves
-})
+});
 ```
 
 Alternatively, there is also the possibility of manually acquiring a connection from the pool and returning it later:
@@ -157,14 +159,12 @@ pool.getConnection(function(err, conn) {
   conn.query(/* ... */);
   // Don't forget to release the connection when finished!
   pool.releaseConnection(conn);
-})
+});
 ```
 
 ## Using Promise Wrapper
 
 MySQL2 also support Promise API. Which works very well with ES7 async await.
-
-<!--eslint-disable-next-block-->
 ```js
 async function main() {
   // get the client
@@ -176,9 +176,7 @@ async function main() {
 }
 ```
 
-MySQL2 use default `Promise` object available in scope. But you can choose which `Promise` implementation you want to use
-
-<!--eslint-disable-next-block-->
+MySQL2 use default `Promise` object available in scope. But you can choose which `Promise` implementation you want to use.
 ```js
 // get the client
 const mysql = require('mysql2/promise');
@@ -193,7 +191,7 @@ const connection = await mysql.createConnection({host:'localhost', user: 'root',
 const [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
 ```
 
-MySQL2 also exposes a .promise() function on Pools, so you can create a promise/non-promise connections from the same pool
+MySQL2 also exposes a .promise() function on Pools, so you can create a promise/non-promise connections from the same pool.
 ```js
 async function main() {
   // get the client
@@ -207,7 +205,7 @@ async function main() {
 }
 ```
 
-MySQL2 exposes a .promise() function on Connections, to "upgrade" an existing non-promise connection to use promise
+MySQL2 exposes a .promise() function on Connections, to "upgrade" an existing non-promise connection to use promise.
 ```js
 // get the client
 const mysql = require('mysql2');
@@ -223,7 +221,7 @@ con.promise().query("SELECT 1")
   .then( () => con.end());
 ```
 
-## Array results
+## Array Results
 
 If you have two columns with the same name, you might want to get results as an array rather than an object to prevent them from clashing. This is a deviation from the [Node MySQL][node-mysql] library.
 
@@ -231,22 +229,19 @@ For example: `select 1 as foo, 2 as foo`.
 
 You can enable this setting at either the connection level (applies to all queries), or at the query level (applies only to that specific query).
 
-### Connection Option
+### Connection Level
 ```js
 const con = mysql.createConnection(
   { host: 'localhost', database: 'test', user: 'root', rowsAsArray: true }
 );
-
 ```
 
-### Query Option
-
+### Query Level
 ```js
 con.query({ sql: 'select 1 as foo, 2 as foo', rowsAsArray: true }, function(err, results, fields) {
-  console.log(results) // will be an array of arrays rather than an array of objects
-  console.log(fields) // these are unchanged
+  console.log(results); // in this query, results will be an array of arrays rather than an array of objects
+  console.log(fields); // fields are unchanged
 });
-
 ```
 
 ## API and Configuration
