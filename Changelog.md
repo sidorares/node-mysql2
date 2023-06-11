@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.3.4](https://github.com/sidorares/node-mysql2/compare/v3.3.3...v3.3.4) (2023-06-11)
+
+
+### Bug Fixes
+
+* `PromisePoolConnection` import name ([76db54a](https://github.com/sidorares/node-mysql2/commit/76db54a91e2f9861605d5975158701233879d02c))
+* `releaseConnection` types and promise ([4aac9d6](https://github.com/sidorares/node-mysql2/commit/4aac9d6a1b379253fa90195ffdc98886b3b87a1b))
+
 ## [3.3.3](https://github.com/sidorares/node-mysql2/compare/v3.3.2...v3.3.3) (2023-05-27)
 
 
