@@ -1,7 +1,7 @@
 import {
   Connection as PromiseConnection,
   Pool as PromisePool,
-  PoolConnection as PromisePoolConnection2,
+  PoolConnection as PromisePoolConnection,
 } from './promise';
 
 import * as mysql from './typings/mysql';
@@ -153,7 +153,7 @@ export interface Pool extends mysql.Connection {
   getConnection(
     callback: (err: NodeJS.ErrnoException, connection: PoolConnection) => any
   ): void;
-  releaseConnection(connection: PoolConnection | PromisePoolConnection2): void;
+  releaseConnection(connection: PoolConnection | PromisePoolConnection): void;
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;
   on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
