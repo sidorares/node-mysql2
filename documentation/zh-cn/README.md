@@ -8,9 +8,9 @@
 [![Windows Build][appveyor-image]][appveyor-url]
 [![License][license-image]][license-url]
 
-[English](../..) | 简体中文
+[English](../..) | 简体中文 | [Português (BR)](../pt-br/)
 
-> 适用于Node.js的MySQL客户端，专注于性能优化。支持SQL预处理、非UTF-8编码支持、二进制文件编码支持、压缩和SSL等等 [查看更多](../en)
+> 适用于Node.js的MySQL客户端，专注于性能优化。支持SQL预处理、非UTF-8编码支持、二进制文件编码支持、压缩和SSL等等 [查看更多](../en)。
 
 __目录__
 
@@ -20,6 +20,9 @@ __目录__
   - [SQL预处理的使用](#SQL预处理的使用)
   - [连接池的使用](#连接池的使用)
   - [Promise封装](#Promise封装)
+  - [结果返回](#结果返回)
+    - [连接级别](#连接级别)
+    - [查询级别](#查询级别)
   - [API配置项](#API配置项)
   - [文档](#文档)
   - [鸣谢](#鸣谢)
@@ -29,17 +32,17 @@ __目录__
 
 MySQL2 项目是 [MySQL-Native][mysql-native] 的延续。 协议解析器代码从头开始重写，api 更改为匹配流行的 [mysqljs/mysql][node-mysql]。 MySQL2 团队正在与 [mysqljs/mysql][node-mysql] 团队合作，将共享代码分解并移至 [mysqljs][node-mysql] 组织下。
 
-MySQL2 大部分 API 与 [mysqljs][node-mysql] 兼容，并支持大部分功能。 MySQL2 还提供了更多的附加功能
+MySQL2 大部分 API 与 [mysqljs][node-mysql] 兼容，并支持大部分功能。 MySQL2 还提供了更多的附加功能：
 
  - 更快、更好的性能
- - [支持预处理](../en/documentation/en/Prepared-Statements.md)
+ - [支持预处理](../en/Prepared-Statements.md)
  - MySQL二进制日志协议
- - [MySQL Server](../en/documentation/en/MySQL-Server.md)
+ - [MySQL Server](../en/MySQL-Server.md)
  -  对编码和排序规则有很好的支持
- - [Promise封装](../en/documentation/en/Promise-Wrapper.md)
+ - [Promise封装](../en/Promise-Wrapper.md)
  - 支持压缩
- - SSL 和 [Authentication Switch](../en/documentation/en/Authentication-Switch.md)
- - [自定义流](../en/documentation/en/Extras.md)
+ - SSL 和 [Authentication Switch](../en/Authentication-Switch.md)
+ - [自定义流](../en/Extras.md)
  - [连接池](#using-connection-pools)
 
 ## 安装
@@ -84,11 +87,11 @@ connection.query(
 
 ## SQL预处理的使用
 
-使用 MySQL2，您还可以提前准备好SQL预处理语句。 使用准备好的SQL预处理语句，MySQL 不必每次都为相同的查询做准备，这会带来更好的性能。 如果您不知道为什么它们很重要，请查看这些讨论
+使用 MySQL2，您还可以提前准备好SQL预处理语句。 使用准备好的SQL预处理语句，MySQL 不必每次都为相同的查询做准备，这会带来更好的性能。 如果您不知道为什么它们很重要，请查看这些讨论：
 
 - [如何防止预处理语句SQL注入攻击](http://stackoverflow.com/questions/8263371/how-can-prepared-statements-protect-from-sql-injection-attacks)
 
-MySQL 提供了 `execute` 辅助函数，它将准备和查询语句。 您还可以使用 `prepare` / `unprepare` 方法手动准备/取消准备。
+MySQL2 提供了 `execute` 辅助函数，它将准备和查询语句。 您还可以使用 `prepare` / `unprepare` 方法手动准备/取消准备。
 
 ```js
 // 导入模块
@@ -142,9 +145,9 @@ const pool = mysql.createPool({
 您可以像直接连接一样使用池（使用 `pool.query()` 和 `pool.execute()`）：
 ```js
 // For pool initialization, see above
-pool.query("SELECT field FROM atable", function(err, rows, fields) {
+pool.query("SELECT `field` FROM `table`", function(err, rows, fields) {
   // Connection is automatically released when query resolves
-})
+});
 ```
 
 或者，也可以手动从池中获取连接并稍后返回：
@@ -155,14 +158,12 @@ pool.getConnection(function(err, conn) {
   conn.query(/* ... */);
   // Don't forget to release the connection when finished!
   pool.releaseConnection(conn);
-})
+});
 ```
 
 ## Promise封装
 
 MySQL2 也支持 Promise API。 这与 ES7 异步等待非常有效。
-
-<!--eslint-disable-next-block-->
 ```js
 async function main() {
   // get the client
@@ -174,9 +175,7 @@ async function main() {
 }
 ```
 
-MySQL2 使用范围内可用的默认 `Promise` 对象。 但是你可以选择你想使用的 `Promise` 实现
-
-<!--eslint-disable-next-block-->
+MySQL2 使用范围内可用的默认 `Promise` 对象。 但是你可以选择你想使用的 `Promise` 实现。
 ```js
 // get the client
 const mysql = require('mysql2/promise');
@@ -191,7 +190,7 @@ const connection = await mysql.createConnection({host:'localhost', user: 'root',
 const [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
 ```
 
-MySQL2 还在 Pools 上公开了一个 .promise()函数，因此您可以从同一个池创建一个 promise/non-promise 连接
+MySQL2 还在 Pools 上公开了一个 .promise()函数，因此您可以从同一个池创建一个 promise/non-promise 连接。
 ```js
 async function main() {
   // get the client
@@ -205,7 +204,7 @@ async function main() {
 }
 ```
 
-MySQL2 在 Connections 上公开了一个 .promise*()函数，以“升级”现有的 non-promise 连接以使用 Promise
+MySQL2 在 Connections 上公开了一个 .promise*()函数，以“升级”现有的 non-promise 连接以使用 Promise。
 ```js
 // get the client
 const mysql = require('mysql2');
@@ -229,33 +228,30 @@ con.promise().query("SELECT 1")
 
 您可以在连接级别（适用于所有查询）或查询级别（仅适用于该特定查询）启用此设置。
 
-### 连接参数
+### 连接级别
 ```js
 const con = mysql.createConnection(
   { host: 'localhost', database: 'test', user: 'root', rowsAsArray: true }
 );
-
 ```
 
-### 查询参数
-
+### 查询级别
 ```js
 con.query({ sql: 'select 1 as foo, 2 as foo', rowsAsArray: true }, function(err, results, fields) {
   console.log(results) // 返回数组而不是数组对象
   console.log(fields) // 无变化
 });
-
 ```
 
 ## API配置项
 
 MySQL2大部分的API与 [Node MySQL][node-mysql] 基本上相同，你应该查看他们的API文档来知道更多的API选项。
 
-如果您发现与 [Node MySQL][node-mysql] 的任何不兼容问题，请通过`isesue`报告。 我们将优先修复报告的不兼容问题。
+如果您发现与 [Node MySQL][node-mysql] 的任何不兼容问题，请通过`issue`报告。 我们将优先修复报告的不兼容问题。
 
 ## 文档
 
-你可以在[这里](../en/documentation/en)获得更多的详细文档，并且你应该查阅各种代码[示例](../en/examples)来获得更高级的概念。
+你可以在[这里](../en)获得更多的详细文档，并且你应该查阅各种代码[示例](../en/examples)来获得更高级的概念。
 
 ## 鸣谢
 
