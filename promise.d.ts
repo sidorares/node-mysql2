@@ -83,12 +83,11 @@ export interface Connection extends EventEmitter {
 }
 
 export interface PoolConnection extends Connection {
-  connection: Connection;
-  getConnection(): Promise<PoolConnection>;
   release(): void;
+  connection: Connection;
 }
 
-export interface Pool extends EventEmitter {
+export interface Pool extends EventEmitter, Connection {
   query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
     sql: string
   ): Promise<[T, FieldPacket[]]>;
@@ -128,6 +127,7 @@ export interface Pool extends EventEmitter {
   ): Promise<[T, FieldPacket[]]>;
 
   getConnection(): Promise<PoolConnection>;
+  releaseConnection(connection: PoolConnection): void;
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;
   on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
@@ -138,7 +138,7 @@ export interface Pool extends EventEmitter {
   escapeId(value: string): string;
   escapeId(values: string[]): string;
   format(sql: string, values?: any | any[] | { [param: string]: any }): string;
-
+  
   pool: CorePool;
 }
 
@@ -153,4 +153,3 @@ export interface PreparedStatementInfo {
   close(): Promise<void>;
   execute(parameters: any[]): Promise<[RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader, FieldPacket[]]>;
 }
-

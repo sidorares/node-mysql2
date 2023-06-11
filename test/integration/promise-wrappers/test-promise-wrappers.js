@@ -207,6 +207,16 @@ function testEventsConnect() {
 
 function testBasicPool() {
   const pool = createPool(config);
+  const promiseConn = pool.getConnection();
+
+  promiseConn
+    .then(connResolved => {
+      pool.releaseConnection(connResolved);
+    })
+    .catch(err => {
+      throw err;
+    });
+
   pool
     .query('select 1+2 as ttt')
     .then(result1 => {
