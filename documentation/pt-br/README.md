@@ -10,7 +10,7 @@
 
 [English](../..) | [简体中文](../zh-cn/) | Português (BR)
 
-> Cliente MySQL para Node.js com foco em performance. Suporta instruções preparadas (*prepared statements*), Codidificações *non-utf8*, protocolo de log binário (*binary log protocol*), compressão, SSL e [muito mais](../en).
+> Cliente MySQL para Node.js com foco em performance. Suporta instruções preparadas (*prepared statements*), Codificações *non-utf8*, protocolo de log binário (*binary log protocol*), compressão, SSL e [muito mais](../en).
 
 __Lista de Conteúdos__
 
@@ -56,7 +56,7 @@ npm install --save mysql2
 ## Primeira Consulta (*Query*)
 
 ```js
-// obtém o cliente
+// Obtém o cliente
 const mysql = require('mysql2');
 
 // Cria a conexão com o Banco de Dados
@@ -166,7 +166,7 @@ pool.getConnection(function(err, conn) {
 
 ## Usando o *Promise Wrapper*
 
-O MySQL2 também suporta *Promise* API. O que funciona muito bem com o ES7 async await.
+O MySQL2 também suporta *Promise* API. O que funciona muito bem com o ES7 *async await*.
 
 ```js
 async function main() {
