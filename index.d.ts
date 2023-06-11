@@ -1,6 +1,7 @@
 import {
   Connection as PromiseConnection,
-  PoolConnection as PromisePoolConnection,
+  Pool as PromisePool,
+  PoolConnection as PromisePoolConnection2,
 } from './promise';
 
 import * as mysql from './typings/mysql';
@@ -83,7 +84,7 @@ export interface Connection extends mysql.Connection {
 }
 
 export interface PoolConnection extends mysql.PoolConnection {
-  promise(promiseImpl?: PromiseConstructor): PromisePoolConnection;
+  promise(promiseImpl?: PromiseConstructor): PromisePool;
 }
 
 export interface Pool extends mysql.Connection {
@@ -152,13 +153,14 @@ export interface Pool extends mysql.Connection {
   getConnection(
     callback: (err: NodeJS.ErrnoException, connection: PoolConnection) => any
   ): void;
+  releaseConnection(connection: PoolConnection | PromisePoolConnection2): void;
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;
   on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
   on(event: 'enqueue', listener: () => any): this;
   unprepare(sql: string): mysql.PrepareStatementInfo;
   prepare(sql: string, callback?: (err: mysql.QueryError | null, statement: mysql.PrepareStatementInfo) => any): mysql.Prepare;
-  promise(promiseImpl?: PromiseConstructor): PromisePoolConnection;
+  promise(promiseImpl?: PromiseConstructor): PromisePool;
   config: mysql.PoolOptions;
 }
 
