@@ -25,9 +25,7 @@ describe('Prepare result when CLIENT_OPTIONAL_RESULTSET_METADATA is set or metad
       }
     });
     */
-    const connection = common.createConnection({
-      database: 'mysql',
-    });
+    const connection = common.createConnection();
     connection.on('error', (err) => {
       console.log('Error connecting to mysql', err);
       done(err);
