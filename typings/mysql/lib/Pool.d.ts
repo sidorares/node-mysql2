@@ -4,7 +4,7 @@ import {OkPacket, RowDataPacket, FieldPacket, ResultSetHeader} from './protocol/
 import Connection = require('./Connection');
 import PoolConnection = require('./PoolConnection');
 import {EventEmitter} from 'events';
-import {PoolConnection as PromisePoolConnection} from '../../../promise';
+import {Pool as PromisePool} from '../../../promise';
 
 declare namespace Pool {
 
@@ -78,7 +78,7 @@ declare class Pool extends EventEmitter {
     on(event: string, listener: Function): this;
     on(event: 'connection', listener: (connection: PoolConnection) => any): this;
 
-    promise(promiseImpl?: PromiseConstructor): PromisePoolConnection;
+    promise(promiseImpl?: PromiseConstructor): PromisePool;
 }
 
 export = Pool;
