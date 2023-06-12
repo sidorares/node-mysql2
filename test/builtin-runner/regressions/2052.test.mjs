@@ -4,7 +4,6 @@ import common from '../../../test/common.js';
 
 describe('Prepare result when CLIENT_OPTIONAL_RESULTSET_METADATA is set or metadata_follows is unset', () => {
   it('should not throw an exception', (t, done) => {
-    /*
     const connection = common.createConnection({
       database: 'mysql',
     });
@@ -21,19 +20,8 @@ describe('Prepare result when CLIENT_OPTIONAL_RESULTSET_METADATA is set or metad
         }
         done(err);
       } else {
-        done(null);
+        connection.end(done);
       }
     });
-    */
-    const connection = common.createConnection();
-    connection.on('error', (err) => {
-      console.log('Error connecting to mysql', err);
-      done(err);
-    });
-    connection.on('connect', () => {
-      console.log('Connected!')
-      done(null);
-    });
-
   });
 });
