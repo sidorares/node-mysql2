@@ -25,10 +25,17 @@ describe('Prepare result when CLIENT_OPTIONAL_RESULTSET_METADATA is set or metad
       }
     });
     */
-    console.log('test1')
-    setTimeout(() => {
-      console.log('test2')
+    const connection = common.createConnection({
+      database: 'mysql',
+    });
+    connection.on('error', (err) => {
+      console.log('Error connecting to mysql', err);
+      done(err);
+    });
+    connection.on('connect', () => {
+      console.log('Connected!')
       done(null);
-    }, 1000);
+    });
+
   });
 });
