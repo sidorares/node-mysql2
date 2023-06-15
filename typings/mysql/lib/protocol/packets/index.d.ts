@@ -1,10 +1,10 @@
-import FieldPacket from './FieldPacket';
-import Field from './Field';
-import OkPacket from './OkPacket';
-import RowDataPacket from './RowDataPacket';
-import ResultSetHeader from './ResultSetHeader';
-import OkPacketParams from './params/OkPacketParams';
-import ErrorPacketParams from './params/ErrorPacketParams';
+import FieldPacket from './FieldPacket.js';
+import Field from './Field.js';
+import OkPacket from './OkPacket.js';
+import RowDataPacket from './RowDataPacket.js';
+import ResultSetHeader from './ResultSetHeader.js';
+import OkPacketParams from './params/OkPacketParams.js';
+import ErrorPacketParams from './params/ErrorPacketParams.js';
 
 export {
   OkPacket,

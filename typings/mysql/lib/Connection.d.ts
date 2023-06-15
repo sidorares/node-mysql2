@@ -3,7 +3,8 @@
 // connection options relevant for multifactor authentication.
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
-import { Query, QueryError, QueryOptions } from './protocol/sequences/Query';
+import { EventEmitter } from 'events';
+import { Query, QueryError, QueryOptions } from './protocol/sequences/Query.js';
 import {
   OkPacket,
   FieldPacket,
@@ -11,13 +12,12 @@ import {
   ResultSetHeader,
   OkPacketParams,
   ErrorPacketParams,
-} from './protocol/packets';
-import { EventEmitter } from 'events';
-import { AuthPlugin } from './Auth';
-import { Connection as PromiseConnection } from '../../../promise';
-import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare';
-import { QueryableBase } from './protocol/sequences/QueryableBase';
-import { ExecutableBase } from './protocol/sequences/ExecutableBase';
+} from './protocol/packets/index.js';
+import { AuthPlugin } from './Auth.js';
+import { Connection as PromiseConnection } from '../../../promise.js';
+import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
+import { QueryableBase } from './protocol/sequences/QueryableBase.js';
+import { ExecutableBase } from './protocol/sequences/ExecutableBase.js';
 
 export interface SslOptions {
   /**

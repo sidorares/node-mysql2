@@ -1,15 +1,15 @@
-import * as BaseConnection from './lib/Connection';
-import * as BasePool from './lib/Pool';
-import * as BasePoolCluster from './lib/PoolCluster';
-import * as BaseQuery from './lib/protocol/sequences/Query';
-import { ConnectionOptions, SslOptions } from './lib/Connection';
-import { PoolOptions } from './lib/Pool';
-import { PoolClusterOptions } from './lib/PoolCluster';
-import { QueryOptions, QueryError } from './lib/protocol/sequences/Query';
-import { PrepareStatementInfo } from './lib/protocol/sequences/Prepare';
-import { Prepare as BasePrepare } from './lib/protocol/sequences/Prepare';
-import Server from './lib/Server';
-import BasePoolConnection from './lib/PoolConnection';
+import * as BaseConnection from './lib/Connection.js';
+import * as BasePool from './lib/Pool.js';
+import * as BasePoolCluster from './lib/PoolCluster.js';
+import * as BaseQuery from './lib/protocol/sequences/Query.js';
+import { ConnectionOptions, SslOptions } from './lib/Connection.js';
+import { PoolOptions } from './lib/Pool.js';
+import { PoolClusterOptions } from './lib/PoolCluster.js';
+import { QueryOptions, QueryError } from './lib/protocol/sequences/Query.js';
+import { PrepareStatementInfo } from './lib/protocol/sequences/Prepare.js';
+import { Prepare as BasePrepare } from './lib/protocol/sequences/Prepare.js';
+import Server from './lib/Server.js';
+import BasePoolConnection from './lib/PoolConnection.js';
 
 export function createConnection(
   connectionUri: string
@@ -49,8 +49,8 @@ export function raw(sql: string): {
   toSqlString: () => string;
 };
 
-export * from './lib/protocol/packets';
-export * from './lib/Auth';
+export * from './lib/protocol/packets/index.js';
+export * from './lib/Auth.js';
 
 export {
   ConnectionOptions,

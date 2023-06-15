@@ -3,8 +3,8 @@ import {
   FieldPacket,
   RowDataPacket,
   ResultSetHeader,
-} from '../../packets';
-import { Query, QueryOptions, QueryableConstructor } from '../Query';
+} from '../../packets/index.js';
+import { Query, QueryOptions, QueryableConstructor } from '../Query.js';
 
 export function ExecutableBase<T extends QueryableConstructor>(
   Base: T = {} as T

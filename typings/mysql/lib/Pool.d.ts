@@ -1,14 +1,14 @@
-import { QueryError } from './protocol/sequences/Query';
-import Connection = require('./Connection');
-import PoolConnection from './PoolConnection';
+import { QueryError } from './protocol/sequences/Query.js';
+import * as Connection from './Connection.js';
+import PoolConnection from './PoolConnection.js';
 import { EventEmitter } from 'events';
 import {
   Pool as PromisePool,
   PoolConnection as PromisePoolConnection,
-} from '../../../promise';
-import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare';
-import { QueryableBase } from './protocol/sequences/QueryableBase';
-import { ExecutableBase } from './protocol/sequences/ExecutableBase';
+} from '../../../promise.js';
+import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
+import { QueryableBase } from './protocol/sequences/QueryableBase.js';
+import { ExecutableBase } from './protocol/sequences/ExecutableBase.js';
 
 export interface PoolOptions extends Connection.ConnectionOptions {
   /**

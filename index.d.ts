@@ -1,1 +1,1 @@
-export * from './typings/mysql';
+export * from './typings/mysql/index.js';

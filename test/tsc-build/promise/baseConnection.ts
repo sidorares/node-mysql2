@@ -1,4 +1,4 @@
-import { mysqlp as mysql } from '../index';
+import { mysqlp as mysql } from '../index.js';
 
 export const access: mysql.ConnectionOptions = {
   host: '',

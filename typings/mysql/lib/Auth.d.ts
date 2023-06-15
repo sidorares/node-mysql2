@@ -1,5 +1,5 @@
 import { RsaPublicKey, RsaPrivateKey, KeyLike } from 'crypto';
-import { Connection } from './Connection';
+import { Connection } from './Connection.js';
 
 export type AuthPlugin = (pluginMetadata: {
   connection: Connection;

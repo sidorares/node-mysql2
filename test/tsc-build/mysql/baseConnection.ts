@@ -1,4 +1,4 @@
-import { mysql } from '../index';
+import { mysql } from '../index.js';
 
 export const access: mysql.ConnectionOptions = {
   host: '',

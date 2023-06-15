@@ -1,8 +1,8 @@
-import Sequence from '../sequences/Sequence';
-import { QueryError, StreamOptions } from '../sequences/Query';
-import { OkPacket, FieldPacket, RowDataPacket } from '../packets';
 import { Readable } from 'stream';
-import { ExecutableBase } from './ExecutableBase';
+import Sequence from '../sequences/Sequence.js';
+import { QueryError, StreamOptions } from '../sequences/Query.js';
+import { OkPacket, FieldPacket, RowDataPacket } from '../packets/index.js';
+import { ExecutableBase } from './ExecutableBase.js';
 
 declare class PrepareStatementInfo extends ExecutableBase() {
   close(): void;

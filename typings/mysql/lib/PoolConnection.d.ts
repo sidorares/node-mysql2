@@ -1,5 +1,5 @@
-import { Connection } from './Connection';
-import { Pool as PromisePool } from '../../../promise';
+import { Connection } from './Connection.js';
+import { Pool as PromisePool } from '../../../promise.js';
 
 declare class PoolConnection extends Connection {
   connection: Connection;

@@ -9,7 +9,7 @@
   "typings": "typings/mysql/index",
   "scripts": {
     "lint": "npm run lint:docs && npm run lint:code",
-    "lint:code": "eslint index.js promise.js \"lib/**/*.js\" \"test/**/*.js\" \"benchmarks/**/*.js\"",
+    "lint:code": "eslint index.js promise.js index.d.ts promise.d.ts \"typings/**/*.ts\" \"lib/**/*.js\" \"test/**/*.{js,ts}\" \"benchmarks/**/*.js\"",
     "lint:docs": "eslint Contributing.md README.md \"documentation/**/*.md\" \"examples/*.js\"",
     "test": "node ./test/run.js",
     "test:tsc-build": "cd \"test/tsc-build\" && npx tsc -p \"tsconfig.json\"",

@@ -1,4 +1,5 @@
-export * from './';
+export * from './index.js';
+
 import {
   RowDataPacket,
   OkPacket,
@@ -8,10 +9,10 @@ import {
   ConnectionOptions,
   PoolOptions,
   Pool as CorePool,
-} from './';
+} from './index.js';
 import { EventEmitter } from 'events';
-import { ExecutableBase as ExecutableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/ExecutableBase';
-import { QueryableBase as QueryableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/QueryableBase';
+import { ExecutableBase as ExecutableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/ExecutableBase.js';
+import { QueryableBase as QueryableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/QueryableBase.js';
 
 export interface PreparedStatementInfo {
   close(): Promise<void>;
