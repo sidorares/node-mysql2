@@ -1,11 +1,26 @@
 import { Readable } from 'stream';
 import Sequence from '../sequences/Sequence.js';
-import { QueryError, StreamOptions } from '../sequences/Query.js';
-import { OkPacket, FieldPacket, RowDataPacket } from '../packets/index.js';
-import { ExecutableBase } from './ExecutableBase.js';
+import { Query, QueryError, StreamOptions } from '../sequences/Query.js';
+import {
+  OkPacket,
+  FieldPacket,
+  RowDataPacket,
+  ResultSetHeader,
+} from '../packets/index.js';
 
-declare class PrepareStatementInfo extends ExecutableBase() {
+declare class PrepareStatementInfo {
   close(): void;
+  execute<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    paramaters: any | any[] | { [param: string]: any },
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+  ): Query;
 }
 
 declare class Prepare extends Sequence {

@@ -17,7 +17,7 @@ import { QueryableBase as QueryableBaseClass } from './typings/mysql/lib/protoco
 export interface PreparedStatementInfo {
   close(): Promise<void>;
   execute(
-    parameters: any[]
+    paramaters: any | any[] | { [param: string]: any }
   ): Promise<
     [
       (
