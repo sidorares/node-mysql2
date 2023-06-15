@@ -1,9 +1,10 @@
-
-import Connection = require('./Connection');
+import { Connection } from './Connection';
+import { Pool as PromisePool } from '../../../promise';
 
 declare class PoolConnection extends Connection {
-    connection: Connection;
-    release(): void;
+  connection: Connection;
+  release(): void;
+  promise(promiseImpl?: PromiseConstructor): PromisePool;
 }
 
-export = PoolConnection;
+export default PoolConnection;

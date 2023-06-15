@@ -3,4 +3,4 @@ declare interface ErrorPacketParams {
   code?: number | string;
 }
 
-export = ErrorPacketParams;
+export default ErrorPacketParams;
