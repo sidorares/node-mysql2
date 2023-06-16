@@ -30,7 +30,7 @@ export interface PoolOptions extends Connection.ConnectionOptions {
   connectionLimit?: number;
 
   /**
-   * The minimum number of idle connections. (Default: 10)
+   * The maximum number of idle connections. (Default: same as `connectionLimit`)
    */
   maxIdle?: number;
 
