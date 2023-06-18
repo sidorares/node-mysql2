@@ -72,7 +72,13 @@ export interface Connection extends mysql.Connection {
   ): mysql.Query;
   ping(callback?: (err: mysql.QueryError | null) => any): void;
   unprepare(sql: string): mysql.PrepareStatementInfo;
-  prepare(sql: string, callback?: (err: mysql.QueryError | null, statement: mysql.PrepareStatementInfo) => any): mysql.Prepare;
+  prepare(
+    sql: string,
+    callback?: (
+      err: mysql.QueryError | null,
+      statement: mysql.PrepareStatementInfo
+    ) => any
+  ): mysql.Prepare;
   serverHandshake(args: any): any;
   writeOk(args?: mysql.OkPacketParams): void;
   writeError(args?: mysql.ErrorPacketParams): void;
@@ -159,7 +165,13 @@ export interface Pool extends mysql.Connection {
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
   on(event: 'enqueue', listener: () => any): this;
   unprepare(sql: string): mysql.PrepareStatementInfo;
-  prepare(sql: string, callback?: (err: mysql.QueryError | null, statement: mysql.PrepareStatementInfo) => any): mysql.Prepare;
+  prepare(
+    sql: string,
+    callback?: (
+      err: mysql.QueryError | null,
+      statement: mysql.PrepareStatementInfo
+    ) => any
+  ): mysql.Prepare;
   promise(promiseImpl?: PromiseConstructor): PromisePool;
   config: mysql.PoolOptions;
 }
@@ -195,7 +207,14 @@ export interface ConnectionConfig extends ConnectionOptions {
   getDefaultFlags(options?: ConnectionOptions): string[];
   getCharsetNumber(charset: string): number;
   getSSLProfile(name: string): { ca: string[] };
-  parseUrl(url: string): { host: string, port: number, database: string, user: string, password: string, [key: string]: any };
+  parseUrl(url: string): {
+    host: string;
+    port: number;
+    database: string;
+    user: string;
+    password: string;
+    [key: string]: any;
+  };
 }
 
 export interface PoolOptions extends mysql.PoolOptions, ConnectionOptions {}

@@ -6,7 +6,7 @@ import { access } from '../../baseConnection';
   const conn = await pool.promise().getConnection();
 
   conn.connection;
-  
+
   try {
     // @ts-expect-error: The pool can't be a connection itself
     pool.connection;
