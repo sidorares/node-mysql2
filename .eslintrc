@@ -1,7 +1,7 @@
 {
-  "extends": ["prettier", "eslint:recommended",  "plugin:markdown/recommended"],
+  "extends": ["prettier", "eslint:recommended", "plugin:markdown/recommended"],
   "parserOptions": {
-    "ecmaVersion": 2022
+    "ecmaVersion": "latest"
   },
   "plugins": ["markdown", "async-await"],
   "env": {
@@ -39,16 +39,17 @@
   },
   "overrides": [
     {
-      "files":  ["**/*.ts"],
+      "files": ["**/*.ts"],
       "parser": "@typescript-eslint/parser",
-      "extends": [
-        "plugin:@typescript-eslint/recommended",
-        "prettier"
-      ],
-      "plugins": ["@typescript-eslint"]
+      "extends": ["plugin:@typescript-eslint/recommended"],
+      "plugins": ["@typescript-eslint"],
+      "rules": {
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+      }
     },
     {
-      "files":  ["**/*.md/*js"],
+      "files": ["**/*.md/*js"],
       "rules": {
         "no-undef": "off",
         "no-unused-vars": "off",
