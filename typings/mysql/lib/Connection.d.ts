@@ -375,7 +375,7 @@ declare class Connection extends EventEmitter {
 
   format(sql: string, values?: any | any[] | { [param: string]: any }): string;
 
-  on(event: string, listener: (args: any[]) => void): this;
+  on(event: string, listener: Function): this;
 
   rollback(callback: (err: Query.QueryError | null) => void): void;
 
