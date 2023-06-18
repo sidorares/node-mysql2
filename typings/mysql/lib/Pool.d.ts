@@ -200,7 +200,7 @@ declare class Pool extends EventEmitter {
     callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any
   ): void;
 
-  on(event: string, listener: Function): this;
+  on(event: string, listener: (args: any[]) => void): this;
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;
 
   promise(promiseImpl?: PromiseConstructor): PromisePool;

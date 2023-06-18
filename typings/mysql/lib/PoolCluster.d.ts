@@ -63,7 +63,7 @@ declare class PoolCluster extends EventEmitter {
 
   of(pattern: string, selector?: string): PoolCluster;
 
-  on(event: string, listener: Function): this;
+  on(event: string, listener: (args: any[]) => void): this;
   on(event: 'remove', listener: (nodeId: number) => void): this;
   on(event: 'connection', listener: (connection: PoolConnection) => void): this;
 }

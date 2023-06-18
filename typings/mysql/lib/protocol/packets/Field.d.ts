@@ -7,9 +7,9 @@ declare interface Field {
   name: string;
   type: string;
   length: number;
-  string: Function;
-  buffer: Function;
-  geometry: Function;
+  string: () => any;
+  buffer: () => any;
+  geometry: () => any;
 }
 
 export = Field;

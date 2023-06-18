@@ -55,7 +55,7 @@ declare class Prepare extends Sequence {
    */
   stream(options?: Query.StreamOptions): Readable;
 
-  on(event: string, listener: Function): this;
+  on(event: string, listener: (args: []) => void): this;
   on(event: 'error', listener: (err: Query.QueryError) => any): this;
   on(
     event: 'fields',
