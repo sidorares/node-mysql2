@@ -19,8 +19,7 @@
     "prettier:docs": "prettier --single-quote --trailing-comma none --write README.md documentation/*",
     "precommit": "lint-staged",
     "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check",
-    "wait-port": "wait-on",
-    "type-test": "node ./node_modules/typescript/bin/tsc -p tests.json && mocha typings/test --timeout 10000"
+    "wait-port": "wait-on"
   },
   "lint-staged": {
     "*.js": [
@@ -67,15 +66,12 @@
     "sqlstring": "^2.3.2"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.4",
-    "@types/mocha": "^10.0.0",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "assert-diff": "^3.0.2",
     "benchmark": "^2.1.4",
     "c8": "^8.0.0",
-    "chai": "^4.3.7",
     "error-stack-parser": "^2.0.3",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
@@ -83,7 +79,6 @@
     "eslint-plugin-markdown": "^3.0.0",
     "husky": "^8.0.2",
     "lint-staged": "^13.0.3",
-    "mocha": "^10.0.0",
     "portfinder": "^1.0.28",
     "prettier": "^2.4.1",
     "progress": "^2.0.3",
