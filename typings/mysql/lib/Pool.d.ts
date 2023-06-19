@@ -5,61 +5,52 @@ import {
   FieldPacket,
   ResultSetHeader,
 } from './protocol/packets/index';
-import Connection = require('./Connection');
+import { ConnectionOptions } from './Connection';
 import PoolConnection = require('./PoolConnection');
 import { EventEmitter } from 'events';
 import { Pool as PromisePool } from '../../../promise';
 
-declare namespace Pool {
-  export interface PoolOptions extends Connection.ConnectionOptions {
-    /**
-     * The milliseconds before a timeout occurs during the connection acquisition. This is slightly different from connectTimeout,
-     * because acquiring a pool connection does not always involve making a connection. (Default: 10 seconds)
-     */
-    acquireTimeout?: number;
-
-    /**
-     * Determines the pool's action when no connections are available and the limit has been reached. If true, the pool will queue
-     * the connection request and call it when one becomes available. If false, the pool will immediately call back with an error.
-     * (Default: true)
-     */
-    waitForConnections?: boolean;
-
-    /**
-     * The maximum number of connections to create at once. (Default: 10)
-     */
-    connectionLimit?: number;
-
-    /**
-     * The minimum number of idle connections. (Default: 10)
-     */
-    maxIdle?: number;
-
-    /**
-     * The idle connections timeout, in milliseconds. (Default: 60000)
-     */
-    idleTimeout?: number;
-
-    /**
-     * The maximum number of connection requests the pool will queue before returning an error from getConnection. If set to 0, there
-     * is no limit to the number of queued connection requests. (Default: 0)
-     */
-    queueLimit?: number;
-
-    /**
-     * Enable keep-alive on the socket. (Default: true)
-     */
-    enableKeepAlive?: boolean;
-
-    /**
-     * If keep-alive is enabled users can supply an initial delay. (Default: 0)
-     */
-    keepAliveInitialDelay?: number;
-  }
+export interface PoolOptions extends ConnectionOptions {
+  /**
+   * The milliseconds before a timeout occurs during the connection acquisition. This is slightly different from connectTimeout,
+   * because acquiring a pool connection does not always involve making a connection. (Default: 10 seconds)
+   */
+  acquireTimeout?: number;
+  /**
+   * Determines the pool's action when no connections are available and the limit has been reached. If true, the pool will queue
+   * the connection request and call it when one becomes available. If false, the pool will immediately call back with an error.
+   * (Default: true)
+   */
+  waitForConnections?: boolean;
+  /**
+   * The maximum number of connections to create at once. (Default: 10)
+   */
+  connectionLimit?: number;
+  /**
+   * The minimum number of idle connections. (Default: 10)
+   */
+  maxIdle?: number;
+  /**
+   * The idle connections timeout, in milliseconds. (Default: 60000)
+   */
+  idleTimeout?: number;
+  /**
+   * The maximum number of connection requests the pool will queue before returning an error from getConnection. If set to 0, there
+   * is no limit to the number of queued connection requests. (Default: 0)
+   */
+  queueLimit?: number;
+  /**
+   * Enable keep-alive on the socket. (Default: true)
+   */
+  enableKeepAlive?: boolean;
+  /**
+   * If keep-alive is enabled users can supply an initial delay. (Default: 0)
+   */
+  keepAliveInitialDelay?: number;
 }
 
 declare class Pool extends EventEmitter {
-  config: Pool.PoolOptions;
+  config: PoolOptions;
 
   getConnection(
     callback: (
@@ -206,4 +197,4 @@ declare class Pool extends EventEmitter {
   promise(promiseImpl?: PromiseConstructor): PromisePool;
 }
 
-export = Pool;
+export { Pool };

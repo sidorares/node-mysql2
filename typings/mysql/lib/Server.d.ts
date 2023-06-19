@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import Connection = require('./Connection');
+import { Connection } from './Connection';
 
 declare namespace Server {}
 
