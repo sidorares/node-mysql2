@@ -10,8 +10,15 @@ import {
   PoolOptions,
   Pool as CorePool,
 } from './index.js';
+import { ExecutableBase as ExecutableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/ExecutableBase.js';
+import { QueryableBase as QueryableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/QueryableBase.js';
 
 export * from './index.js';
+
+// Expose class interfaces
+declare class QueryableAndExecutableBase extends QueryableBaseClass(
+  ExecutableBaseClass(EventEmitter)
+) {}
 
 export interface PreparedStatementInfo {
   close(): Promise<void>;
@@ -31,93 +38,7 @@ export interface PreparedStatementInfo {
   >;
 }
 
-export interface Connection extends EventEmitter {
-  query<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    sql: string
-  ): Promise<[T, FieldPacket[]]>;
-  query<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    sql: string,
-    values: any | any[] | { [param: string]: any }
-  ): Promise<[T, FieldPacket[]]>;
-  query<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    options: QueryOptions
-  ): Promise<[T, FieldPacket[]]>;
-  query<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    options: QueryOptions,
-    values: any | any[] | { [param: string]: any }
-  ): Promise<[T, FieldPacket[]]>;
-
-  execute<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    sql: string
-  ): Promise<[T, FieldPacket[]]>;
-  execute<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    sql: string,
-    values: any | any[] | { [param: string]: any }
-  ): Promise<[T, FieldPacket[]]>;
-  execute<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    options: QueryOptions
-  ): Promise<[T, FieldPacket[]]>;
-  execute<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    options: QueryOptions,
-    values: any | any[] | { [param: string]: any }
-  ): Promise<[T, FieldPacket[]]>;
-
+export interface Connection extends QueryableAndExecutableBase {
   config: ConnectionOptions;
 
   threadId: number;
