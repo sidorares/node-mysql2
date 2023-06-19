@@ -15,6 +15,7 @@ import {
   ErrorPacketParams,
 } from './protocol/packets/index.js';
 import { Connection as PromiseConnection } from '../../../promise.js';
+import { AuthPlugin } from './Auth.js';
 
 export interface SslOptions {
   /**
@@ -248,6 +249,46 @@ export interface ConnectionOptions {
    * This can also be set in the `QueryOption` object to be applied per-query.
    */
   rowsAsArray?: boolean;
+
+  charsetNumber?: number;
+
+  compress?: boolean;
+
+  authSwitchHandler?: (data: any, callback: () => void) => any;
+
+  connectAttributes?: { [param: string]: any };
+
+  isServer?: boolean;
+
+  maxPreparedStatements?: number;
+
+  namedPlaceholders?: boolean;
+
+  nestTables?: boolean | string;
+
+  passwordSha1?: string;
+
+  pool?: any;
+
+  stream?: any;
+
+  uri?: string;
+
+  connectionLimit?: number;
+
+  maxIdle?: number;
+
+  idleTimeout?: number;
+
+  Promise?: any;
+
+  queueLimit?: number;
+
+  waitForConnections?: boolean;
+
+  authPlugins?: {
+    [key: string]: AuthPlugin;
+  };
 }
 
 declare class Connection extends EventEmitter {
