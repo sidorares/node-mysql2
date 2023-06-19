@@ -1,4 +1,3 @@
-import { RsaPublicKey, RsaPrivateKey, KeyLike } from 'crypto';
 import { Pool as BasePool, PoolOptions } from './lib/Pool.js';
 import {
   Connection as BaseConnection,
@@ -33,6 +32,7 @@ export {
 };
 
 export * from './lib/protocol/packets/index.js';
+export * from './lib/Auth.js';
 
 // Expose class interfaces
 export interface Connection extends BaseConnection {
@@ -43,34 +43,6 @@ export interface PoolConnection extends BasePoolConnection {}
 export interface PoolCluster extends BasePoolCluster {}
 export interface Query extends BaseQuery {}
 export interface Prepare extends BasePrepare {}
-
-export type AuthPlugin = (pluginMetadata: {
-  connection: Connection;
-  command: string;
-}) => (
-  pluginData: Buffer
-) => Promise<string> | string | Buffer | Promise<Buffer> | null;
-
-type AuthPluginDefinition<T> = (pluginOptions?: T) => AuthPlugin;
-
-export const authPlugins: {
-  caching_sha2_password: AuthPluginDefinition<{
-    overrideIsSecure?: boolean;
-    serverPublicKey?: RsaPublicKey | RsaPrivateKey | KeyLike;
-    jonServerPublicKey?: (data: Buffer) => void;
-  }>;
-  mysql_clear_password: AuthPluginDefinition<{
-    password?: string;
-  }>;
-  mysql_native_password: AuthPluginDefinition<{
-    password?: string;
-    passwordSha1?: string;
-  }>;
-  sha256_password: AuthPluginDefinition<{
-    serverPublicKey?: RsaPublicKey | RsaPrivateKey | KeyLike;
-    joinServerPublicKey?: (data: Buffer) => void;
-  }>;
-};
 
 export function createConnection(connectionUri: string): Connection;
 export function createConnection(config: ConnectionOptions): Connection;
