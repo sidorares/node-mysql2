@@ -160,6 +160,7 @@ export interface Pool extends mysql.Connection {
     callback: (err: NodeJS.ErrnoException, connection: PoolConnection) => any
   ): void;
   releaseConnection(connection: PoolConnection | PromisePoolConnection): void;
+  on(event: string, listener: (args: any[]) => void): this;
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;
   on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
