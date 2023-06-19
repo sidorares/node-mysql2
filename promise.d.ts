@@ -9,9 +9,9 @@ import {
   ConnectionOptions,
   PoolOptions,
   Pool as CorePool,
-} from './index';
+} from './index.js';
 
-export * from './index';
+export * from './index.js';
 
 export interface PreparedStatementInfo {
   close(): Promise<void>;

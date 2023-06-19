@@ -1,5 +1,5 @@
-import { mysql, mysqlp } from '../../../index';
-import { access } from '../../baseConnection';
+import { mysql, mysqlp } from '../../../index.js';
+import { access } from '../../baseConnection.js';
 
 (async () => {
   let pool: mysql.Pool | null = null;

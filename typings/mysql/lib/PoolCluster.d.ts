@@ -1,6 +1,6 @@
-import { PoolConnection } from './PoolConnection';
 import { EventEmitter } from 'events';
-import { PoolOptions } from './Pool';
+import { PoolConnection } from './PoolConnection.js';
+import { PoolOptions } from './Pool.js';
 
 export interface PoolClusterOptions {
   /**

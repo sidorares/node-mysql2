@@ -1,14 +1,14 @@
-import { Query, QueryError, QueryOptions } from './protocol/sequences/Query';
+import { EventEmitter } from 'events';
+import { Query, QueryError, QueryOptions } from './protocol/sequences/Query.js';
 import {
   OkPacket,
   RowDataPacket,
   FieldPacket,
   ResultSetHeader,
-} from './protocol/packets/index';
-import { ConnectionOptions } from './Connection';
-import { PoolConnection } from './PoolConnection';
-import { EventEmitter } from 'events';
-import { Pool as PromisePool } from '../../../promise';
+} from './protocol/packets/index.js';
+import { ConnectionOptions } from './Connection.js';
+import { PoolConnection } from './PoolConnection.js';
+import { Pool as PromisePool } from '../../../promise.js';
 
 export interface PoolOptions extends ConnectionOptions {
   /**

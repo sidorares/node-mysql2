@@ -3,14 +3,14 @@
 // connection options relevant for multifactor authentication.
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
-import { Query, QueryError, QueryOptions } from './protocol/sequences/Query';
+import { EventEmitter } from 'events';
+import { Query, QueryError, QueryOptions } from './protocol/sequences/Query.js';
 import {
   OkPacket,
   FieldPacket,
   RowDataPacket,
   ResultSetHeader,
-} from './protocol/packets/index';
-import { EventEmitter } from 'events';
+} from './protocol/packets/index.js';
 
 export interface SslOptions {
   /**

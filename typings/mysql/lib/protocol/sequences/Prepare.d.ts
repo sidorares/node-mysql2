@@ -1,11 +1,11 @@
-import { Sequence } from './Sequence';
-import { Query, QueryError, StreamOptions } from '../sequences/Query';
+import { Sequence } from './Sequence.js';
+import { Query, QueryError, StreamOptions } from '../sequences/Query.js';
 import {
   OkPacket,
   FieldPacket,
   RowDataPacket,
   ResultSetHeader,
-} from '../packets';
+} from '../packets/index.js';
 import { Readable } from 'stream';
 
 export class PrepareStatementInfo {

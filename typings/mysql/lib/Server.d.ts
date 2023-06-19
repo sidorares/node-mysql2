@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Connection } from './Connection';
+import { Connection } from './Connection.js';
 
 declare class Server extends EventEmitter {
   connections: Array<Connection>;

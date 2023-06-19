@@ -1,5 +1,5 @@
-import { Sequence } from './Sequence';
-import { OkPacket, RowDataPacket, FieldPacket } from '../packets/index';
+import { Sequence } from './Sequence.js';
+import { OkPacket, RowDataPacket, FieldPacket } from '../packets/index.js';
 import { Readable } from 'stream';
 
 export interface QueryOptions {

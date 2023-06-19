@@ -1,11 +1,11 @@
-import * as mysql from './typings/mysql';
+import * as mysql from './typings/mysql/index.js';
 import {
   Connection as PromiseConnection,
   Pool as PromisePool,
   PoolConnection as PromisePoolConnection,
-} from './promise';
+} from './promise.js';
 
-export * from './typings/mysql';
+export * from './typings/mysql/index.js';
 
 export interface Connection extends mysql.Connection {
   execute<

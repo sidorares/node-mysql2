@@ -1,26 +1,26 @@
 import { RsaPublicKey, RsaPrivateKey, KeyLike } from 'crypto';
-import { Pool as BasePool, PoolOptions } from './lib/Pool';
+import { Pool as BasePool, PoolOptions } from './lib/Pool.js';
 import {
   Connection as BaseConnection,
   ConnectionOptions,
   SslOptions,
-} from './lib/Connection';
+} from './lib/Connection.js';
 import {
   Query as BaseQuery,
   QueryOptions,
   QueryError,
-} from './lib/protocol/sequences/Query';
+} from './lib/protocol/sequences/Query.js';
 import {
   PoolCluster as BasePoolCluster,
   PoolClusterOptions,
-} from './lib/PoolCluster';
-import { PoolConnection as BasePoolConnection } from './lib/PoolConnection';
+} from './lib/PoolCluster.js';
+import { PoolConnection as BasePoolConnection } from './lib/PoolConnection.js';
 import {
   Prepare as BasePrepare,
   PrepareStatementInfo,
-} from './lib/protocol/sequences/Prepare';
-import { Server } from './lib/Server';
-import { Connection as PromiseConnection } from '../../promise';
+} from './lib/protocol/sequences/Prepare.js';
+import { Server } from './lib/Server.js';
+import { Connection as PromiseConnection } from '../../promise.js';
 
 export {
   ConnectionOptions,
@@ -32,7 +32,7 @@ export {
   PrepareStatementInfo,
 };
 
-export * from './lib/protocol/packets/index';
+export * from './lib/protocol/packets/index.js';
 
 // Expose class interfaces
 export interface Connection extends BaseConnection {
