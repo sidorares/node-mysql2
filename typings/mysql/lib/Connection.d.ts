@@ -3,301 +3,416 @@
 // connection options relevant for multifactor authentication.
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
-import Query = require('./protocol/sequences/Query');
-import Prepare = require('./protocol/sequences/Prepare');
-import {OkPacket, FieldPacket, RowDataPacket, ResultSetHeader} from './protocol/packets/index';
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
+import { Query, QueryError, QueryOptions } from './protocol/sequences/Query.js';
+import {
+  OkPacket,
+  FieldPacket,
+  RowDataPacket,
+  ResultSetHeader,
+} from './protocol/packets/index.js';
 
-declare namespace Connection {
+export interface SslOptions {
+  /**
+   * A string or buffer holding the PFX or PKCS12 encoded private key, certificate and CA certificates
+   */
+  pfx?: string;
 
-    export interface ConnectionOptions {
+  /**
+   * Either a string/buffer or list of strings/Buffers holding the PEM encoded private key(s) to use
+   */
+  key?: string | string[] | Buffer | Buffer[];
 
-        /**
-         * DECIMAL and NEWDECIMAL types will be returned as numbers if this option is set to `true` ( default: `false`).
-         */
-        decimalNumbers?: boolean;
+  /**
+   * A string of passphrase for the private key or pfx
+   */
+  passphrase?: string;
 
-        /**
-         * The MySQL user to authenticate as
-         */
-        user?: string;
+  /**
+   * A string/buffer or list of strings/Buffers holding the PEM encoded certificate(s)
+   */
+  cert?: string | string[] | Buffer | Buffer[];
 
-        /**
-         * The password of that MySQL user
-         */
-        password?: string;
+  /**
+   * Either a string/Buffer or list of strings/Buffers of PEM encoded CA certificates to trust.
+   */
+  ca?: string | string[] | Buffer | Buffer[];
 
-        /**
-         * Alias for the MySQL user password. Makes a bit more sense in a multifactor authentication setup (see
-         * "password2" and "password3")
-         */
-        password1?: string;
+  /**
+   * Either a string or list of strings of PEM encoded CRLs (Certificate Revocation List)
+   */
+  crl?: string | string[];
 
-        /**
-         * 2nd factor authentication password. Mandatory when the authentication policy for the MySQL user account
-         * requires an additional authentication method that needs a password.
-         * https://dev.mysql.com/doc/refman/8.0/en/multifactor-authentication.html
-         */
-        password2?: string;
+  /**
+   * A string describing the ciphers to use or exclude
+   */
+  ciphers?: string;
 
-        /**
-         * 3rd factor authentication password. Mandatory when the authentication policy for the MySQL user account
-         * requires two additional authentication methods and the last one needs a password.
-         * https://dev.mysql.com/doc/refman/8.0/en/multifactor-authentication.html
-         */
-        password3?: string;
+  /**
+   * You can also connect to a MySQL server without properly providing the appropriate CA to trust. You should not do this.
+   */
+  rejectUnauthorized?: boolean;
 
-        /**
-         * Name of the database to use for this connection
-         */
-        database?: string;
+  /**
+   * Configure the minimum supported version of SSL, the default is TLSv1.2.
+   */
+  minVersion?: string;
 
-        /**
-         * The charset for the connection. This is called 'collation' in the SQL-level of MySQL (like utf8_general_ci).
-         * If a SQL-level charset is specified (like utf8mb4) then the default collation for that charset is used.
-         * (Default: 'UTF8_GENERAL_CI')
-         */
-        charset?: string;
+  /**
+   * Configure the maximum supported version of SSL, the default is TLSv1.3.
+   */
+  maxVersion?: string;
 
-        /**
-         * The hostname of the database you are connecting to. (Default: localhost)
-         */
-        host?: string;
+  /**
+   * You can verify the server name identity presented on the server certificate when connecting to a MySQL server.
+   * You should enable this but it is disabled by default right now for backwards compatibility.
+   */
+  verifyIdentity?: boolean;
+}
 
-        /**
-         * The port number to connect to. (Default: 3306)
-         */
-        port?: number;
+export interface ConnectionOptions {
+  /**
+   * DECIMAL and NEWDECIMAL types will be returned as numbers if this option is set to `true` ( default: `false`).
+   */
+  decimalNumbers?: boolean;
 
-        /**
-         * The source IP address to use for TCP connection
-         */
-        localAddress?: string;
+  /**
+   * The MySQL user to authenticate as
+   */
+  user?: string;
 
-        /**
-         * The path to a unix domain socket to connect to. When used host and port are ignored
-         */
-        socketPath?: string;
+  /**
+   * The password of that MySQL user
+   */
+  password?: string;
 
-        /**
-         * The timezone used to store local dates. (Default: 'local')
-         */
-        timezone?: string | 'local';
+  /**
+   * Alias for the MySQL user password. Makes a bit more sense in a multifactor authentication setup (see
+   * "password2" and "password3")
+   */
+  password1?: string;
 
-        /**
-         * The milliseconds before a timeout occurs during the initial connection to the MySQL server. (Default: 10 seconds)
-         */
-        connectTimeout?: number;
+  /**
+   * 2nd factor authentication password. Mandatory when the authentication policy for the MySQL user account
+   * requires an additional authentication method that needs a password.
+   * https://dev.mysql.com/doc/refman/8.0/en/multifactor-authentication.html
+   */
+  password2?: string;
 
-        /**
-         * Stringify objects instead of converting to values. (Default: 'false')
-         */
-        stringifyObjects?: boolean;
+  /**
+   * 3rd factor authentication password. Mandatory when the authentication policy for the MySQL user account
+   * requires two additional authentication methods and the last one needs a password.
+   * https://dev.mysql.com/doc/refman/8.0/en/multifactor-authentication.html
+   */
+  password3?: string;
 
-        /**
-         * Allow connecting to MySQL instances that ask for the old (insecure) authentication method. (Default: false)
-         */
-        insecureAuth?: boolean;
+  /**
+   * Name of the database to use for this connection
+   */
+  database?: string;
 
-        /**
-         * Determines if column values should be converted to native JavaScript types. It is not recommended (and may go away / change in the future)
-         * to disable type casting, but you can currently do so on either the connection or query level. (Default: true)
-         *
-         * You can also specify a function (field: any, next: () => void) => {} to do the type casting yourself.
-         *
-         * WARNING: YOU MUST INVOKE the parser using one of these three field functions in your custom typeCast callback. They can only be called once.
-         *
-         * field.string()
-         * field.buffer()
-         * field.geometry()
-         *
-         * are aliases for
-         *
-         * parser.parseLengthCodedString()
-         * parser.parseLengthCodedBuffer()
-         * parser.parseGeometryValue()
-         *
-         * You can find which field function you need to use by looking at: RowDataPacket.prototype._typeCast
-         */
-        typeCast?: boolean | ((field: any, next: () => void) => any);
+  /**
+   * The charset for the connection. This is called 'collation' in the SQL-level of MySQL (like utf8_general_ci).
+   * If a SQL-level charset is specified (like utf8mb4) then the default collation for that charset is used.
+   * (Default: 'UTF8_GENERAL_CI')
+   */
+  charset?: string;
 
-        /**
-         * A custom query format function
-         */
-        queryFormat?: (query: string, values: any) => void;
+  /**
+   * The hostname of the database you are connecting to. (Default: localhost)
+   */
+  host?: string;
 
-        /**
-         * When dealing with big numbers (BIGINT and DECIMAL columns) in the database, you should enable this option
-         * (Default: false)
-         */
-        supportBigNumbers?: boolean;
+  /**
+   * The port number to connect to. (Default: 3306)
+   */
+  port?: number;
 
-        /**
-         * Enabling both supportBigNumbers and bigNumberStrings forces big numbers (BIGINT and DECIMAL columns) to be
-         * always returned as JavaScript String objects (Default: false). Enabling supportBigNumbers but leaving
-         * bigNumberStrings disabled will return big numbers as String objects only when they cannot be accurately
-         * represented with [JavaScript Number objects](https://262.ecma-international.org/5.1/#sec-8.5)
-         * (which happens when they exceed the [-2^53, +2^53] range), otherwise they will be returned as Number objects.
-         * This option is ignored if supportBigNumbers is disabled.
-         */
-        bigNumberStrings?: boolean;
+  /**
+   * The source IP address to use for TCP connection
+   */
+  localAddress?: string;
 
-        /**
-         * Force date types (TIMESTAMP, DATETIME, DATE) to be returned as strings rather then inflated into JavaScript Date
-         * objects. Can be true/false or an array of type names to keep as strings.
-         *
-         * (Default: false)
-         */
-        dateStrings?: boolean | Array<'TIMESTAMP' | 'DATETIME' | 'DATE'>;
+  /**
+   * The path to a unix domain socket to connect to. When used host and port are ignored
+   */
+  socketPath?: string;
 
-        /**
-         * This will print all incoming and outgoing packets on stdout.
-         * You can also restrict debugging to packet types by passing an array of types (strings) to debug;
-         *
-         * (Default: false)
-         */
-        debug?: any;
+  /**
+   * The timezone used to store local dates. (Default: 'local')
+   */
+  timezone?: string | 'local';
 
-        /**
-         * Generates stack traces on Error to include call site of library entrance ('long stack traces'). Slight
-         * performance penalty for most calls. (Default: true)
-         */
-        trace?: boolean;
+  /**
+   * The milliseconds before a timeout occurs during the initial connection to the MySQL server. (Default: 10 seconds)
+   */
+  connectTimeout?: number;
 
-        /**
-         * Allow multiple mysql statements per query. Be careful with this, it exposes you to SQL injection attacks. (Default: false)
-         */
-        multipleStatements?: boolean;
+  /**
+   * Stringify objects instead of converting to values. (Default: 'false')
+   */
+  stringifyObjects?: boolean;
 
-        /**
-         * List of connection flags to use other than the default ones. It is also possible to blacklist default ones
-         */
-        flags?: Array<string>;
+  /**
+   * Allow connecting to MySQL instances that ask for the old (insecure) authentication method. (Default: false)
+   */
+  insecureAuth?: boolean;
 
-        /**
-         * object with ssl parameters or a string containing name of ssl profile
-         */
-        ssl?: string | SslOptions;
+  /**
+   * Determines if column values should be converted to native JavaScript types. It is not recommended (and may go away / change in the future)
+   * to disable type casting, but you can currently do so on either the connection or query level. (Default: true)
+   *
+   * You can also specify a function (field: any, next: () => void) => {} to do the type casting yourself.
+   *
+   * WARNING: YOU MUST INVOKE the parser using one of these three field functions in your custom typeCast callback. They can only be called once.
+   *
+   * field.string()
+   * field.buffer()
+   * field.geometry()
+   *
+   * are aliases for
+   *
+   * parser.parseLengthCodedString()
+   * parser.parseLengthCodedBuffer()
+   * parser.parseGeometryValue()
+   *
+   * You can find which field function you need to use by looking at: RowDataPacket.prototype._typeCast
+   */
+  typeCast?: boolean | ((field: any, next: () => void) => any);
 
+  /**
+   * A custom query format function
+   */
+  queryFormat?: (query: string, values: any) => void;
 
-        /**
-         * Return each row as an array, not as an object.
-         * This is useful when you have duplicate column names.
-         * This can also be set in the `QueryOption` object to be applied per-query.
-         */
-        rowsAsArray?: boolean
-    }
+  /**
+   * When dealing with big numbers (BIGINT and DECIMAL columns) in the database, you should enable this option
+   * (Default: false)
+   */
+  supportBigNumbers?: boolean;
 
-    export interface SslOptions {
-        /**
-         * A string or buffer holding the PFX or PKCS12 encoded private key, certificate and CA certificates
-         */
-        pfx?: string;
+  /**
+   * Enabling both supportBigNumbers and bigNumberStrings forces big numbers (BIGINT and DECIMAL columns) to be
+   * always returned as JavaScript String objects (Default: false). Enabling supportBigNumbers but leaving
+   * bigNumberStrings disabled will return big numbers as String objects only when they cannot be accurately
+   * represented with [JavaScript Number objects](https://262.ecma-international.org/5.1/#sec-8.5)
+   * (which happens when they exceed the [-2^53, +2^53] range), otherwise they will be returned as Number objects.
+   * This option is ignored if supportBigNumbers is disabled.
+   */
+  bigNumberStrings?: boolean;
 
-        /**
-         * Either a string/buffer or list of strings/Buffers holding the PEM encoded private key(s) to use
-         */
-        key?: string | string[] | Buffer | Buffer[];
+  /**
+   * Force date types (TIMESTAMP, DATETIME, DATE) to be returned as strings rather then inflated into JavaScript Date
+   * objects. Can be true/false or an array of type names to keep as strings.
+   *
+   * (Default: false)
+   */
+  dateStrings?: boolean | Array<'TIMESTAMP' | 'DATETIME' | 'DATE'>;
 
-        /**
-         * A string of passphrase for the private key or pfx
-         */
-        passphrase?: string;
+  /**
+   * This will print all incoming and outgoing packets on stdout.
+   * You can also restrict debugging to packet types by passing an array of types (strings) to debug;
+   *
+   * (Default: false)
+   */
+  debug?: any;
 
-        /**
-         * A string/buffer or list of strings/Buffers holding the PEM encoded certificate(s)
-         */
-        cert?: string | string[] | Buffer | Buffer[];
+  /**
+   * Generates stack traces on Error to include call site of library entrance ('long stack traces'). Slight
+   * performance penalty for most calls. (Default: true)
+   */
+  trace?: boolean;
 
-        /**
-         * Either a string/Buffer or list of strings/Buffers of PEM encoded CA certificates to trust.
-         */
-        ca?: string | string[] | Buffer | Buffer[];
+  /**
+   * Allow multiple mysql statements per query. Be careful with this, it exposes you to SQL injection attacks. (Default: false)
+   */
+  multipleStatements?: boolean;
 
-        /**
-         * Either a string or list of strings of PEM encoded CRLs (Certificate Revocation List)
-         */
-        crl?: string | string[];
+  /**
+   * List of connection flags to use other than the default ones. It is also possible to blacklist default ones
+   */
+  flags?: Array<string>;
 
-        /**
-         * A string describing the ciphers to use or exclude
-         */
-        ciphers?: string;
+  /**
+   * object with ssl parameters or a string containing name of ssl profile
+   */
+  ssl?: string | SslOptions;
 
-        /**
-         * You can also connect to a MySQL server without properly providing the appropriate CA to trust. You should not do this.
-         */
-        rejectUnauthorized?: boolean;
-      
-        /**
-         * Configure the minimum supported version of SSL, the default is TLSv1.2.
-         */
-        minVersion?: string;
-
-        /**
-	 * Configure the maximum supported version of SSL, the default is TLSv1.3.
-         */
-        maxVersion?: string; 
-
-        /**
-         * You can verify the server name identity presented on the server certificate when connecting to a MySQL server.
-         * You should enable this but it is disabled by default right now for backwards compatibility.
-         */
-         verifyIdentity?: boolean;
-    }
+  /**
+   * Return each row as an array, not as an object.
+   * This is useful when you have duplicate column names.
+   * This can also be set in the `QueryOption` object to be applied per-query.
+   */
+  rowsAsArray?: boolean;
 }
 
 declare class Connection extends EventEmitter {
+  config: ConnectionOptions;
 
-    config: Connection.ConnectionOptions;
-    threadId: number;
-    authorized: boolean;
+  threadId: number;
 
-    static createQuery<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
-    static createQuery<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+  authorized: boolean;
 
-    beginTransaction(callback: (err: Query.QueryError | null) => void): void;
+  static createQuery<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    sql: string,
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+  ): Query;
+  static createQuery<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    sql: string,
+    values: any | any[] | { [param: string]: any },
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+  ): Query;
 
-    connect(callback?: (err: Query.QueryError | null) => void): void;
+  beginTransaction(callback: (err: QueryError | null) => void): void;
 
-    commit(callback?: (err: Query.QueryError | null) => void): void;
+  connect(callback?: (err: QueryError | null) => void): void;
 
-    changeUser(options: Connection.ConnectionOptions, callback?: (err: Query.QueryError | null) => void): void;
+  commit(callback?: (err: QueryError | null) => void): void;
 
-    query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
-    query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
-    query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, callback?: (err: Query.QueryError | null, result: T, fields?: FieldPacket[]) => any): Query;
-    query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+  changeUser(
+    options: ConnectionOptions,
+    callback?: (err: QueryError | null) => void
+  ): void;
 
-    end(callback?: (err: Query.QueryError | null) => void): void;
-    end(options: any, callback?: (err: Query.QueryError | null) => void): void;
+  query<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    sql: string,
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+  ): Query;
+  query<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    sql: string,
+    values: any | any[] | { [param: string]: any },
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+  ): Query;
+  query<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    options: QueryOptions,
+    callback?: (
+      err: QueryError | null,
+      result: T,
+      fields?: FieldPacket[]
+    ) => any
+  ): Query;
+  query<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    options: QueryOptions,
+    values: any | any[] | { [param: string]: any },
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+  ): Query;
 
-    destroy(): void;
+  execute<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    sql: string,
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+  ): Query;
+  execute<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    sql: string,
+    values: any | any[] | { [param: string]: any },
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+  ): Query;
+  execute<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    options: QueryOptions,
+    callback?: (
+      err: QueryError | null,
+      result: T,
+      fields?: FieldPacket[]
+    ) => any
+  ): Query;
+  execute<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    options: QueryOptions,
+    values: any | any[] | { [param: string]: any },
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+  ): Query;
 
-    pause(): void;
+  end(callback?: (err: QueryError | null) => void): void;
+  end(options: any, callback?: (err: QueryError | null) => void): void;
 
-    resume(): void;
+  destroy(): void;
 
-    escape(value: any): string;
+  pause(): void;
 
-    escapeId(value: string): string;
-    escapeId(values: string[]): string;
+  resume(): void;
 
-    format(sql: string, values?: any | any[] | { [param: string]: any }): string;
+  escape(value: any): string;
 
-    on(event: string, listener: Function): this;
+  escapeId(value: string): string;
+  escapeId(values: string[]): string;
 
-    rollback(callback: (err: Query.QueryError | null) => void): void;
+  format(sql: string, values?: any | any[] | { [param: string]: any }): string;
 
-    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
-    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(sql: string, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
-    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, callback?: (err: Query.QueryError | null, result: T, fields?: FieldPacket[]) => any): Query;
-    execute<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(options: Query.QueryOptions, values: any | any[] | { [param: string]: any }, callback?: (err: Query.QueryError | null, result: T, fields: FieldPacket[]) => any): Query;
+  on(event: string, listener: (args: any[]) => void): this;
 
+  rollback(callback: (err: QueryError | null) => void): void;
 
-    unprepare(sql: string): any;
+  unprepare(sql: string): any;
 
-    serverHandshake(args: any): any;
+  serverHandshake(args: any): any;
 }
 
-export = Connection;
+export { Connection };

@@ -1,56 +1,69 @@
+import { EventEmitter } from 'events';
+import { PoolConnection } from './PoolConnection.js';
+import { PoolOptions } from './Pool.js';
 
-import PoolConnection = require('./PoolConnection');
-import {EventEmitter} from 'events';
-import {PoolOptions} from './Pool';
+export interface PoolClusterOptions {
+  /**
+   * If true, PoolCluster will attempt to reconnect when connection fails. (Default: true)
+   */
+  canRetry?: boolean;
 
-declare namespace PoolCluster {
+  /**
+   * If connection fails, node's errorCount increases. When errorCount is greater than removeNodeErrorCount,
+   * remove a node in the PoolCluster. (Default: 5)
+   */
+  removeNodeErrorCount?: number;
 
-    export interface PoolClusterOptions {
-        /**
-         * If true, PoolCluster will attempt to reconnect when connection fails. (Default: true)
-         */
-        canRetry?: boolean;
+  /**
+   * If connection fails, specifies the number of milliseconds before another connection attempt will be made.
+   * If set to 0, then node will be removed instead and never re-used. (Default: 0)
+   */
+  restoreNodeTimeout?: number;
 
-        /**
-         * If connection fails, node's errorCount increases. When errorCount is greater than removeNodeErrorCount,
-         * remove a node in the PoolCluster. (Default: 5)
-         */
-        removeNodeErrorCount?: number;
-
-        /**
-         * If connection fails, specifies the number of milliseconds before another connection attempt will be made.
-         * If set to 0, then node will be removed instead and never re-used. (Default: 0)
-         */
-        restoreNodeTimeout?: number;
-
-        /**
-         * The default selector. (Default: RR)
-         * RR: Select one alternately. (Round-Robin)
-         * RANDOM: Select the node by random function.
-         * ORDER: Select the first node available unconditionally.
-         */
-        defaultSelector?: string;
-    }
+  /**
+   * The default selector. (Default: RR)
+   * RR: Select one alternately. (Round-Robin)
+   * RANDOM: Select the node by random function.
+   * ORDER: Select the first node available unconditionally.
+   */
+  defaultSelector?: string;
 }
 
 declare class PoolCluster extends EventEmitter {
+  config: PoolClusterOptions;
 
-    config: PoolCluster.PoolClusterOptions;
+  add(config: PoolOptions): void;
+  add(group: string, config: PoolOptions): void;
 
-    add(config: PoolOptions): void;
-    add(group: string, config: PoolOptions): void;
+  end(): void;
 
-    end(): void;
+  getConnection(
+    callback: (
+      err: NodeJS.ErrnoException | null,
+      connection: PoolConnection
+    ) => void
+  ): void;
+  getConnection(
+    group: string,
+    callback: (
+      err: NodeJS.ErrnoException | null,
+      connection: PoolConnection
+    ) => void
+  ): void;
+  getConnection(
+    group: string,
+    selector: string,
+    callback: (
+      err: NodeJS.ErrnoException | null,
+      connection: PoolConnection
+    ) => void
+  ): void;
 
-    getConnection(callback: (err: NodeJS.ErrnoException | null, connection: PoolConnection) => void): void;
-    getConnection(group: string, callback: (err: NodeJS.ErrnoException | null, connection: PoolConnection) => void): void;
-    getConnection(group: string, selector: string, callback: (err: NodeJS.ErrnoException | null, connection: PoolConnection) => void): void;
+  of(pattern: string, selector?: string): PoolCluster;
 
-    of(pattern: string, selector?: string): PoolCluster;
-
-    on(event: string, listener: Function): this;
-    on(event: 'remove', listener: (nodeId: number) => void): this;
-    on(event: 'connection', listener: (connection: PoolConnection) => void): this;
+  on(event: string, listener: (args: any[]) => void): this;
+  on(event: 'remove', listener: (nodeId: number) => void): this;
+  on(event: 'connection', listener: (connection: PoolConnection) => void): this;
 }
 
-export = PoolCluster;
+export { PoolCluster };

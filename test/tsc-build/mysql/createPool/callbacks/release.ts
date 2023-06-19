@@ -1,15 +1,15 @@
-import { mysql } from '../../../index';
-import { access } from '../../baseConnection';
+import { mysql } from '../../../index.js';
+import { access } from '../../baseConnection.js';
 
 const pool = mysql.createPool(access);
 
 pool.getConnection((err, conn) => {
-	conn.release();
-	
-	try {
-		// @ts-expect-error: The pool isn't a connection itself, so it doesn't have the connection methods
-		pool.release();
-   } catch (err) {
-      console.log('This error is expected', err);
-   }
+  conn.release();
+
+  try {
+    // @ts-expect-error: The pool isn't a connection itself, so it doesn't have the connection methods
+    pool.release();
+  } catch (err) {
+    console.log('This error is expected', err);
+  }
 });
