@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/sidorares/node-mysql2/compare/v3.3.5...v3.4.0) (2023-06-19)
+
+
+### Features
+
+* support STATE_GTIDS session track information ([2b1520f](https://github.com/sidorares/node-mysql2/commit/2b1520f4c5c11cda30d69e8b8b20ff03ec469099))
+
 ## [3.3.5](https://github.com/sidorares/node-mysql2/compare/v3.3.4...v3.3.5) (2023-06-12)
 
 
