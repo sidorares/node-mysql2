@@ -12,4 +12,4 @@ declare interface OkPacket {
   procotol41: boolean;
 }
 
-export = OkPacket;
+export { OkPacket };

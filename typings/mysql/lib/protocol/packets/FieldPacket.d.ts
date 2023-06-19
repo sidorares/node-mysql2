@@ -18,4 +18,4 @@ declare interface FieldPacket {
   zerofill: boolean;
 }
 
-export = FieldPacket;
+export { FieldPacket };

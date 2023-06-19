@@ -1,4 +1,4 @@
-import Query = require('./protocol/sequences/Query');
+import { Query, QueryError, QueryOptions } from './protocol/sequences/Query';
 import {
   OkPacket,
   RowDataPacket,
@@ -6,7 +6,7 @@ import {
   ResultSetHeader,
 } from './protocol/packets/index';
 import { ConnectionOptions } from './Connection';
-import PoolConnection = require('./PoolConnection');
+import { PoolConnection } from './PoolConnection';
 import { EventEmitter } from 'events';
 import { Pool as PromisePool } from '../../../promise';
 
@@ -16,33 +16,40 @@ export interface PoolOptions extends ConnectionOptions {
    * because acquiring a pool connection does not always involve making a connection. (Default: 10 seconds)
    */
   acquireTimeout?: number;
+
   /**
    * Determines the pool's action when no connections are available and the limit has been reached. If true, the pool will queue
    * the connection request and call it when one becomes available. If false, the pool will immediately call back with an error.
    * (Default: true)
    */
   waitForConnections?: boolean;
+
   /**
    * The maximum number of connections to create at once. (Default: 10)
    */
   connectionLimit?: number;
+
   /**
    * The minimum number of idle connections. (Default: 10)
    */
   maxIdle?: number;
+
   /**
    * The idle connections timeout, in milliseconds. (Default: 60000)
    */
   idleTimeout?: number;
+
   /**
    * The maximum number of connection requests the pool will queue before returning an error from getConnection. If set to 0, there
    * is no limit to the number of queued connection requests. (Default: 0)
    */
   queueLimit?: number;
+
   /**
    * Enable keep-alive on the socket. (Default: true)
    */
   enableKeepAlive?: boolean;
+
   /**
    * If keep-alive is enabled users can supply an initial delay. (Default: 0)
    */
@@ -70,11 +77,7 @@ declare class Pool extends EventEmitter {
       | ResultSetHeader
   >(
     sql: string,
-    callback?: (
-      err: Query.QueryError | null,
-      result: T,
-      fields: FieldPacket[]
-    ) => any
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
   ): Query;
   query<
     T extends
@@ -86,11 +89,7 @@ declare class Pool extends EventEmitter {
   >(
     sql: string,
     values: any | any[] | { [param: string]: any },
-    callback?: (
-      err: Query.QueryError | null,
-      result: T,
-      fields: FieldPacket[]
-    ) => any
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
   ): Query;
   query<
     T extends
@@ -100,9 +99,9 @@ declare class Pool extends EventEmitter {
       | OkPacket[]
       | ResultSetHeader
   >(
-    options: Query.QueryOptions,
+    options: QueryOptions,
     callback?: (
-      err: Query.QueryError | null,
+      err: QueryError | null,
       result: T,
       fields?: FieldPacket[]
     ) => any
@@ -115,13 +114,9 @@ declare class Pool extends EventEmitter {
       | OkPacket[]
       | ResultSetHeader
   >(
-    options: Query.QueryOptions,
+    options: QueryOptions,
     values: any | any[] | { [param: string]: any },
-    callback?: (
-      err: Query.QueryError | null,
-      result: T,
-      fields: FieldPacket[]
-    ) => any
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
   ): Query;
 
   execute<
@@ -133,11 +128,7 @@ declare class Pool extends EventEmitter {
       | ResultSetHeader
   >(
     sql: string,
-    callback?: (
-      err: Query.QueryError | null,
-      result: T,
-      fields: FieldPacket[]
-    ) => any
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
   ): Query;
   execute<
     T extends
@@ -149,11 +140,7 @@ declare class Pool extends EventEmitter {
   >(
     sql: string,
     values: any | any[] | { [param: string]: any },
-    callback?: (
-      err: Query.QueryError | null,
-      result: T,
-      fields: FieldPacket[]
-    ) => any
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
   ): Query;
   execute<
     T extends
@@ -163,9 +150,9 @@ declare class Pool extends EventEmitter {
       | OkPacket[]
       | ResultSetHeader
   >(
-    options: Query.QueryOptions,
+    options: QueryOptions,
     callback?: (
-      err: Query.QueryError | null,
+      err: QueryError | null,
       result: T,
       fields?: FieldPacket[]
     ) => any
@@ -178,13 +165,9 @@ declare class Pool extends EventEmitter {
       | OkPacket[]
       | ResultSetHeader
   >(
-    options: Query.QueryOptions,
+    options: QueryOptions,
     values: any | any[] | { [param: string]: any },
-    callback?: (
-      err: Query.QueryError | null,
-      result: T,
-      fields: FieldPacket[]
-    ) => any
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
   ): Query;
 
   end(

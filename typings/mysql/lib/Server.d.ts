@@ -1,8 +1,6 @@
 import { EventEmitter } from 'events';
 import { Connection } from './Connection';
 
-declare namespace Server {}
-
 declare class Server extends EventEmitter {
   connections: Array<Connection>;
 
@@ -10,4 +8,4 @@ declare class Server extends EventEmitter {
   close(callback: (error: Error, count: number) => any): void;
 }
 
-export = Server;
+export { Server };

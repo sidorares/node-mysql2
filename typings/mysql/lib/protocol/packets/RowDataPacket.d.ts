@@ -6,4 +6,4 @@ declare interface RowDataPacket {
   [column: number]: any;
 }
 
-export = RowDataPacket;
+export { RowDataPacket };

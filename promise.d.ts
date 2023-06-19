@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+
 import {
   RowDataPacket,
   OkPacket,
@@ -9,7 +11,6 @@ import {
   Pool as CorePool,
 } from './index';
 
-import { EventEmitter } from 'events';
 export * from './index';
 
 export interface PreparedStatementInfo {
@@ -246,6 +247,7 @@ export interface Pool extends EventEmitter, Connection {
   ): Promise<[T, FieldPacket[]]>;
 
   getConnection(): Promise<PoolConnection>;
+
   releaseConnection(connection: PoolConnection): void;
 
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;

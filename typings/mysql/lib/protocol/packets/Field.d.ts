@@ -12,4 +12,4 @@ declare interface Field {
   geometry: () => any;
 }
 
-export = Field;
+export { Field };

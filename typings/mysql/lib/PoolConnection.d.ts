@@ -5,4 +5,4 @@ declare class PoolConnection extends Connection {
   release(): void;
 }
 
-export = PoolConnection;
+export { PoolConnection };

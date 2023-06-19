@@ -11,4 +11,4 @@ declare interface ResultSetHeader {
   changedRows?: number;
 }
 
-export = ResultSetHeader;
+export { ResultSetHeader };

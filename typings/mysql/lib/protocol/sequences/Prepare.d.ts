@@ -1,5 +1,5 @@
-import Sequence = require('../sequences/Sequence');
-import Query = require('../sequences/Query');
+import { Sequence } from './Sequence';
+import { Query, QueryError, StreamOptions } from '../sequences/Query';
 import {
   OkPacket,
   FieldPacket,
@@ -8,25 +8,19 @@ import {
 } from '../packets';
 import { Readable } from 'stream';
 
-declare namespace Prepare {
-  export class PrepareStatementInfo {
-    close(): void;
-    execute<
-      T extends
-        | RowDataPacket[][]
-        | RowDataPacket[]
-        | OkPacket
-        | OkPacket[]
-        | ResultSetHeader
-    >(
-      paramaters: any | any[] | { [param: string]: any },
-      callback?: (
-        err: Query.QueryError | null,
-        result: T,
-        fields: FieldPacket[]
-      ) => any
-    ): Query;
-  }
+export class PrepareStatementInfo {
+  close(): void;
+  execute<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader
+  >(
+    paramaters: any | any[] | { [param: string]: any },
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+  ): Query;
 }
 
 declare class Prepare extends Sequence {
@@ -53,10 +47,10 @@ declare class Prepare extends Sequence {
    *
    * @param options The options for the stream.
    */
-  stream(options?: Query.StreamOptions): Readable;
+  stream(options?: StreamOptions): Readable;
 
   on(event: string, listener: (args: []) => void): this;
-  on(event: 'error', listener: (err: Query.QueryError) => any): this;
+  on(event: 'error', listener: (err: QueryError) => any): this;
   on(
     event: 'fields',
     listener: (fields: FieldPacket, index: number) => any
@@ -68,4 +62,4 @@ declare class Prepare extends Sequence {
   on(event: 'end', listener: () => any): this;
 }
 
-export = Prepare;
+export { Prepare };

@@ -1,18 +1,25 @@
-import * as crypto from 'crypto';
-import * as BasePool from './lib/Pool';
-import * as BaseConnection from './lib/Connection';
+import { RsaPublicKey, RsaPrivateKey, KeyLike } from 'crypto';
+import { Pool as BasePool, PoolOptions } from './lib/Pool';
+import {
+  Connection as BaseConnection,
+  ConnectionOptions,
+  SslOptions,
+} from './lib/Connection';
+import {
+  Query as BaseQuery,
+  QueryOptions,
+  QueryError,
+} from './lib/protocol/sequences/Query';
 import {
   PoolCluster as BasePoolCluster,
   PoolClusterOptions,
 } from './lib/PoolCluster';
-import { ConnectionOptions, SslOptions } from './lib/Connection';
-import BasePoolConnection = require('./lib/PoolConnection');
-import { PoolOptions } from './lib/Pool';
-import BaseQuery = require('./lib/protocol/sequences/Query');
-import BasePrepare = require('./lib/protocol/sequences/Prepare');
-import { QueryOptions, QueryError } from './lib/protocol/sequences/Query';
-import { PrepareStatementInfo } from './lib/protocol/sequences/Prepare';
-import Server = require('./lib/Server');
+import { PoolConnection as BasePoolConnection } from './lib/PoolConnection';
+import {
+  Prepare as BasePrepare,
+  PrepareStatementInfo,
+} from './lib/protocol/sequences/Prepare';
+import { Server } from './lib/Server';
 import { Connection as PromiseConnection } from '../../promise';
 
 export {
@@ -28,10 +35,10 @@ export {
 export * from './lib/protocol/packets/index';
 
 // Expose class interfaces
-export interface Connection extends BaseConnection.Connection {
+export interface Connection extends BaseConnection {
   promise(promiseImpl?: PromiseConstructor): PromiseConnection;
 }
-export interface Pool extends BasePool.Pool {}
+export interface Pool extends BasePool {}
 export interface PoolConnection extends BasePoolConnection {}
 export interface PoolCluster extends BasePoolCluster {}
 export interface Query extends BaseQuery {}
@@ -49,10 +56,7 @@ type AuthPluginDefinition<T> = (pluginOptions?: T) => AuthPlugin;
 export const authPlugins: {
   caching_sha2_password: AuthPluginDefinition<{
     overrideIsSecure?: boolean;
-    serverPublicKey?:
-      | crypto.RsaPublicKey
-      | crypto.RsaPrivateKey
-      | crypto.KeyLike;
+    serverPublicKey?: RsaPublicKey | RsaPrivateKey | KeyLike;
     jonServerPublicKey?: (data: Buffer) => void;
   }>;
   mysql_clear_password: AuthPluginDefinition<{
@@ -63,20 +67,15 @@ export const authPlugins: {
     passwordSha1?: string;
   }>;
   sha256_password: AuthPluginDefinition<{
-    serverPublicKey?:
-      | crypto.RsaPublicKey
-      | crypto.RsaPrivateKey
-      | crypto.KeyLike;
+    serverPublicKey?: RsaPublicKey | RsaPrivateKey | KeyLike;
     joinServerPublicKey?: (data: Buffer) => void;
   }>;
 };
 
 export function createConnection(connectionUri: string): Connection;
-export function createConnection(
-  config: BaseConnection.ConnectionOptions
-): Connection;
+export function createConnection(config: ConnectionOptions): Connection;
 
-export function createPool(config: BasePool.PoolOptions): BasePool.Pool;
+export function createPool(config: PoolOptions): BasePool;
 
 export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
 
@@ -103,6 +102,4 @@ export function raw(sql: string): {
   toSqlString: () => string;
 };
 
-export function createServer(
-  handler: (conn: BaseConnection.Connection) => any
-): Server;
+export function createServer(handler: (conn: BaseConnection) => any): Server;

@@ -1,4 +1,4 @@
-import PoolConnection = require('./PoolConnection');
+import { PoolConnection } from './PoolConnection';
 import { EventEmitter } from 'events';
 import { PoolOptions } from './Pool';
 
@@ -7,16 +7,19 @@ export interface PoolClusterOptions {
    * If true, PoolCluster will attempt to reconnect when connection fails. (Default: true)
    */
   canRetry?: boolean;
+
   /**
    * If connection fails, node's errorCount increases. When errorCount is greater than removeNodeErrorCount,
    * remove a node in the PoolCluster. (Default: 5)
    */
   removeNodeErrorCount?: number;
+
   /**
    * If connection fails, specifies the number of milliseconds before another connection attempt will be made.
    * If set to 0, then node will be removed instead and never re-used. (Default: 0)
    */
   restoreNodeTimeout?: number;
+
   /**
    * The default selector. (Default: RR)
    * RR: Select one alternately. (Round-Robin)
