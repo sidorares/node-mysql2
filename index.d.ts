@@ -1,98 +1,6 @@
 import * as mysql from './typings/mysql/index.js';
-import {
-  Pool as PromisePool,
-  PoolConnection as PromisePoolConnection,
-} from './promise.js';
 
 export * from './typings/mysql/index.js';
-
-export interface PoolConnection extends mysql.PoolConnection {
-  promise(promiseImpl?: PromiseConstructor): PromisePool;
-}
-
-export interface Pool extends mysql.Connection {
-  execute<
-    T extends
-      | mysql.RowDataPacket[][]
-      | mysql.RowDataPacket[]
-      | mysql.OkPacket
-      | mysql.OkPacket[]
-      | mysql.ResultSetHeader
-  >(
-    sql: string,
-    callback?: (
-      err: mysql.QueryError | null,
-      result: T,
-      fields: mysql.FieldPacket[]
-    ) => any
-  ): mysql.Query;
-  execute<
-    T extends
-      | mysql.RowDataPacket[][]
-      | mysql.RowDataPacket[]
-      | mysql.OkPacket
-      | mysql.OkPacket[]
-      | mysql.ResultSetHeader
-  >(
-    sql: string,
-    values: any | any[] | { [param: string]: any },
-    callback?: (
-      err: mysql.QueryError | null,
-      result: T,
-      fields: mysql.FieldPacket[]
-    ) => any
-  ): mysql.Query;
-  execute<
-    T extends
-      | mysql.RowDataPacket[][]
-      | mysql.RowDataPacket[]
-      | mysql.OkPacket
-      | mysql.OkPacket[]
-      | mysql.ResultSetHeader
-  >(
-    options: mysql.QueryOptions,
-    callback?: (
-      err: mysql.QueryError | null,
-      result: T,
-      fields?: mysql.FieldPacket[]
-    ) => any
-  ): mysql.Query;
-  execute<
-    T extends
-      | mysql.RowDataPacket[][]
-      | mysql.RowDataPacket[]
-      | mysql.OkPacket
-      | mysql.OkPacket[]
-      | mysql.ResultSetHeader
-  >(
-    options: mysql.QueryOptions,
-    values: any | any[] | { [param: string]: any },
-    callback?: (
-      err: mysql.QueryError | null,
-      result: T,
-      fields: mysql.FieldPacket[]
-    ) => any
-  ): mysql.Query;
-  getConnection(
-    callback: (err: NodeJS.ErrnoException, connection: PoolConnection) => any
-  ): void;
-  releaseConnection(connection: PoolConnection | PromisePoolConnection): void;
-  on(event: string, listener: (args: any[]) => void): this;
-  on(event: 'connection', listener: (connection: PoolConnection) => any): this;
-  on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
-  on(event: 'release', listener: (connection: PoolConnection) => any): this;
-  on(event: 'enqueue', listener: () => any): this;
-  unprepare(sql: string): mysql.PrepareStatementInfo;
-  prepare(
-    sql: string,
-    callback?: (
-      err: mysql.QueryError | null,
-      statement: mysql.PrepareStatementInfo
-    ) => any
-  ): mysql.Prepare;
-  promise(promiseImpl?: PromiseConstructor): PromisePool;
-  config: mysql.PoolOptions;
-}
 
 export interface ConnectionOptions extends mysql.ConnectionOptions {
   charsetNumber?: number;
@@ -136,5 +44,3 @@ export interface ConnectionConfig extends ConnectionOptions {
 }
 
 export interface PoolOptions extends mysql.PoolOptions, ConnectionOptions {}
-
-export function createPool(config: PoolOptions): Pool;

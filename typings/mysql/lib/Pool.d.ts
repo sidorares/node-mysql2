@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import { Query, QueryError, QueryOptions } from './protocol/sequences/Query.js';
+import { PrepareStatementInfo } from './protocol/sequences/Prepare.js';
 import {
   OkPacket,
   RowDataPacket,
@@ -8,7 +9,10 @@ import {
 } from './protocol/packets/index.js';
 import { ConnectionOptions } from './Connection.js';
 import { PoolConnection } from './PoolConnection.js';
-import { Pool as PromisePool } from '../../../promise.js';
+import {
+  Pool as PromisePool,
+  PoolConnection as PromisePoolConnection,
+} from '../../../promise.js';
 
 export interface PoolOptions extends ConnectionOptions {
   /**
@@ -57,8 +61,6 @@ export interface PoolOptions extends ConnectionOptions {
 }
 
 declare class Pool extends EventEmitter {
-  config: PoolOptions;
-
   getConnection(
     callback: (
       err: NodeJS.ErrnoException | null,
@@ -66,7 +68,7 @@ declare class Pool extends EventEmitter {
     ) => any
   ): void;
 
-  releaseConnection(connection: PoolConnection): void;
+  releaseConnection(connection: PoolConnection | PromisePoolConnection): void;
 
   query<
     T extends
@@ -176,8 +178,15 @@ declare class Pool extends EventEmitter {
 
   on(event: string, listener: (args: any[]) => void): this;
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;
+  on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
+  on(event: 'release', listener: (connection: PoolConnection) => any): this;
+  on(event: 'enqueue', listener: () => any): this;
+
+  unprepare(sql: string): PrepareStatementInfo;
 
   promise(promiseImpl?: PromiseConstructor): PromisePool;
+
+  config: PoolOptions;
 }
 
 export { Pool };
