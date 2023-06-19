@@ -19,7 +19,6 @@ import {
   PrepareStatementInfo,
 } from './lib/protocol/sequences/Prepare.js';
 import { Server } from './lib/Server.js';
-import { Connection as PromiseConnection } from '../../promise.js';
 
 export {
   ConnectionOptions,
@@ -35,17 +34,15 @@ export * from './lib/protocol/packets/index.js';
 export * from './lib/Auth.js';
 
 // Expose class interfaces
-export interface Connection extends BaseConnection {
-  promise(promiseImpl?: PromiseConstructor): PromiseConnection;
-}
+export interface Connection extends BaseConnection {}
 export interface Pool extends BasePool {}
 export interface PoolConnection extends BasePoolConnection {}
 export interface PoolCluster extends BasePoolCluster {}
 export interface Query extends BaseQuery {}
 export interface Prepare extends BasePrepare {}
 
-export function createConnection(connectionUri: string): Connection;
-export function createConnection(config: ConnectionOptions): Connection;
+export function createConnection(connectionUri: string): BaseConnection;
+export function createConnection(config: ConnectionOptions): BaseConnection;
 
 export function createPool(config: PoolOptions): BasePool;
 

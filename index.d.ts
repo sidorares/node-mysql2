@@ -1,93 +1,10 @@
 import * as mysql from './typings/mysql/index.js';
 import {
-  Connection as PromiseConnection,
   Pool as PromisePool,
   PoolConnection as PromisePoolConnection,
 } from './promise.js';
 
 export * from './typings/mysql/index.js';
-
-export interface Connection extends mysql.Connection {
-  execute<
-    T extends
-      | mysql.RowDataPacket[][]
-      | mysql.RowDataPacket[]
-      | mysql.OkPacket
-      | mysql.OkPacket[]
-      | mysql.ResultSetHeader
-  >(
-    sql: string,
-    callback?: (
-      err: mysql.QueryError | null,
-      result: T,
-      fields: mysql.FieldPacket[]
-    ) => any
-  ): mysql.Query;
-  execute<
-    T extends
-      | mysql.RowDataPacket[][]
-      | mysql.RowDataPacket[]
-      | mysql.OkPacket
-      | mysql.OkPacket[]
-      | mysql.ResultSetHeader
-  >(
-    sql: string,
-    values: any | any[] | { [param: string]: any },
-    callback?: (
-      err: mysql.QueryError | null,
-      result: T,
-      fields: mysql.FieldPacket[]
-    ) => any
-  ): mysql.Query;
-  execute<
-    T extends
-      | mysql.RowDataPacket[][]
-      | mysql.RowDataPacket[]
-      | mysql.OkPacket
-      | mysql.OkPacket[]
-      | mysql.ResultSetHeader
-  >(
-    options: mysql.QueryOptions,
-    callback?: (
-      err: mysql.QueryError | null,
-      result: T,
-      fields?: mysql.FieldPacket[]
-    ) => any
-  ): mysql.Query;
-  execute<
-    T extends
-      | mysql.RowDataPacket[][]
-      | mysql.RowDataPacket[]
-      | mysql.OkPacket
-      | mysql.OkPacket[]
-      | mysql.ResultSetHeader
-  >(
-    options: mysql.QueryOptions,
-    values: any | any[] | { [param: string]: any },
-    callback?: (
-      err: mysql.QueryError | null,
-      result: T,
-      fields: mysql.FieldPacket[]
-    ) => any
-  ): mysql.Query;
-  ping(callback?: (err: mysql.QueryError | null) => any): void;
-  unprepare(sql: string): mysql.PrepareStatementInfo;
-  prepare(
-    sql: string,
-    callback?: (
-      err: mysql.QueryError | null,
-      statement: mysql.PrepareStatementInfo
-    ) => any
-  ): mysql.Prepare;
-  serverHandshake(args: any): any;
-  writeOk(args?: mysql.OkPacketParams): void;
-  writeError(args?: mysql.ErrorPacketParams): void;
-  writeEof(warnings?: number, statusFlags?: number): void;
-  writeTextResult(rows?: Array<any>, columns?: Array<any>): void;
-  writePacket(packet: any): void;
-  promise(promiseImpl?: PromiseConstructor): PromiseConnection;
-  sequenceId: number;
-}
 
 export interface PoolConnection extends mysql.PoolConnection {
   promise(promiseImpl?: PromiseConstructor): PromisePool;
@@ -220,6 +137,4 @@ export interface ConnectionConfig extends ConnectionOptions {
 
 export interface PoolOptions extends mysql.PoolOptions, ConnectionOptions {}
 
-export function createConnection(connectionUri: string): Connection;
-export function createConnection(config: ConnectionOptions): Connection;
 export function createPool(config: PoolOptions): Pool;

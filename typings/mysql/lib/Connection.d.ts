@@ -5,12 +5,16 @@
 
 import { EventEmitter } from 'events';
 import { Query, QueryError, QueryOptions } from './protocol/sequences/Query.js';
+import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
 import {
   OkPacket,
   FieldPacket,
   RowDataPacket,
   ResultSetHeader,
+  OkPacketParams,
+  ErrorPacketParams,
 } from './protocol/packets/index.js';
+import { Connection as PromiseConnection } from '../../../promise.js';
 
 export interface SslOptions {
   /**
@@ -410,9 +414,30 @@ declare class Connection extends EventEmitter {
 
   rollback(callback: (err: QueryError | null) => void): void;
 
-  unprepare(sql: string): any;
+  prepare(
+    sql: string,
+    callback?: (err: QueryError | null, statement: PrepareStatementInfo) => any
+  ): Prepare;
+
+  unprepare(sql: string): PrepareStatementInfo;
 
   serverHandshake(args: any): any;
+
+  promise(promiseImpl?: PromiseConstructor): PromiseConnection;
+
+  ping(callback?: (err: QueryError | null) => any): void;
+
+  writeOk(args?: OkPacketParams): void;
+
+  writeError(args?: ErrorPacketParams): void;
+
+  writeEof(warnings?: number, statusFlags?: number): void;
+
+  writeTextResult(rows?: Array<any>, columns?: Array<any>): void;
+
+  writePacket(packet: any): void;
+
+  sequenceId: number;
 }
 
 export { Connection };
