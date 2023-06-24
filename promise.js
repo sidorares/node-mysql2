@@ -563,3 +563,13 @@ exports.raw = core.raw;
 exports.PromisePool = PromisePool;
 exports.PromiseConnection = PromiseConnection;
 exports.PromisePoolConnection = PromisePoolConnection;
+
+exports.__defineGetter__('Types', () => require('./lib/constants/types.js'));
+
+exports.__defineGetter__('Charsets', () =>
+  require('./lib/constants/charsets.js')
+);
+
+exports.__defineGetter__('CharsetToEncoding', () =>
+  require('./lib/constants/charset_encodings.js')
+);
