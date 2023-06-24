@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.4.1](https://github.com/sidorares/node-mysql2/compare/v3.4.0...v3.4.1) (2023-06-24)
+
+
+### Bug Fixes
+
+* `createPool` uri overload ([98623dd](https://github.com/sidorares/node-mysql2/commit/98623dd7fc82cfbe556fc4b92828d382b86625d8))
+* `PoolCluster` typings ([3902ca6](https://github.com/sidorares/node-mysql2/commit/3902ca6534fd64a798c5b2dc29402fe396d4a67c))
+* create promise-based `PoolCluster` typings ([7f38496](https://github.com/sidorares/node-mysql2/commit/7f38496097fa6d9cfbced604fe0ddc392b1b1979))
+* missing `parserCache` in `promise.js` ([7f35cf5](https://github.com/sidorares/node-mysql2/commit/7f35cf5f6e69cc8aa3d2008bf5b0434c4d7ee5ac))
+* missing constants in `promise.js` ([4ce2c70](https://github.com/sidorares/node-mysql2/commit/4ce2c70313ecbe2c4c5fd73f34b4ce7d32a9c83c))
+* missing keys for `Types` constant ([86655ec](https://github.com/sidorares/node-mysql2/commit/86655ec6ad8ab8deae11a3c4919ae2ee553f4120))
+* missing typings for `Charsets` constants ([01f77a0](https://github.com/sidorares/node-mysql2/commit/01f77a0db471682e7c4f523bde1189fc5d11d43d))
+* missing typings for `CharsetToEncoding` constants ([609229a](https://github.com/sidorares/node-mysql2/commit/609229a973031615cb93b5678b5932cf3714480f))
+* missing typings for `parserCache` ([891a523](https://github.com/sidorares/node-mysql2/commit/891a523939120666e8d85db634262889657aff45))
+* missing typings for `Types` constant ([04601dd](https://github.com/sidorares/node-mysql2/commit/04601ddbd1430b37a7a7ab8d8d63ad27bd00bb54))
+* rename file of typings `Charsets` constants ([51c4196](https://github.com/sidorares/node-mysql2/commit/51c4196d50472eb18e440ea0291f2b571a3e7585))
+
 ## [3.4.0](https://github.com/sidorares/node-mysql2/compare/v3.3.5...v3.4.0) (2023-06-19)
 
 
