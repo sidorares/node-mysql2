@@ -44,6 +44,7 @@ export interface Prepare extends BasePrepare {}
 export function createConnection(connectionUri: string): BaseConnection;
 export function createConnection(config: ConnectionOptions): BaseConnection;
 
+export function createPool(connectionUri: string): BasePool;
 export function createPool(config: PoolOptions): BasePool;
 
 export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
