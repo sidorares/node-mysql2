@@ -1,4 +1,3 @@
-import { RsaPublicKey, RsaPrivateKey, KeyLike } from 'crypto';
 import { Pool as BasePool, PoolOptions } from './lib/Pool.js';
 import {
   Connection as BaseConnection,
@@ -20,7 +19,6 @@ import {
   PrepareStatementInfo,
 } from './lib/protocol/sequences/Prepare.js';
 import { Server } from './lib/Server.js';
-import { Connection as PromiseConnection } from '../../promise.js';
 
 export {
   ConnectionOptions,
@@ -33,47 +31,18 @@ export {
 };
 
 export * from './lib/protocol/packets/index.js';
+export * from './lib/Auth.js';
 
 // Expose class interfaces
-export interface Connection extends BaseConnection {
-  promise(promiseImpl?: PromiseConstructor): PromiseConnection;
-}
+export interface Connection extends BaseConnection {}
 export interface Pool extends BasePool {}
 export interface PoolConnection extends BasePoolConnection {}
 export interface PoolCluster extends BasePoolCluster {}
 export interface Query extends BaseQuery {}
 export interface Prepare extends BasePrepare {}
 
-export type AuthPlugin = (pluginMetadata: {
-  connection: Connection;
-  command: string;
-}) => (
-  pluginData: Buffer
-) => Promise<string> | string | Buffer | Promise<Buffer> | null;
-
-type AuthPluginDefinition<T> = (pluginOptions?: T) => AuthPlugin;
-
-export const authPlugins: {
-  caching_sha2_password: AuthPluginDefinition<{
-    overrideIsSecure?: boolean;
-    serverPublicKey?: RsaPublicKey | RsaPrivateKey | KeyLike;
-    jonServerPublicKey?: (data: Buffer) => void;
-  }>;
-  mysql_clear_password: AuthPluginDefinition<{
-    password?: string;
-  }>;
-  mysql_native_password: AuthPluginDefinition<{
-    password?: string;
-    passwordSha1?: string;
-  }>;
-  sha256_password: AuthPluginDefinition<{
-    serverPublicKey?: RsaPublicKey | RsaPrivateKey | KeyLike;
-    joinServerPublicKey?: (data: Buffer) => void;
-  }>;
-};
-
-export function createConnection(connectionUri: string): Connection;
-export function createConnection(config: ConnectionOptions): Connection;
+export function createConnection(connectionUri: string): BaseConnection;
+export function createConnection(config: ConnectionOptions): BaseConnection;
 
 export function createPool(config: PoolOptions): BasePool;
 
@@ -101,5 +70,20 @@ export function format(
 export function raw(sql: string): {
   toSqlString: () => string;
 };
+
+export interface ConnectionConfig extends ConnectionOptions {
+  mergeFlags(defaultFlags: string[], userFlags: string[] | string): number;
+  getDefaultFlags(options?: ConnectionOptions): string[];
+  getCharsetNumber(charset: string): number;
+  getSSLProfile(name: string): { ca: string[] };
+  parseUrl(url: string): {
+    host: string;
+    port: number;
+    database: string;
+    user: string;
+    password: string;
+    [key: string]: any;
+  };
+}
 
 export function createServer(handler: (conn: BaseConnection) => any): Server;

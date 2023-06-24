@@ -146,4 +146,6 @@ declare class Query extends Sequence {
   on(event: 'end', listener: () => any): this;
 }
 
+export type QueryableConstructor<T = object> = new (...args: any[]) => T;
+
 export { Query };

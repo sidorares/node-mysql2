@@ -4,13 +4,20 @@
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
 import { EventEmitter } from 'events';
-import { Query, QueryError, QueryOptions } from './protocol/sequences/Query.js';
+import { Query, QueryError } from './protocol/sequences/Query.js';
+import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
 import {
   OkPacket,
   FieldPacket,
   RowDataPacket,
   ResultSetHeader,
+  OkPacketParams,
+  ErrorPacketParams,
 } from './protocol/packets/index.js';
+import { Connection as PromiseConnection } from '../../../promise.js';
+import { AuthPlugin } from './Auth.js';
+import { QueryableBase } from './protocol/sequences/QueryableBase.js';
+import { ExecutableBase } from './protocol/sequences/ExecutableBase.js';
 
 export interface SslOptions {
   /**
@@ -244,9 +251,49 @@ export interface ConnectionOptions {
    * This can also be set in the `QueryOption` object to be applied per-query.
    */
   rowsAsArray?: boolean;
+
+  charsetNumber?: number;
+
+  compress?: boolean;
+
+  authSwitchHandler?: (data: any, callback: () => void) => any;
+
+  connectAttributes?: { [param: string]: any };
+
+  isServer?: boolean;
+
+  maxPreparedStatements?: number;
+
+  namedPlaceholders?: boolean;
+
+  nestTables?: boolean | string;
+
+  passwordSha1?: string;
+
+  pool?: any;
+
+  stream?: any;
+
+  uri?: string;
+
+  connectionLimit?: number;
+
+  maxIdle?: number;
+
+  idleTimeout?: number;
+
+  Promise?: any;
+
+  queueLimit?: number;
+
+  waitForConnections?: boolean;
+
+  authPlugins?: {
+    [key: string]: AuthPlugin;
+  };
 }
 
-declare class Connection extends EventEmitter {
+declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
   config: ConnectionOptions;
 
   threadId: number;
@@ -288,108 +335,6 @@ declare class Connection extends EventEmitter {
     callback?: (err: QueryError | null) => void
   ): void;
 
-  query<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    sql: string,
-    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
-  ): Query;
-  query<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    sql: string,
-    values: any | any[] | { [param: string]: any },
-    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
-  ): Query;
-  query<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    options: QueryOptions,
-    callback?: (
-      err: QueryError | null,
-      result: T,
-      fields?: FieldPacket[]
-    ) => any
-  ): Query;
-  query<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    options: QueryOptions,
-    values: any | any[] | { [param: string]: any },
-    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
-  ): Query;
-
-  execute<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    sql: string,
-    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
-  ): Query;
-  execute<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    sql: string,
-    values: any | any[] | { [param: string]: any },
-    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
-  ): Query;
-  execute<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    options: QueryOptions,
-    callback?: (
-      err: QueryError | null,
-      result: T,
-      fields?: FieldPacket[]
-    ) => any
-  ): Query;
-  execute<
-    T extends
-      | RowDataPacket[][]
-      | RowDataPacket[]
-      | OkPacket
-      | OkPacket[]
-      | ResultSetHeader
-  >(
-    options: QueryOptions,
-    values: any | any[] | { [param: string]: any },
-    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
-  ): Query;
-
   end(callback?: (err: QueryError | null) => void): void;
   end(options: any, callback?: (err: QueryError | null) => void): void;
 
@@ -410,9 +355,30 @@ declare class Connection extends EventEmitter {
 
   rollback(callback: (err: QueryError | null) => void): void;
 
-  unprepare(sql: string): any;
+  prepare(
+    sql: string,
+    callback?: (err: QueryError | null, statement: PrepareStatementInfo) => any
+  ): Prepare;
+
+  unprepare(sql: string): PrepareStatementInfo;
 
   serverHandshake(args: any): any;
+
+  promise(promiseImpl?: PromiseConstructor): PromiseConnection;
+
+  ping(callback?: (err: QueryError | null) => any): void;
+
+  writeOk(args?: OkPacketParams): void;
+
+  writeError(args?: ErrorPacketParams): void;
+
+  writeEof(warnings?: number, statusFlags?: number): void;
+
+  writeTextResult(rows?: Array<any>, columns?: Array<any>): void;
+
+  writePacket(packet: any): void;
+
+  sequenceId: number;
 }
 
 export { Connection };
