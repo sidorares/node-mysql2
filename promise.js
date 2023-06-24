@@ -2,6 +2,7 @@
 
 const core = require('./index.js');
 const EventEmitter = require('events').EventEmitter;
+const parserCache = require('./lib/parsers/parser_cache.js');
 
 function makeDoneCb(resolve, reject, localErr) {
   return function (err, rows, fields) {
@@ -563,3 +564,21 @@ exports.raw = core.raw;
 exports.PromisePool = PromisePool;
 exports.PromiseConnection = PromiseConnection;
 exports.PromisePoolConnection = PromisePoolConnection;
+
+exports.__defineGetter__('Types', () => require('./lib/constants/types.js'));
+
+exports.__defineGetter__('Charsets', () =>
+  require('./lib/constants/charsets.js')
+);
+
+exports.__defineGetter__('CharsetToEncoding', () =>
+  require('./lib/constants/charset_encodings.js')
+);
+
+exports.setMaxParserCache = function(max) {
+  parserCache.setMaxCache(max);
+};
+
+exports.clearParserCache = function() {
+  parserCache.clearCache();
+};

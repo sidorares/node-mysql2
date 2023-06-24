@@ -7,6 +7,8 @@ export const access: mysql.ConnectionOptions = {
   database: '',
 };
 
+export const uriAccess = `mysql://${access.host}:${access.password}@${access.host}:${access.port}/${access.database}`;
+
 /** The SQL for the query */
 export const sql = 'SELECT * FROM `table`';
 

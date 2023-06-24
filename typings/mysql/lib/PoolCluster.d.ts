@@ -1,6 +1,13 @@
 import { EventEmitter } from 'events';
 import { PoolConnection } from './PoolConnection.js';
 import { PoolOptions } from './Pool.js';
+import { ExecutableBase as ExecutableBaseClass } from './protocol/sequences/ExecutableBase.js';
+import { QueryableBase as QueryableBaseClass } from './protocol/sequences/QueryableBase.js';
+
+// Expose class interfaces
+declare class QueryableAndExecutableBase extends QueryableBaseClass(
+  ExecutableBaseClass(EventEmitter)
+) {}
 
 export interface PoolClusterOptions {
   /**
@@ -29,10 +36,20 @@ export interface PoolClusterOptions {
   defaultSelector?: string;
 }
 
+export interface PoolNamespace extends QueryableAndExecutableBase {
+  getConnection(
+    callback: (
+      err: NodeJS.ErrnoException | null,
+      connection: PoolConnection
+    ) => any
+  ): void;
+}
+
 declare class PoolCluster extends EventEmitter {
   config: PoolClusterOptions;
 
   add(config: PoolOptions): void;
+  add(group: string, connectionUri: string): void;
   add(group: string, config: PoolOptions): void;
 
   end(): void;
@@ -59,7 +76,7 @@ declare class PoolCluster extends EventEmitter {
     ) => void
   ): void;
 
-  of(pattern: string, selector?: string): PoolCluster;
+  of(pattern: string, selector?: string): PoolNamespace;
 
   on(event: string, listener: (args: any[]) => void): this;
   on(event: 'remove', listener: (nodeId: number) => void): this;
