@@ -12,6 +12,7 @@ import {
 import {
   PoolCluster as BasePoolCluster,
   PoolClusterOptions,
+  PoolNamespace,
 } from './lib/PoolCluster.js';
 import { PoolConnection as BasePoolConnection } from './lib/PoolConnection.js';
 import {
@@ -25,6 +26,7 @@ export {
   SslOptions,
   PoolOptions,
   PoolClusterOptions,
+  PoolNamespace,
   QueryOptions,
   QueryError,
   PrepareStatementInfo,

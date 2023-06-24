@@ -8,6 +8,7 @@ import {
   QueryOptions,
   ConnectionOptions,
   PoolOptions,
+  PoolClusterOptions,
   Pool as CorePool,
 } from './index.js';
 import { ExecutableBase as ExecutableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/ExecutableBase.js';
@@ -95,6 +96,30 @@ export interface Pool extends Connection {
   pool: CorePool;
 }
 
+export interface PoolNamespace extends QueryableAndExecutableBase {
+  getConnection(): Promise<PoolConnection>;
+}
+
+export interface PoolCluster extends EventEmitter {
+  config: PoolClusterOptions;
+
+  add(config: PoolOptions): void;
+  add(group: string, connectionUri: string): void;
+  add(group: string, config: PoolOptions): void;
+
+  end(): Promise<void>;
+
+  getConnection(): Promise<PoolConnection>;
+  getConnection(group: string): Promise<PoolConnection>;
+  getConnection(group: string, selector: string): Promise<PoolConnection>;
+
+  of(pattern: string, selector?: string): PoolNamespace;
+
+  on(event: string, listener: (args: any[]) => void): this;
+  on(event: 'remove', listener: (nodeId: number) => void): this;
+  on(event: 'connection', listener: (connection: PoolConnection) => void): this;
+}
+
 export function createConnection(connectionUri: string): Promise<Connection>;
 export function createConnection(
   config: ConnectionOptions
@@ -102,3 +127,5 @@ export function createConnection(
 
 export function createPool(connectionUri: string): Pool;
 export function createPool(config: PoolOptions): Pool;
+
+export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
