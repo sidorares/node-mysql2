@@ -10,6 +10,8 @@
     "strict": true,
     "noImplicitAny": true,
     "moduleResolution": "node",
-    "removeComments": false
+    "removeComments": false,
+    "noUnusedParameters": true,
+    "isolatedModules": true,
   }
 }

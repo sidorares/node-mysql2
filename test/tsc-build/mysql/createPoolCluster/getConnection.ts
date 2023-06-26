@@ -7,7 +7,7 @@ poolCluster.add('cluster1', uriAccess);
 poolCluster.add('cluster2', access);
 
 /** execute */
-poolCluster.getConnection((err, conn) => {
+poolCluster.getConnection((_err, conn) => {
   /** Overload: execute(sql, () => {}}) */
   conn.execute(sql, (err, result, fields) => {
     console.log(err, result, fields);
@@ -38,7 +38,7 @@ poolCluster.getConnection((err, conn) => {
 });
 
 /** query */
-poolCluster.getConnection('cluster1', (err, conn) => {
+poolCluster.getConnection('cluster1', (_err, conn) => {
   /** Overload: query(sql, () => {}}) */
   conn.query(sql, (err, result, fields) => {
     console.log(err, result, fields);
