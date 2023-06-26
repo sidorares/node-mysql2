@@ -15,6 +15,5 @@
     "noEmit": true,
     "noUnusedParameters": true,
     "isolatedModules": true,
-		"preserveValueImports": true,
   }
 }
