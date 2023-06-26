@@ -32,7 +32,7 @@ import { access, sql, sqlPS, values } from '../../baseConnection.js';
 
 /** getConnection */
 {
-  mysql.createPool(access).getConnection((err, connection) => {
+  mysql.createPool(access).getConnection((_err, connection) => {
     /** Overload: query(sql, () => {}}) */
     connection.query(sql, (err, result, fields) => {
       console.log(err, result, fields);

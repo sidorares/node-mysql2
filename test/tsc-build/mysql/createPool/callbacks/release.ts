@@ -3,7 +3,7 @@ import { access } from '../../baseConnection.js';
 
 const pool = mysql.createPool(access);
 
-pool.getConnection((err, conn) => {
+pool.getConnection((_err, conn) => {
   conn.release();
 
   try {
