@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.2](https://github.com/sidorares/node-mysql2/compare/v3.4.1...v3.4.2) (2023-06-26)
+
+
+### Bug Fixes
+
+* changing type files to declaration type files ([98e6f3a](https://github.com/sidorares/node-mysql2/commit/98e6f3a0b1f2d523dc8cb62c67e49d9589c469eb))
+
 ## [3.4.1](https://github.com/sidorares/node-mysql2/compare/v3.4.0...v3.4.1) (2023-06-24)
 
 
