@@ -4,7 +4,6 @@
     "target": "ES2016",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "isolatedModules": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -13,6 +12,9 @@
     "strictFunctionTypes": false,
     "skipLibCheck": false,
     "noEmitOnError": true,
-    "noEmit": true
+    "noEmit": true,
+    "noUnusedParameters": true,
+    "isolatedModules": true,
+		"preserveValueImports": true,
   }
 }
