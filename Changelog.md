@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.3](https://github.com/sidorares/node-mysql2/compare/v3.4.2...v3.4.3) (2023-06-30)
+
+
+### Bug Fixes
+
+* remove acquireTimeout invalid option ([#2095](https://github.com/sidorares/node-mysql2/issues/2095)) ([eb311db](https://github.com/sidorares/node-mysql2/commit/eb311dbb988a4d3adada9774d43a79806a453745))
+
 ## [3.4.2](https://github.com/sidorares/node-mysql2/compare/v3.4.1...v3.4.2) (2023-06-26)
 
 
