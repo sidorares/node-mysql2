@@ -18,13 +18,7 @@ export declare function QueryableBase<T extends QueryableConstructor>(
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
-        | ProcedureCallPacket<
-            | OkPacket
-            | ResultSetHeader
-            | RowDataPacket[]
-            | RowDataPacket[][]
-            | OkPacket[]
-          >
+        | ProcedureCallPacket
     >(
       sql: string
     ): Promise<[T, FieldPacket[]]>;
@@ -35,13 +29,7 @@ export declare function QueryableBase<T extends QueryableConstructor>(
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
-        | ProcedureCallPacket<
-            | OkPacket
-            | ResultSetHeader
-            | RowDataPacket[]
-            | RowDataPacket[][]
-            | OkPacket[]
-          >
+        | ProcedureCallPacket
     >(
       sql: string,
       values: any
@@ -53,13 +41,7 @@ export declare function QueryableBase<T extends QueryableConstructor>(
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
-        | ProcedureCallPacket<
-            | OkPacket
-            | ResultSetHeader
-            | RowDataPacket[]
-            | RowDataPacket[][]
-            | OkPacket[]
-          >
+        | ProcedureCallPacket
     >(
       options: QueryOptions
     ): Promise<[T, FieldPacket[]]>;
@@ -70,13 +52,7 @@ export declare function QueryableBase<T extends QueryableConstructor>(
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
-        | ProcedureCallPacket<
-            | OkPacket
-            | ResultSetHeader
-            | RowDataPacket[]
-            | RowDataPacket[][]
-            | OkPacket[]
-          >
+        | ProcedureCallPacket
     >(
       options: QueryOptions,
       values: any
