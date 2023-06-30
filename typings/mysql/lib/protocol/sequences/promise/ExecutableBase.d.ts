@@ -3,6 +3,7 @@ import {
   FieldPacket,
   RowDataPacket,
   ResultSetHeader,
+  ProcedureCallPacket,
 } from '../../packets/index.js';
 import { QueryOptions, QueryableConstructor } from '../Query.js';
 
@@ -17,6 +18,7 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       sql: string
     ): Promise<[T, FieldPacket[]]>;
@@ -27,6 +29,7 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       sql: string,
       values: any
@@ -38,6 +41,7 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       options: QueryOptions
     ): Promise<[T_2, FieldPacket[]]>;
@@ -48,6 +52,7 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       options: QueryOptions,
       values: any
