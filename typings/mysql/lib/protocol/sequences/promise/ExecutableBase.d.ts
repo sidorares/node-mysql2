@@ -23,7 +23,7 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
       sql: string
     ): Promise<[T, FieldPacket[]]>;
     execute<
-      T_1 extends
+      T extends
         | OkPacket
         | ResultSetHeader
         | RowDataPacket[]
@@ -33,9 +33,9 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
     >(
       sql: string,
       values: any
-    ): Promise<[T_1, FieldPacket[]]>;
+    ): Promise<[T, FieldPacket[]]>;
     execute<
-      T_2 extends
+      T extends
         | OkPacket
         | ResultSetHeader
         | RowDataPacket[]
@@ -44,9 +44,9 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
         | ProcedureCallPacket
     >(
       options: QueryOptions
-    ): Promise<[T_2, FieldPacket[]]>;
+    ): Promise<[T, FieldPacket[]]>;
     execute<
-      T_3 extends
+      T extends
         | OkPacket
         | ResultSetHeader
         | RowDataPacket[]
@@ -56,6 +56,6 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
     >(
       options: QueryOptions,
       values: any
-    ): Promise<[T_3, FieldPacket[]]>;
+    ): Promise<[T, FieldPacket[]]>;
   };
 } & T;
