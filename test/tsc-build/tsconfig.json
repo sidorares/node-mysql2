@@ -1,5 +1,5 @@
 {
-  "include": ["index.ts", "mysql", "promise"],
+  "include": ["index.ts", "helpers.ts", "mysql", "promise"],
   "compilerOptions": {
     "target": "ES2016",
     "module": "CommonJS",

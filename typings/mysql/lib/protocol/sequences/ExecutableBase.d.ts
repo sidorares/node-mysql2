@@ -3,6 +3,7 @@ import {
   FieldPacket,
   RowDataPacket,
   ResultSetHeader,
+  ProcedureCallPacket,
 } from '../packets/index.js';
 import {
   Query,
@@ -10,6 +11,7 @@ import {
   QueryOptions,
   QueryableConstructor,
 } from './Query.js';
+
 export declare function ExecutableBase<T extends QueryableConstructor>(
   Base?: T
 ): {
@@ -21,6 +23,7 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       sql: string,
       callback?:
@@ -28,44 +31,47 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
         | undefined
     ): Query;
     execute<
-      T_1 extends
+      T extends
         | OkPacket
         | ResultSetHeader
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       sql: string,
       values: any,
       callback?:
-        | ((err: QueryError | null, result: T_1, fields: FieldPacket[]) => any)
+        | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
         | undefined
     ): Query;
     execute<
-      T_2 extends
+      T extends
         | OkPacket
         | ResultSetHeader
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       options: QueryOptions,
       callback?:
-        | ((err: QueryError | null, result: T_2, fields?: FieldPacket[]) => any)
+        | ((err: QueryError | null, result: T, fields?: FieldPacket[]) => any)
         | undefined
     ): Query;
     execute<
-      T_3 extends
+      T extends
         | OkPacket
         | ResultSetHeader
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       options: QueryOptions,
       values: any,
       callback?:
-        | ((err: QueryError | null, result: T_3, fields: FieldPacket[]) => any)
+        | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
         | undefined
     ): Query;
   };
