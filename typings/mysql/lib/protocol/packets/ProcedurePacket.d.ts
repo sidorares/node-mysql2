@@ -3,17 +3,16 @@ import { ResultSetHeader } from './ResultSetHeader.js';
 import { RowDataPacket } from './RowDataPacket.js';
 
 declare type ProcedureCallPacket<
-  T extends
-    | OkPacket
-    | ResultSetHeader
-    | RowDataPacket[]
-    | RowDataPacket[][]
-    | OkPacket[] =
-    | OkPacket
-    | ResultSetHeader
-    | RowDataPacket[]
-    | RowDataPacket[][]
-    | OkPacket[]
-> = [T, ResultSetHeader];
+  T = RowDataPacket[] | RowDataPacket[][] | ResultSetHeader
+> = T extends RowDataPacket[]
+  ? [...T, ResultSetHeader]
+  : T extends RowDataPacket[][]
+  ? [...T, ResultSetHeader]
+  : T extends ResultSetHeader | OkPacket | OkPacket[]
+  ? ResultSetHeader
+  :
+      | [...RowDataPacket[], ResultSetHeader]
+      | [...RowDataPacket[][], ResultSetHeader]
+      | ResultSetHeader;
 
 export { ProcedureCallPacket };
