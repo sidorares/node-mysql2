@@ -173,14 +173,14 @@ const procedureCall = {
 
   // Checking `ResultSetHeader | OkPacket | OkPacket[]` Procedure Calls
   {
-    await conn.query(dropProcedure.select);
-    await conn.query(createProcedure.select);
+    await conn.query(dropProcedure.update);
+    await conn.query(createProcedure.update);
 
     const [procedureResult] = await conn.query<
       mysqlp.ProcedureCallPacket<
         mysqlp.ResultSetHeader | mysqlp.OkPacket | mysqlp.OkPacket[]
       >
-    >(procedureCall.select, []);
+    >(procedureCall.update, []);
 
     // Strict checking the `ResultSetHeader`
     const resultSetHeader: mysqlp.ResultSetHeader = procedureResult;
