@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.4.4](https://github.com/sidorares/node-mysql2/compare/v3.4.3...v3.4.4) (2023-07-04)
+
+
+### Bug Fixes
+
+* add `ProcedureCallPacket` to `execute` overloads ([3566ef7](https://github.com/sidorares/node-mysql2/commit/3566ef77a1a45d2cb18b1e32e0a5f4fc325a26cd))
+* add `ProcedureCallPacket` to `query` overloads ([352c3bc](https://github.com/sidorares/node-mysql2/commit/352c3bc5504d6cb8d9837771a2fa8673db7eb001))
+* add `ProcedureCallPacket` to promise-based `execute` overloads ([8292416](https://github.com/sidorares/node-mysql2/commit/829241604cfd4cd45b6f5bfd7c36082287da5ca0))
+* add `ProcedureCallPacket` to promise-based `query` overloads ([0f31a41](https://github.com/sidorares/node-mysql2/commit/0f31a41dcfe65d2953447c7f1a8b5c892f2ceed9))
+* create `ProcedureCallPacket` typings ([09ad1d2](https://github.com/sidorares/node-mysql2/commit/09ad1d276fcad6c9e3963d54b56c39c26a57b690))
+
 ## [3.4.3](https://github.com/sidorares/node-mysql2/compare/v3.4.2...v3.4.3) (2023-06-30)
 
 

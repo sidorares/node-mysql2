@@ -3,6 +3,7 @@ import {
   FieldPacket,
   RowDataPacket,
   ResultSetHeader,
+  ProcedureCallPacket,
 } from '../../packets/index.js';
 import { QueryOptions, QueryableConstructor } from '../Query.js';
 
@@ -17,40 +18,44 @@ export declare function QueryableBase<T extends QueryableConstructor>(
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       sql: string
     ): Promise<[T, FieldPacket[]]>;
     query<
-      T_1 extends
+      T extends
         | OkPacket
         | ResultSetHeader
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       sql: string,
       values: any
-    ): Promise<[T_1, FieldPacket[]]>;
+    ): Promise<[T, FieldPacket[]]>;
     query<
-      T_2 extends
+      T extends
         | OkPacket
         | ResultSetHeader
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       options: QueryOptions
-    ): Promise<[T_2, FieldPacket[]]>;
+    ): Promise<[T, FieldPacket[]]>;
     query<
-      T_3 extends
+      T extends
         | OkPacket
         | ResultSetHeader
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
+        | ProcedureCallPacket
     >(
       options: QueryOptions,
       values: any
-    ): Promise<[T_3, FieldPacket[]]>;
+    ): Promise<[T, FieldPacket[]]>;
   };
 } & T;
