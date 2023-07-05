@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [16.x, 18.x, 20.x]
-        mysql-version: ["mysql:8.0.18", "mysql:8.0.22", "mysql:5.7"]
+        mysql-version: ["mysql:8.0.18", "mysql:8.0.22", "mysql:8.0.33", "mysql:5.7"]
         use-compression: [0]
         use-tls: [0]
         mysql_connection_url_key: [""]
@@ -38,12 +38,12 @@ jobs:
         include:
           # 20.x 
           - node-version: "20.x"
-            mysql-version: "mysql:8.0.18"
+            mysql-version: "mysql:8.0.33"
             use-compression: 1
             use-tls: 0
             use-builtin-test-runner: 1
           - node-version: "20.x"
-            mysql-version: "mysql:8.0.18"
+            mysql-version: "mysql:8.0.33"
             use-compression: 0
             use-tls: 1
             use-builtin-test-runner: 1
