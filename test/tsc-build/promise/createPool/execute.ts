@@ -1,5 +1,5 @@
-import { mysqlp as mysql } from '../../index';
-import { access, sql, sqlPS, values } from '../baseConnection';
+import { mysqlp as mysql } from '../../index.js';
+import { access, sql, sqlPS, values } from '../baseConnection.js';
 
 (async () => {
   const db = mysql.createPool(access);

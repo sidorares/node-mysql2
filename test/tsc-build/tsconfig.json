@@ -1,10 +1,9 @@
 {
-  "include": ["index.ts", "mysql", "promise"],
+  "include": ["index.ts", "helpers.ts", "mysql", "promise"],
   "compilerOptions": {
     "target": "ES2016",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "isolatedModules": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -13,6 +12,8 @@
     "strictFunctionTypes": false,
     "skipLibCheck": false,
     "noEmitOnError": true,
-    "noEmit": true
+    "noEmit": true,
+    "noUnusedParameters": true,
+    "isolatedModules": true,
   }
 }

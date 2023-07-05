@@ -1,5 +1,62 @@
 # Changelog
 
+## [3.4.4](https://github.com/sidorares/node-mysql2/compare/v3.4.3...v3.4.4) (2023-07-04)
+
+
+### Bug Fixes
+
+* add `ProcedureCallPacket` to `execute` overloads ([3566ef7](https://github.com/sidorares/node-mysql2/commit/3566ef77a1a45d2cb18b1e32e0a5f4fc325a26cd))
+* add `ProcedureCallPacket` to `query` overloads ([352c3bc](https://github.com/sidorares/node-mysql2/commit/352c3bc5504d6cb8d9837771a2fa8673db7eb001))
+* add `ProcedureCallPacket` to promise-based `execute` overloads ([8292416](https://github.com/sidorares/node-mysql2/commit/829241604cfd4cd45b6f5bfd7c36082287da5ca0))
+* add `ProcedureCallPacket` to promise-based `query` overloads ([0f31a41](https://github.com/sidorares/node-mysql2/commit/0f31a41dcfe65d2953447c7f1a8b5c892f2ceed9))
+* create `ProcedureCallPacket` typings ([09ad1d2](https://github.com/sidorares/node-mysql2/commit/09ad1d276fcad6c9e3963d54b56c39c26a57b690))
+
+## [3.4.3](https://github.com/sidorares/node-mysql2/compare/v3.4.2...v3.4.3) (2023-06-30)
+
+
+### Bug Fixes
+
+* remove acquireTimeout invalid option ([#2095](https://github.com/sidorares/node-mysql2/issues/2095)) ([eb311db](https://github.com/sidorares/node-mysql2/commit/eb311dbb988a4d3adada9774d43a79806a453745))
+
+## [3.4.2](https://github.com/sidorares/node-mysql2/compare/v3.4.1...v3.4.2) (2023-06-26)
+
+
+### Bug Fixes
+
+* changing type files to declaration type files ([98e6f3a](https://github.com/sidorares/node-mysql2/commit/98e6f3a0b1f2d523dc8cb62c67e49d9589c469eb))
+
+## [3.4.1](https://github.com/sidorares/node-mysql2/compare/v3.4.0...v3.4.1) (2023-06-24)
+
+
+### Bug Fixes
+
+* `createPool` uri overload ([98623dd](https://github.com/sidorares/node-mysql2/commit/98623dd7fc82cfbe556fc4b92828d382b86625d8))
+* `PoolCluster` typings ([3902ca6](https://github.com/sidorares/node-mysql2/commit/3902ca6534fd64a798c5b2dc29402fe396d4a67c))
+* create promise-based `PoolCluster` typings ([7f38496](https://github.com/sidorares/node-mysql2/commit/7f38496097fa6d9cfbced604fe0ddc392b1b1979))
+* missing `parserCache` in `promise.js` ([7f35cf5](https://github.com/sidorares/node-mysql2/commit/7f35cf5f6e69cc8aa3d2008bf5b0434c4d7ee5ac))
+* missing constants in `promise.js` ([4ce2c70](https://github.com/sidorares/node-mysql2/commit/4ce2c70313ecbe2c4c5fd73f34b4ce7d32a9c83c))
+* missing keys for `Types` constant ([86655ec](https://github.com/sidorares/node-mysql2/commit/86655ec6ad8ab8deae11a3c4919ae2ee553f4120))
+* missing typings for `Charsets` constants ([01f77a0](https://github.com/sidorares/node-mysql2/commit/01f77a0db471682e7c4f523bde1189fc5d11d43d))
+* missing typings for `CharsetToEncoding` constants ([609229a](https://github.com/sidorares/node-mysql2/commit/609229a973031615cb93b5678b5932cf3714480f))
+* missing typings for `parserCache` ([891a523](https://github.com/sidorares/node-mysql2/commit/891a523939120666e8d85db634262889657aff45))
+* missing typings for `Types` constant ([04601dd](https://github.com/sidorares/node-mysql2/commit/04601ddbd1430b37a7a7ab8d8d63ad27bd00bb54))
+* rename file of typings `Charsets` constants ([51c4196](https://github.com/sidorares/node-mysql2/commit/51c4196d50472eb18e440ea0291f2b571a3e7585))
+
+## [3.4.0](https://github.com/sidorares/node-mysql2/compare/v3.3.5...v3.4.0) (2023-06-19)
+
+
+### Features
+
+* support STATE_GTIDS session track information ([2b1520f](https://github.com/sidorares/node-mysql2/commit/2b1520f4c5c11cda30d69e8b8b20ff03ec469099))
+
+## [3.3.5](https://github.com/sidorares/node-mysql2/compare/v3.3.4...v3.3.5) (2023-06-12)
+
+
+### Bug Fixes
+
+* `createPool` `promise` as `PromisePool` ([#2060](https://github.com/sidorares/node-mysql2/issues/2060)) ([ff3c36c](https://github.com/sidorares/node-mysql2/commit/ff3c36ca8b092f8ab16fc81400f6c63524cd971d))
+* keepAliveInitialDelay not taking effect ([#2043](https://github.com/sidorares/node-mysql2/issues/2043)) ([585911c](https://github.com/sidorares/node-mysql2/commit/585911c5d5d4b933e32e5a646574af222b63f530))
+
 ## [3.3.4](https://github.com/sidorares/node-mysql2/compare/v3.3.3...v3.3.4) (2023-06-11)
 
 

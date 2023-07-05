@@ -1,5 +1,5 @@
-import { mysql } from '../../../index';
-import { access, sql, sqlPS, values } from '../../baseConnection';
+import { mysql } from '../../../index.js';
+import { access, sql, sqlPS, values } from '../../baseConnection.js';
 
 {
   const db = mysql.createPool(access);
@@ -32,7 +32,7 @@ import { access, sql, sqlPS, values } from '../../baseConnection';
 
 /** getConnection and query */
 {
-  mysql.createPool(access).getConnection((err, connection) => {
+  mysql.createPool(access).getConnection((_err, connection) => {
     /** Overload: execute(sql, () => {}}) */
     connection.execute(sql, (err, result, fields) => {
       console.log(err, result, fields);

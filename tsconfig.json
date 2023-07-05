@@ -1,18 +1,17 @@
 {
-	"compilerOptions": {
-		"target": "es2016",
-		"alwaysStrict": true,
-		"noUnusedLocals": true,
-		"module": "commonjs",
-		"rootDir": "src",
-		"declaration": true,
-		"strict": true,
-		"strictFunctionTypes": false,
-		"noImplicitAny": true,
-		"sourceMap": true,
-		"moduleResolution": "node",
-		"removeComments": false,
-		"listEmittedFiles": true,
-		"outDir": "lib"
-	}
-} 
+  "include": ["index.d.ts", "promise.d.ts", "typings"],
+  "exclude": ["node_modules", "test/tsc-build"],
+  "compilerOptions": {
+    "target": "es2016",
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "module": "commonjs",
+    "declaration": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "removeComments": false,
+    "noUnusedParameters": true,
+    "isolatedModules": true,
+  }
+}

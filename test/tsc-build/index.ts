@@ -11,7 +11,7 @@
  * For mysql/promise build tests:   './promise/...'
  */
 
-import mysql from '../../index';
-import mysqlp from '../../promise';
+import mysql from '../../index.js';
+import mysqlp from '../../promise.js';
 
 export { mysql, mysqlp };
