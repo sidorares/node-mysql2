@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.5](https://github.com/sidorares/node-mysql2/compare/v3.4.4...v3.4.5) (2023-07-05)
+
+
+### Bug Fixes
+
+* handle prepare response with actual number of parameter definition less than reported in the prepare header. Fixes [#2052](https://github.com/sidorares/node-mysql2/issues/2052) ([b658be0](https://github.com/sidorares/node-mysql2/commit/b658be0cfbfdec378d71a9d9e70de4a52180cd2d))
+
 ## [3.4.4](https://github.com/sidorares/node-mysql2/compare/v3.4.3...v3.4.4) (2023-07-04)
 
 
