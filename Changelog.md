@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0](https://github.com/sidorares/node-mysql2/compare/v3.4.5...v3.5.0) (2023-07-06)
+
+
+### Features
+
+* improved inspection of columns ([#2112](https://github.com/sidorares/node-mysql2/issues/2112)) ([69277aa](https://github.com/sidorares/node-mysql2/commit/69277aa0430d951d61c485d2cd228c3cd9d4a33c))
+
 ## [3.4.5](https://github.com/sidorares/node-mysql2/compare/v3.4.4...v3.4.5) (2023-07-05)
 
 
