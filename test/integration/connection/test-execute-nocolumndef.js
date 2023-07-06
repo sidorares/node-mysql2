@@ -58,7 +58,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 63,
-    columnType: 8,
+    encoding: 'binary',
     type: 8,
     flags: 161,
     decimals: 0
@@ -71,7 +71,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnType: 253,
+    encoding: 'utf8',
     type: 253,
     flags: 1,
     decimals: 31
@@ -84,7 +84,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnType: 253,
+    encoding: 'utf8',
     type: 253,
     flags: 0,
     decimals: 31
@@ -97,7 +97,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnType: 250,
+    encoding: 'utf8',
     type: 250,
     flags: 0,
     decimals: 31
@@ -110,7 +110,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnType: 253,
+    encoding: 'utf8',
     type: 253,
     flags: 0,
     decimals: 31
@@ -123,7 +123,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnType: 253,
+    encoding: 'utf8',
     type: 253,
     flags: 0,
     decimals: 31
@@ -136,7 +136,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnType: 253,
+    encoding: 'utf8',
     type: 253,
     flags: 0,
     decimals: 31
@@ -149,7 +149,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnType: 253,
+    encoding: 'utf8',
     type: 253,
     flags: 0,
     decimals: 31
@@ -162,7 +162,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnType: 253,
+    encoding: 'utf8',
     type: 253,
     flags: 0,
     decimals: 31
@@ -175,7 +175,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 63,
-    columnType: 8,
+    encoding: 'binary',
     type: 8,
     flags: 160,
     decimals: 0
@@ -188,7 +188,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 63,
-    columnType: 5,
+    encoding: 'binary',
     type: 5,
     flags: 128,
     decimals: 2
@@ -201,7 +201,7 @@ const expectedFields = [
     table: '',
     orgTable: '',
     characterSet: 224,
-    columnType: 253,
+    encoding: 'utf8',
     type: 253,
     flags: 1,
     decimals: 31
