@@ -81,7 +81,7 @@
     "husky": "^8.0.2",
     "lint-staged": "^13.0.3",
     "portfinder": "^1.0.28",
-    "prettier": "^2.4.1",
+    "prettier": "^3.0.0",
     "progress": "^2.0.3",
     "typescript": "^5.0.2",
     "urun": "0.0.8",
