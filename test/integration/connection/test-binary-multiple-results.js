@@ -43,7 +43,7 @@ const fields1 = [
   {
     catalog: 'def',
     characterSet: 63,
-    columnType: 8,
+    encoding: 'binary',
     type: 8,
     decimals: 0,
     flags: 129,
@@ -58,7 +58,7 @@ const nr_fields = [
   {
     catalog: 'def',
     characterSet: 63,
-    columnType: 3,
+    encoding: 'binary',
     type: 3,
     decimals: 0,
     flags: 0,
