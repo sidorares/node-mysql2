@@ -11,6 +11,7 @@ const assert = require('assert');
 
 const createConnection = require('../../../promise.js').createConnection;
 const createPool = require('../../../promise.js').createPool;
+const createPoolCluster = require('../../../promise.js').createPoolCluster;
 
 // it's lazy exported from main index.js as well. Test that it's same function
 const mainExport = require('../../../index.js').createConnectionPromise;
@@ -19,6 +20,7 @@ assert.equal(mainExport, createConnection);
 let doneCalled = false;
 let exceptionCaught = false;
 let doneEventsConnect = false;
+let eventsPoolCluster = false;
 
 let doneCalledPool = false;
 let exceptionCaughtPool = false;
@@ -203,6 +205,26 @@ function testEventsConnect() {
         );
       }
     });
+}
+
+function testEventsConnectPoolCluster() {
+  const poolCluster = createPoolCluster();
+  let events = 0;
+  /* eslint-disable no-invalid-this */
+  poolCluster
+    .once('warn', function () {
+      assert.equal(this, poolCluster);
+      ++events;
+    })
+    .once('remove', function () {
+      assert.equal(this, poolCluster);
+      ++events;
+      eventsPoolCluster = events === 2;
+    });
+  /* eslint-enable no-invalid-this */
+  poolCluster.poolCluster.emit('warn', new Error());
+  poolCluster.poolCluster.emit("remove");
+
 }
 
 function testBasicPool() {
@@ -469,6 +491,7 @@ testBasicPool();
 testErrorsPool();
 testObjParamsPool();
 testEventsPool();
+testEventsConnectPoolCluster();
 testChangeUser();
 testConnectionProperties();
 testPoolConnectionDestroy();
@@ -478,6 +501,7 @@ process.on('exit', () => {
   assert.equal(doneCalled, true, 'done not called');
   assert.equal(exceptionCaught, true, 'exception not caught');
   assert.equal(doneEventsConnect, true, 'wrong number of connection events');
+  assert.equal(eventsPoolCluster, true, 'wrong number of pool cluster events');
   assert.equal(doneCalledPool, true, 'pool done not called');
   assert.equal(exceptionCaughtPool, true, 'pool exception not caught');
   assert.equal(doneEventsPool, true, 'wrong number of pool connection events');
