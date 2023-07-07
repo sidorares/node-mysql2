@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-const tls = require('tls');
 const common = require('../../common');
 const connection = common.createConnection();
 
