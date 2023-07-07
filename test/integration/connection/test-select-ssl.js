@@ -1,0 +1,16 @@
+'use strict';
+
+const assert = require('assert');
+const tls = require('tls');
+const common = require('../../common');
+const connection = common.createConnection();
+
+connection.query(`SHOW STATUS LIKE 'Ssl_cipher'`, (err, rows, fields) => {
+  assert.ifError(err);
+  if (process.env.MYSQL_USE_TLS === '1') {
+    assert(rows[0].Value.startsWith('TLS_AES_'));
+  } else {
+     assert.deepEqual(rows, [{ Variable_name: 'Ssl_cipher', Value: '' }]);
+  }
+  connection.end();
+});

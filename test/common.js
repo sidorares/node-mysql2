@@ -12,7 +12,7 @@ const config = {
   port: process.env.MYSQL_PORT || 3306
 };
 
-if (process.env.MYSQL_USE_TLS) {
+if (process.env.MYSQL_USE_TLS === '1') {
   config.ssl = {
     rejectUnauthorized: false,
     ca: fs.readFileSync(
@@ -84,6 +84,7 @@ exports.createConnection = function(args) {
     typeCast: args && args.typeCast,
     namedPlaceholders: args && args.namedPlaceholders,
     connectTimeout: args && args.connectTimeout,
+    ssl: (args && args.ssl) || config.ssl,
   };
 
   const conn = driver.createConnection(params);

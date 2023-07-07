@@ -59,4 +59,4 @@ jobs:
 
       - name: Run tests
         # todo: run full test suite once test createServer is implemented using Bun.listen
-        run: FILTER=test-select MYSQL_PORT=3306 bun run test
+        run: MYSQL_USE_TLS=${{ matrix.use-tls }} FILTER=test-select MYSQL_PORT=3306 bun run test
