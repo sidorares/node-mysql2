@@ -20,10 +20,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bun-version: [0.5.1]
+        bun-version: [0.6.13]
         mysql-version: ["mysql:5.7", "mysql:8.0.18", "mysql:8.0.22"]
         use-compression: [0]
-        use-tls: [0]
+        use-tls: [0,1]
 
     name: Bun ${{ matrix.bun-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
