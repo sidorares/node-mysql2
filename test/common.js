@@ -84,7 +84,7 @@ exports.createConnection = function(args) {
     typeCast: args && args.typeCast,
     namedPlaceholders: args && args.namedPlaceholders,
     connectTimeout: args && args.connectTimeout,
-    ssl: (args && args.ssl) || config.ssl,
+    ssl: (args && args.ssl) ?? config.ssl,
   };
 
   const conn = driver.createConnection(params);
@@ -165,10 +165,12 @@ exports.createServer = function(onListening, handler) {
   const server = require('../index.js').createServer();
   server.on('connection', conn => {
     conn.on('error', () => {
-      // we are here when client drops connection
+      // server side of the connection
+      // ignore disconnects
     });
+    // remove ssl bit from the flags
     let flags = 0xffffff;
-    flags = flags ^ ClientFlags.COMPRESS;
+    flags = flags ^ (ClientFlags.COMPRESS | ClientFlags.SSL);
 
     conn.serverHandshake({
       protocolVersion: 10,
