@@ -302,6 +302,7 @@ For `ProcedureCallPacket<RowDataPacket[]>` and `ProcedureCallPacket<RowDataPacke
 You can also check some code examples using **MySQL2** and **TypeScript** to understand advanced concepts:
 
 - [Extending and using **Interfaces** with `RowDataPacket`](../../examples/typescript/row-data-packet.ts)
+- [Extending and using **Interfaces** with `RowDataPacket` and `rowAsArray`](../../examples/typescript/row-data-packet-row-as-array.ts)
 - Checking for `ResultSetHeader` or `RowDataPacket[]` using **Procedure Calls** (*in progress*)
 - Checking for `ResultSetHeader` or `RowDataPacket[][]` using **Procedure Calls** (*in progress*)
 - Creating a custom **MySQL2** **Class** (*in progress*)
