@@ -49,7 +49,7 @@ jobs:
     
       - name: Set up MySQL
         if: ${{ matrix.mysql-version }}
-        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
+        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
