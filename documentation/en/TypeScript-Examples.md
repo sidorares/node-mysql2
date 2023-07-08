@@ -188,7 +188,7 @@ conn.query<ResultSetHeader>(sql, (_err, result) => {
 #### ResultSetHeader[]
 > Needs to be fixed ⚠️
 
-For multiples `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc. when using `multipleStatements`
+For multiples `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc. when using `multipleStatements` as `true`
 
 ```ts
 import mysql, { ResultSetHeader } from 'mysql2';
@@ -204,10 +204,10 @@ const sql = `
   SET @2 = 2;
 `;
 
-conn.query<ResultSetHeader[]>(sql, (_err, result) => {
-  console.log(result);
+conn.query<ResultSetHeader[]>(sql, (_err, results) => {
+  console.log(results);
   /**
-   * @result: [
+   * @results: [
       ResultSetHeader {
         fieldCount: 0,
         affectedRows: 0,
