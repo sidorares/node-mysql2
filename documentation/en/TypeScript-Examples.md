@@ -177,7 +177,8 @@ conn.query<ResultSetHeader>(sql, (_err, result) => {
       insertId: 0,
       info: '',
       serverStatus: 2,
-      warningStatus: 0
+      warningStatus: 0,
+      changedRows: 0
     }
    */
 });
@@ -212,7 +213,8 @@ conn.query<ResultSetHeader[]>(sql, (_err, results) => {
         insertId: 0,
         info: '',
         serverStatus: 10,
-        warningStatus: 0
+        warningStatus: 0,
+        changedRows: 0
       },
       ResultSetHeader {
         fieldCount: 0,
@@ -220,15 +222,69 @@ conn.query<ResultSetHeader[]>(sql, (_err, results) => {
         insertId: 0,
         info: '',
         serverStatus: 2,
-        warningStatus: 0
+        warningStatus: 0,
+        changedRows: 0
       }
     ]
    */
 });
 ```
 
+---
+
 #### ProcedureCallPacket
-> In progress
+By performing a **Call Procedure** using `INSERT`, `UPDATE`, etc., the return will be a `ProcedureCallPacket<ResultSetHeader>` (even if you perform multiples queries and set `multipleStatements` to `true`).
+
+> For `CREATE PROCEDURE` and `DROP PROCEDURE`, these returns will be the *default* `ResultSetHeader`.
+
+```ts
+import mysql, { ProcedureCallPacket, ResultSetHeader } from 'mysql2';
+
+const conn = mysql.createConnection({
+  user: 'test',
+  database: 'test',
+});
+
+/** ResultSetHeader */
+conn.query('DROP PROCEDURE IF EXISTS myProcedure');
+
+/** ResultSetHeader */
+conn.query(`
+    CREATE PROCEDURE myProcedure()
+    BEGIN
+      SET @1 = 1;
+      SET @2 = 2;
+    END
+  `);
+
+/** ProcedureCallPacket */
+const sql = 'CALL myProcedure()';
+
+conn.query<ProcedureCallPacket<ResultSetHeader>>(sql, (_err, result) => {
+  console.log(result);
+  /**
+   * @result: ResultSetHeader {
+      fieldCount: 0,
+      affectedRows: 0,
+      insertId: 0,
+      info: '',
+      serverStatus: 2,
+      warningStatus: 0,
+      changedRows: 0
+    }
+   */
+});
+```
+
+By using `SELECT` and `SHOW` queries in a **Procedure Call**, it groups the results as:
+```tsx
+// ProcedureCallPacket<RowDataPacket[]>
+[...RowDataPacket[], ResultSetHeader]
+
+// ProcedureCallPacket<RowDataPacket[][]>
+[...RowDataPacket[][], ResultSetHeader]
+```
+For `ProcedureCallPacket<RowDataPacket[]>` and `ProcedureCallPacket<RowDataPacket[][]>`, please see the following advanced examples.
 
 ---
 
