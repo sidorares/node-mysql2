@@ -3,7 +3,10 @@ import { ResultSetHeader } from './ResultSetHeader.js';
 import { RowDataPacket } from './RowDataPacket.js';
 
 declare type ProcedureCallPacket<
-  T = RowDataPacket[] | RowDataPacket[][] | ResultSetHeader
+  T =
+    | [...RowDataPacket[], ResultSetHeader]
+    | [...RowDataPacket[][], ResultSetHeader]
+    | ResultSetHeader
 > = T extends RowDataPacket[]
   ? [...T, ResultSetHeader]
   : T extends RowDataPacket[][]
