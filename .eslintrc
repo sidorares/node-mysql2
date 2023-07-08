@@ -57,10 +57,11 @@
       }
     },
     {
-      "files": ["**/*.md/*js"],
+      "files": ["**/*.md/*js", "**/*.md/*ts"],
       "rules": {
         "no-undef": "off",
         "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "off",
         "no-console": "off",
         "no-unused-labels": "off",
         "strict": "off",
