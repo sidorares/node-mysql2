@@ -106,37 +106,38 @@ conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
 });
 ```
 
+Using `rowsAsArray` option as `true`:
+
+```ts
+import mysql, { RowDataPacket } from 'mysql2';
+
+const conn = mysql.createConnection({
+  user: 'test',
+  database: 'test',
+  rowsAsArray: true,
+});
+
+// SELECT
+conn.query<RowDataPacket[]>('SELECT 1 + 1 AS test, 2 + 2 AS test;', (_err, rows) => {
+  console.log(rows);
+  /**
+  * @rows: [ [ 2, 4 ] ]
+  */
+});
+
+// SHOW
+conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
+  console.log(rows);
+  /**
+  * @rows: [ [ 'test' ] ]
+  */
+});
+```
+
 ---
 
 ### RowDataPacket[][]
-- When `rowsAsArray` option is `true`
-  ```ts
-  import mysql, { RowDataPacket } from 'mysql2';
-
-  const conn = mysql.createConnection({
-    user: 'test',
-    database: 'test',
-    rowsAsArray: true,
-  });
-
-  // SELECT
-  conn.query<RowDataPacket[][]>('SELECT 1 + 1 AS test, 2 + 2 AS test;', (_err, rows) => {
-    console.log(rows);
-    /**
-    * @rows: [ [ 2, 4 ] ]
-    */
-  });
-
-  // SHOW
-  conn.query<RowDataPacket[][]>('SHOW TABLES FROM `test`;', (_err, rows) => {
-    console.log(rows);
-    /**
-    * @rows: [ [ 'test' ] ]
-    */
-  });
-  ```
-
-- When `multipleStatements` is `true` with multiple queries
+Using `multipleStatements`option as `true` with multiple queries:
   ```ts
   import mysql, { RowDataPacket } from 'mysql2';
 
@@ -162,7 +163,7 @@ conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
 ---
 
 ### ResultSetHeader
-For `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc.
+For `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc.:
 ```ts
 import mysql, { ResultSetHeader } from 'mysql2';
 
@@ -194,7 +195,7 @@ conn.query<ResultSetHeader>(sql, (_err, result) => {
 ---
 
 ### ResultSetHeader[]
-For multiples `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc. when using `multipleStatements` as `true`
+For multiples `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc. when using `multipleStatements` as `true`:
 
 ```ts
 import mysql, { ResultSetHeader } from 'mysql2';
@@ -240,9 +241,7 @@ conn.query<ResultSetHeader[]>(sql, (_err, results) => {
 ---
 
 ### ProcedureCallPacket
-By performing a **Call Procedure** using `INSERT`, `UPDATE`, etc., the return will be a `ProcedureCallPacket<ResultSetHeader>` (even if you perform multiples queries and set `multipleStatements` to `true`).
-
-> For `CREATE PROCEDURE` and `DROP PROCEDURE`, these returns will be the *default* `ResultSetHeader`.
+By performing a **Call Procedure** using `INSERT`, `UPDATE`, etc., the return will be a `ProcedureCallPacket<ResultSetHeader>` (even if you perform multiples queries and set `multipleStatements` to `true`):
 
 ```ts
 import mysql, { ProcedureCallPacket, ResultSetHeader } from 'mysql2';
@@ -283,6 +282,8 @@ conn.query<ProcedureCallPacket<ResultSetHeader>>(sql, (_err, result) => {
 });
 ```
 
+> For `CREATE PROCEDURE` and `DROP PROCEDURE`, these returns will be the *default* `ResultSetHeader`.
+
 By using `SELECT` and `SHOW` queries in a **Procedure Call**, it groups the results as:
 ```tsx
 // ProcedureCallPacket<RowDataPacket[]>
@@ -291,6 +292,7 @@ By using `SELECT` and `SHOW` queries in a **Procedure Call**, it groups the resu
 // ProcedureCallPacket<RowDataPacket[][]>
 [...RowDataPacket[][], ResultSetHeader]
 ```
+
 For `ProcedureCallPacket<RowDataPacket[]>` and `ProcedureCallPacket<RowDataPacket[][]>`, please see the following examples.
 
 ---
