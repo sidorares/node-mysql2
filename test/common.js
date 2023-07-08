@@ -32,7 +32,7 @@ exports.waitDatabaseReady = function(callback) {
   const tryConnect = function() {
     const conn = exports.createConnection({ database: 'mysql', password: process.env.MYSQL_PASSWORD });
     conn.once('error', err => {
-      if (err.code !== 'PROTOCOL_CONNECTION_LOST' && err.code !== 'ETIMEDOUT') {
+      if (err.code !== 'PROTOCOL_CONNECTION_LOST' && err.code !== 'ETIMEDOUT' && err.code !== 'ECONNREFUSED') {
         console.log('Unexpected error waiting for connection', err);
         process.exit(-1);
       }
