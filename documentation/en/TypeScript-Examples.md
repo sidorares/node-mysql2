@@ -73,6 +73,7 @@ In this example, you need to manually check the output types
 ### Type Specification
 #### RowDataPacket[]
 An array with the returned rows, for example:
+
 ```ts
 import mysql, { RowDataPacket } from 'mysql2';
 
@@ -81,7 +82,7 @@ const conn = mysql.createConnection({
   database: 'test',
 });
 
-/** SELECT */
+// SELECT
 conn.query<RowDataPacket[]>('SELECT 1 + 1 AS `test`;', (_err, rows) => {
   console.log(rows);
   /**
@@ -89,7 +90,7 @@ conn.query<RowDataPacket[]>('SELECT 1 + 1 AS `test`;', (_err, rows) => {
    */
 });
 
-/** SHOW */
+// SHOW
 conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
   console.log(rows);
   /**
@@ -111,18 +112,16 @@ conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
     rowsAsArray: true,
   });
 
-  const sql = `
-    SELECT 1 + 1 AS test, 2 + 2 AS test;
-  `;
-
-  conn.query<RowDataPacket[][]>(sql, (_err, rows) => {
+  // SELECT
+  conn.query<RowDataPacket[][]>('SELECT 1 + 1 AS test, 2 + 2 AS test;', (_err, rows) => {
     console.log(rows);
     /**
     * @rows: [ [ 2, 4 ] ]
     */
   });
 
-  conn.query<RowDataPacket[][]>(sql, (_err, rows) => {
+  // SHOW
+  conn.query<RowDataPacket[][]>('SHOW TABLES FROM `test`;', (_err, rows) => {
     console.log(rows);
     /**
     * @rows: [ [ 'test' ] ]
