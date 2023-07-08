@@ -44,15 +44,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up docker
-        run: |
-          brew install docker
-          brew install docker-compose
-          brew install docker-machine
-          docker-machine create --driver virtualbox default
-          docker-machine env default
-          eval $(docker-machine env default)
-
+      - name: Setup Docker on macOS
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+    
       - name: Set up MySQL
         if: ${{ matrix.mysql-version }}
         run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
