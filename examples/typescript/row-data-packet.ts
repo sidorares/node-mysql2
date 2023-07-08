@@ -1,8 +1,5 @@
 /**
- * docker run --rm --name mysql2-examples -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=mysql2_examples -p 3306:3306 -d mysql:latest
- *
  * The types are explicity for learning purpose
- *
  * By extending the `RowDataPacket`, you can use your Interface in `query` and `execute`
  */
 
@@ -19,11 +16,10 @@ interface User extends RowDataPacket {
 
 (async () => {
   const access: ConnectionOptions = {
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    port: 3306,
-    database: 'mysql2_examples',
+    host: '',
+    user: '',
+    password: '',
+    database: '',
   };
 
   const conn = await mysql.createConnection(access);
