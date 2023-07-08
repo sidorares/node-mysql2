@@ -1,6 +1,7 @@
 'use strict';
 
 // temporary disabling the test
+/*
 return;
 
 const common = require('../../common');
@@ -63,3 +64,4 @@ process.on('exit', () => {
   assert.equal(results[2].name2, 'BB');
   assert.equal(results[3].name2, 'AA');
 });
+*/
