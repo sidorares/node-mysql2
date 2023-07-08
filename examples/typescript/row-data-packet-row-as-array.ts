@@ -22,6 +22,7 @@ import mysql, {
     user: '',
     password: '',
     database: '',
+    rowsAsArray: true,
   };
 
   const conn = await mysql.createConnection(access);
