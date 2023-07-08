@@ -304,6 +304,7 @@ You can also check some code examples using **MySQL2** and **TypeScript** to und
 - [Extending and using **Interfaces** with `RowDataPacket`](../../examples/typescript/row-data-packet.ts)
 - [Extending and using **Interfaces** with `RowDataPacket` and `rowAsArray`](../../examples/typescript/row-data-packet-row-as-array.ts)
 - [Extending and using **Interfaces** with `RowDataPacket` and `multipleStatements`](../../examples/typescript/row-data-packet-multi-statements.ts)
+- [Extending and using **Interfaces** with `RowDataPacket`, `rowAsArray` and `multipleStatements`](../../examples/typescript/row-data-packet-row-as-array-multi-statements.ts)
 - Checking for `ResultSetHeader` or `RowDataPacket[]` using **Procedure Calls** (*in progress*)
 - Checking for `ResultSetHeader` or `RowDataPacket[][]` using **Procedure Calls** (*in progress*)
 - Creating a custom **MySQL2** **Class** (*in progress*)
