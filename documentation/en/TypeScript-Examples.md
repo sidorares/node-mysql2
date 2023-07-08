@@ -44,9 +44,15 @@ const conn = mysql.createPool(access);
 ```
 
 ## Query and Execute
-### A simple SELECT
+### A simple query
 ```ts
 conn.query('SELECT 1 + 1 AS `test`;', (_err, rows) => {
+  /**
+   * @rows: [ { test: 2 } ]
+   */
+});
+
+conn.execute('SELECT 1 + 1 AS `test`;', (_err, rows) => {
   /**
    * @rows: [ { test: 2 } ]
    */
@@ -76,10 +82,19 @@ const conn = mysql.createConnection({
   database: 'test',
 });
 
+/** SELECT */
 conn.query<RowDataPacket[]>('SELECT 1 + 1 AS `test`;', (_err, rows) => {
   console.log(rows);
   /**
    * @rows: [ { test: 2 } ]
+   */
+});
+
+/** SHOW */
+conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
+  console.log(rows);
+  /**
+   * @rows: [ { Tables_in_test: 'test' } ]
    */
 });
 ```
@@ -87,7 +102,7 @@ conn.query<RowDataPacket[]>('SELECT 1 + 1 AS `test`;', (_err, rows) => {
 ---
 
 #### RowDataPacket[][]
-- `rowsAsArray`
+- When `rowsAsArray` option is `true`
   ```ts
   import mysql, { RowDataPacket } from 'mysql2';
 
@@ -107,9 +122,16 @@ conn.query<RowDataPacket[]>('SELECT 1 + 1 AS `test`;', (_err, rows) => {
     * @rows: [ [ 2, 4 ] ]
     */
   });
+
+  conn.query<RowDataPacket[][]>(sql, (_err, rows) => {
+    console.log(rows);
+    /**
+    * @rows: [ [ 'test' ] ]
+    */
+  });
   ```
 
-- `multipleStatements` with multiple queries
+- When `multipleStatements` is `true` with multiple queries
   ```ts
   import mysql, { RowDataPacket } from 'mysql2';
 
@@ -132,16 +154,84 @@ conn.query<RowDataPacket[]>('SELECT 1 + 1 AS `test`;', (_err, rows) => {
   });
   ```
 
+---
+
 #### ResultSetHeader
-> In progress
+For `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc.
+```ts
+import mysql, { ResultSetHeader } from 'mysql2';
+
+const conn = mysql.createConnection({
+  user: 'test',
+  database: 'test',
+});
+
+const sql = `
+  SET @1 = 1;
+`;
+
+conn.query<ResultSetHeader>(sql, (_err, result) => {
+  console.log(result);
+  /**
+   * @result: ResultSetHeader {
+      fieldCount: 0,
+      affectedRows: 0,
+      insertId: 0,
+      info: '',
+      serverStatus: 2,
+      warningStatus: 0
+    }
+   */
+});
+```
+
+---
+
+#### ResultSetHeader[]
+> Needs to be fixed ⚠️
+
+For multiples `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc. when using `multipleStatements`
+
+```ts
+import mysql, { ResultSetHeader } from 'mysql2';
+
+const conn = mysql.createConnection({
+  user: 'test',
+  database: 'test',
+  multipleStatements: true,
+});
+
+const sql = `
+  SET @1 = 1;
+  SET @2 = 2;
+`;
+
+conn.query<ResultSetHeader[]>(sql, (_err, result) => {
+  console.log(result);
+  /**
+   * @result: [
+      ResultSetHeader {
+        fieldCount: 0,
+        affectedRows: 0,
+        insertId: 0,
+        info: '',
+        serverStatus: 10,
+        warningStatus: 0
+      },
+      ResultSetHeader {
+        fieldCount: 0,
+        affectedRows: 0,
+        insertId: 0,
+        info: '',
+        serverStatus: 2,
+        warningStatus: 0
+      }
+    ]
+   */
+});
+```
 
 #### ProcedureCallPacket
-> In progress
-
-#### OkPacket
-> In progress
-
-#### OkPacket[]
 > In progress
 
 ---
