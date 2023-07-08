@@ -8,18 +8,21 @@ npm install --save-dev @types/node
 
 > The `@types/node` ensure the proper interaction between **TypeScript** and the **Node.js** modules used by **MySQL2** (*net*, *events*, *stream*, *tls*, etc.).
 
-## Import
+## Usage
 You can import **MySQL2** in two ways:
+- By setting the `esModuleInterop` option to `true` in `tsconfig.json`
 ```ts
-import * as mysql from 'mysql2';
-import * as mysql from 'mysql2/promise';
-
-// By setting the `esModuleInterop` option to `true` in `tsconfig.json`
 import mysql from 'mysql2';
 import mysql from 'mysql2/promise';
 ```
 
-## Connection
+- By setting the `esModuleInterop` option to `false` in `tsconfig.json`
+```ts
+import * as mysql from 'mysql2';
+import * as mysql from 'mysql2/promise';
+```
+
+### Connection
 ```ts
 import mysql, { ConnectionOptions } from 'mysql2';
 
@@ -31,7 +34,7 @@ const access: ConnectionOptions = {
 const conn = mysql.createConnection(access);
 ```
 
-## Pool Connection
+### Pool Connection
 ```ts
 import mysql, { PoolOptions } from 'mysql2';
 
@@ -43,8 +46,8 @@ const access: PoolOptions = {
 const conn = mysql.createPool(access);
 ```
 
-## Query and Execute
-### A simple query
+### Query and Execute
+#### A simple query
 ```ts
 conn.query('SELECT 1 + 1 AS `test`;', (_err, rows) => {
   /**
@@ -70,8 +73,8 @@ In this example, you need to manually check the output types
 
 ---
 
-### Type Specification
-#### RowDataPacket[]
+## Type Specification
+### RowDataPacket[]
 An array with the returned rows, for example:
 
 ```ts
@@ -101,7 +104,7 @@ conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
 
 ---
 
-#### RowDataPacket[][]
+### RowDataPacket[][]
 - When `rowsAsArray` option is `true`
   ```ts
   import mysql, { RowDataPacket } from 'mysql2';
@@ -154,7 +157,7 @@ conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
 
 ---
 
-#### ResultSetHeader
+### ResultSetHeader
 For `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc.
 ```ts
 import mysql, { ResultSetHeader } from 'mysql2';
@@ -186,7 +189,7 @@ conn.query<ResultSetHeader>(sql, (_err, result) => {
 
 ---
 
-#### ResultSetHeader[]
+### ResultSetHeader[]
 For multiples `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc. when using `multipleStatements` as `true`
 
 ```ts
@@ -232,7 +235,7 @@ conn.query<ResultSetHeader[]>(sql, (_err, results) => {
 
 ---
 
-#### ProcedureCallPacket
+### ProcedureCallPacket
 By performing a **Call Procedure** using `INSERT`, `UPDATE`, etc., the return will be a `ProcedureCallPacket<ResultSetHeader>` (even if you perform multiples queries and set `multipleStatements` to `true`).
 
 > For `CREATE PROCEDURE` and `DROP PROCEDURE`, these returns will be the *default* `ResultSetHeader`.
