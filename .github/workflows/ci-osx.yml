@@ -44,6 +44,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: install lima
+        run: brew install lima
+
       - name: Setup Docker on macOS
         uses: douglascamata/setup-docker-macos-action@v1-alpha
     
