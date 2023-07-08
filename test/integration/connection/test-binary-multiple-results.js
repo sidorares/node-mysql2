@@ -30,7 +30,8 @@ const rs1 = {
   insertId: 0,
   serverStatus: 10,
   warningStatus: 0,
-  info: ''
+  info: '',
+  changedRows: 0
 };
 const rs2 = clone(rs1);
 rs2.serverStatus = 2;
