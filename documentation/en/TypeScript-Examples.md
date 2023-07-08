@@ -8,6 +8,10 @@ npm install --save-dev @types/node
 
 > The `@types/node` ensure the proper interaction between **TypeScript** and the **Node.js** modules used by **MySQL2** (*net*, *events*, *stream*, *tls*, etc.).
 
+Requires **TypeScript** `>=4.5.2`.
+
+---
+
 ## Usage
 You can import **MySQL2** in two ways:
 - By setting the `esModuleInterop` option to `true` in `tsconfig.json`
@@ -287,16 +291,15 @@ By using `SELECT` and `SHOW` queries in a **Procedure Call**, it groups the resu
 // ProcedureCallPacket<RowDataPacket[][]>
 [...RowDataPacket[][], ResultSetHeader]
 ```
-For `ProcedureCallPacket<RowDataPacket[]>` and `ProcedureCallPacket<RowDataPacket[][]>`, please see the following advanced examples.
+For `ProcedureCallPacket<RowDataPacket[]>` and `ProcedureCallPacket<RowDataPacket[][]>`, please see the following examples.
 
 ---
 
 ## Examples
 
-You can also check various code examples using **MySQL2** and **TypeScript** to understand advanced concepts:
-> In progress
+You can also check some code examples using **MySQL2** and **TypeScript** to understand advanced concepts:
 
-- Extending and using **Interfaces** with `RowDataPacket`.
-- Checking for `ResultSetHeader` or `RowDataPacket[]` using **Procedure Calls**
-- Checking for `ResultSetHeader` or `RowDataPacket[][]` using **Procedure Calls**
-- Creating a custom **MySQL2** **Class**
+- Extending and using **Interfaces** with `RowDataPacket` (*in progress*)
+- Checking for `ResultSetHeader` or `RowDataPacket[]` using **Procedure Calls** (*in progress*)
+- Checking for `ResultSetHeader` or `RowDataPacket[][]` using **Procedure Calls** (*in progress*)
+- Creating a custom **MySQL2** **Class** (*in progress*)
