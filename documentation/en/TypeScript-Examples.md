@@ -63,9 +63,8 @@ The `rows` output will be these possible types:
 - `RowDataPacket[]`
 - `RowDataPacket[][]`
 - `ResultSetHeader`
+- `ResultSetHeader[]` (needs to be fixed ⚠️)
 - `ProcedureCallPacket`
-- `OkPacket`
-- `OkPacket[]`
 
 In this example, you need to manually check the output types
 
