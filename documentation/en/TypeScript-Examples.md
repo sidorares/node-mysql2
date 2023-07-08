@@ -63,7 +63,7 @@ The `rows` output will be these possible types:
 - `RowDataPacket[]`
 - `RowDataPacket[][]`
 - `ResultSetHeader`
-- `ResultSetHeader[]` (needs to be fixed ⚠️)
+- `ResultSetHeader[]`
 - `ProcedureCallPacket`
 
 In this example, you need to manually check the output types
@@ -186,8 +186,6 @@ conn.query<ResultSetHeader>(sql, (_err, result) => {
 ---
 
 #### ResultSetHeader[]
-> Needs to be fixed ⚠️
-
 For multiples `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc. when using `multipleStatements` as `true`
 
 ```ts
