@@ -9,12 +9,10 @@ import mysql, {
   RowDataPacket,
 } from 'mysql2/promise';
 
- interface User extends RowDataPacket {
-   /** id */
-   0: number;
-   /** name */
-   1: string;
- }
+interface User extends RowDataPacket {
+  id: number;
+  name: string;
+}
 
 (async () => {
   const access: ConnectionOptions = {
@@ -63,18 +61,18 @@ import mysql, {
 })();
 
 /** Output
-  *
-  * Inserted: 4
-  * -----------
-  * id:   4
-  * name: Gween
-  * -----------
-  * id:   2
-  * name: John
-  * -----------
-  * id:   1
-  * name: Josh
-  * -----------
-  * id:   3
-  * name: Marie
-  */
+ *
+ * Inserted: 4
+ * -----------
+ * id:   4
+ * name: Gween
+ * -----------
+ * id:   2
+ * name: John
+ * -----------
+ * id:   1
+ * name: Josh
+ * -----------
+ * id:   3
+ * name: Marie
+ */
