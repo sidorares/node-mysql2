@@ -286,19 +286,15 @@ conn.query<ProcedureCallPacket<ResultSetHeader>>(sql, (_err, result) => {
 
 By using `SELECT` and `SHOW` queries in a **Procedure Call**, it groups the results as:
 ```tsx
-// ProcedureCallPacket<RowDataPacket[]>
-[...RowDataPacket[], ResultSetHeader]
-
-// ProcedureCallPacket<RowDataPacket[][]>
-[...RowDataPacket[][], ResultSetHeader]
+/** ProcedureCallPacket<RowDataPacket[]> */
+[RowDataPacket[], ResultSetHeader]
 ```
 
-For `ProcedureCallPacket<RowDataPacket[]>` and `ProcedureCallPacket<RowDataPacket[][]>`, please see the following examples.
+For `ProcedureCallPacket<RowDataPacket[]>`, please see the following examples.
 
 ---
 
 ## Examples
-
 You can also check some code examples using **MySQL2** and **TypeScript** to understand advanced concepts:
 
 - [Extending and using **Interfaces** with `RowDataPacket`](../../examples/typescript/row-data-packet.ts)

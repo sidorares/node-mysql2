@@ -72,7 +72,7 @@ const isResultSetHeader = (data: unknown): data is ResultSetHeader => {
   `);
 
   /** Getting users */
-  const [procedureResult] = await conn.query<ProcedureCallPacket<User[][]>>(
+  const [procedureResult] = await conn.query<ProcedureCallPacket<User[]>>(
     'CALL getUsers()',
   );
 
