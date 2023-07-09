@@ -1,9 +1,5 @@
 'use strict';
 
-// temporary disabling the test
-/*
-return;
-
 const common = require('../../common');
 const connection = common.createConnection();
 const assert = require('assert');
@@ -49,7 +45,7 @@ prepareTestSet(err => {
     (err, rows) => {
       assert.ifError(err);
       results = rows;
-      connection.close();
+      connection.end();
     }
   );
 });
@@ -64,4 +60,3 @@ process.on('exit', () => {
   assert.equal(results[2].name2, 'BB');
   assert.equal(results[3].name2, 'AA');
 });
-*/

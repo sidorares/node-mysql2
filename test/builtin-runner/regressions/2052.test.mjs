@@ -70,7 +70,9 @@ describe(
   }
 );
 
-describe.skip('E2E Prepare result with number of parameters incorrectly reported by the server', { timeout: 1000 }, () => {
+describe('E2E Prepare result with number of parameters incorrectly reported by the server', 
+  { timeout: 1000 }, 
+  () => {
   let connection;
 
   function isNewerThan8_0_22() {
