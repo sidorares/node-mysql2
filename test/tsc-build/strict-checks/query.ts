@@ -52,7 +52,9 @@ import { access, sql } from '../promise/baseConnection.js';
 
   conn.query<mysql.ProcedureCallPacket>(sql, (_e, _r, _f) => {
     const err: mysql.QueryError | null = _e;
-    const result: mysql.ProcedureCallPacket = _r;
+    const result:
+      | [mysqlp.RowDataPacket[], mysqlp.ResultSetHeader]
+      | mysqlp.ResultSetHeader = _r;
     const fields: mysql.FieldPacket[] = _f;
 
     console.log(err, result, fields);
@@ -62,35 +64,23 @@ import { access, sql } from '../promise/baseConnection.js';
     sql,
     (_e, _r, _f) => {
       const err: mysql.QueryError | null = _e;
-      const result: [...mysqlp.RowDataPacket[], mysql.ResultSetHeader] = _r;
+      const result: [mysqlp.RowDataPacket[], mysql.ResultSetHeader] = _r;
       const fields: mysql.FieldPacket[] = _f;
 
       console.log(err, result, fields);
-    }
+    },
   );
 
-  conn.query<mysql.ProcedureCallPacket<mysql.RowDataPacket[][]>>(
+  conn.query<mysql.ProcedureCallPacket<mysql.OkPacket | mysql.ResultSetHeader>>(
     sql,
     (_e, _r, _f) => {
       const err: mysql.QueryError | null = _e;
-      const result: [...mysqlp.RowDataPacket[][], mysql.ResultSetHeader] = _r;
+      const result: mysql.ResultSetHeader = _r;
       const fields: mysql.FieldPacket[] = _f;
 
       console.log(err, result, fields);
-    }
+    },
   );
-
-  conn.query<
-    mysql.ProcedureCallPacket<
-      mysql.OkPacket | mysql.OkPacket[] | mysql.ResultSetHeader
-    >
-  >(sql, (_e, _r, _f) => {
-    const err: mysql.QueryError | null = _e;
-    const result: mysql.ResultSetHeader = _r;
-    const fields: mysql.FieldPacket[] = _f;
-
-    console.log(err, result, fields);
-  });
 }
 
 // Promise
@@ -133,7 +123,9 @@ import { access, sql } from '../promise/baseConnection.js';
   });
 
   conn.query<mysqlp.ProcedureCallPacket>(sql).then(([_r, _f]) => {
-    const result: mysqlp.ProcedureCallPacket = _r;
+    const result:
+      | [mysqlp.RowDataPacket[], mysqlp.ResultSetHeader]
+      | mysqlp.ResultSetHeader = _r;
     const fields: mysqlp.FieldPacket[] = _f;
 
     console.log(result, fields);
@@ -142,16 +134,7 @@ import { access, sql } from '../promise/baseConnection.js';
   conn
     .query<mysqlp.ProcedureCallPacket<mysqlp.RowDataPacket[]>>(sql)
     .then(([_r, _f]) => {
-      const result: [...mysqlp.RowDataPacket[], mysql.ResultSetHeader] = _r;
-      const fields: mysqlp.FieldPacket[] = _f;
-
-      console.log(result, fields);
-    });
-
-  conn
-    .query<mysqlp.ProcedureCallPacket<mysqlp.RowDataPacket[][]>>(sql)
-    .then(([_r, _f]) => {
-      const result: [...mysqlp.RowDataPacket[][], mysql.ResultSetHeader] = _r;
+      const result: [mysqlp.RowDataPacket[], mysql.ResultSetHeader] = _r;
       const fields: mysqlp.FieldPacket[] = _f;
 
       console.log(result, fields);
@@ -159,9 +142,7 @@ import { access, sql } from '../promise/baseConnection.js';
 
   conn
     .query<
-      mysqlp.ProcedureCallPacket<
-        mysqlp.OkPacket | mysqlp.OkPacket[] | mysqlp.ResultSetHeader
-      >
+      mysqlp.ProcedureCallPacket<mysqlp.OkPacket | mysqlp.ResultSetHeader>
     >(sql)
     .then(([_r, _f]) => {
       const result: mysqlp.ResultSetHeader = _r;

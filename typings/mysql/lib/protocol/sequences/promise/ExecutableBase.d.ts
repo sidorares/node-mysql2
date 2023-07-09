@@ -15,6 +15,7 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
       T extends
         | OkPacket
         | ResultSetHeader
+        | ResultSetHeader[]
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
@@ -26,6 +27,7 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
       T extends
         | OkPacket
         | ResultSetHeader
+        | ResultSetHeader[]
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
@@ -38,6 +40,7 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
       T extends
         | OkPacket
         | ResultSetHeader
+        | ResultSetHeader[]
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]
@@ -49,6 +52,7 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
       T extends
         | OkPacket
         | ResultSetHeader
+        | ResultSetHeader[]
         | RowDataPacket[]
         | RowDataPacket[][]
         | OkPacket[]

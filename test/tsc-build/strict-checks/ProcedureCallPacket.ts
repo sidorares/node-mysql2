@@ -34,7 +34,6 @@ const procedureCall = {
   }
 
   const conn = mysql.createConnection(access);
-  const connAsRow = mysql.createConnection({ ...access, rowsAsArray: true });
 
   // Checking `RowDataPacket[]` Procedure Calls
   conn.query(dropProcedure.select, () => {
@@ -43,66 +42,37 @@ const procedureCall = {
         procedureCall.select,
         [],
         (_err, procedureResult) => {
-          procedureResult.forEach((results) => {
-            if (isResultSetHeader(results)) {
-              console.log(results);
+          procedureResult.forEach((users) => {
+            if (isResultSetHeader(users)) {
+              console.log(users);
 
               return;
             }
 
             // Strict checking the `RowDataPacket[]`
-            const user: User = results;
-            const id: number = user.id;
-
-            console.log(id);
-          });
-        }
-      );
-    });
-  });
-
-  // Checking `RowDataPacket[][]` Procedure Calls
-  connAsRow.query(dropProcedure.select, () => {
-    connAsRow.query(createProcedure.select, () => {
-      connAsRow.query<mysql.ProcedureCallPacket<User[][]>>(
-        procedureCall.select,
-        [],
-        (_err, procedureResult) => {
-          procedureResult.forEach((results) => {
-            if (isResultSetHeader(results)) {
-              console.log(results);
-
-              return;
-            }
-
-            // Strict checking the `RowDataPacket[][]`
-            const users: User[] = results;
-
             users.forEach((user) => {
               const id: number = user.id;
 
               console.log(id);
             });
           });
-        }
+        },
       );
     });
   });
 
-  // Checking `ResultSetHeader | OkPacket | OkPacket[]` Procedure Calls
+  // Checking `ResultSetHeader | OkPacket` Procedure Calls
   conn.query(dropProcedure.update, () => {
     conn.query(createProcedure.update, () => {
       conn.query<
-        mysql.ProcedureCallPacket<
-          mysql.ResultSetHeader | mysql.OkPacket | mysql.OkPacket[]
-        >
+        mysql.ProcedureCallPacket<mysql.ResultSetHeader | mysql.OkPacket>
       >(
         procedureCall.update,
         [],
         // Strict checking the `ResultSetHeader`
         (_err, procedureResult: mysql.ResultSetHeader) => {
           console.log(procedureResult);
-        }
+        },
       );
     });
   });
@@ -115,10 +85,6 @@ const procedureCall = {
   }
 
   const conn = await mysqlp.createConnection(access);
-  const connAsRow = await mysqlp.createConnection({
-    ...access,
-    rowsAsArray: true,
-  });
 
   // Checking `RowDataPacket[]` Procedure Calls
   {
@@ -129,40 +95,14 @@ const procedureCall = {
       mysqlp.ProcedureCallPacket<User[]>
     >(procedureCall.select, []);
 
-    procedureResult.forEach((results) => {
-      if (isResultSetHeader(results)) {
-        console.log(results);
+    procedureResult.forEach((users) => {
+      if (isResultSetHeader(users)) {
+        console.log(users);
 
         return;
       }
 
       // Strict checking the `RowDataPacket[]`
-      const user: User = results;
-      const id: number = user.id;
-
-      console.log(id);
-    });
-  }
-
-  // Checking `RowDataPacket[][]` Procedure Calls
-  {
-    await connAsRow.query(dropProcedure.select);
-    await connAsRow.query(createProcedure.select);
-
-    const [procedureResult] = await connAsRow.query<
-      mysqlp.ProcedureCallPacket<User[][]>
-    >(procedureCall.select, []);
-
-    procedureResult.forEach((results) => {
-      if (isResultSetHeader(results)) {
-        console.log(results);
-
-        return;
-      }
-
-      // Strict checking the `RowDataPacket[][]`
-      const users: User[] = results;
-
       users.forEach((user) => {
         const id: number = user.id;
 
@@ -171,15 +111,13 @@ const procedureCall = {
     });
   }
 
-  // Checking `ResultSetHeader | OkPacket | OkPacket[]` Procedure Calls
+  // Checking `ResultSetHeader | OkPacket` Procedure Calls
   {
     await conn.query(dropProcedure.update);
     await conn.query(createProcedure.update);
 
     const [procedureResult] = await conn.query<
-      mysqlp.ProcedureCallPacket<
-        mysqlp.ResultSetHeader | mysqlp.OkPacket | mysqlp.OkPacket[]
-      >
+      mysqlp.ProcedureCallPacket<mysqlp.ResultSetHeader | mysqlp.OkPacket>
     >(procedureCall.update, []);
 
     // Strict checking the `ResultSetHeader`

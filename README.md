@@ -53,6 +53,14 @@ MySQL2 is free from native bindings and can be installed on Linux, Mac OS or Win
 npm install --save mysql2
 ```
 
+If you are using TypeScript, you will need to install `@types/node`.
+
+```bash
+npm install --save-dev @types/node
+```
+
+> For TypeScript documentation and examples, see [here](./documentation/en/TypeScript-Examples.md).
+
 ## First Query
 ```js
 // get the client
