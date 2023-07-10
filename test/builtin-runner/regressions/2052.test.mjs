@@ -10,6 +10,7 @@ describe(
   () => {
     it('should report 0 actual parameters when 1 placeholder is used in ORDER BY ?', (t, done) => {
       const connection = {
+        sequenceId: 1,
         constructor: {
           statementKey: () => 0,
         },
@@ -23,9 +24,10 @@ describe(
         },
         writePacket: (packet) => {
           // client -> server COM_PREPARE
+          packet.writeHeader(1);
           assert.equal(
             packet.buffer.toString('hex'),
-            '000000001673656c656374202a2066726f6d207573657273206f72646572206279203f'
+            '1f0000011673656c656374202a2066726f6d207573657273206f72646572206279203f'
           );
         },
       };
@@ -68,7 +70,9 @@ describe(
   }
 );
 
-describe('E2E Prepare result with number of parameters incorrectly reported by the server', { timeout: 1000 }, () => {
+describe('E2E Prepare result with number of parameters incorrectly reported by the server', 
+  { timeout: 1000 }, 
+  () => {
   let connection;
 
   function isNewerThan8_0_22() {

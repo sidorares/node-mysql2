@@ -45,7 +45,7 @@ prepareTestSet(err => {
     (err, rows) => {
       assert.ifError(err);
       results = rows;
-      connection.close();
+      connection.end();
     }
   );
 });

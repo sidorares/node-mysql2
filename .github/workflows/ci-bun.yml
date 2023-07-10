@@ -20,10 +20,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bun-version: [0.5.1]
+        bun-version: [canary]
         mysql-version: ["mysql:5.7", "mysql:8.0.18", "mysql:8.0.22"]
-        use-compression: [0]
-        use-tls: [0]
+        use-compression: [0, 1]
+        use-tls: [0,1]
+        include:
+          - bun-version: "0.6.13"
+            use-compression: 1
+            use-tls: 0
+            mysql-version: "mysql:8.0.18"
+          - bun-version: "0.6.13"
+            use-compression: 1
+            use-tls: 0
+            mysql-version: "mysql:8.0.22"
 
     name: Bun ${{ matrix.bun-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
@@ -33,7 +42,7 @@ jobs:
         run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
 
       - name: Set up Bun ${{ matrix.bun-version }}
-        uses: oven-sh/setup-bun@v0.1.8
+        uses: oven-sh/setup-bun@v1
         with:
           bun-version: ${{ matrix.bun-version }}
 
@@ -57,6 +66,14 @@ jobs:
       - name: Wait mysql server is ready
         run: node tools/wait-up.js
 
-      - name: Run tests
-        # todo: run full test suite once test createServer is implemented using Bun.listen
-        run: FILTER=test-select MYSQL_PORT=3306 bun run test
+      # todo: run full test suite once test createServer is implemented using Bun.listen
+      - name: run tests
+        env:
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_PORT: ${{ env.MYSQL_PORT }}
+          MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
+          MYSQL_USE_TLS: ${{ matrix.use-tls }}
+        run: |
+          bun test/integration/connection/test-select-1.js
+          bun test/integration/connection/test-select-ssl.js

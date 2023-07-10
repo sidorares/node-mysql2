@@ -12,7 +12,7 @@ const config = {
   port: process.env.MYSQL_PORT || 3306
 };
 
-if (process.env.MYSQL_USE_TLS) {
+if (process.env.MYSQL_USE_TLS === '1') {
   config.ssl = {
     rejectUnauthorized: false,
     ca: fs.readFileSync(
@@ -32,7 +32,7 @@ exports.waitDatabaseReady = function(callback) {
   const tryConnect = function() {
     const conn = exports.createConnection({ database: 'mysql', password: process.env.MYSQL_PASSWORD });
     conn.once('error', err => {
-      if (err.code !== 'PROTOCOL_CONNECTION_LOST' && err.code !== 'ETIMEDOUT') {
+      if (err.code !== 'PROTOCOL_CONNECTION_LOST' && err.code !== 'ETIMEDOUT' && err.code !== 'ECONNREFUSED') {
         console.log('Unexpected error waiting for connection', err);
         process.exit(-1);
       }
@@ -84,6 +84,7 @@ exports.createConnection = function(args) {
     typeCast: args && args.typeCast,
     namedPlaceholders: args && args.namedPlaceholders,
     connectTimeout: args && args.connectTimeout,
+    ssl: (args && args.ssl) ?? config.ssl,
   };
 
   const conn = driver.createConnection(params);
@@ -164,10 +165,12 @@ exports.createServer = function(onListening, handler) {
   const server = require('../index.js').createServer();
   server.on('connection', conn => {
     conn.on('error', () => {
-      // we are here when client drops connection
+      // server side of the connection
+      // ignore disconnects
     });
+    // remove ssl bit from the flags
     let flags = 0xffffff;
-    flags = flags ^ ClientFlags.COMPRESS;
+    flags = flags ^ (ClientFlags.COMPRESS | ClientFlags.SSL);
 
     conn.serverHandshake({
       protocolVersion: 10,

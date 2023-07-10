@@ -25,9 +25,13 @@ const server = common.createServer(
       // different host provided via MYSQL_HOST that identifies a real MySQL
       // server instance.
       host: 'localhost',
-      port: server._port
+      port: server._port,
+      ssl: false
     });
     clientConnection.query(query, err => {
+      if (err && err.code === 'HANDSHAKE_NO_SSL_SUPPORT') {
+        clientConnection.end();
+      }
       receivedError1 = err;
     });
     clientConnection.query('second query, should not be executed', () => {
