@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.5.1](https://github.com/sidorares/node-mysql2/compare/v3.5.0...v3.5.1) (2023-07-10)
+
+
+### Bug Fixes
+
+* improvements to allow to use Bun and tls  ([#2119](https://github.com/sidorares/node-mysql2/issues/2119)) ([fd44a2a](https://github.com/sidorares/node-mysql2/commit/fd44a2ab9c08961a898edcfef5ba0035467a28ce))
+* missing `ResultSetHeader[]` to `query` and `execute` ([f649486](https://github.com/sidorares/node-mysql2/commit/f649486fdd0e95ad9f46c002e385986b52224f68))
+
 ## [3.5.0](https://github.com/sidorares/node-mysql2/compare/v3.4.5...v3.5.0) (2023-07-06)
 
 
