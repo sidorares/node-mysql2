@@ -20,9 +20,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bun-version: [canary]
+        bun-version: [0.6.13, canary]
         mysql-version: ["mysql:5.7", "mysql:8.0.18", "mysql:8.0.22"]
-        use-compression: [0]
+        use-compression: [0, 1]
         use-tls: [0,1]
 
     name: Bun ${{ matrix.bun-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
@@ -58,5 +58,13 @@ jobs:
         run: node tools/wait-up.js
 
       # todo: run full test suite once test createServer is implemented using Bun.listen
-      - run: MYSQL_USE_TLS=${{ matrix.use-tls }} FILTER=test-select MYSQL_PORT=3306 bun test/integration/connection/test-select-1.js
-      - run: MYSQL_USE_TLS=${{ matrix.use-tls }} FILTER=test-select MYSQL_PORT=3306 bun test/integration/connection/test-select-ssl.js
+      - name: run tests
+        env:
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_PORT: ${{ env.MYSQL_PORT }}
+          MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
+          MYSQL_USE_TLS: ${{ matrix.use-tls }}
+        run: |
+          bun test/integration/connection/test-select-1.js
+          bun test/integration/connection/test-select-ssl.js
