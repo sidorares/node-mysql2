@@ -117,7 +117,7 @@ export interface PoolCluster extends EventEmitter {
 
   on(event: string, listener: (args: any[]) => void): this;
   on(event: 'remove', listener: (nodeId: number) => void): this;
-  on(event: 'connection', listener: (connection: PoolConnection) => void): this;
+  on(event: 'warn', listener: (err: Error) => void): this;
 }
 
 export function createConnection(connectionUri: string): Promise<Connection>;
