@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.2](https://github.com/sidorares/node-mysql2/compare/v3.5.1...v3.5.2) (2023-07-17)
+
+
+### Bug Fixes
+
+* Update events that are propagated from pool cluster to include remove ([#2114](https://github.com/sidorares/node-mysql2/issues/2114)) ([927d209](https://github.com/sidorares/node-mysql2/commit/927d20945d664c55209fd95b05b2c68904f51acc))
+
 ## [3.5.2](https://github.com/sidorares/node-mysql2/compare/v3.5.1...v3.5.2) (2023-07-14)
 
 
