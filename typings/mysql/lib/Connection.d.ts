@@ -291,6 +291,8 @@ export interface ConnectionOptions {
   authPlugins?: {
     [key: string]: AuthPlugin;
   };
+
+  decimalStringTrimTrailingZero?: boolean;
 }
 
 declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {

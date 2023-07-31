@@ -85,6 +85,7 @@ exports.createConnection = function(args) {
     namedPlaceholders: args && args.namedPlaceholders,
     connectTimeout: args && args.connectTimeout,
     ssl: (args && args.ssl) ?? config.ssl,
+    decimalStringTrimTrailingZero: (args && args.decimalStringTrimTrailingZero) ?? config.decimalStringTrimTrailingZero,
   };
 
   const conn = driver.createConnection(params);

@@ -49,3 +49,11 @@ assert.strictEqual(
   ).password,
   'pass!%40$%%5E&*()%5Cword%3A'
 );
+
+assert.doesNotThrow(
+  () =>
+    new ConnectionConfig({
+      decimalStringTrimTrailingZero: true
+    }),
+  'Error, the constructor accepts an object but throws an exception'
+);
