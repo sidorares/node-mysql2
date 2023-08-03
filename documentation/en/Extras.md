@@ -68,6 +68,28 @@ connection.query(
 );
 ```
 
+The `infileStreamFactory` option may also be set at a connection-level:
+
+```js
+const fs = require("fs");
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  user: 'test',
+  database: 'test',
+  infileStreamFactory: path => {
+    // Validate file path
+    const validPaths = ['/tmp/data.csv'];
+    if (!validPaths.includes(path)) {
+      throw new Error(`invalid file path: ${path}: expected to be one of ${validPaths.join(',')}`);
+    }
+    return fs.createReadStream(path);
+  }
+});
+
+connection.query('LOAD DATA LOCAL INFILE "/tmp/data.csv" INTO TABLE test', onInserted);
+```
+
 ## Connecting using custom stream:
 
 ```js

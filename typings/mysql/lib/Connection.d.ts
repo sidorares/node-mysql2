@@ -4,6 +4,7 @@
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
 import { EventEmitter } from 'events';
+import { Readable } from 'stream';
 import { Query, QueryError } from './protocol/sequences/Query.js';
 import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
 import {
@@ -164,6 +165,11 @@ export interface ConnectionOptions {
    * Allow connecting to MySQL instances that ask for the old (insecure) authentication method. (Default: false)
    */
   insecureAuth?: boolean;
+
+  /**
+   * By specifying a function that returns a readable stream, an arbitrary stream can be sent when sending a local fs file.
+   */
+  infileStreamFactory?: (path: string) => Readable;
 
   /**
    * Determines if column values should be converted to native JavaScript types. It is not recommended (and may go away / change in the future)
