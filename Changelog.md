@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.0](https://github.com/sidorares/node-mysql2/compare/v3.5.2...v3.6.0) (2023-08-04)
+
+
+### Features
+
+* add conn-level `infileStreamFactory` option ([#2159](https://github.com/sidorares/node-mysql2/issues/2159)) ([5bed0f8](https://github.com/sidorares/node-mysql2/commit/5bed0f8f195f615844d5dbe322ebfe47b76ba2f5))
+
 ## [3.5.2](https://github.com/sidorares/node-mysql2/compare/v3.5.1...v3.5.2) (2023-07-14)
 
 
