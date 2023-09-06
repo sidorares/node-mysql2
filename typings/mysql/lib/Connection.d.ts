@@ -357,7 +357,7 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
 
   format(sql: string, values?: any | any[] | { [param: string]: any }): string;
 
-  on(event: string, listener: (args: any[]) => void): this;
+  on(event: string, listener: (...args: any[]) => void): this;
 
   rollback(callback: (err: QueryError | null) => void): void;
 

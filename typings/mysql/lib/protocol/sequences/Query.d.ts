@@ -133,7 +133,7 @@ declare class Query extends Sequence {
    */
   stream(options?: StreamOptions): Readable;
 
-  on(event: string, listener: (args: any[]) => void): this;
+  on(event: string, listener: (...args: any[]) => void): this;
   on(event: 'error', listener: (err: QueryError) => any): this;
   on(
     event: 'fields',
