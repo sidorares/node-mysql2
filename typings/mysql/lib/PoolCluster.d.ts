@@ -78,7 +78,7 @@ declare class PoolCluster extends EventEmitter {
 
   of(pattern: string, selector?: string): PoolNamespace;
 
-  on(event: string, listener: (args: any[]) => void): this;
+  on(event: string, listener: (...args: any[]) => void): this;
   on(event: 'remove', listener: (nodeId: number) => void): this;
   on(event: 'warn', listener: (err: Error) => void): this;
 }
