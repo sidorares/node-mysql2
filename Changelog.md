@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.1](https://github.com/sidorares/node-mysql2/compare/v3.6.0...v3.6.1) (2023-09-06)
+
+
+### Bug Fixes
+
+* EventEmitter on method signatures to use spread syntax ([#2200](https://github.com/sidorares/node-mysql2/issues/2200)) ([5d21b81](https://github.com/sidorares/node-mysql2/commit/5d21b8127b8b6aa4b0308b6482d707d150403990))
+
 ## [3.6.0](https://github.com/sidorares/node-mysql2/compare/v3.5.2...v3.6.0) (2023-08-04)
 
 
