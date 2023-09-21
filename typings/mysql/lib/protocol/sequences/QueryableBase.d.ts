@@ -28,7 +28,7 @@ export declare function QueryableBase<T extends QueryableConstructor>(
     >(
       sql: string,
       callback?:
-        | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
+        | ((err: QueryError | null, result: T, fields: FieldPacket[], warningCount: number | number[]) => any)
         | undefined
     ): Query;
     query<
@@ -44,7 +44,7 @@ export declare function QueryableBase<T extends QueryableConstructor>(
       sql: string,
       values: any,
       callback?:
-        | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
+        | ((err: QueryError | null, result: T, fields: FieldPacket[], warningCount: number | number[]) => any)
         | undefined
     ): Query;
     query<
@@ -59,7 +59,7 @@ export declare function QueryableBase<T extends QueryableConstructor>(
     >(
       options: QueryOptions,
       callback?:
-        | ((err: QueryError | null, result: T, fields?: FieldPacket[]) => any)
+        | ((err: QueryError | null, result: T, fields: FieldPacket[], warningCount: number | number[]) => any)
         | undefined
     ): Query;
     query<
@@ -75,7 +75,7 @@ export declare function QueryableBase<T extends QueryableConstructor>(
       options: QueryOptions,
       values: any,
       callback?:
-        | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
+        | ((err: QueryError | null, result: T, fields: FieldPacket[], warningCount: number | number[]) => any)
         | undefined
     ): Query;
   };
