@@ -18,7 +18,7 @@ export class PrepareStatementInfo {
       | OkPacket[]
       | ResultSetHeader
   >(
-    paramaters: any | any[] | { [param: string]: any },
+    parameters: any | any[] | { [param: string]: any },
     callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
   ): Query;
 }
