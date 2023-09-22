@@ -1,5 +1,10 @@
 'use strict';
 
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test for planetscale');
+  process.exit(0);
+}
+
 const config = require('../../common.js').config;
 
 const assert = require('assert');
@@ -202,6 +207,16 @@ function testEventsConnect() {
 
 function testBasicPool() {
   const pool = createPool(config);
+  const promiseConn = pool.getConnection();
+
+  promiseConn
+    .then(connResolved => {
+      pool.releaseConnection(connResolved);
+    })
+    .catch(err => {
+      throw err;
+    });
+
   pool
     .query('select 1+2 as ttt')
     .then(result1 => {

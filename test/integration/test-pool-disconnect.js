@@ -3,6 +3,13 @@
 const assert = require('assert');
 const mysql = require('../common');
 
+// planetscale does not support KILL, skipping this test
+// https://planetscale.com/docs/reference/mysql-compatibility
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test, planetscale does not support KILL');
+  process.exit(0);
+}
+
 const pool = mysql.createPool();
 const conn = mysql.createConnection({ multipleStatements: true });
 pool.config.connectionLimit = 5;
@@ -18,7 +25,7 @@ function kill() {
     if (typeof id !== 'undefined') {
       // sleep required to give mysql time to close connection,
       // and callback called after connection with id is really closed
-      conn.query('kill ?; select sleep(0.05)', id, err => {
+      conn.query('kill ?; select sleep(0.05)', [id], err => {
         assert.ifError(err);
         killCount++;
         // TODO: this assertion needs to be fixed, after kill

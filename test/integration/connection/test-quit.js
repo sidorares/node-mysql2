@@ -22,7 +22,8 @@ const server = common.createServer(
       // different host provided via MYSQL_HOST that identifies a real MySQL
       // server instance.
       host: 'localhost',
-      port: server._port
+      port: server._port,
+      ssl: false
     });
 
     connection.query(queryCli, (err, _rows, _fields) => {

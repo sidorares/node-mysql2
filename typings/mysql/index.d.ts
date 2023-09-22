@@ -1,75 +1,94 @@
-import * as crypto from 'crypto';
-
-import BaseConnection = require('./lib/Connection');
-import {ConnectionOptions, SslOptions} from './lib/Connection';
-import BasePoolConnection = require('./lib/PoolConnection');
-import BasePool = require('./lib/Pool');
-import {PoolOptions} from './lib/Pool';
-import BasePoolCluster = require('./lib/PoolCluster');
-import {PoolClusterOptions} from './lib/PoolCluster';
-import BaseQuery = require('./lib/protocol/sequences/Query');
-import BasePrepare = require('./lib/protocol/sequences/Prepare');
-import {QueryOptions, StreamOptions, QueryError} from './lib/protocol/sequences/Query';
-import {PrepareStatementInfo} from './lib/protocol/sequences/Prepare';
-import Server = require('./lib/Server');
-
-export function createConnection(connectionUri: string): Connection;
-export function createConnection(config: BaseConnection.ConnectionOptions): Connection;
-export function createPool(config: BasePool.PoolOptions): BasePool;
-export function createPoolCluster(config?: BasePoolCluster.PoolClusterOptions): PoolCluster;
-export function escape(value: any): string;
-export function escapeId(value: any): string;
-export function format(sql: string): string;
-export function format(sql: string, values: any[], stringifyObjects?: boolean, timeZone?: string): string;
-export function format(sql: string, values: any, stringifyObjects?: boolean, timeZone?: string): string;
-export function raw(sql: string): {
-    toSqlString: () => string
-};
-export function createServer(handler: (conn: BaseConnection) => any): Server;
+import { Pool as BasePool, PoolOptions } from './lib/Pool.js';
+import {
+  Connection as BaseConnection,
+  ConnectionOptions,
+  SslOptions,
+} from './lib/Connection.js';
+import {
+  Query as BaseQuery,
+  QueryOptions,
+  QueryError,
+} from './lib/protocol/sequences/Query.js';
+import {
+  PoolCluster as BasePoolCluster,
+  PoolClusterOptions,
+  PoolNamespace,
+} from './lib/PoolCluster.js';
+import { PoolConnection as BasePoolConnection } from './lib/PoolConnection.js';
+import {
+  Prepare as BasePrepare,
+  PrepareStatementInfo,
+} from './lib/protocol/sequences/Prepare.js';
+import { Server } from './lib/Server.js';
 
 export {
-    ConnectionOptions,
-    SslOptions,
-    PoolOptions,
-    PoolClusterOptions,
-    QueryOptions,
-    QueryError,
-    PrepareStatementInfo
+  ConnectionOptions,
+  SslOptions,
+  PoolOptions,
+  PoolClusterOptions,
+  PoolNamespace,
+  QueryOptions,
+  QueryError,
+  PrepareStatementInfo,
 };
-export * from './lib/protocol/packets/index';
+
+export * from './lib/protocol/packets/index.js';
+export * from './lib/Auth.js';
+export * from './lib/constants/index.js';
+export * from './lib/parsers/index.js';
 
 // Expose class interfaces
 export interface Connection extends BaseConnection {}
-export interface PoolConnection extends BasePoolConnection {}
 export interface Pool extends BasePool {}
+export interface PoolConnection extends BasePoolConnection {}
 export interface PoolCluster extends BasePoolCluster {}
 export interface Query extends BaseQuery {}
 export interface Prepare extends BasePrepare {}
 
-export type AuthPlugin = (pluginMetadata: {
-  connection: Connection;
-  command: string;
-}) => (
-  pluginData: Buffer
-) => Promise<string> | string | Buffer | Promise<Buffer> | null;
+export function createConnection(connectionUri: string): BaseConnection;
+export function createConnection(config: ConnectionOptions): BaseConnection;
 
-type AuthPluginDefinition<T> = (pluginOptions?: T) => AuthPlugin
+export function createPool(connectionUri: string): BasePool;
+export function createPool(config: PoolOptions): BasePool;
 
-export const authPlugins: {
-  caching_sha2_password: AuthPluginDefinition<{
-    overrideIsSecure?: boolean,
-    serverPublicKey?: crypto.RsaPublicKey | crypto.RsaPrivateKey | crypto.KeyLike,
-    jonServerPublicKey?: (data: Buffer) => void;
-  }>,
-  mysql_clear_password: AuthPluginDefinition<{
-    password?: string;
-  }>,
-  mysql_native_password: AuthPluginDefinition<{
-    password?: string;
-    passwordSha1?: string;
-  }>,
-  sha256_password: AuthPluginDefinition<{
-    serverPublicKey?: crypto.RsaPublicKey | crypto.RsaPrivateKey | crypto.KeyLike,
-    joinServerPublicKey?: (data: Buffer) => void;
-  }>,
+export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
+
+export function escape(value: any): string;
+
+export function escapeId(value: any): string;
+
+export function format(sql: string): string;
+export function format(
+  sql: string,
+  values: any[],
+  stringifyObjects?: boolean,
+  timeZone?: string
+): string;
+
+export function format(
+  sql: string,
+  values: any,
+  stringifyObjects?: boolean,
+  timeZone?: string
+): string;
+
+export function raw(sql: string): {
+  toSqlString: () => string;
+};
+
+export interface ConnectionConfig extends ConnectionOptions {
+  mergeFlags(defaultFlags: string[], userFlags: string[] | string): number;
+  getDefaultFlags(options?: ConnectionOptions): string[];
+  getCharsetNumber(charset: string): number;
+  getSSLProfile(name: string): { ca: string[] };
+  parseUrl(url: string): {
+    host: string;
+    port: number;
+    database: string;
+    user: string;
+    password: string;
+    [key: string]: any;
+  };
 }
+
+export function createServer(handler: (conn: BaseConnection) => any): Server;

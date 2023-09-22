@@ -3,6 +3,11 @@
 const common = require('../../../common');
 const assert = require('assert');
 
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test for planetscale');
+  process.exit(0);
+}
+
 // 4 bytes in utf8
 const pileOfPoo = '💩';
 

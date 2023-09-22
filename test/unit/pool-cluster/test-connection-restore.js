@@ -1,5 +1,11 @@
 'use strict';
 
+// TODO: config poolCluster to work with MYSQL_CONNECTION_URL run
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test for planetscale');
+  process.exit(0);
+}
+
 if (process.platform === 'win32') {
   console.log('This test is known to fail on windows. FIXME: investi=gate why');
   process.exit(0);

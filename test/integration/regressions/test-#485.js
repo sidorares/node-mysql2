@@ -3,8 +3,15 @@
 const config = require('../../common.js').config;
 
 const assert = require('assert');
-const createPool = require('../../../promise.js').createPool;
+const createPoolPromise = require('../../../promise.js').createPool;
 const PoolConnection = require('../../../lib/pool_connection.js');
+
+function createPool(args) {
+  if (!args && process.env.MYSQL_CONNECTION_URL) {
+    return createPoolPromise({ uri: process.env.MYSQL_CONNECTION_URL });
+  }
+  return createPoolPromise({ ...config, ...args });
+}
 
 // stub
 const release = PoolConnection.prototype.release;
@@ -14,7 +21,7 @@ PoolConnection.prototype.release = function() {
 };
 
 function testPoolPromiseExecuteLeak() {
-  const pool = createPool(config);
+  const pool = createPool();
   pool
     .execute('select 1+2 as ttt')
     .then(result => {

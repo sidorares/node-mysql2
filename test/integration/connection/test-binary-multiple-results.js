@@ -5,6 +5,11 @@
 
 'use strict';
 
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test for planetscale');
+  process.exit(0);
+}
+
 const mysql = require('../../common.js').createConnection({
   multipleStatements: true
 });
@@ -25,7 +30,8 @@ const rs1 = {
   insertId: 0,
   serverStatus: 10,
   warningStatus: 0,
-  info: ''
+  info: '',
+  changedRows: 0
 };
 const rs2 = clone(rs1);
 rs2.serverStatus = 2;
@@ -38,7 +44,7 @@ const fields1 = [
   {
     catalog: 'def',
     characterSet: 63,
-    columnType: 8,
+    encoding: 'binary',
     type: 8,
     decimals: 0,
     flags: 129,
@@ -53,7 +59,7 @@ const nr_fields = [
   {
     catalog: 'def',
     characterSet: 63,
-    columnType: 3,
+    encoding: 'binary',
     type: 3,
     decimals: 0,
     flags: 0,

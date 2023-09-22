@@ -1,5 +1,11 @@
 'use strict';
 
+// TODO: config poolCluster to work with MYSQL_CONNECTION_URL run
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test for planetscale');
+  process.exit(0);
+} 
+
 const assert  = require('assert');
 const common  = require('../../common');
 const cluster = common.createPoolCluster();

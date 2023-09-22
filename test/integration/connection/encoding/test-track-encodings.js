@@ -8,14 +8,14 @@ const text = 'привет, мир';
 
 connection.query('SET character_set_client=koi8r', err => {
   assert.ifError(err);
-  connection.query('SELECT ?', [text], (err, rows) => {
+  connection.query(`SELECT ? as result`, [text], (err, rows) => {
     assert.ifError(err);
-    assert.equal(rows[0][text], text);
+    assert.equal(rows[0].result, text);
     connection.query('SET character_set_client=cp1251', err => {
       assert.ifError(err);
-      connection.query('SELECT ?', [text], (err, rows) => {
+      connection.query(`SELECT ? as result`, [text], (err, rows) => {
         assert.ifError(err);
-        assert.equal(rows[0][text], text);
+        assert.equal(rows[0].result, text);
         connection.end();
       });
     });

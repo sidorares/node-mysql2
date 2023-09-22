@@ -26,7 +26,7 @@ connection.execute(q, [123], (err, _rows) => {
         throw err;
       }
       rows2 = _rows;
-      assert(connection._statements.length === 1);
+      assert(connection._statements.size === 1);
       assert(connection._statements.get(key).query === q);
       assert(connection._statements.get(key).parameters.length === 1);
       connection.end();

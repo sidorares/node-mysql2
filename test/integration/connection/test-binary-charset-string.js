@@ -4,6 +4,12 @@ const common = require('../../common');
 const connection = common.createConnection();
 const assert = require('assert');
 
+// TODO - this could be re-enabled
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  console.log('skipping test for planetscale');
+  process.exit(0);
+}
+
 let rows = undefined;
 let fields = undefined;
 let rows1 = undefined;

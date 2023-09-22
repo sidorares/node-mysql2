@@ -1,7 +1,7 @@
 {
-  "extends": ["prettier", "eslint:recommended",  "plugin:markdown/recommended"],
+  "extends": ["prettier", "eslint:recommended", "plugin:markdown/recommended"],
   "parserOptions": {
-    "ecmaVersion": 2017
+    "ecmaVersion": "latest"
   },
   "plugins": ["markdown", "async-await"],
   "env": {
@@ -39,13 +39,37 @@
   },
   "overrides": [
     {
-      "files":  ["**/*.ts"],
+      "files": ["**/*.ts"],
       "parser": "@typescript-eslint/parser",
-      "extends": [
-        "plugin:@typescript-eslint/recommended",
-        "prettier"
-      ],
-      "plugins": ["@typescript-eslint"]
+      "extends": ["plugin:@typescript-eslint/recommended"],
+      "plugins": ["@typescript-eslint"],
+      "rules": {
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "arrow-parens": "off",
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "ImportDeclaration[source.value=/^\\./][source.value!=/\\.(js)$/]",
+            "message": "Local imports must have the explicit extension"
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/*.md/*js", "**/*.md/*ts"],
+      "rules": {
+        "no-undef": "off",
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "no-console": "off",
+        "no-unused-labels": "off",
+        "strict": "off",
+        "prefer-arrow-callback": "off"
+      },
+      "parserOptions": {
+        "sourceType": "module"
+      }
     }
   ]
 }

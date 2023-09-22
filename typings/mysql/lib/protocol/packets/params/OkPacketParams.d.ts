@@ -6,4 +6,4 @@ declare interface OkPacketParams {
   message?: string;
 }
 
-export = OkPacketParams;
+export { OkPacketParams };

@@ -13,7 +13,7 @@ try {
   error = false;
 }
 q.on('end', () => {
-  connection.destroy();
+  connection.end();
 });
 
 process.on('exit', () => {

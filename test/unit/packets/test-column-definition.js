@@ -19,7 +19,6 @@ let packet = ColumnDefinition.toPacket(
     columnLength: 500,
     flags: 32896,
     columnType: 0x8,
-    type: 0x8,
     decimals: 1
   },
   sequenceId
@@ -38,12 +37,10 @@ packet = ColumnDefinition.toPacket(
     orgName: 'on_погоди',
     table: 't_погоди',
     orgTable: 'ot_погоди',
-
     characterSet: 0x21,
     columnLength: 500,
     flags: 32896,
     columnType: 0x8,
-    type: 0x8,
     decimals: 1
   },
   sequenceId
@@ -67,6 +64,7 @@ const inputColDef = {
   flags: 0,
   columnType: 0xfd,
   type: 0xfd,
+  encoding: 'latin1',
   decimals: 0x1f
 }
 packet = ColumnDefinition.toPacket(inputColDef, sequenceId);
@@ -77,6 +75,9 @@ assert.equal(
 
 packet.offset = 4;
 const colDef = new ColumnDefinition(packet, "utf8");
-const inspect = colDef.inspect();
+// inspect omits the "colulumnType" property because type is an alias for it
+// but ColumnDefinition.toPacket reads type from "columnType"
+// TODO: think how to make this more consistent
+const inspect = { columnType: 253, ...colDef.inspect() };
 assert.deepEqual(inspect, inputColDef);
 assert.equal(colDef.db, inputColDef.schema);
