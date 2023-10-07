@@ -18,13 +18,13 @@ export * from './index.js';
 
 // Expose class interfaces
 declare class QueryableAndExecutableBase extends QueryableBaseClass(
-  ExecutableBaseClass(EventEmitter)
+  ExecutableBaseClass(EventEmitter),
 ) {}
 
 export interface PreparedStatementInfo {
   close(): Promise<void>;
   execute(
-    paramaters: any | any[] | { [param: string]: any }
+    parameters: any | any[] | { [param: string]: any },
   ): Promise<
     [
       (
@@ -34,7 +34,7 @@ export interface PreparedStatementInfo {
         | OkPacket[]
         | ResultSetHeader
       ),
-      FieldPacket[]
+      FieldPacket[],
     ]
   >;
 }
@@ -122,7 +122,7 @@ export interface PoolCluster extends EventEmitter {
 
 export function createConnection(connectionUri: string): Promise<Connection>;
 export function createConnection(
-  config: ConnectionOptions
+  config: ConnectionOptions,
 ): Promise<Connection>;
 
 export function createPool(connectionUri: string): Pool;
