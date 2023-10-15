@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.2](https://github.com/sidorares/node-mysql2/compare/v3.6.1...v3.6.2) (2023-10-15)
+
+
+### Bug Fixes
+
+* sql-template-strings/tag compatibility ([#2238](https://github.com/sidorares/node-mysql2/issues/2238)) ([f2efe5a](https://github.com/sidorares/node-mysql2/commit/f2efe5a2ddf9e10a83bf24da2af744061b2ae597))
+
 ## [3.6.1](https://github.com/sidorares/node-mysql2/compare/v3.6.0...v3.6.1) (2023-09-06)
 
 
