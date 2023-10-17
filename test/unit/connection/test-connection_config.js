@@ -49,3 +49,15 @@ assert.strictEqual(
   ).password,
   'pass!%40$%%5E&*()%5Cword%3A'
 );
+
+assert.deepEqual(
+  ConnectionConfig.parseUrl(
+    String.raw`mysql://localhost/database?connectAttributes=program_name:testProg,second_attr:example`
+  ).connectAttributes,
+  (new ConnectionConfig({
+    connectAttributes: {
+      program_name: 'testProg',
+      second_attr: 'example'
+    }
+  })).connectAttributes
+);
