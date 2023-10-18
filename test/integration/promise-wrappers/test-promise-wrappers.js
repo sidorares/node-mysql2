@@ -326,17 +326,22 @@ function testEventsPool() {
       assert.equal(this, pool);
       ++events;
     })
+    .once('dequeue', function() {
+      assert.equal(this, pool);
+      ++events;
+    })
     .once('release', function() {
       assert.equal(this, pool);
       ++events;
 
-      doneEventsPool = events === 4;
+      doneEventsPool = events === 5;
     });
   /* eslint-enable no-invalid-this */
 
   pool.pool.emit('acquire');
   pool.pool.emit('connection');
   pool.pool.emit('enqueue');
+  pool.pool.emit('dequeue');
   pool.pool.emit('release');
 
   for (const eventName in expectedListeners) {

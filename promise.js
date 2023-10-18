@@ -331,7 +331,7 @@ class PromisePool extends EventEmitter {
     super();
     this.pool = pool;
     this.Promise = thePromise || Promise;
-    inheritEvents(pool, this, ['acquire', 'connection', 'enqueue', 'release']);
+    inheritEvents(pool, this, ['acquire', 'connection', 'enqueue', 'release', 'dequeue']);
   }
 
   getConnection() {

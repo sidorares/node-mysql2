@@ -90,6 +90,7 @@ export interface Pool extends Connection {
   on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
   on(event: 'enqueue', listener: () => any): this;
+  on(event: 'dequeue', listener: () => any): this;
 
   end(): Promise<void>;
 
