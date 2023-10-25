@@ -47,5 +47,5 @@ process.on('exit', () => {
     error.message,
     'The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior.',
   );
-  assert.equal(error.code, errors.ER_CLIENT_INTERACTION_TIMEOUT);
+  assert.equal(error.code, 'ER_CLIENT_INTERACTION_TIMEOUT');
 });
