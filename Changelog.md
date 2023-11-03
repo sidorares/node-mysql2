@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.3](https://github.com/sidorares/node-mysql2/compare/v3.6.2...v3.6.3) (2023-11-03)
+
+
+### Bug Fixes
+
+* correctly pass values when used with sql-template-strings library ([#2266](https://github.com/sidorares/node-mysql2/issues/2266)) ([6444f99](https://github.com/sidorares/node-mysql2/commit/6444f9953ddb08b1b98cd0d7eb0d939d25d3971a))
+
 ## [3.6.2](https://github.com/sidorares/node-mysql2/compare/v3.6.1...v3.6.2) (2023-10-15)
 
 
