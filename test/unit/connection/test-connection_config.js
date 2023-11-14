@@ -45,7 +45,36 @@ assert.doesNotThrow(() => {
 
 assert.strictEqual(
   ConnectionConfig.parseUrl(
-    String.raw`fml://test:pass!@$%^&*()\word:@www.example.com/database`
+    String.raw`fml://test:pass!%40%24%25%5E%26*()word%3A@www.example.com/database`,
   ).password,
-  'pass!%40$%%5E&*()%5Cword%3A'
+  'pass!@$%^&*()word:',
 );
+
+assert.strictEqual(
+  ConnectionConfig.parseUrl(
+    String.raw`fml://user%40test.com:pass!%40%24%25%5E%26*()word%3A@www.example.com/database`,
+  ).user,
+  'user@test.com',
+);
+
+assert.strictEqual(
+  ConnectionConfig.parseUrl(
+    String.raw`fml://test:pass@wordA@fe80%3A3438%3A7667%3A5c77%3Ace27%2518/database`,
+  ).host,
+  'fe80:3438:7667:5c77:ce27%18',
+);
+
+assert.strictEqual(
+  ConnectionConfig.parseUrl(
+    String.raw`fml://test:pass@wordA@www.example.com/database`,
+  ).host,
+  'www.example.com',
+);
+
+assert.strictEqual(
+  ConnectionConfig.parseUrl(
+    String.raw`fml://test:pass@wordA@www.example.com/database%24`,
+  ).database,
+  'database$',
+);
+
