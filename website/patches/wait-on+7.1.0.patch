@@ -1,0 +1,21 @@
+diff --git a/node_modules/wait-on/lib/wait-on.js b/node_modules/wait-on/lib/wait-on.js
+index 43f5ab8..7f3fd30 100644
+--- a/node_modules/wait-on/lib/wait-on.js
++++ b/node_modules/wait-on/lib/wait-on.js
+@@ -7,14 +7,14 @@ const https = require('https');
+ const net = require('net');
+ const util = require('util');
+ const axiosPkg = require('axios').default;
+-const axiosHttpAdapter = require('axios/lib/adapters/http');
++// const axiosHttpAdapter = require('axios/lib/adapters/http');
+ const { isBoolean, isEmpty, negate, noop, once, partial, pick, zip } = require('lodash/fp');
+ const { NEVER, combineLatest, from, merge, throwError, timer } = require('rxjs');
+ const { distinctUntilChanged, map, mergeMap, scan, startWith, take, takeWhile } = require('rxjs/operators');
+ 
+ // force http adapter for axios, otherwise if using jest/jsdom xhr might
+ // be used and it logs all errors polluting the logs
+-const axios = axiosPkg.create({ adapter: axiosHttpAdapter });
++const axios = axiosPkg.create({ adapter: 'http' });
+ const isNotABoolean = negate(isBoolean);
+ const isNotEmpty = negate(isEmpty);
+ const fstat = promisify(fs.stat);
