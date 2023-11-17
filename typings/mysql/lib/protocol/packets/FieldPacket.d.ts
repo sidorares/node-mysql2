@@ -3,18 +3,24 @@ declare interface FieldPacket {
     name: 'FieldPacket';
   };
   catalog: string;
-  schema: string;
-  characterSet: number;
+  charsetNr?: number;
+  db?: string;
+  schema?: string;
+  characterSet?: number;
   decimals: number;
-  flags: string[];
+  default?: any;
+  flags: number | string[];
+  length?: number;
   name: string;
   orgName: string;
   orgTable: string;
+  protocol41?: boolean;
   table: string;
   type: number;
-  typeName: string;
-  encoding: string;
-  columnLength: number;
+  zerofill?: boolean;
+  typeName?: string;
+  encoding?: string;
+  columnLength?: number;
 }
 
 export { FieldPacket };
