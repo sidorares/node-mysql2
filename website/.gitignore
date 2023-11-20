@@ -7,6 +7,8 @@
 # Generated files
 .docusaurus
 .cache-loader
+i18n/**/docusaurus-theme-classic/navbar.json
+i18n/**/code.json
 
 # Misc
 .DS_Store

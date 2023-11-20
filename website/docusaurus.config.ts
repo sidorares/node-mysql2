@@ -1,6 +1,7 @@
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import { navbarLocalePlugin, getLocaleURL } from './plugins/locale.js';
 
 const config: Config = {
   title: 'Quickstart',
@@ -16,34 +17,52 @@ const config: Config = {
 
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'zh-CN', 'pt-BR'],
+    localeConfigs: {
+      en: {
+        label: '🇺🇸 English',
+      },
+      'zh-CN': {
+        label: '🇨🇳 简体中文',
+      },
+      'pt-BR': {
+        label: '🇧🇷 Português (Brasil)',
+      },
+    },
   },
 
   presets: [
     [
       'classic',
-        {
-          docs: {
-            sidebarPath: './sidebars.ts',
-            editUrl: 'https://github.com/sidorares/node-mysql2/tree/master/website/docs',
-          },
-          theme: {
-            customCss: './src/css/custom.scss',
-          },
-          blog: false,
-        } satisfies Preset.Options,
+      {
+        docs: {
+          sidebarPath: './sidebars.ts',
+          editUrl:
+            'https://github.com/sidorares/node-mysql2/tree/master/website/',
+        },
+        theme: {
+          customCss: './src/css/custom.scss',
+        },
+        blog: false,
+      } satisfies Preset.Options,
     ],
   ],
 
   themeConfig: {
     // image: 'img/mysql2-social-card.jpg',
     navbar: {
-      title: 'MySQL2',
       // logo: {
       //    alt: 'MySQL2 Logo',
       //    src: 'img/logo.svg',
       // },
       items: [
+        {
+          to: getLocaleURL(),
+          label: 'MySQL2',
+          position: 'left',
+          className: 'navbar__brand navbar__manual--title text--truncate',
+          activeBaseRegex: `^\/$`,
+        },
         {
           to: '/docs/examples',
           label: 'Examples',
@@ -54,6 +73,15 @@ const config: Config = {
         //    label: 'FAQ',
         //    position: 'left',
         // },
+        // {
+        //    to: '/docs/stability',
+        //    label: 'Stability',
+        //    position: 'left',
+        // },
+        {
+          type: 'localeDropdown',
+          position: 'right',
+        },
         {
           href: 'https://stackoverflow.com/questions/tagged/mysql2',
           label: 'Stack Overflow',
@@ -73,7 +101,11 @@ const config: Config = {
     },
   } satisfies Preset.ThemeConfig,
 
-  plugins: ['docusaurus-plugin-sass', '@easyops-cn/docusaurus-search-local'],
+  plugins: [
+    'docusaurus-plugin-sass',
+    '@easyops-cn/docusaurus-search-local',
+    navbarLocalePlugin,
+  ],
 };
 
 export default config;

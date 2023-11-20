@@ -22,8 +22,8 @@
 }
 
 [data-theme='light'] {
-  code[class*="language-"],
-  pre[class*="language-"] {
+  code[class*='language-'],
+  pre[class*='language-'] {
     background-color: #f9fafb !important;
 
     .token {
@@ -43,21 +43,40 @@
         color: #6639ba !important;
       }
 
-      &.property, &.number {
+      &.property,
+      &.number {
         color: #0550ae !important;
       }
     }
   }
 }
 
-code[class*="language-"],
-pre[class*="language-"] {
-  font-size: .85em;
+code[class*='language-'],
+pre[class*='language-'] {
+  font-size: 0.85em;
 
   .token {
     &.comment {
       font-size: 0.9em;
       font-style: normal !important;
+    }
+  }
+}
+
+.navbar__brand {
+  margin-right: 0;
+}
+
+.navbar__manual--title {
+  padding: 0;
+  margin-right: 1rem;
+  font-weight: bold;
+}
+
+.navbar.navbar--fixed-top {
+  .navbar__item.dropdown.dropdown--hoverable {
+    svg {
+      display: none;
     }
   }
 }
