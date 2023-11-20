@@ -17,6 +17,7 @@ declare interface FieldPacket {
   protocol41?: boolean;
   table: string;
   type: number;
+  columnType?: number
   zerofill?: boolean;
   typeName?: string;
   encoding?: string;
