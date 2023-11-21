@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.6.4](https://github.com/sidorares/node-mysql2/compare/v3.6.3...v3.6.4) (2023-11-21)
+
+
+### Bug Fixes
+
+* malformed FieldPacket ([#2280](https://github.com/sidorares/node-mysql2/issues/2280)) ([8831e09](https://github.com/sidorares/node-mysql2/commit/8831e092024f8d26fe9272adec8e1a5f115735aa))
+* move missing options to `ConnectionOptions ` ([#2288](https://github.com/sidorares/node-mysql2/issues/2288)) ([5cd7639](https://github.com/sidorares/node-mysql2/commit/5cd76396d962da070452800597a6f86829b35bd4))
+
 ## [3.6.3](https://github.com/sidorares/node-mysql2/compare/v3.6.2...v3.6.3) (2023-11-03)
 
 
