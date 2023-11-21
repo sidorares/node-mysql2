@@ -10,7 +10,7 @@ const config: Config = {
   organizationName: 'sidorares',
   projectName: 'node-mysql2',
   trailingSlash: false,
-  // favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.svg',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
