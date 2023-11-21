@@ -1,4 +1,4 @@
-name: 'GitHub Pages'
+name: 'CI - Website'
 on:
   pull_request:
     paths:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Actions - Checkout
