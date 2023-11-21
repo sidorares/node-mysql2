@@ -1,8 +1,6 @@
 name: 'GitHub Pages'
 on:
-  push:
-    branches:
-      - master
+  pull_request:
     paths:
       - 'website/**'
   workflow_dispatch:
@@ -29,14 +27,11 @@ jobs:
       - name: Installing Dependencies
         run: cd website && npm ci
 
+      - name: Lint Checking
+        run: cd website && npm run lintcheck
+
       - name: Checking Types
         run: cd website && npm run typecheck
 
-      - name: Building Site
+      - name: Checking Build
         run: cd website && npm run build
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./website/build

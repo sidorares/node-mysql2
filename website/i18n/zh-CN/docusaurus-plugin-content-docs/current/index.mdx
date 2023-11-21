@@ -17,7 +17,7 @@ import TabItem from '@theme/TabItem';
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Node.js Version][node-version-image]][node-version-url]
-[![License][license-image]][license-url]  
+[![License][license-image]][license-url]
 
 ## 安装
 
@@ -25,17 +25,21 @@ MySQL2 可以跨平台使用，毫无疑问可以安装在 Linux、Mac OS 或 Wi
 
 <Tabs>
   <TabItem value='JavaScript' default>
-    ```bash
-    npm install --save mysql2
-    ```
+
+```bash
+npm install --save mysql2
+```
+
   </TabItem>
   <TabItem value='TypeScript'>
-    ```bash
-    npm install --save mysql2
-    npm install --save-dev @types/node
-    ```
+
+```bash
+npm install --save mysql2
+npm install --save-dev @types/node
+```
 
     For TypeScript documentation and examples, see [here](/docs/documentation/typescript-examples).
+
   </TabItem>
 </Tabs>
 
@@ -46,73 +50,75 @@ MySQL2 可以跨平台使用，毫无疑问可以安装在 Linux、Mac OS 或 Wi
 <Tabs>
   <TabItem value='Promise' default>
 
-  ```js
-  // 导入模块
-  import mysql from 'mysql2/promise';
+```js
+// 导入模块
+import mysql from 'mysql2/promise';
 
-  // 创建一个数据库连接
-  const connection = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    database: 'test'
-  });
+// 创建一个数据库连接
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
 
-  // 简单查询
-  try {
-    const [results, fields] = await connection.query(
-      'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
-    );
+// 简单查询
+try {
+  const [results, fields] = await connection.query(
+    'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45'
+  );
 
-    console.log(results); // 结果集
-    console.log(fields); // 额外的元数据（如果有的话）
-  } catch (err) {
-    console.log(err);
-  }
+  console.log(results); // 结果集
+  console.log(fields); // 额外的元数据（如果有的话）
+} catch (err) {
+  console.log(err);
+}
 
-  // 使用占位符
-  try {
-    const [results] = await connection.query(
-      'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
-      ['Page', 45],
-    );
-    
-    console.log(results);
-  } catch (err) {
-    console.log(err);
-  }
-  ```
+// 使用占位符
+try {
+  const [results] = await connection.query(
+    'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+    ['Page', 45]
+  );
+
+  console.log(results);
+} catch (err) {
+  console.log(err);
+}
+```
 
   </TabItem>
   <TabItem value='Callback'>
-  ```js
-  // 导入模块
-  const mysql = require('mysql2');
 
-  // 创建一个数据库连接
-  const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    database: 'test'
-  });
+```js
+// 导入模块
+const mysql = require('mysql2');
 
-  // 简单查询
-  connection.query(
-    'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
-    function(err, results, fields) {
-      console.log(results); // 结果集
-      console.log(fields); // 额外的元数据（如果有的话）
-    }
-  );
+// 创建一个数据库连接
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
 
-  // 使用占位符
-  connection.query(
-    'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
-    ['Page', 45],
-    function(err, results) {
-      console.log(results);
-    }
-  );
-  ```
+// 简单查询
+connection.query(
+  'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
+  function (err, results, fields) {
+    console.log(results); // 结果集
+    console.log(fields); // 额外的元数据（如果有的话）
+  }
+);
+
+// 使用占位符
+connection.query(
+  'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+  ['Page', 45],
+  function (err, results) {
+    console.log(results);
+  }
+);
+```
+
   </TabItem>
 </Tabs>
 
@@ -128,56 +134,60 @@ MySQL2 提供了 `execute` 辅助函数，它将准备和查询语句。 您还�
 
 <Tabs>
   <TabItem value='Promise' default>
-  ```js
-  import mysql from 'mysql2/promise';
 
-  try {
-    // 创建一个数据库连接
-    const connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      database: 'test'
-    });
-  
-    // execute 将在内部调用 prepare 和 query
-    const [results, fields] = await connection.execute(
-      'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
-      ['Rick C-137', 53],
-    );
+```js
+import mysql from 'mysql2/promise';
 
-    console.log(results); // 结果集
-    console.log(fields); // 额外的元数据（如果有的话）
-  } catch (err) {
-    console.log(err);
-  }
-  ```
-  </TabItem>
-  <TabItem value='Callback'>
-  ```js
-  const mysql = require('mysql2');
-
+try {
   // 创建一个数据库连接
-  const connection = mysql.createConnection({
+  const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    database: 'test'
+    database: 'test',
   });
 
   // execute 将在内部调用 prepare 和 query
-  connection.execute(
+  const [results, fields] = await connection.execute(
     'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
-    ['Rick C-137', 53],
-    function(err, results, fields) {
-      console.log(results); // 结果集
-      console.log(fields); // 额外的元数据（如果有的话）
-    }
+    ['Rick C-137', 53]
   );
-  ```
+
+  console.log(results); // 结果集
+  console.log(fields); // 额外的元数据（如果有的话）
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+const mysql = require('mysql2');
+
+// 创建一个数据库连接
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+// execute 将在内部调用 prepare 和 query
+connection.execute(
+  'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+  ['Rick C-137', 53],
+  function (err, results, fields) {
+    console.log(results); // 结果集
+    console.log(fields); // 额外的元数据（如果有的话）
+  }
+);
+```
+
   </TabItem>
 </Tabs>
 
 :::tip
-  如果再次执行相同的语句，他将从缓存中选取，这能有效的节省准备查询时间获得更好的性能。
+如果再次执行相同的语句，他将从缓存中选取，这能有效的节省准备查询时间获得更好的性能。
 :::
 
 ---
@@ -190,42 +200,46 @@ MySQL2 提供了 `execute` 辅助函数，它将准备和查询语句。 您还�
 
 <Tabs>
   <TabItem value='Promise' default>
-  ```js
-  import mysql from 'mysql2/promise';
 
-  // 创建连接池，设置连接池的参数
-  const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    database: 'test',
-    waitForConnections: true,
-    connectionLimit: 10,
-    maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-    idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-    queueLimit: 0,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 0
-  });
-  ```
+```js
+import mysql from 'mysql2/promise';
+
+// 创建连接池，设置连接池的参数
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
+});
+```
+
   </TabItem>
   <TabItem value='Callback'>
-  ```js
-  const mysql = require('mysql2');
 
-  // 创建连接池，设置连接池的参数
-  const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    database: 'test',
-    waitForConnections: true,
-    connectionLimit: 10,
-    maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-    idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-    queueLimit: 0,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 0
-  });
-  ```
+```js
+const mysql = require('mysql2');
+
+// 创建连接池，设置连接池的参数
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
+});
+```
+
   </TabItem>
 </Tabs>
 
@@ -239,53 +253,60 @@ MySQL2 提供了 `execute` 辅助函数，它将准备和查询语句。 您还�
 
 <Tabs>
   <TabItem value='Promise' default>
-  ```js
-  try {
-    // For pool initialization, see above
-    const [rows, fields] = await pool.query('SELECT `field` FROM `table`');
-    // Connection is automatically released when query resolves
-  } catch (err) {
-    console.log(err);
-  }
-  ```
+
+```js
+try {
+  // For pool initialization, see above
+  const [rows, fields] = await pool.query('SELECT `field` FROM `table`');
+  // Connection is automatically released when query resolves
+} catch (err) {
+  console.log(err);
+}
+```
+
   </TabItem>
   <TabItem value='Callback'>
-  ```js
-  // For pool initialization, see above
-  pool.query('SELECT `field` FROM `table`', function(err, rows, fields) {
-    // Connection is automatically released when query resolves
-  });
-  ```
+
+```js
+// For pool initialization, see above
+pool.query('SELECT `field` FROM `table`', function (err, rows, fields) {
+  // Connection is automatically released when query resolves
+});
+```
+
   </TabItem>
 </Tabs>
-
 
 或者，也可以手动从池中获取连接并稍后返回：
 
 <Tabs>
   <TabItem value='Promise' default>
-  ```js
-  // For pool initialization, see above
-  const conn = await pool.getConnection();
 
+```js
+// For pool initialization, see above
+const conn = await pool.getConnection();
+
+// Do something with the connection
+await conn.query(/* ... */);
+
+// Don't forget to release the connection when finished!
+pool.releaseConnection(conn);
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+// For pool initialization, see above
+pool.getConnection(function (err, conn) {
   // Do something with the connection
-  await conn.query(/* ... */);
+  conn.query(/* ... */);
 
   // Don't forget to release the connection when finished!
   pool.releaseConnection(conn);
-  ```
-  </TabItem>
-  <TabItem value='Callback'>
-  ```js
-  // For pool initialization, see above
-  pool.getConnection(function(err, conn) {
-    // Do something with the connection
-    conn.query(/* ... */);
+});
+```
 
-    // Don't forget to release the connection when finished!
-    pool.releaseConnection(conn);
-  });
-  ```
   </TabItem>
 </Tabs>
 
@@ -300,23 +321,28 @@ MySQL2 提供了 `execute` 辅助函数，它将准备和查询语句。 您还�
 ### Promise封装
 
 MySQL2 也支持 Promise API。 这与 ES7 异步等待非常有效。
+
 ```js
 import mysql from 'mysql2/promise';
 
 async function main() {
   // create the connection
   const connection = await mysql.createConnection({
-    host:'localhost',
-    user: 'root', 
+    host: 'localhost',
+    user: 'root',
     database: 'test',
   });
 
   // query database
-  const [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+  const [rows, fields] = await connection.execute(
+    'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+    ['Morty', 14]
+  );
 }
 ```
 
 MySQL2 使用范围内可用的默认 `Promise` 对象。 但是你可以选择你想使用的 `Promise` 实现。
+
 ```js
 // 导入模块
 import mysql from 'mysql2/promise';
@@ -326,24 +352,28 @@ import bluebird from 'bluebird';
 
 // create the connection, specify bluebird as Promise
 const connection = await mysql.createConnection({
-  host:'localhost',
+  host: 'localhost',
   user: 'root',
   database: 'test',
   Promise: bluebird,
 });
 
 // query database
-const [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
+const [rows, fields] = await connection.execute(
+  'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+  ['Morty', 14]
+);
 ```
 
 MySQL2 还在 Pools 上公开了一个 `.promise()`函数，因此您可以从同一个池创建一个 promise/non-promise 连接。
+
 ```js
 import mysql from 'mysql2';
 
 async function main() {
   // create the pool
   const pool = mysql.createPool({
-    host:'localhost',
+    host: 'localhost',
     user: 'root',
     database: 'test',
   });
@@ -352,23 +382,26 @@ async function main() {
   const promisePool = pool.promise();
 
   // query database using promises
-  const [rows,fields] = await promisePool.query('SELECT 1');
+  const [rows, fields] = await promisePool.query('SELECT 1');
 }
 ```
 
 MySQL2 在 Connections 上公开了一个 `.promise()`函数，以“升级”现有的 non-promise 连接以使用 Promise。
-```js
+
+```js {11}
 const mysql = require('mysql2');
 
 // create the connection
 const conn = mysql.createConnection({
-  host:'localhost',
+  host: 'localhost',
   user: 'root',
   database: 'test',
 });
 
-conn.promise().query('SELECT 1')
-  .then(([rows,fields]) => {
+conn
+  .promise()
+  .query('SELECT 1')
+  .then(([rows, fields]) => {
     console.log(rows);
   })
   .catch(console.log)
@@ -381,7 +414,7 @@ conn.promise().query('SELECT 1')
 
 如果你有两个相同名称的列，你可能希望以数组而不是对象的形式获取结果，为了防止冲突，这是与 [Node MySQL][node-mysql] 库的区别。
 
-例如： ``` SELECT 1 AS `foo`, 2 AS `foo` ```.
+例如： `` SELECT 1 AS `foo`, 2 AS `foo` ``.
 
 您可以在连接级别（适用于所有查询）或查询级别（仅适用于该特定查询）启用此设置。
 
@@ -389,64 +422,73 @@ conn.promise().query('SELECT 1')
 
 <Tabs>
   <TabItem value='Promise' default>
-  ```js {5}
-  const conn = await mysql.createConnection({
-    host: 'localhost',
-    database: 'test',
-    user: 'root',
-    rowsAsArray: true,
-  });
-  ```
+
+```js {5}
+const conn = await mysql.createConnection({
+  host: 'localhost',
+  database: 'test',
+  user: 'root',
+  rowsAsArray: true,
+});
+```
+
   </TabItem>
   <TabItem value='Callback'>
-  ```js {5}
-  const conn = mysql.createConnection({
-    host: 'localhost',
-    database: 'test',
-    user: 'root',
-    rowsAsArray: true,
-  });
-  ```
+
+```js {5}
+const conn = mysql.createConnection({
+  host: 'localhost',
+  database: 'test',
+  user: 'root',
+  rowsAsArray: true,
+});
+```
+
   </TabItem>
 </Tabs>
 
 #### 查询级别
+
 <Tabs>
   <TabItem value='Promise' default>
-  ```js {4}
-  try {    
-    const [results, fields] = await conn.query({
-      sql: 'SELECT 1 AS `foo`, 2 AS `foo`',
-      rowsAsArray: true,
-    });
-  
-    console.log(results); // 返回数组而不是数组对象
-    console.log(fields); // 无变化
-  } catch (err) {
-    console.log(err);
-  }
-  ```
+
+```js {4}
+try {
+  const [results, fields] = await conn.query({
+    sql: 'SELECT 1 AS `foo`, 2 AS `foo`',
+    rowsAsArray: true,
+  });
+
+  console.log(results); // 返回数组而不是数组对象
+  console.log(fields); // 无变化
+} catch (err) {
+  console.log(err);
+}
+```
+
   </TabItem>
   <TabItem value='Callback'>
-  ```js {4}
-  conn.query(
-    {
-      sql: 'SELECT 1 AS `foo`, 2 AS `foo`',
-      rowsAsArray: true,
-    },
-    function(err, results, fields) {
-      console.log(results); // in this query, results will be an array of arrays rather than an array of objects
-      console.log(fields); // fields are unchanged
-    }
-  );
-  ```
+
+```js {4}
+conn.query(
+  {
+    sql: 'SELECT 1 AS `foo`, 2 AS `foo`',
+    rowsAsArray: true,
+  },
+  function (err, results, fields) {
+    console.log(results); // in this query, results will be an array of arrays rather than an array of objects
+    console.log(fields); // fields are unchanged
+  }
+);
+```
+
   </TabItem>
 </Tabs>
 
 ---
 
 :::tip Getting Help
-Need help? Ask your question on [Stack Overflow](https://stackoverflow.com/questions/tagged/mysql2) or [GitHub](https://github.com/sidorares/node-mysql2/discussions).  
+Need help? Ask your question on [Stack Overflow](https://stackoverflow.com/questions/tagged/mysql2) or [GitHub](https://github.com/sidorares/node-mysql2/discussions).
 If you've encountered an issue, please [file it on GitHub](https://github.com/sidorares/node-mysql2/issues).
 :::
 

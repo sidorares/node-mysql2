@@ -25,7 +25,6 @@ connection.query('select ? + ? as z', [1, 1], (err, rows) => {
 });
 ```
 
-
 ## Receiving rows as array of columns instead of hash with column name as key:
 
 ```js
@@ -60,9 +59,9 @@ const sql =
 connection.query(
   {
     sql: sql,
-    infileStreamFactory: function(path) {
+    infileStreamFactory: function (path) {
       return getStream();
-    }
+    },
   },
   onInserted2
 );
@@ -71,23 +70,30 @@ connection.query(
 The `infileStreamFactory` option may also be set at a connection-level:
 
 ```js
-const fs = require("fs");
+const fs = require('fs');
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
   user: 'test',
   database: 'test',
-  infileStreamFactory: path => {
+  infileStreamFactory: (path) => {
     // Validate file path
     const validPaths = ['/tmp/data.csv'];
     if (!validPaths.includes(path)) {
-      throw new Error(`invalid file path: ${path}: expected to be one of ${validPaths.join(',')}`);
+      throw new Error(
+        `invalid file path: ${path}: expected to be one of ${validPaths.join(
+          ','
+        )}`
+      );
     }
     return fs.createReadStream(path);
-  }
+  },
 });
 
-connection.query('LOAD DATA LOCAL INFILE "/tmp/data.csv" INTO TABLE test', onInserted);
+connection.query(
+  'LOAD DATA LOCAL INFILE "/tmp/data.csv" INTO TABLE test',
+  onInserted
+);
 ```
 
 ## Connecting using custom stream:
@@ -99,7 +105,7 @@ const shape = require('shaper');
 const connection = mysql.createConnection({
   user: 'test',
   database: 'test',
-  stream: net.connect('/tmp/mysql.sock').pipe(shape(10)) // emulate 10 bytes/sec link
+  stream: net.connect('/tmp/mysql.sock').pipe(shape(10)), // emulate 10 bytes/sec link
 });
 connection.query('SELECT 1+1 as test1', console.log);
 ```
@@ -113,13 +119,13 @@ const pool = mysql.createPool({
   database: 'test',
   user: 'foo',
   password: 'bar',
-  stream: function(cb) {
+  stream: function (cb) {
     const newStream = new SocksConnection(
       { host: 'remote.host', port: 3306 },
       { host: 'localhost', port: 1080 }
     );
     cb(null, newStream);
-  }
+  },
 });
 ```
 

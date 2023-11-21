@@ -2,7 +2,7 @@
 
 MySQL2 aims to be a drop in replacement for [node-mysql](https://github.com/mysqljs/mysql). Please check `node-mysql` for full documentation.
 
-**Note :** *If you see any API incompatibilities with `node-mysql`, please report via github issue.*
+**Note :** _If you see any API incompatibilities with `node-mysql`, please report via github issue._
 
 Not only `Node-MySQL2` offers better performance over `node-mysql`, we also support these additional features.
 
@@ -27,9 +27,10 @@ Please check these [examples](/docs/examples) for `node-mysql2`.
 ## Known incompatibilities with `node-mysql`
 
 - `zeroFill` flag is ignored in type conversion.
-You need to check corresponding field's zeroFill flag and convert to string manually if this is of importance to you.
+  You need to check corresponding field's zeroFill flag and convert to string manually if this is of importance to you.
 
 - `DECIMAL` and `NEWDECIMAL` types always returned as `string` unless you pass this config option:
+
 ```js
 {
   decimalNumbers: true,
@@ -53,6 +54,7 @@ This option could lose precision on the number as Javascript Number is a Float!
 ---
 
 ## Benchmarks
+
 - https://gist.github.com/sidorares/ffe9ee9c423f763e3b6b
 - `npm run benchmarks`
 - [node-mysql-benchmarks](https://github.com/mscdex/node-mysql-benchmarks)

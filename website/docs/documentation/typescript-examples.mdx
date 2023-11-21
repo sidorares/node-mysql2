@@ -1,32 +1,38 @@
 # Using MySQL2 with TypeScript
 
 ## Installation
+
 ```bash
 npm install --save mysql2
 npm install --save-dev @types/node
 ```
 
-> The `@types/node` ensure the proper interaction between **TypeScript** and the **Node.js** modules used by **MySQL2** (*net*, *events*, *stream*, *tls*, etc.).
+> The `@types/node` ensure the proper interaction between **TypeScript** and the **Node.js** modules used by **MySQL2** (_net_, _events_, _stream_, _tls_, etc.).
 
 Requires **TypeScript** `>=4.5.2`.
 
 ---
 
 ## Usage
+
 You can import **MySQL2** in two ways:
+
 - By setting the `esModuleInterop` option to `true` in `tsconfig.json`
+
 ```ts
 import mysql from 'mysql2';
 import mysql from 'mysql2/promise';
 ```
 
 - By setting the `esModuleInterop` option to `false` in `tsconfig.json`
+
 ```ts
 import * as mysql from 'mysql2';
 import * as mysql from 'mysql2/promise';
 ```
 
 ### Connection
+
 ```ts
 import mysql, { ConnectionOptions } from 'mysql2';
 
@@ -39,6 +45,7 @@ const conn = mysql.createConnection(access);
 ```
 
 ### Pool Connection
+
 ```ts
 import mysql, { PoolOptions } from 'mysql2';
 
@@ -51,7 +58,9 @@ const conn = mysql.createPool(access);
 ```
 
 ### Query and Execute
+
 #### A simple query
+
 ```ts
 conn.query('SELECT 1 + 1 AS `test`;', (_err, rows) => {
   /**
@@ -67,6 +76,7 @@ conn.execute('SELECT 1 + 1 AS `test`;', (_err, rows) => {
 ```
 
 The `rows` output will be these possible types:
+
 - `RowDataPacket[]`
 - `RowDataPacket[][]`
 - `ResultSetHeader`
@@ -78,7 +88,9 @@ In this example, you need to manually check the output types
 ---
 
 ## Type Specification
+
 ### RowDataPacket[]
+
 An array with the returned rows, for example:
 
 ```ts
@@ -118,52 +130,59 @@ const conn = mysql.createConnection({
 });
 
 // SELECT
-conn.query<RowDataPacket[]>('SELECT 1 + 1 AS test, 2 + 2 AS test;', (_err, rows) => {
-  console.log(rows);
-  /**
-  * @rows: [ [ 2, 4 ] ]
-  */
-});
+conn.query<RowDataPacket[]>(
+  'SELECT 1 + 1 AS test, 2 + 2 AS test;',
+  (_err, rows) => {
+    console.log(rows);
+    /**
+     * @rows: [ [ 2, 4 ] ]
+     */
+  }
+);
 
 // SHOW
 conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
   console.log(rows);
   /**
-  * @rows: [ [ 'test' ] ]
-  */
+   * @rows: [ [ 'test' ] ]
+   */
 });
 ```
 
 ---
 
 ### RowDataPacket[][]
+
 Using `multipleStatements`option as `true` with multiple queries:
-  ```ts
-  import mysql, { RowDataPacket } from 'mysql2';
 
-  const conn = mysql.createConnection({
-    user: 'test',
-    database: 'test',
-    multipleStatements: true,
-  });
+```ts
+import mysql, { RowDataPacket } from 'mysql2';
 
-  const sql = `
-    SELECT 1 + 1 AS test;
-    SELECT 2 + 2 AS test;
-  `;
+const conn = mysql.createConnection({
+  user: 'test',
+  database: 'test',
+  multipleStatements: true,
+});
 
-  conn.query<RowDataPacket[][]>(sql, (_err, rows) => {
-    console.log(rows);
-    /**
-    * @rows: [ [ { test: 2 } ], [ { test: 4 } ] ]
-    */
-  });
-  ```
+const sql = `
+  SELECT 1 + 1 AS test;
+  SELECT 2 + 2 AS test;
+`;
+
+conn.query<RowDataPacket[][]>(sql, (_err, rows) => {
+  console.log(rows);
+  /**
+   * @rows: [ [ { test: 2 } ], [ { test: 4 } ] ]
+   */
+});
+```
 
 ---
 
 ### ResultSetHeader
+
 For `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc.:
+
 ```ts
 import mysql, { ResultSetHeader } from 'mysql2';
 
@@ -195,6 +214,7 @@ conn.query<ResultSetHeader>(sql, (_err, result) => {
 ---
 
 ### ResultSetHeader[]
+
 For multiples `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc. when using `multipleStatements` as `true`:
 
 ```ts
@@ -241,6 +261,7 @@ conn.query<ResultSetHeader[]>(sql, (_err, results) => {
 ---
 
 ### ProcedureCallPacket
+
 By performing a **Call Procedure** using `INSERT`, `UPDATE`, etc., the return will be a `ProcedureCallPacket<ResultSetHeader>` (even if you perform multiples queries and set `multipleStatements` to `true`):
 
 ```ts
@@ -282,9 +303,10 @@ conn.query<ProcedureCallPacket<ResultSetHeader>>(sql, (_err, result) => {
 });
 ```
 
-> For `CREATE PROCEDURE` and `DROP PROCEDURE`, these returns will be the *default* `ResultSetHeader`.
+> For `CREATE PROCEDURE` and `DROP PROCEDURE`, these returns will be the _default_ `ResultSetHeader`.
 
 By using `SELECT` and `SHOW` queries in a **Procedure Call**, it groups the results as:
+
 ```tsx
 /** ProcedureCallPacket<RowDataPacket[]> */
 [RowDataPacket[], ResultSetHeader]
@@ -295,6 +317,7 @@ For `ProcedureCallPacket<RowDataPacket[]>`, please see the following examples.
 ---
 
 ## Examples
+
 You can also check some code examples using **MySQL2** and **TypeScript** to understand advanced concepts:
 
 - [Extending and using **Interfaces** with `RowDataPacket`](https://github.com/sidorares/node-mysql2/blob/master/examples/typescript/row-data-packet.ts)
