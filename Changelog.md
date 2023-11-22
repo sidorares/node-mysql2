@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.5](https://github.com/sidorares/node-mysql2/compare/v3.6.4...v3.6.5) (2023-11-22)
+
+
+### Bug Fixes
+
+* add decodeuricomponent to parse uri encoded special characters in host, username, password and datbase keys ([#2277](https://github.com/sidorares/node-mysql2/issues/2277)) ([fe573ad](https://github.com/sidorares/node-mysql2/commit/fe573addffa64a842ae37994fcd8879cefa933f2))
+
 ## [3.6.4](https://github.com/sidorares/node-mysql2/compare/v3.6.3...v3.6.4) (2023-11-21)
 
 
