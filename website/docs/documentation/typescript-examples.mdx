@@ -9,7 +9,9 @@ npm install --save-dev @types/node
 
 > The `@types/node` ensure the proper interaction between **TypeScript** and the **Node.js** modules used by **MySQL2** (_net_, _events_, _stream_, _tls_, etc.).
 
+:::info
 Requires **TypeScript** `>=4.5.2`.
+:::
 
 ---
 
@@ -262,7 +264,9 @@ conn.query<ResultSetHeader[]>(sql, (_err, results) => {
 
 ### ProcedureCallPacket
 
+:::tip
 By performing a **Call Procedure** using `INSERT`, `UPDATE`, etc., the return will be a `ProcedureCallPacket<ResultSetHeader>` (even if you perform multiples queries and set `multipleStatements` to `true`):
+:::
 
 ```ts
 import mysql, { ProcedureCallPacket, ResultSetHeader } from 'mysql2';
@@ -320,10 +324,10 @@ For `ProcedureCallPacket<RowDataPacket[]>`, please see the following examples.
 
 You can also check some code examples using **MySQL2** and **TypeScript** to understand advanced concepts:
 
-- [Extending and using **Interfaces** with `RowDataPacket`](https://github.com/sidorares/node-mysql2/blob/master/examples/typescript/row-data-packet.ts)
-- [Extending and using **Interfaces** with `RowDataPacket` and `rowAsArray`](https://github.com/sidorares/node-mysql2/blob/master/examples/typescript/row-data-packet-row-as-array.ts)
-- [Extending and using **Interfaces** with `RowDataPacket` and `multipleStatements`](https://github.com/sidorares/node-mysql2/blob/master/examples/typescript/row-data-packet-multi-statements.ts)
-- [Extending and using **Interfaces** with `RowDataPacket`, `rowAsArray` and `multipleStatements`](https://github.com/sidorares/node-mysql2/blob/master/examples/typescript/row-data-packet-row-as-array-multi-statements.ts)
-- [Checking for `ResultSetHeader`, extending and using **Interfaces** with `RowDataPacket` from `ProcedureCallPacket`](https://github.com/sidorares/node-mysql2/blob/master/examples/typescript/procedure-call-packet.ts)
-- [Checking for `ResultSetHeader`, extending and using **Interfaces** with `RowDataPacket` and `rowAsArray` from `ProcedureCallPacket`](https://github.com/sidorares/node-mysql2/blob/master/examples/typescript/procedure-call-packet-row-as-array.ts)
-- [Creating a basic custom **MySQL2** **Class**](https://github.com/sidorares/node-mysql2/blob/master/examples/typescript/basic-custom-class.ts)
+- [Extending and using **Interfaces** with `RowDataPacket`](/docs/examples/typescript/row-data/row-data-packet)
+- [Extending and using **Interfaces** with `RowDataPacket` and `rowAsArray`](/docs/examples/typescript/row-data/row-as-array)
+- [Extending and using **Interfaces** with `RowDataPacket` and `multipleStatements`](/docs/examples/typescript/row-data/multi-statements)
+- [Extending and using **Interfaces** with `RowDataPacket`, `rowAsArray` and `multipleStatements`](/docs/examples/typescript/row-data/row-as-array-multi-statements)
+- [Checking for `ResultSetHeader`, extending and using **Interfaces** with `RowDataPacket` from `ProcedureCallPacket`](/docs/examples/typescript/procedure-call/procedure-call-packet)
+- [Checking for `ResultSetHeader`, extending and using **Interfaces** with `RowDataPacket` and `rowAsArray` from `ProcedureCallPacket`](/docs/examples/typescript/procedure-call/row-as-array)
+- [Creating a basic custom **MySQL2** **Class**](/docs/examples/typescript/basic-custom-class)

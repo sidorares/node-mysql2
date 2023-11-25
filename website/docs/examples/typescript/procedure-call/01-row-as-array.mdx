@@ -81,6 +81,7 @@ const isResultSetHeader = (data: unknown): data is ResultSetHeader => {
   `);
 
   /** Getting users */
+  // highlight-start
   const [procedureResult] =
     await conn.query<ProcedureCallPacket<User[]>>('CALL getUsers()');
 
@@ -97,6 +98,7 @@ const isResultSetHeader = (data: unknown): data is ResultSetHeader => {
       });
     }
   });
+  // highlight-end
 
   await conn.end();
 })();
