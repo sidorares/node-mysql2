@@ -10,5 +10,5 @@
     "strictFunctionTypes": true,
     "noUnusedLocals": true
   },
-  "exclude": ["static"]
+  "exclude": ["static", "build", ".docusaurus"]
 }
