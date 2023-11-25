@@ -63,19 +63,9 @@ const config: Config = {
           className: 'navbar__brand navbar__manual--title text--truncate',
           activeBaseRegex: `^/$`,
         },
-        {
-          to: '/docs/examples',
-          label: 'Examples',
-          position: 'left',
-        },
         // {
         //    to: '/docs/faq',
         //    label: 'FAQ',
-        //    position: 'left',
-        // },
-        // {
-        //    to: '/docs/stability',
-        //    label: 'Stability',
         //    position: 'left',
         // },
         {

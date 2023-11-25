@@ -1,36 +1,120 @@
 ---
-title: Quickstart
+slug: /examples
+title: Introduction
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { PageTitle } from '@site/src/components/PageTitle';
+
+<PageTitle title='Examples' />
 
 # Examples
 
-## Simple SELECT
+## Simple `SELECT`
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+const connection = await mysql.createConnection({
+  user: 'test',
+  database: 'test',
+});
+
+const [rows] = await connection.query('SELECT 1+1 AS `test1`');
+// ...
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
 
 ```js
 const mysql = require('mysql2');
-const connection = mysql.createConnection({ user: 'test', database: 'test' });
 
-connection.query('SELECT 1+1 as test1', (err, rows) => {
-  //
+const connection = mysql.createConnection({
+  user: 'test',
+  database: 'test',
+});
+
+connection.query('SELECT 1+1 AS `test1`', (err, rows) => {
+  // ...
 });
 ```
 
-## Prepared statement and parameters
+  </TabItem>
+</Tabs>
+
+---
+
+## Prepared Statement and Parameters
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+const connection = await mysql.createConnection({
+  user: 'test',
+  database: 'test',
+});
+
+const [rows] = await connection.execute('SELECT 1+? AS `test1`', [10]);
+// ...
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
 
 ```js
 const mysql = require('mysql2');
-const connection = mysql.createConnection({ user: 'test', database: 'test' });
+
+const connection = mysql.createConnection({
+  user: 'test',
+  database: 'test',
+});
 
 connection.execute('SELECT 1+? as test1', [10], (err, rows) => {
-  //
+  // ...
 });
 ```
 
+  </TabItem>
+</Tabs>
+
+---
+
 ## Connecting over encrypted connection
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import fs from 'fs';
+import mysql from 'mysql2/promise';
+
+const connection = await mysql.createConnection({
+  user: 'test',
+  database: 'test',
+  ssl: {
+    key: fs.readFileSync('./certs/client-key.pem'),
+    cert: fs.readFileSync('./certs/client-cert.pem'),
+  },
+});
+
+console.log(await connection.query('SELECT 1+1 AS `test1`'));
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
 
 ```js
 const fs = require('fs');
 const mysql = require('mysql2');
+
 const connection = mysql.createConnection({
   user: 'test',
   database: 'test',
@@ -39,13 +123,44 @@ const connection = mysql.createConnection({
     cert: fs.readFileSync('./certs/client-cert.pem'),
   },
 });
-connection.query('SELECT 1+1 as test1', console.log);
+
+connection.query('SELECT 1+1 AS `test1`', console.log);
 ```
+
+  </TabItem>
+</Tabs>
 
 You can use 'Amazon RDS' string as value to ssl property to connect to Amazon RDS mysql over ssl (in that case http://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used)
 
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  const connection = await mysql.createConnection({
+    user: 'foo',
+    password: 'bar',
+    host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+    ssl: 'Amazon RDS',
+  });
+
+  const [res] = await connection.query("SHOW `status` LIKE 'Ssl_cipher'");
+
+  console.log(res);
+  connection.end();
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
 ```js
 const mysql = require('mysql2');
+
 const connection = mysql.createConnection({
   user: 'foo',
   password: 'bar',
@@ -53,11 +168,16 @@ const connection = mysql.createConnection({
   ssl: 'Amazon RDS',
 });
 
-connection.query("show status like 'Ssl_cipher'", (err, res) => {
+connection.query("SHOW `status` LIKE 'Ssl_cipher'", (err, res) => {
   console.log(err, res);
   connection.end();
 });
 ```
+
+  </TabItem>
+</Tabs>
+
+---
 
 ## Simple MySQL proxy server
 
@@ -114,6 +234,8 @@ server.on('connection', (conn) => {
   conn.on('end', remote.end.bind(remote));
 });
 ```
+
+---
 
 ## Examples using MySQL server API
 

@@ -1,5 +1,8 @@
 {
   "sidebar.docs.category.Documentation": {
     "message": "Documentação"
+  },
+  "sidebar.docs.category.Examples": {
+    "message": "Exemplos"
   }
 }

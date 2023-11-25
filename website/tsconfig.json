@@ -9,5 +9,6 @@
     "alwaysStrict": true,
     "strictFunctionTypes": true,
     "noUnusedLocals": true
-  }
+  },
+  "exclude": ["static"]
 }

@@ -106,6 +106,16 @@
         ],
         "no-unused-vars": 2
       }
+    },
+    {
+      "files": ["static/**/*"],
+      "rules": {
+        "import/no-unresolved": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "no-unused-vars": "off",
+        "no-bitwise": "off"
+      }
     }
   ],
   "settings": {
