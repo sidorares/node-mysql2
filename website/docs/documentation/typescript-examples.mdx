@@ -1,4 +1,5 @@
 import { History } from '@site/src/components/History';
+import { Stability } from '@site/src/components/Stability';
 
 # Using MySQL2 with TypeScript
 
@@ -95,6 +96,8 @@ In this example, you need to manually check the output types
 
 ### RowDataPacket[]
 
+<Stability level={2} />
+
 An array with the returned rows, for example:
 
 ```ts
@@ -157,7 +160,9 @@ conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
 
 ### RowDataPacket[][]
 
-Using `multipleStatements`option as `true` with multiple queries:
+<Stability level={2} />
+
+Using `multipleStatements` option as `true` with multiple queries:
 
 ```ts
 import mysql, { RowDataPacket } from 'mysql2';
@@ -184,6 +189,8 @@ conn.query<RowDataPacket[][]>(sql, (_err, rows) => {
 ---
 
 ### ResultSetHeader
+
+<Stability level={2} />
 
 <History
   records={[
@@ -241,6 +248,8 @@ conn.query<ResultSetHeader>(sql, (_err, result) => {
 
 ### ResultSetHeader[]
 
+<Stability level={2} />
+
 For multiples `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc. when using `multipleStatements` as `true`:
 
 ```ts
@@ -287,6 +296,21 @@ conn.query<ResultSetHeader[]>(sql, (_err, results) => {
 ---
 
 ### ProcedureCallPacket
+
+<Stability level={2} />
+
+<History
+  records={[
+    {
+      version: '3.5.1',
+      changes: [
+        <>
+          Introduce <strong>ProcedureCallPacket</strong>
+        </>,
+      ],
+    },
+  ]}
+/>
 
 :::tip
 By performing a **Call Procedure** using `INSERT`, `UPDATE`, etc., the return will be a `ProcedureCallPacket<ResultSetHeader>` (even if you perform multiples queries and set `multipleStatements` to `true`):
@@ -344,6 +368,22 @@ For `ProcedureCallPacket<RowDataPacket[]>`, please see the following examples.
 
 ---
 
+### OkPacket
+
+<Stability
+  level={0}
+  message={
+    <>
+      <strong>OkPacket</strong> is deprecated and might be removed in the future
+      major release.
+      <br />
+      Please use <strong>ResultSetHeader</strong> instead.
+    </>
+  }
+/>
+
+---
+
 ## Examples
 
 You can also check some code examples using **MySQL2** and **TypeScript** to understand advanced concepts:
@@ -355,3 +395,5 @@ You can also check some code examples using **MySQL2** and **TypeScript** to und
 - [Checking for `ResultSetHeader`, extending and using **Interfaces** with `RowDataPacket` from `ProcedureCallPacket`](/docs/examples/typescript/procedure-call/procedure-call-packet)
 - [Checking for `ResultSetHeader`, extending and using **Interfaces** with `RowDataPacket` and `rowAsArray` from `ProcedureCallPacket`](/docs/examples/typescript/procedure-call/row-as-array)
 - [Creating a basic custom **MySQL2** **Class**](/docs/examples/typescript/basic-custom-class)
+
+---
