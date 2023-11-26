@@ -5,7 +5,7 @@ details {
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    margin-bottom: 1.5625 !important;
+    margin-bottom: 1.5625rem !important;
 
     summary {
       @include flex(row, center);
@@ -44,8 +44,8 @@ details {
                 }
 
                 & + section {
-                  padding-top: 0.46875;
-                  margin-top: 0.46875;
+                  padding-top: 0.46875rem;
+                  margin-top: 0.46875rem;
                   border-top: var(--ifm-table-border-width) solid
                     var(--history-separator);
                 }
