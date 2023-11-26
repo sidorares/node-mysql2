@@ -1,3 +1,5 @@
+@import 'mixins';
+
 :root {
   --ifm-color-primary: #45aaf2;
   --ifm-color-primary-dark: #3d98d1;
@@ -85,9 +87,9 @@ pre[class*='language-'] {
   }
 }
 
-// [title='<ExternalCodeEmbed'] {
-//   visibility: hidden;
-// }
+[title='<ExternalCodeEmbed'] {
+  visibility: hidden;
+}
 
 // Components
 @import './loading';
