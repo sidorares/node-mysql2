@@ -130,7 +130,7 @@ connection.query('SELECT 1+1 AS `test1`', console.log);
   </TabItem>
 </Tabs>
 
-You can use 'Amazon RDS' string as value to ssl property to connect to Amazon RDS mysql over ssl (in that case http://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used)
+You can use 'Amazon RDS' string as value to ssl property to connect to Amazon RDS mysql over ssl (in that case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used)
 
 <Tabs>
   <TabItem value='Promise' default>
@@ -243,4 +243,4 @@ server.on('connection', (conn) => {
 - [MySQLite.js](https://github.com/sidorares/mysqlite.js) - MySQL server with JS-only (emscripten compiled) sqlite backend.
 - [SQL-engine](https://github.com/eugeneware/sql-engine) - MySQL server with LevelDB backend.
 - [MySQL-osquery-proxy](https://github.com/sidorares/mysql-osquery-proxy) - Connect to [facebook osquery](https://osquery.io/) using MySQL client
-- [PlyQL](https://github.com/implydata/plyql) - Connect to [Druid](http://druid.io/) using MySQL client
+- [PlyQL](https://github.com/implydata/plyql) - Connect to [Druid](https://druid.io/) using MySQL client

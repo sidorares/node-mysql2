@@ -3,7 +3,7 @@
 ## Server
 
 - `createServer()` - creates server instance
-- `Server.listen` - listen port / unix socket (same arguments as [net.Server.listen](http://nodejs.org/api/net.html#net_server_listen_port_host_backlog_callback))
+- `Server.listen` - listen port / unix socket (same arguments as [net.Server.listen](https://nodejs.org/api/net.html#net_server_listen_port_host_backlog_callback))
 
 ### Events
 
@@ -17,7 +17,7 @@
 - `serverHandshake({ serverVersion, protocolVersion, connectionId, statusFlags, characterSet, capabilityFlags })`
   - send server handshake initialisation packet, wait handshake response and start listening for commands
 - `writeOk({ affectedRows: num, insertId: num })`
-  - send [OK packet](http://dev.mysql.com/doc/internals/en/overview.html#packet-OK_Packet) to client
+  - send [OK packet](https://dev.mysql.com/doc/internals/en/overview.html#packet-OK_Packet) to client
 - `writeEof(warnings, statusFlags)`
   - send EOF packet
 - `writeTextResult(rows, fields)`
