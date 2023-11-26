@@ -8,6 +8,8 @@
   --ifm-color-primary-lightest: #99c9fa;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: #21657e0d;
+  --ifm-table-stripe-background: #c6ddff !important;
+  --ifm-table-background: #fdfdfd7a !important;
 }
 
 [data-theme='dark'] {
@@ -19,6 +21,8 @@
   --ifm-color-primary-lighter: #4a9bdd;
   --ifm-color-primary-lightest: #5ea6e6;
   --docusaurus-highlighted-code-line-bg: #0c0d152b;
+  --ifm-table-stripe-background: #5e30a0 !important;
+  --ifm-table-background: transparent !important;
 }
 
 [data-theme='light'] {
@@ -81,47 +85,10 @@ pre[class*='language-'] {
   }
 }
 
-[title='<ExternalCodeEmbed'] {
-  visibility: hidden;
-}
+// [title='<ExternalCodeEmbed'] {
+//   visibility: hidden;
+// }
 
-// Credits: https://cssloaders.github.io/
-.loader {
-  width: 0.8rem;
-  height: 0.8rem;
-  border-radius: 50%;
-  display: block;
-  margin: 38px 19px;
-  position: relative;
-  color: var(--ifm-color-primary-lightest);
-  box-sizing: border-box;
-  animation: animloader 1s linear infinite alternate;
-  transform: scale(0.5);
-}
-
-@keyframes animloader {
-  0% {
-    box-shadow:
-      -38px -6px,
-      -14px 6px,
-      14px -6px;
-  }
-  33% {
-    box-shadow:
-      -38px 6px,
-      -14px -6px,
-      14px 6px;
-  }
-  66% {
-    box-shadow:
-      -38px -6px,
-      -14px 6px,
-      14px -6px;
-  }
-  100% {
-    box-shadow:
-      -38px 6px,
-      -14px -6px,
-      14px 6px;
-  }
-}
+// Components
+@import './loading';
+@import './history';

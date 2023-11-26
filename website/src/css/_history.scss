@@ -1,0 +1,134 @@
+details {
+  &.history {
+    // Reset Docusaurus styles
+    background-color: unset !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 25px !important;
+
+    summary {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.35rem;
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    table {
+      width: 100%;
+
+      thead {
+        th {
+          text-align: left;
+        }
+      }
+
+      tbody {
+        tr {
+          td:nth-child(2) {
+            width: 100%;
+
+            .changes {
+              width: 100%;
+
+              section {
+                width: 100%;
+
+                & + section {
+                  padding-top: 7.5px;
+                  margin-top: 7.5px;
+                  border-top: var(--ifm-table-border-width) solid;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+[data-theme='light'] {
+  details {
+    &.history {
+      --ifm-alert-background-color: #f9fafb;
+      --ifm-alert-border-color: var(--ifm-menu-color-active);
+      --ifm-table-border-color: #bcd7ff;
+
+      summary {
+        color: #1b6192;
+
+        svg {
+          stroke: var(--docusaurus-details-decoration-color);
+        }
+      }
+
+      table {
+        width: 100%;
+
+        tbody {
+          tr {
+            td:nth-child(2) {
+              .changes {
+                section {
+                  code {
+                    background-color: #ecf4ff;
+                  }
+
+                  & + section {
+                    border-top-color: var(--ifm-table-border-color);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+[data-theme='dark'] {
+  details {
+    &.history {
+      --ifm-alert-background-color: #18181b;
+      --ifm-alert-border-color: #7f53bc;
+      --ifm-table-border-color: #4a267c;
+
+      summary {
+        color: #ddc7ff;
+
+        svg {
+          stroke: var(--docusaurus-details-decoration-color);
+        }
+      }
+
+      table {
+        width: 100%;
+
+        tbody {
+          tr {
+            td:nth-child(2) {
+              .changes {
+                section {
+                  code {
+                    background-color: #382358;
+                  }
+
+                  & + section {
+                    border-top-color: var(--ifm-table-border-color);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

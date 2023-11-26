@@ -1,3 +1,5 @@
+import { History } from '@site/src/components/History';
+
 # Using MySQL2 with TypeScript
 
 ## Installation
@@ -182,6 +184,28 @@ conn.query<RowDataPacket[][]>(sql, (_err, rows) => {
 ---
 
 ### ResultSetHeader
+
+<History
+  records={[
+    {
+      version: '3.5.1',
+      changes: [
+        <>
+          <strong>OkPacket</strong> is deprecated and might be removed in the
+          future major release.
+          <br />
+          Please use <strong>ResultSetHeader</strong> instead.
+        </>,
+        <>
+          <strong>changedRows</strong> option is deprecated and might be removed
+          in the future major release.
+          <br />
+          Please use <strong>affectedRows</strong> instead.
+        </>,
+      ],
+    },
+  ]}
+/>
 
 For `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, etc.:
 
