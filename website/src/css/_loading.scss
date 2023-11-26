@@ -2,7 +2,7 @@
  * Credits: https://cssloaders.github.io/
  */
 
- .loader {
+.loader {
   width: 0.8rem;
   height: 0.8rem;
   border-radius: 50%;
@@ -17,15 +17,27 @@
 
 @keyframes animloader {
   0% {
-    box-shadow: -2.375rem -0.35rem, -0.875rem 0.35rem, 0.875rem -0.35rem;
+    box-shadow:
+      -2.375rem -0.35rem,
+      -0.875rem 0.35rem,
+      0.875rem -0.35rem;
   }
   33% {
-    box-shadow: -2.375rem 0.35rem, -0.875rem -0.35rem, 0.875rem 0.35rem;
+    box-shadow:
+      -2.375rem 0.35rem,
+      -0.875rem -0.35rem,
+      0.875rem 0.35rem;
   }
   66% {
-    box-shadow: -2.375rem -0.35rem, -0.875rem 0.35rem, 0.875rem -0.35rem;
+    box-shadow:
+      -2.375rem -0.35rem,
+      -0.875rem 0.35rem,
+      0.875rem -0.35rem;
   }
   100% {
-    box-shadow: -2.375rem 0.35rem, -0.875rem -0.35rem, 0.875rem 0.35rem;
+    box-shadow:
+      -2.375rem 0.35rem,
+      -0.875rem -0.35rem,
+      0.875rem 0.35rem;
   }
 }

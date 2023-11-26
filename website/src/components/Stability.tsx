@@ -8,10 +8,40 @@ import {
 } from 'lucide-react';
 
 export type StabilityProps = {
+  /**
+   * - `0`: Deprecated
+   * - `1`: Experimental
+   * - `1.1`: Early Development
+   * - `1.2`: Release Candidate
+   * - `2`: Stable
+   * - `3`: Legacy
+   */
   level: 0 | 1 | 1.1 | 1.2 | 2 | 3;
+  /**
+   * An optional message
+   */
   message?: string | JSX.Element;
 };
 
+/**
+ * **Usage Examples:**
+ *
+ * ```tsx
+ * <Stability level={2} />
+ * ```
+ *
+ * ---
+ *
+ * ```tsx
+ * <Stability level={2} message='An optional message' />
+ * ```
+ *
+ * ---
+ *
+ * ```tsx
+ * <Stability level={2} message={<>An optional message</>} />
+ * ```
+ */
 export const Stability: FC<StabilityProps> = ({ level, message }) => {
   /* eslint-disable @typescript-eslint/indent */
   const styles: Record<
