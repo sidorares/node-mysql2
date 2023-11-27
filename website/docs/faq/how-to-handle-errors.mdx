@@ -1,4 +1,5 @@
 import { FAQ } from '@site/src/components/FAQ';
+import { Stability } from '@site/src/components/Stability';
 
 # How to handle errors?
 
@@ -7,6 +8,11 @@ This section details error handling techniques in MySQL2. It covers essential er
 ## Using callbacks
 
 <FAQ title='createConnection'>
+
+<Stability
+  level={2}
+  message='This solution has been tested and confirmed as the correct answer.'
+/>
 
 Handling connection errors by adding an error event listener:
 
@@ -32,6 +38,8 @@ connection.addListener('error', (err) => {
 
 <FAQ title='createPool'>
 
+<Stability level={2} message='This solution has been tested.' />
+
 Handling connection errors through callback's `err` parameter:
 
 ```js
@@ -56,6 +64,8 @@ pool.getConnection((err, connection) => {
 </FAQ>
 
 <FAQ title='createPoolCluster'>
+
+<Stability level={2} message='This solution has been tested.' />
 
 Handling connection errors through callback's `err` parameter:
 
@@ -84,6 +94,8 @@ poolCluster.getConnection('NodeI', (err, connection) => {
 
 <FAQ title='execute'>
 
+<Stability level={2} message='This solution has been tested.' />
+
 Handling `execute` errors through callback's `err` parameter:
 
 ```js
@@ -104,6 +116,8 @@ connection.execute('SELEC 1 + 1', (err, rows) => {
 </FAQ>
 
 <FAQ title='query'>
+
+<Stability level={2} message='This solution has been tested.' />
 
 Handling `query` errors through callback's `err` parameter:
 
@@ -128,6 +142,11 @@ connection.query('SELEC 1 + 1', (err, rows) => {
 
 <FAQ title='createConnection'>
 
+<Stability
+  level={2}
+  message='This solution has been tested and confirmed as the correct answer.'
+/>
+
 Handling connection errors through `try-catch` block:
 
 ```js
@@ -151,6 +170,8 @@ try {
 </FAQ>
 
 <FAQ title='createPool'>
+
+<Stability level={2} message='This solution has been tested.' />
 
 Handling connection errors through `try-catch` block:
 
@@ -177,6 +198,8 @@ try {
 </FAQ>
 
 <FAQ title='createPoolCluster'>
+
+<Stability level={2} message='This solution has been tested.' />
 
 Handling connection errors through `try-catch` block:
 
@@ -206,6 +229,8 @@ try {
 
 <FAQ title='execute'>
 
+<Stability level={2} message='This solution has been tested.' />
+
 Handling `execute` errors through `try-catch` block:
 
 ```js
@@ -226,6 +251,8 @@ try {
 </FAQ>
 
 <FAQ title='query'>
+
+<Stability level={2} message='This solution has been tested.' />
 
 Handling `query` errors through `try-catch` block:
 

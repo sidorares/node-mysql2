@@ -14,14 +14,15 @@
   --ifm-table-background: #fdfdfd7a !important;
 }
 
+// Dracula Theme
 [data-theme='dark'] {
-  --ifm-color-primary: #3686cc;
-  --ifm-color-primary-dark: #3177b3;
-  --ifm-color-primary-darker: #2c6ca1;
-  --ifm-color-primary-darkest: #245881;
-  --ifm-color-primary-light: #3a91d3;
-  --ifm-color-primary-lighter: #4a9bdd;
-  --ifm-color-primary-lightest: #5ea6e6;
+  --ifm-color-primary: #7a77ff;
+  --ifm-color-primary-dark: #5552ff;
+  --ifm-color-primary-darker: #433fff;
+  --ifm-color-primary-darkest: #0c07ff;
+  --ifm-color-primary-light: #9f9cff;
+  --ifm-color-primary-lighter: #b1afff;
+  --ifm-color-primary-lightest: #b1afff;
   --docusaurus-highlighted-code-line-bg: #0c0d152b;
   --ifm-table-stripe-background: #5e30a0 !important;
   --ifm-table-background: transparent !important;

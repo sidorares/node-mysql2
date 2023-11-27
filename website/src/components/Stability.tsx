@@ -1,11 +1,12 @@
 import { FC, JSX } from 'react';
+import Link from '@docusaurus/Link';
 import {
   AlertTriangle,
   Lightbulb,
   LightbulbOff,
   Microscope,
-  Package,
-  ShieldCheck,
+  PackageSearch,
+  PackageCheck,
 } from 'lucide-react';
 
 export type StabilityProps = {
@@ -56,19 +57,19 @@ export const Stability: FC<StabilityProps> = ({ level, message }) => {
     },
     1: {
       title: 'Experimental',
-      icon: <Microscope />,
+      icon: <Lightbulb />,
     },
     1.1: {
       title: 'Early Development',
-      icon: <Lightbulb />,
+      icon: <Microscope />,
     },
     1.2: {
       title: 'Release Candidate',
-      icon: <Package />,
+      icon: <PackageSearch />,
     },
     2: {
       title: 'Stable',
-      icon: <ShieldCheck />,
+      icon: <PackageCheck />,
     },
     3: {
       title: 'Legacy',
@@ -78,11 +79,13 @@ export const Stability: FC<StabilityProps> = ({ level, message }) => {
 
   return (
     <section className='stability' data-level={level}>
-      <header>
-        <strong>{level}</strong>
-        <span>{styles[level].title}</span>
-        {styles[level].icon}
-      </header>
+      <Link to='/docs/stability-badges'>
+        <header>
+          <strong>{level}</strong>
+          <span>{styles[level].title}</span>
+          {styles[level].icon}
+        </header>
+      </Link>
       {message ? <p>{message}</p> : null}
     </section>
   );

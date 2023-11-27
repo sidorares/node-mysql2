@@ -11,6 +11,38 @@ section {
     border: 0.0625rem solid var(--stability-border);
     background-color: var(--stability-background);
 
+    a {
+      text-decoration: none !important;
+
+      header {
+        @include flex(row, center);
+        gap: 0.46875rem;
+
+        strong {
+          display: block;
+          padding: 0 0.46875rem;
+          border-radius: var(--ifm-code-border-radius);
+          font-size: 0.875rem;
+          background-color: var(--stability-title-background);
+          color: var(--stability-title-color);
+        }
+
+        span {
+          flex-grow: 1;
+          @include flex(row, center);
+          gap: 0.125rem;
+          font-weight: 600;
+          color: var(--stability-text);
+        }
+
+        svg {
+          width: 1.25rem;
+          height: 1.25rem;
+          stroke: var(--stability-text);
+        }
+      }
+    }
+
     p {
       width: 100%;
       margin: 0;
@@ -18,34 +50,6 @@ section {
       border-top: 0.0625rem solid var(--stability-separator);
       font-size: 0.91rem;
       color: var(--stability-description);
-    }
-
-    header {
-      @include flex(row, center);
-      gap: 0.46875rem;
-
-      strong {
-        display: block;
-        padding: 0 0.46875rem;
-        border-radius: var(--ifm-code-border-radius);
-        font-size: 0.875rem;
-        background-color: var(--stability-title-background);
-        color: var(--stability-title-color);
-      }
-
-      span {
-        flex-grow: 1;
-        @include flex(row, center);
-        gap: 0.125rem;
-        font-weight: 600;
-        color: var(--stability-text);
-      }
-
-      svg {
-        width: 1.25rem;
-        height: 1.25rem;
-        stroke: var(--stability-text);
-      }
     }
   }
 }
