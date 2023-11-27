@@ -11,6 +11,7 @@ details {
       @include flex(row, center);
       gap: 0.35rem;
       color: var(--history-summary-color);
+      font-weight: 500;
 
       svg {
         width: 1.125rem;
@@ -64,7 +65,7 @@ details {
       --ifm-alert-background-color: #f9fafb;
       --ifm-alert-border-color: var(--ifm-menu-color-active);
       --ifm-table-border-color: #bcd7ff;
-      --history-summary-color: #1b6192;
+      --history-summary-color: #3a85ba;
       --history-summary-icon: var(--docusaurus-details-decoration-color);
       --history-code-background: #ecf4ff;
       --history-separator: var(--ifm-table-border-color);

@@ -8,6 +8,17 @@ export type FAQProps = {
   title: string;
 };
 
+/**
+ * Usage example:
+ *
+ * ```mdx
+ * <FAQ title='Title'>
+ *
+ * > Some markdown (**MDX**) content.
+ *
+ * </FAQ>
+ * ```
+ */
 export const FAQ: FC<FAQProps> = ({ children, open, title }) => {
   return (
     <Details

@@ -64,6 +64,11 @@ const config: Config = {
           activeBaseRegex: `^/$`,
         },
         {
+          to: '/docs/examples',
+          label: 'Examples',
+          position: 'left',
+        },
+        {
           to: '/docs/faq',
           label: 'FAQ',
           position: 'left',
@@ -88,7 +93,7 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
-      additionalLanguages: ['json'],
+      additionalLanguages: ['json', 'bash', 'tsx'],
     },
   } satisfies Preset.ThemeConfig,
 

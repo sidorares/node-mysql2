@@ -4,5 +4,8 @@
   },
   "sidebar.docs.category.Examples": {
     "message": "Examples"
+  },
+  "sidebar.docs.category.Contributing": {
+    "message": "贡献"
   }
 }
