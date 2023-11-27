@@ -16,32 +16,32 @@
       &[data-level='1.1'],
       &[data-level='1.2'] {
         --stability-background: #e7840a;
-        --stability-border: #e0c146;
+        --stability-border: #806700;
         --stability-title-background: #fff;
         --stability-title-color: #e7840a;
         --stability-text: #fff7ee;
         --stability-description: #fff7ee;
-        --stability-separator: #e0c146;
+        --stability-separator: #806700;
       }
 
       &[data-level='2'] {
         --stability-background: #2d8210;
-        --stability-border: #579b23;
+        --stability-border: #2a5e03;
         --stability-title-background: #fff;
         --stability-title-color: #2d8210;
         --stability-text: #e8ffe0;
         --stability-description: #e8ffe0;
-        --stability-separator: #579b23;
+        --stability-separator: #2a5e03;
       }
 
       &[data-level='3'] {
         --stability-background: #0a8be7;
-        --stability-border: #3680b4;
+        --stability-border: #2a6996;
         --stability-title-background: #fff;
         --stability-title-color: #0a8be7;
         --stability-text: #e0f2ff;
         --stability-description: #e0f2ff;
-        --stability-separator: #3680b4;
+        --stability-separator: #2a6996;
       }
     }
   }

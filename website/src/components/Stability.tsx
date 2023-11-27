@@ -1,9 +1,10 @@
 import { FC, JSX } from 'react';
 import {
-  AlertCircle,
+  AlertTriangle,
   Lightbulb,
   LightbulbOff,
   Microscope,
+  Package,
   ShieldCheck,
 } from 'lucide-react';
 
@@ -51,7 +52,7 @@ export const Stability: FC<StabilityProps> = ({ level, message }) => {
   > = {
     0: {
       title: 'Deprecated',
-      icon: <AlertCircle />,
+      icon: <AlertTriangle />,
     },
     1: {
       title: 'Experimental',
@@ -63,7 +64,7 @@ export const Stability: FC<StabilityProps> = ({ level, message }) => {
     },
     1.2: {
       title: 'Release Candidate',
-      icon: <Lightbulb />,
+      icon: <Package />,
     },
     2: {
       title: 'Stable',
