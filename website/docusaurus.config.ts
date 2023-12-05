@@ -64,6 +64,11 @@ const config: Config = {
           activeBaseRegex: `^/$`,
         },
         {
+          to: '/docs/documentation',
+          label: 'Docs',
+          position: 'left',
+        },
+        {
           to: '/docs/examples',
           label: 'Examples',
           position: 'left',
@@ -74,7 +79,8 @@ const config: Config = {
           position: 'left',
         },
         {
-          type: 'localeDropdown',
+          href: 'https://github.com/sidorares/node-mysql2',
+          label: 'GitHub',
           position: 'right',
         },
         {
@@ -83,11 +89,15 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://github.com/sidorares/node-mysql2',
-          label: 'GitHub',
+          href: 'https://github.com/sponsors/sidorares',
+          label: 'Donate',
           position: 'right',
         },
         { type: 'search', position: 'right' },
+        {
+          type: 'localeDropdown',
+          position: 'right',
+        },
       ],
     },
     prism: {

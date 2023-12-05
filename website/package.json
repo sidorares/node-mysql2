@@ -13,11 +13,12 @@
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
     "lintcheck": "prettier --check . && eslint . --ext .ts,.tsx",
-    "lint": "prettier --write . && eslint . --fix"
+    "lint": "prettier --write . && eslint . --fix",
+    "test": "npm run typecheck && npm run lintcheck && npm run clear && npm run build"
   },
   "dependencies": {
-    "@docusaurus/core": "3.0.0",
-    "@docusaurus/preset-classic": "3.0.0",
+    "@docusaurus/core": "^3.0.1",
+    "@docusaurus/preset-classic": "^3.0.1",
     "@easyops-cn/docusaurus-search-local": "^0.37.4",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^1.2.1",
@@ -29,9 +30,9 @@
     "sass": "^1.69.5"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.0.0",
-    "@docusaurus/tsconfig": "3.0.0",
-    "@docusaurus/types": "3.0.0",
+    "@docusaurus/module-type-aliases": "^3.0.1",
+    "@docusaurus/tsconfig": "^3.0.1",
+    "@docusaurus/types": "^3.0.1",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "eslint": "^8.54.0",
