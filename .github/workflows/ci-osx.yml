@@ -14,7 +14,7 @@ env:
 
 jobs:
   tests-osx:
-    runs-on: macos-13
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
@@ -25,7 +25,7 @@ jobs:
         mysql_connection_url_key: [""]
         # TODO - add mariadb to the matrix. currently few tests are broken due to mariadb incompatibilities
         include:
-          # 20.x 
+          # 20.x
           - node-version: "20.x"
             mysql-version: "mysql:8.0.33"
             use-compression: 1
@@ -44,12 +44,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: install lima
-        run: brew install lima
+      - name: Install Colima
+        run: brew install colima
 
-      - name: Setup Docker on macOS
-        uses: douglascamata/setup-docker-macos-action@v1-alpha
-    
+      - name: Install Docker
+        run: brew install --formula docker
+
+      - name: Start Docker
+        run: colima start
+
+      - name: Pull MySQL
+        if: ${{ matrix.mysql-version }}
+        run: docker pull ${{ matrix.mysql-version }}
+
       - name: Set up MySQL
         if: ${{ matrix.mysql-version }}
         run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
@@ -65,7 +72,7 @@ jobs:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
-          
+
       - name: Install npm dependencies
         run: npm ci
 
