@@ -1,0 +1,37 @@
+name: 'CI - Website'
+on:
+  pull_request:
+    paths:
+      - 'website/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Actions - Checkout
+        uses: actions/checkout@v3
+
+      - name: Actions - Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+
+      - name: Installing Dependencies
+        run: cd website && npm ci
+
+      - name: Lint Checking
+        run: cd website && npm run lintcheck
+
+      - name: Checking Types
+        run: cd website && npm run typecheck
+
+      - name: Checking Build
+        run: cd website && npm run build

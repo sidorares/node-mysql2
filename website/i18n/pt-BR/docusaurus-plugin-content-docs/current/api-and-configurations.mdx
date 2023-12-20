@@ -1,0 +1,11 @@
+# API e Configuração
+
+O MySQL2 é maioritariamente compatível com a API do [Node MySQL][node-mysql].
+
+Uma incompatibilidade conhecida é que os valores em `DECIMAL` são retornados como _strings_, enquanto no [Node MySQL][node-mysql] eles são retornados como números. Isso inclui o resultado das funções `SUM()` e `AVG()` quando aplicadas a argumentos `INTEGER`. Isso é feito deliberadamente para evitar a perda de precisão - veja https://github.com/sidorares/node-mysql2/issues/935.
+
+:::info
+Se você encontrar qualquer outra incompatibilidade com o [Node MySQL][node-mysql], por favor, reporte através do acompanhamento de _Issues_. Nós corrigiremos a incompatibilidade relatada como uma prioridade.
+:::
+
+[node-mysql]: https://github.com/mysqljs/mysql

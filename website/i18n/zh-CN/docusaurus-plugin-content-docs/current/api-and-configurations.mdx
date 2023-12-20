@@ -1,0 +1,11 @@
+# API配置项
+
+MySQL2大部分的API与 [Node MySQL][node-mysql] 基本上相同，你应该查看他们的API文档来知道更多的API选项。
+
+One known incompatibility is that `DECIMAL` values are returned as strings whereas in [Node MySQL][node-mysql] they are returned as numbers. This includes the result of `SUM()` and `AVG()` functions when applied to `INTEGER` arguments. This is done deliberately to avoid loss of precision - see https://github.com/sidorares/node-mysql2/issues/935.
+
+:::info
+如果您发现与 [Node MySQL][node-mysql] 的任何不兼容问题，请通过`issue`报告。 我们将优先修复报告的不兼容问题。
+:::
+
+[node-mysql]: https://github.com/mysqljs/mysql

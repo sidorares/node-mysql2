@@ -1,0 +1,39 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Select Over SSL
+
+<Tabs>
+  <TabItem value='index.js' default>
+
+```js
+'use strict';
+
+const fs = require('fs');
+const mysql = require('mysql2');
+
+const conn = mysql.createConnection({
+  user: 'root',
+  password: '',
+  database: 'test',
+  host: '127.0.0.1',
+  port: '3306',
+  ssl: {
+    // key: fs.readFileSync('./certs/client-key.pem'),
+    // cert: fs.readFileSync('./certs/client-cert.pem')
+    ca: fs.readFileSync('./certs/ca-cert.pem'),
+  },
+});
+
+conn.query('select 1+1 as test', function (err, res) {
+  console.log(res);
+  conn.query('select repeat("a", 100) as test', function (err, res) {
+    console.log(res);
+  });
+});
+```
+
+  </TabItem>
+</Tabs>
+
+- See [examples/ssl/certs](https://github.com/sidorares/node-mysql2/tree/master/examples/ssl/certs).
