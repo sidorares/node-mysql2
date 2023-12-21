@@ -14,16 +14,16 @@
 
 __目录__
 
-  - [MySQL2的历史以及选择原因](#MySQL2的历史以及选择原因)
+  - [MySQL2的历史以及选择原因](#mysql2的历史以及选择原因)
   - [安装](#安装)
   - [查询数据](#查询数据)
-  - [SQL预处理的使用](#SQL预处理的使用)
+  - [SQL预处理的使用](#sql预处理的使用)
   - [连接池的使用](#连接池的使用)
-  - [Promise封装](#Promise封装)
+  - [Promise封装](#promise封装)
   - [结果返回](#结果返回)
     - [连接级别](#连接级别)
     - [查询级别](#查询级别)
-  - [API配置项](#API配置项)
+  - [API配置项](#api配置项)
   - [文档](#文档)
   - [鸣谢](#鸣谢)
   - [贡献](#贡献)
@@ -43,7 +43,7 @@ MySQL2 大部分 API 与 [mysqljs][node-mysql] 兼容，并支持大部分功能
  - 支持压缩
  - SSL 和 [Authentication Switch](../en/Authentication-Switch.md)
  - [自定义流](../en/Extras.md)
- - [连接池](#using-connection-pools)
+ - [连接池](#连接池的使用)
 
 ## 安装
 
@@ -51,6 +51,8 @@ MySQL2 可以跨平台使用，毫无疑问可以安装在 Linux、Mac OS 或 Wi
 
 ```bash
 npm install --save mysql2
+# 你也可以使用yarn管理您的软件包
+yarn add mysql2
 ```
 
 ## 查询数据
@@ -89,7 +91,7 @@ connection.query(
 
 使用 MySQL2，您还可以提前准备好SQL预处理语句。 使用准备好的SQL预处理语句，MySQL 不必每次都为相同的查询做准备，这会带来更好的性能。 如果您不知道为什么它们很重要，请查看这些讨论：
 
-- [如何防止预处理语句SQL注入攻击](http://stackoverflow.com/questions/8263371/how-can-prepared-statements-protect-from-sql-injection-attacks)
+- [如何防止预处理语句SQL注入攻击(英语)](http://stackoverflow.com/questions/8263371/how-can-prepared-statements-protect-from-sql-injection-attacks)
 
 MySQL2 提供了 `execute` 辅助函数，它将准备和查询语句。 您还可以使用 `prepare` / `unprepare` 方法手动准备/取消准备。
 
@@ -104,7 +106,7 @@ const connection = mysql.createConnection({
   database: 'test'
 });
 
-// execute 将在内部调用 prepare 和 query
+// execute 将在内部调用 prepare 和 query 
 connection.execute(
   'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
   ['Rick C-137', 53],
@@ -112,8 +114,8 @@ connection.execute(
     console.log(results); // 结果集
     console.log(fields); // 额外元数据（如果有）
 
-    // 如果再次执行相同的语句，他将从缓存中选取
-    // 这能有效的节省准备查询时间获得更好的性能
+    // 如果再次执行相同的语句，它将从缓存中选取
+    // 这能有效的节省准备查询时间来获得更好的性能
   }
 );
 ```
@@ -144,19 +146,19 @@ const pool = mysql.createPool({
 
 您可以像直接连接一样使用池（使用 `pool.query()` 和 `pool.execute()`）：
 ```js
-// For pool initialization, see above
+// 有关连接池初始化操作本文不赘述，请看上文
 pool.query("SELECT `field` FROM `table`", function(err, rows, fields) {
-  // Connection is automatically released when query resolves
+  // 查询结束时自动释放连接
 });
 ```
 
 或者，也可以手动从池中获取连接并稍后返回：
 ```js
-// For pool initialization, see above
+// 有关连接池初始化操作本文不赘述，请看上文
 pool.getConnection(function(err, conn) {
-  // Do something with the connection
+  // 在获取连接后做的任何操作
   conn.query(/* ... */);
-  // Don't forget to release the connection when finished!
+  // 不要忘记释放连接
   pool.releaseConnection(conn);
 });
 ```
@@ -166,49 +168,49 @@ pool.getConnection(function(err, conn) {
 MySQL2 也支持 Promise API。 这与 ES7 异步等待非常有效。
 ```js
 async function main() {
-  // get the client
+  // 导入包
   const mysql = require('mysql2/promise');
-  // create the connection
+  // 创建一个连接
   const connection = await mysql.createConnection({host:'localhost', user: 'root', database: 'test'});
-  // query database
+  // 查询数据库
   const [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
 }
 ```
 
 MySQL2 使用范围内可用的默认 `Promise` 对象。 但是你可以选择你想使用的 `Promise` 实现。
 ```js
-// get the client
+// 导入包
 const mysql = require('mysql2/promise');
 
-// get the promise implementation, we will use bluebird
+// 获得连接实现, 这里使用 bluebird 实现
 const bluebird = require('bluebird');
 
-// create the connection, specify bluebird as Promise
+// 创建一个连接，将 bluebir 做为 Promise 实现
 const connection = await mysql.createConnection({host:'localhost', user: 'root', database: 'test', Promise: bluebird});
 
-// query database
+// 查询数据库
 const [rows, fields] = await connection.execute('SELECT * FROM `table` WHERE `name` = ? AND `age` > ?', ['Morty', 14]);
 ```
 
 MySQL2 还在 Pools 上公开了一个 .promise()函数，因此您可以从同一个池创建一个 promise/non-promise 连接。
 ```js
 async function main() {
-  // get the client
+  // 导入包
   const mysql = require('mysql2');
-  // create the pool
+  // 创建连接池
   const pool = mysql.createPool({host:'localhost', user: 'root', database: 'test'});
-  // now get a Promise wrapped instance of that pool
+  // 获取该池的 Promise 包装实例
   const promisePool = pool.promise();
-  // query database using promises
+  // 使用 Promise 获取数据
   const [rows,fields] = await promisePool.query("SELECT 1");
 }
 ```
 
 MySQL2 在 Connections 上公开了一个 .promise*()函数，以“升级”现有的 non-promise 连接以使用 Promise。
 ```js
-// get the client
+// 导入包
 const mysql = require('mysql2');
-// create the connection
+// 创建一个连接
 const con = mysql.createConnection(
   {host:'localhost', user: 'root', database: 'test'}
 );
@@ -251,7 +253,7 @@ MySQL2大部分的API与 [Node MySQL][node-mysql] 基本上相同，你应该查
 
 ## 文档
 
-你可以在[这里](../en)获得更多的详细文档，并且你应该查阅各种代码[示例](../en/examples)来获得更高级的概念。
+你可以在[这里](../en)获得更多的详细文档，并且你应该查阅各种代码[示例](../zh-cn/Examples.md)来获得更高级的概念。
 
 ## 鸣谢
 
