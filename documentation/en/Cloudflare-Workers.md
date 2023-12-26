@@ -54,8 +54,12 @@ Develop your code in the `src/index.ts`. Here are some examples:
 1. local mysql example
 
   ```ts
+
   import { createConnection } from 'mysql2';
 
+  async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
   export default {
     async fetch(
       request: Request,
@@ -84,17 +88,16 @@ Develop your code in the `src/index.ts`. Here are some examples:
       return new Response(JSON.stringify(result))
     },
   };
-
-  async function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
   ```
 
 2. TiDB Serverless example with TLS:
 
-  ```js
+  ```ts
   import { createConnection } from 'mysql2';
 
+  async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
   export default {
     async fetch(
       request: Request,
@@ -128,16 +131,16 @@ Develop your code in the `src/index.ts`. Here are some examples:
       return new Response(JSON.stringify(result))
     },
   };
-
-  async function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
   ```
 
 3. PlanetScale example with TLS:
 
-  ```js
+  ```ts
   import { createConnection } from 'mysql2';
+
+  async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   export default {
     async fetch(
@@ -172,10 +175,6 @@ Develop your code in the `src/index.ts`. Here are some examples:
       return new Response(JSON.stringify(result))
     },
   };
-
-  async function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
   ```
 
 ## Step 4: Test locally
@@ -231,8 +230,11 @@ If you want to develop the corresponding feature. Here is a simaple example of t
 
 4. write your test code inside worker.js
 
-  ```
+  ```js
   const { createConnection } = require('../index');
+  async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
   export default {
     async fetch(request, env, ctx) {
       let result
@@ -257,10 +259,6 @@ If you want to develop the corresponding feature. Here is a simaple example of t
       return new Response(JSON.stringify(result))
     }
   };
-
-  async function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
   ```
 
 5. Test locally
