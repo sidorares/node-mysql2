@@ -16,7 +16,7 @@ if (process.env.MYSQL_USE_TLS === '1') {
   config.ssl = {
     rejectUnauthorized: false,
     ca: fs.readFileSync(
-      path.join(__dirname, '../examples/ssl/certs/ca.pem'),
+      path.join(__dirname, '../test/fixtures/ssl/certs/ca.pem'),
       'utf-8'
     )
   };
