@@ -1,25 +1,8 @@
 # Website
 
-This website is built using [Docusaurus 3](https://docusaurus.io/), a modern static website generator.
+This [website](https://sidorares.github.io/node-mysql2/docs) is built using [Docusaurus 3](https://docusaurus.io/), a modern static website generator.
 
-### Installation
+# Contributing
 
-```bash
-npm i
-```
-
-### Local Development
-
-```bash
-npm start
-```
-
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
-
-### Build
-
-```bash
-npm run build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+Want to improve something in **MySQL2 Documentation Website**?  
+Please visit the [Website Contributing Guidelines](https://sidorares.github.io/node-mysql2/docs) for detailed instruction on how to get started.

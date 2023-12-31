@@ -8,9 +8,9 @@
 [![Windows Build][appveyor-image]][appveyor-url]
 [![License][license-image]][license-url]  
 
-English | [简体中文](./documentation/zh-cn/) | [Português (BR)](./documentation/pt-br/)
+English | [简体中文](https://sidorares.github.io/node-mysql2/zh-CN/docs) | [Português (BR)](https://sidorares.github.io/node-mysql2/pt-BR/docs)
 
-> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more](./documentation/en).
+> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more](https://sidorares.github.io/node-mysql2/docs).
 
 __Table of contents__
 
@@ -35,14 +35,14 @@ MySQL2 project is a continuation of [MySQL-Native][mysql-native]. Protocol parse
 MySQL2 is mostly API compatible with [mysqljs][node-mysql] and supports majority of features. MySQL2 also offers these additional features:
 
  - Faster / Better Performance
- - [Prepared Statements](./documentation/en/Prepared-Statements.md)
+ - [Prepared Statements](https://sidorares.github.io/node-mysql2/docs/documentation/prepared-statements)
  - MySQL Binary Log Protocol
- - [MySQL Server](./documentation/en/MySQL-Server.md)
+ - [MySQL Server](https://sidorares.github.io/node-mysql2/docs/documentation/mysql-server)
  - Extended support for Encoding and Collation
- - [Promise Wrapper](./documentation/en/Promise-Wrapper.md)
+ - [Promise Wrapper](https://sidorares.github.io/node-mysql2/docs/documentation/promise-wrapper)
  - Compression
- - SSL and [Authentication Switch](./documentation/en/Authentication-Switch.md)
- - [Custom Streams](./documentation/en/Extras.md)
+ - SSL and [Authentication Switch](https://sidorares.github.io/node-mysql2/docs/documentation/authentication-switch)
+ - [Custom Streams](https://sidorares.github.io/node-mysql2/docs/documentation/extras)
  - [Pooling](#using-connection-pools)
 
 ## Installation
@@ -59,7 +59,7 @@ If you are using TypeScript, you will need to install `@types/node`.
 npm install --save-dev @types/node
 ```
 
-> For TypeScript documentation and examples, see [here](./documentation/en/TypeScript-Examples.md).
+> For TypeScript documentation and examples, see [here](https://sidorares.github.io/node-mysql2/docs/documentation/typescript-examples).
 
 ## First Query
 ```js
@@ -262,7 +262,7 @@ If you find any other incompatibility with [Node MySQL][node-mysql], Please repo
 
 ## Documentation
 
-You can find more detailed documentation [here](./documentation/en). You should also check various code [examples](./examples) to understand advanced concepts.
+You can find more detailed documentation [here](https://sidorares.github.io/node-mysql2/docs/documentation). You should also check various code [examples](https://sidorares.github.io/node-mysql2/docs/examples) to understand advanced concepts.
 
 ## Acknowledgements
 
