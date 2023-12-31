@@ -19,7 +19,7 @@
   "dependencies": {
     "@docusaurus/core": "^3.0.1",
     "@docusaurus/preset-classic": "^3.0.1",
-    "@easyops-cn/docusaurus-search-local": "^0.37.4",
+    "@easyops-cn/docusaurus-search-local": "^0.40.1",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^1.2.1",
     "docusaurus-plugin-sass": "^0.2.5",
