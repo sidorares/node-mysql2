@@ -1,37 +1,41 @@
+[node-mysql]: https://github.com/mysqljs/mysql
+[docs-contributing]: https://sidorares.github.io/node-mysql2/docs/contributing/website
+
 # Contributing Guidelines
 
 ## Introduction
 
-Contributions are always welcomed. You can help `node-mysql2` community in various ways. Here are our major priorities, listed in order of importance.
+Contributions are always welcomed. You can help **MySQL2** community in various ways. Here are our major priorities, listed in order of importance:
 
-  - `node-mysql` API incompatibility fixes
-  - Documentation
-  - Adding tests or improving existing ones
-  - Improving benchmarks
-  - Bug Fixes
-  - TODO from source
-  - Performance improvements
-  - Add Features
+- [Node MySQL][node-mysql] API incompatibility fixes
+- [Documentation][docs-contributing]
+- Adding tests or improving existing ones
+- Improving benchmarks
+- Bug Fixes
+- TODO from source
+- Performance improvements
+- Add Features
 
 ## Security Issues
 
 Please contact project maintainers privately before opening a security issue on Github. It will allow us to fix the issue before attackers know about it.
 
-**Contact**
+### Contact
 
 - Andrey Sidorov, sidorares@yandex.ru
 
 ## New Features
 
-Its better to discuss an API before actually start implementing it. You can open an issue on Github. We can discuss design of API and implementation ideas.
+It's better to discuss an API before actually start implementing it. You can open an issue on Github. We can discuss design of API and implementation ideas.
 
 ## Development
 
-We assume you already have these tools installed on your system
- - MySQL Server
- - Node.JS
+We assume you already have these tools installed on your system:
 
-As `node-mysql2` is purely JS based you can develop it on Linux, Mac or Windows. Please follow these steps
+- MySQL Server
+- Node.JS
+
+As **MySQL2** is purely JS based you can develop it on Linux, Mac or Windows. Please follow these steps
 
 ```bash
 # clone node-mysql2

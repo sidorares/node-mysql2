@@ -7,6 +7,7 @@
 [license-url]: https://github.com/sidorares/node-mysql2/blob/master/License
 [license-image]: https://img.shields.io/npm/l/mysql2.svg?maxAge=2592000
 [node-mysql]: https://github.com/mysqljs/mysql
+[mysqljs]: https://github.com/mysqljs
 [mysql-native]: https://github.com/sidorares/nodejs-mysql-native
 [sidorares]: https://github.com/sidorares
 [TooTallNate]: https://gist.github.com/TooTallNate
@@ -40,7 +41,7 @@
 
 [English][docs-base] | [简体中文][docs-base-zh-CN] | [Português (BR)][docs-base-pt-BR]
 
-> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more][docs-base].
+> MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl [much more][docs-documentation].
 
 **Table of Contents**
 
@@ -52,9 +53,9 @@
 
 ## History and Why MySQL2
 
-MySQL2 project is a continuation of [MySQL-Native][mysql-native]. Protocol parser code was rewritten from scratch and api changed to match popular [mysqljs/mysql][node-mysql]. MySQL2 team is working together with [mysqljs/mysql][node-mysql] team to factor out shared code and move it under [mysqljs][node-mysql] organization.
+MySQL2 project is a continuation of [MySQL-Native][mysql-native]. Protocol parser code was rewritten from scratch and api changed to match popular [Node MySQL][node-mysql]. MySQL2 team is working together with [Node MySQL][node-mysql] team to factor out shared code and move it under [mysqljs][mysqljs] organization.
 
-MySQL2 is mostly API compatible with [mysqljs][node-mysql] and supports majority of features. MySQL2 also offers these additional features:
+MySQL2 is mostly API compatible with [Node MySQL][node-mysql] and supports majority of features. MySQL2 also offers these additional features:
 
 - Faster / Better Performance
 - [Prepared Statements][docs-prepared-statements]
@@ -94,7 +95,7 @@ npm install --save-dev @types/node
 ## Acknowledgements
 
 - Internal protocol is written by [@sidorares][sidorares] [MySQL-Native][mysql-native].
-- Constants, SQL parameters interpolation, Pooling, `ConnectionConfig` class taken from [node-mysql][node-mysql].
+- Constants, SQL parameters interpolation, Pooling, `ConnectionConfig` class taken from [Node MySQL][node-mysql].
 - SSL upgrade code based on [@TooTallNate][TooTallNate] [code][starttls.js].
 - Secure connection / compressed connection api flags compatible to [MariaSQL][node-mariasql] client.
 - [Contributors][contributors].
