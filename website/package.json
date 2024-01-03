@@ -19,30 +19,30 @@
   "dependencies": {
     "@docusaurus/core": "^3.0.1",
     "@docusaurus/preset-classic": "^3.0.1",
-    "@easyops-cn/docusaurus-search-local": "^0.37.4",
+    "@easyops-cn/docusaurus-search-local": "^0.40.1",
     "@mdx-js/react": "^3.0.0",
-    "clsx": "^1.2.1",
+    "clsx": "^2.1.0",
     "docusaurus-plugin-sass": "^0.2.5",
-    "lucide-react": "^0.293.0",
-    "prism-react-renderer": "^2.1.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "sass": "^1.69.5"
+    "lucide-react": "^0.303.0",
+    "prism-react-renderer": "^2.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sass": "^1.69.6"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^3.0.1",
     "@docusaurus/tsconfig": "^3.0.1",
     "@docusaurus/types": "^3.0.1",
-    "@typescript-eslint/eslint-plugin": "^6.11.0",
-    "@typescript-eslint/parser": "^6.11.0",
-    "eslint": "^8.54.0",
+    "@typescript-eslint/eslint-plugin": "^6.17.0",
+    "@typescript-eslint/parser": "^6.17.0",
+    "eslint": "^8.56.0",
     "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.4",
-    "prettier": "^3.1.0",
-    "typescript": "^5.2.2"
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
   },
   "browserslist": {
     "production": [

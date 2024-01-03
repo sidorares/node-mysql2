@@ -9,13 +9,15 @@ import { PageTitle } from '@site/src/components/PageTitle';
 
 # Documentation
 
-MySQL2 aims to be a drop in replacement for [node-mysql](https://github.com/mysqljs/mysql).
+[node-mysql]: https://github.com/mysqljs/mysql
+
+MySQL2 aims to be a drop in replacement for [Node MySQL][node-mysql].
 
 :::note
-_If you see any API incompatibilities with `node-mysql`, please report via github issue._
+_If you see any API incompatibilities with [Node MySQL][node-mysql], please report via github issue._
 :::
 
-Not only `Node-MySQL2` offers better performance over `node-mysql`, we also support these additional features.
+Not only **MySQL2** offers better performance over [Node MySQL][node-mysql], we also support these additional features:
 
 - [Prepared Statements](/docs/documentation/prepared-statements)
 - [Promise Wrapper](/docs/documentation/promise-wrapper)
@@ -35,7 +37,7 @@ Please check these [examples](/docs/examples) for **MySQL2**.
 
 ---
 
-## Known incompatibilities with `node-mysql`
+## Known incompatibilities with [Node MySQL][node-mysql]
 
 - `zeroFill` flag is ignored in type conversion.
   You need to check corresponding field's zeroFill flag and convert to string manually if this is of importance to you.
@@ -57,7 +59,7 @@ This option could lose precision on the number as Javascript Number is a Float!
 ## Other Resources
 
 - [Wire protocol documentation](https://dev.mysql.com/doc/internals/en/client-server-protocol.html)
-- [node-mysql](https://github.com/mysqljs/mysql) - Most popular node.js mysql client library
+- [Node MySQL][node-mysql] - Most popular node.js mysql client library
 - [node-mariasql](https://github.com/mscdex/node-mariasql/) - Bindings to libmariasql. One of the fastest clients
 - [node-libmysqlclient](https://github.com/Sannis/node-mysql-libmysqlclient) - Bindings to libmysqlclient
 - [go-mysql](https://github.com/siddontang/go-mysql) - MySQL Go client (prepared statements, binlog protocol, server)

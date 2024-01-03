@@ -5,4 +5,4 @@ This [website](https://sidorares.github.io/node-mysql2/docs) is built using [Doc
 # Contributing
 
 Want to improve something in **MySQL2 Documentation Website**?  
-Please visit the [Website Contributing Guidelines](https://sidorares.github.io/node-mysql2/docs) for detailed instruction on how to get started.
+Please visit the [Website Contributing Guidelines](https://sidorares.github.io/node-mysql2/docs/contributing/website) for detailed instruction on how to get started.
