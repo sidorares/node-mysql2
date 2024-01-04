@@ -14,7 +14,8 @@
     "typecheck": "tsc",
     "lintcheck": "prettier --check . && eslint . --ext .ts,.tsx",
     "lint": "prettier --write . && eslint . --fix",
-    "test": "npm run typecheck && npm run lintcheck && npm run clear && npm run build"
+    "test:unit": "npx tsx test/index.ts",
+    "test": "npm run typecheck && npm run lintcheck && npm run test:unit && npm run clear && npm run build"
   },
   "dependencies": {
     "@docusaurus/core": "^3.0.1",
@@ -33,6 +34,7 @@
     "@docusaurus/module-type-aliases": "^3.0.1",
     "@docusaurus/tsconfig": "^3.0.1",
     "@docusaurus/types": "^3.0.1",
+    "@types/node": "^20.10.6",
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
     "eslint": "^8.56.0",
@@ -42,6 +44,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "prettier": "^3.1.1",
+    "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   },
   "browserslist": {
