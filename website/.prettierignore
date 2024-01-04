@@ -2,4 +2,3 @@
 /.docusaurus
 /.cache-loader
 # /**/*.mdx
-package-lock.json
