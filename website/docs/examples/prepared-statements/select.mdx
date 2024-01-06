@@ -5,9 +5,9 @@ import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
 
 # SELECT
 
-## execute(sql: string, values: any[])
+## execute(sql, values)
 
-> The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+> **execute(sql: string, values: any[])**
 
 <Tabs>
   <TabItem value='promise.js' default>
@@ -17,6 +17,7 @@ try {
   const sql = 'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?';
   const values = ['Page', 45];
 
+  // highlight-next-line
   const [rows, fields] = await connection.execute(sql, values);
 
   console.log(rows);
@@ -50,11 +51,15 @@ connection.execute(sql, values, (err, rows, fields) => {
 - **rows** contains rows returned by server
 - **fields** contains extra meta data about rows, if available
 
+:::info
+The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
 ---
 
-## execute(options: [QueryOptions](#queryoptions))
+## execute(options)
 
-> The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+> **execute(options: [QueryOptions](#queryoptions))**
 
 <Tabs>
   <TabItem value='promise.js' default>
@@ -108,11 +113,15 @@ connection.execute(
 - **rows** contains rows returned by server
 - **fields** contains extra meta data about rows, if available
 
+:::info
+The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
 ---
 
-## execute(options: [QueryOptions](#queryoptions), values: any[])
+## execute(options, values)
 
-> The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+> **execute(options: [QueryOptions](#queryoptions), values: any[])**
 
 <Tabs>
   <TabItem value='promise.js' default>
@@ -168,13 +177,17 @@ connection.execute(
 - **rows** contains rows returned by server
 - **fields** contains extra meta data about rows, if available
 
+:::info
+The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
 ---
 
 ## Glossary
 
 ### QueryOptions
 
-<FAQ title='QueryOptions Specification'>
+<FAQ title={'QueryOptions Specification'}>
   <ExternalCodeEmbed
     language='ts'
     url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/protocol/sequences/Query.d.ts'
