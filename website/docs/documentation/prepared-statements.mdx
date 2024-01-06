@@ -1,3 +1,7 @@
+---
+tags: [Prepared Statements, execute]
+---
+
 # Prepared Statements
 
 ## Automatic creation, cached and re-used by connection
@@ -39,11 +43,11 @@ connection.prepare('select ? + ? as tests', (err, statement) => {
 
 Note that you should not use statement after connection reset (`changeUser()` or disconnect). Statement scope is connection, you need to prepare statement for each new connection in order to use it.
 
-# Configuration
+## Configuration
 
 `maxPreparedStatements` : We keep the cached statements in a [lru-cache](https://github.com/isaacs/node-lru-cache). Default size is `16000` but you can use this option to override it. Any statements that are dropped from cache will be `closed`.
 
-# Serialization of bind parameters
+## Serialization of bind parameters
 
 The bind parameter values passed to `execute` are serialized JS -> MySQL as:
 
@@ -57,3 +61,32 @@ The bind parameter values passed to `execute` are serialized JS -> MySQL as:
 - Other -> `VAR_STRING`
 
 Passing in `undefined` or a `function` will result in an error.
+
+## Prepared Statements Helper
+
+MySQL2 provides `execute` helper which will prepare and query the statement. You can also manually prepare / unprepare statement with `prepare` / `unprepare` methods.
+
+```js
+connection.execute(
+  'select ?+1 as qqq, ? as rrr, ? as yyy',
+  [1, null, 3],
+  (err, rows, fields) => {
+    console.log(err, rows, fields);
+    connection.execute(
+      'select ?+1 as qqq, ? as rrr, ? as yyy',
+      [3, null, 3],
+      (err, rows, fields) => {
+        console.log(err, rows, fields);
+        connection.unprepare('select ?+1 as qqq, ? as rrr, ? as yyy');
+        connection.execute(
+          'select ?+1 as qqq, ? as rrr, ? as yyy',
+          [3, null, 3],
+          (err, rows, fields) => {
+            console.log(err, rows, fields);
+          }
+        );
+      }
+    );
+  }
+);
+```
