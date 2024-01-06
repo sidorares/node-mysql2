@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 0
 ---
 
 import Tabs from '@theme/Tabs';
@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 import { FAQ } from '@site/src/components/FAQ';
 import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
 
-# SELECT
+# INSERT
 
 ## execute(sql, values)
 
@@ -18,13 +18,13 @@ import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
 
 ```js
 try {
-  const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
-  const values = ['Page', 45];
+  const sql = 'INSERT INTO `users`(`name`, `age`) VALUES (?, ?), (?,?)';
+  const values = ['Josh', 19, 'Page', 45];
 
   // highlight-next-line
-  const [rows, fields] = await connection.execute(sql, values);
+  const [result, fields] = await connection.execute(sql, values);
 
-  console.log(rows);
+  console.log(result);
   console.log(fields);
 } catch (err) {
   console.log(err);
@@ -35,16 +35,16 @@ try {
   <TabItem value='callback.js'>
 
 ```js
-const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
-const values = ['Page', 45];
+const sql = 'INSERT INTO `users`(`name`, `age`) VALUES (?, ?), (?,?)';
+const values = ['Josh', 19, 'Page', 45];
 
-connection.execute(sql, values, (err, rows, fields) => {
+connection.execute(sql, values, (err, result, fields) => {
   if (err instanceof Error) {
     console.log(err);
     return;
   }
 
-  console.log(rows);
+  console.log(result);
   console.log(fields);
 });
 ```
@@ -52,8 +52,8 @@ connection.execute(sql, values, (err, rows, fields) => {
   </TabItem>
 </Tabs>
 
-- **rows** contains rows returned by server
-- **fields** contains extra meta data about rows, if available
+- **result**: contains a [ResultSetHeader](#resultsetheader) object, which provides details about the operation executed by the server.
+- **fields** contains extra meta data about the operation, if available
 
 :::info
 The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
@@ -70,16 +70,16 @@ The connection used for the query (`execute`) can be obtained through the `creat
 
 ```js
 try {
-  const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
-  const values = ['Page', 45];
+  const sql = 'INSERT INTO `users`(`name`, `age`) VALUES (?, ?), (?,?)';
+  const values = ['Josh', 19, 'Page', 45];
 
-  const [rows, fields] = await connection.execute({
+  const [result, fields] = await connection.execute({
     sql,
     values,
     // ... other options
   });
 
-  console.log(rows);
+  console.log(result);
   console.log(fields);
 } catch (err) {
   console.log(err);
@@ -90,8 +90,8 @@ try {
   <TabItem value='callback.js'>
 
 ```js
-const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
-const values = ['Page', 45];
+const sql = 'INSERT INTO `users`(`name`, `age`) VALUES (?, ?), (?,?)';
+const values = ['Josh', 19, 'Page', 45];
 
 connection.execute(
   {
@@ -99,13 +99,13 @@ connection.execute(
     values,
     // ... other options
   },
-  (err, rows, fields) => {
+  (err, result, fields) => {
     if (err instanceof Error) {
       console.log(err);
       return;
     }
 
-    console.log(rows);
+    console.log(result);
     console.log(fields);
   }
 );
@@ -114,8 +114,8 @@ connection.execute(
   </TabItem>
 </Tabs>
 
-- **rows** contains rows returned by server
-- **fields** contains extra meta data about rows, if available
+- **result**: contains a [ResultSetHeader](#resultsetheader) object, which provides details about the operation executed by the server.
+- **fields** contains extra meta data about the operation, if available
 
 :::info
 The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
@@ -132,10 +132,10 @@ The connection used for the query (`execute`) can be obtained through the `creat
 
 ```js
 try {
-  const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
-  const values = ['Page', 45];
+  const sql = 'INSERT INTO `users`(`name`, `age`) VALUES (?, ?), (?,?)';
+  const values = ['Josh', 19, 'Page', 45];
 
-  const [rows, fields] = await connection.execute(
+  const [result, fields] = await connection.execute(
     {
       sql,
       // ... other options
@@ -143,7 +143,7 @@ try {
     values
   );
 
-  console.log(rows);
+  console.log(result);
   console.log(fields);
 } catch (err) {
   console.log(err);
@@ -154,8 +154,8 @@ try {
   <TabItem value='callback.js'>
 
 ```js
-const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
-const values = ['Page', 45];
+const sql = 'INSERT INTO `users`(`name`, `age`) VALUES (?, ?), (?,?)';
+const values = ['Josh', 19, 'Page', 45];
 
 connection.execute(
   {
@@ -163,13 +163,13 @@ connection.execute(
     // ... other options
   },
   values,
-  (err, rows, fields) => {
+  (err, result, fields) => {
     if (err instanceof Error) {
       console.log(err);
       return;
     }
 
-    console.log(rows);
+    console.log(result);
     console.log(fields);
   }
 );
@@ -178,8 +178,8 @@ connection.execute(
   </TabItem>
 </Tabs>
 
-- **rows** contains rows returned by server
-- **fields** contains extra meta data about rows, if available
+- **result**: contains a [ResultSetHeader](#resultsetheader) object, which provides details about the operation executed by the server.
+- **fields** contains extra meta data about the operation, if available
 
 :::info
 The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
@@ -189,9 +189,20 @@ The connection used for the query (`execute`) can be obtained through the `creat
 
 ## Glossary
 
+### ResultSetHeader
+
+<FAQ title='ResultSetHeader Specification'>
+  <ExternalCodeEmbed
+    language='ts'
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/protocol/packets/ResultSetHeader.d.ts'
+    extractMethod='ResultSetHeader'
+    methodType='interface'
+  />
+</FAQ>
+
 ### QueryOptions
 
-<FAQ title={'QueryOptions Specification'}>
+<FAQ title='QueryOptions Specification'>
   <ExternalCodeEmbed
     language='ts'
     url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/protocol/sequences/Query.d.ts'
