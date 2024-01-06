@@ -21,7 +21,8 @@ The examples below also work for the [`execute`](/docs/examples/prepared-stateme
 
 ```js
 try {
-  const sql = 'INSERT INTO `users`(`name`, `age`) VALUES ("Josh", 19), ("Page", 45)';
+  const sql =
+    'INSERT INTO `users`(`name`, `age`) VALUES ("Josh", 19), ("Page", 45)';
 
   // highlight-next-line
   const [result, fields] = await connection.query(sql);
@@ -37,7 +38,8 @@ try {
   <TabItem value='callback.js'>
 
 ```js
-const sql = 'INSERT INTO `users`(`name`, `age`) VALUES ("Josh", 19), ("Page", 45)';
+const sql =
+  'INSERT INTO `users`(`name`, `age`) VALUES ("Josh", 19), ("Page", 45)';
 
 connection.query(sql, (err, result, fields) => {
   if (err instanceof Error) {
@@ -71,7 +73,8 @@ The connection used for the query (`.query()`) can be obtained through the `crea
 
 ```js
 try {
-  const sql = 'INSERT INTO `users`(`name`, `age`) VALUES ("Josh", 19), ("Page", 45)';
+  const sql =
+    'INSERT INTO `users`(`name`, `age`) VALUES ("Josh", 19), ("Page", 45)';
 
   const [result, fields] = await connection.query({
     sql,
@@ -89,7 +92,8 @@ try {
   <TabItem value='callback.js'>
 
 ```js
-const sql = 'INSERT INTO `users`(`name`, `age`) VALUES ("Josh", 19), ("Page", 45)';
+const sql =
+  'INSERT INTO `users`(`name`, `age`) VALUES ("Josh", 19), ("Page", 45)';
 
 connection.query(
   {
