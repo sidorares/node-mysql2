@@ -13,7 +13,8 @@ const config: Config = {
   favicon: 'img/favicon.svg',
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenMarkdownLinks: 'throw',
+  onBrokenAnchors: 'throw',
 
   i18n: {
     defaultLocale: 'en',

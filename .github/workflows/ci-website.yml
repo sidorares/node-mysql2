@@ -33,5 +33,8 @@ jobs:
       - name: Checking Types
         run: cd website && npm run typecheck
 
+      - name: Run Unit Tests
+        run: cd website && npm run test:unit
+
       - name: Checking Build
         run: cd website && npm run build

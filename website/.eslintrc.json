@@ -8,7 +8,8 @@
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:react-hooks/recommended",
-    "plugin:react/jsx-runtime"
+    "plugin:react/jsx-runtime",
+    "plugin:@docusaurus/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": "latest",

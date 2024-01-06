@@ -5,6 +5,7 @@ title: Documentation Site
 import { FAQ } from '@site/src/components/FAQ';
 import { History } from '@site/src/components/History';
 import { Stability } from '@site/src/components/Stability';
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
 
 # Website Contributing Guidelines
 
@@ -145,7 +146,8 @@ import { FAQ } from '@site/src/components/FAQ';
 
 - The **FAQ** component can be utilized in any section or page.
 - Code blocks are compatible and can be used within the **FAQ** component.
-  :::
+
+:::
 
 <FAQ title='Example'>
   <FAQ title='Title'>
@@ -153,6 +155,42 @@ import { FAQ } from '@site/src/components/FAQ';
     > Some markdown (**MDX**) content.
 
   </FAQ>
+</FAQ>
+
+---
+
+### ExternalCodeEmbed
+
+{/* prettier-ignore-start */}
+```tsx
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
+
+<ExternalCodeEmbed
+  url='https://github.com/sidorares/node-mysql2/blob/75b05f0765c9edd0c0be8f18d85be05618770cca/.prettierrc'
+  language='json'
+/>
+
+<ExternalCodeEmbed
+  url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/tools/parse-row.js'
+  language='js'
+  extractMethod='parseC'
+  methodType='function'
+/>
+```
+{/* prettier-ignore-end */}
+
+<FAQ title='Example'>
+  <ExternalCodeEmbed
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/.prettierrc'
+    language='json'
+  />
+
+  <ExternalCodeEmbed
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/tools/parse-row.js'
+    language='js'
+    extractMethod='parseC'
+    methodType='function'
+  />
 </FAQ>
 
 ---

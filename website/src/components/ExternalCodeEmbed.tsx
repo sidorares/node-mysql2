@@ -3,15 +3,24 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 // eslint-disable-next-line import/no-unresolved
 import CodeBlock from '@theme/CodeBlock';
 import { Loading } from '@site/src/components/Loading';
+import {
+  MethodType,
+  extractMethodContent,
+} from '@site/helpers/extract-method-content';
 
 export type ExternalCodeEmbedProps = {
   /** Raw URL from GitHub */
   url: string;
   /** `js`, `ts`, `json`, etc. */
   language: string;
+  extractMethod?: string;
+  methodType?: MethodType;
 };
 
 /**
+ * Experimental
+ *
+ *
  * **Usage Example:**
  *
  * ```tsx
@@ -33,6 +42,8 @@ export type ExternalCodeEmbedProps = {
 export const ExternalCodeEmbed: FC<ExternalCodeEmbedProps> = ({
   url,
   language,
+  extractMethod,
+  methodType,
 }) => {
   const [code, setCode] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
@@ -48,7 +59,12 @@ export const ExternalCodeEmbed: FC<ExternalCodeEmbedProps> = ({
     fetch(finalURL, { signal })
       .then((response) => response.text())
       .then((text) => {
-        setCode(text);
+        const extractedCode =
+          extractMethod && methodType
+            ? extractMethodContent(text, extractMethod, methodType)
+            : text;
+
+        setCode(extractedCode || text);
         setLoading(false);
         setError(false);
       })
@@ -60,7 +76,7 @@ export const ExternalCodeEmbed: FC<ExternalCodeEmbedProps> = ({
     return () => {
       controller.abort();
     };
-  }, [finalURL]);
+  }, [finalURL, extractMethod, methodType]);
 
   return (
     <>
