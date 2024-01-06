@@ -1,42 +1,134 @@
+---
+sidebar_position: 1
+tags: [query]
+---
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import { FAQ } from '@site/src/components/FAQ';
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
 
 # SELECT
 
+The examples below also work for the [`execute`](/docs/examples/prepared-statements/select) method.
+
+## query(sql)
+
+> **query(sql: string)**
+
 <Tabs>
-  <TabItem value='index.js' default>
+  <TabItem value='promise.js' default>
 
 ```js
-'use strict';
+try {
+  const sql = 'SELECT * FROM `users` WHERE `name` = "Page" AND `age` > 45';
 
-// get the client
-const mysql = require('mysql2');
+  // highlight-next-line
+  const [rows, fields] = await connection.query(sql);
 
-// create the connection to database
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  database: 'test',
-});
+  console.log(rows);
+  console.log(fields);
+} catch (err) {
+  console.log(err);
+}
+```
 
-// simple query
-connection.query(
-  'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
-  (err, results, fields) => {
-    console.log(results); // results contains rows returned by server
-    console.log(fields); // fields contains extra meta data about results, if available
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const sql = 'SELECT * FROM `users` WHERE `name` = "Page" AND `age` > 45';
+
+connection.query(sql, (err, rows, fields) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
   }
-);
 
-// with placeholder
+  console.log(rows);
+  console.log(fields);
+});
+```
+
+  </TabItem>
+</Tabs>
+
+- **rows** contains rows returned by server
+- **fields** contains extra meta data about rows, if available
+
+:::info
+The connection used for the query (`.query()`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
+---
+
+## query(options)
+
+> **query(options: [QueryOptions](#queryoptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+try {
+  const sql = 'SELECT * FROM `users` WHERE `name` = "Page" AND `age` > 45';
+
+  const [rows, fields] = await connection.query({
+    sql,
+    // ... other options
+  });
+
+  console.log(rows);
+  console.log(fields);
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const sql = 'SELECT * FROM `users` WHERE `name` = "Page" AND `age` > 45';
+
 connection.query(
-  'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
-  ['Page', 45],
-  (err, results) => {
-    console.log(results);
+  {
+    sql,
+    // ... other options
+  },
+  (err, rows, fields) => {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    console.log(rows);
+    console.log(fields);
   }
 );
 ```
 
   </TabItem>
 </Tabs>
+
+- **rows** contains rows returned by server
+- **fields** contains extra meta data about rows, if available
+
+:::info
+The connection used for the query (`.query()`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
+---
+
+## Glossary
+
+### QueryOptions
+
+<FAQ title={'QueryOptions Specification'}>
+  <ExternalCodeEmbed
+    language='ts'
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/protocol/sequences/Query.d.ts'
+    extractMethod='QueryOptions'
+    methodType='interface'
+  />
+</FAQ>
