@@ -50,6 +50,8 @@ npm install --save-dev @types/node
 
 ### 查询数据
 
+> To explore more queries examples, please visit the example sections [**Simple Queries**](/docs/examples/queries/simple-queries) and [**Prepared Statements**](/docs/examples/queries/prepared-statements).
+
 <Tabs>
   <TabItem value='Promise' default>
 
@@ -135,6 +137,8 @@ connection.query(
 
 MySQL2 提供了 `execute` 辅助函数，它将准备和查询语句。 您还可以使用 `prepare` / `unprepare` 方法手动准备/取消准备。
 
+> To explore more Prepared Statements and Placeholders examples, please visit the example section [**Prepared Statements**](/docs/examples/queries/prepared-statements).
+
 <Tabs>
   <TabItem value='Promise' default>
 
@@ -200,6 +204,8 @@ connection.execute(
 连接池通过重用以前的连接来帮助减少连接到 MySQL 服务器所花费的时间，当你完成它们时让它们保持打开而不是关闭。
 
 这改善了查询的延迟，因为您避免了建立新连接所带来的所有开销。
+
+> To explore more Connection Pools examples, please visit the example section [**createPool**](/docs/examples/connections/create-pool).
 
 <Tabs>
   <TabItem value='Promise' default>

@@ -50,6 +50,8 @@ O MySQL2 não tem restrições nativas e pode ser instalado no Linux, Mac OS ou 
 
 ### Primeira Consulta (_Query_)
 
+> Para explorar mais exemplos de consulta (queries), visite a seção de exemplos [**Consultas Simples**](/docs/examples/queries/simple-queries) e [**Instruções Preparadas (_Prepared Statements_)**](/docs/examples/queries/prepared-statements).
+
 <Tabs>
   <TabItem value='Promise' default>
 
@@ -135,6 +137,8 @@ Com o MySQL2 você também pode obter Instruções Preparadas (Prepared Statemen
 
 O MySQL2 fornece o método auxiliar `execute` que irá preparar e consultar as declarações (_statements_) SQL. Além disso, você também pode usar os métodos `prepare` e `unprepare` para preparar ou desfazer a preparação de declarações (_statements_) manualmente, se necessário.
 
+> Para explorar mais exemplos de Instruções Preparadas (_Prepared Statements_), visite a seção de exemplos [**Instruções Preparadas (_Prepared Statements_)**](/docs/examples/queries/prepared-statements).
+
 <Tabs>
   <TabItem value='Promise' default>
 
@@ -200,6 +204,8 @@ Se você executar a mesma declaração novamente, ela será selecionada a partir
 O conjunto de conexões (_pools_) ajuda a reduzir o tempo gasto na conexão com o servidor MySQL, reutilizando uma conexão anterior e deixando-as abertas ao invés de fechá-las quando você termina de usá-las.
 
 Isto melhora a latência das consultas (_queries_), pois evita toda a sobrecarga associada à criação de uma nova conexão.
+
+> Para explorar mais exemplos de Conjunto de Conexões (_pools_), visite a seção de exemplos [**createPool**](/docs/examples/connections/create-pool).
 
 <Tabs>
   <TabItem value='Promise' default>

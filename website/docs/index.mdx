@@ -60,6 +60,8 @@ npm install --save-dev @types/node
 
 ### First Query
 
+> To explore more queries examples, please visit the example sections [**Simple Queries**](/docs/examples/queries/simple-queries) and [**Prepared Statements**](/docs/examples/queries/prepared-statements).
+
 <Tabs>
   <TabItem value='Promise' default>
 
@@ -145,6 +147,8 @@ With MySQL2 you also get the prepared statements. With prepared statements MySQL
 
 MySQL2 provides `execute` helper which will prepare and query the statement. You can also manually prepare / unprepare statement with `prepare` / `unprepare` methods.
 
+> To explore more Prepared Statements and Placeholders examples, please visit the example section [**Prepared Statements**](/docs/examples/queries/prepared-statements).
+
 <Tabs>
   <TabItem value='Promise' default>
 
@@ -210,6 +214,8 @@ If you execute same statement again, it will be picked from a LRU cache which wi
 Connection pools help reduce the time spent connecting to the MySQL server by reusing a previous connection, leaving them open instead of closing when you are done with them.
 
 This improves the latency of queries as you avoid all of the overhead that comes with establishing a new connection.
+
+> To explore more Connection Pools examples, please visit the example section [**createPool**](/docs/examples/connections/create-pool).
 
 <Tabs>
   <TabItem value='Promise' default>
