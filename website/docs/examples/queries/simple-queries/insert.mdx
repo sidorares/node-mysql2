@@ -76,10 +76,12 @@ try {
   const sql =
     'INSERT INTO `users`(`name`, `age`) VALUES ("Josh", 19), ("Page", 45)';
 
+  // highlight-start
   const [result, fields] = await connection.query({
     sql,
     // ... other options
   });
+  // highlight-end
 
   console.log(result);
   console.log(fields);

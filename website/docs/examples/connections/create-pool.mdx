@@ -25,10 +25,13 @@ For queries please see the [**Simple Queries**](/docs/examples/queries/simple-qu
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const pool = mysql.createPool('mysql://root:password@localhost:3306/test');
   const connection = await pool.getConnection();
+  // highlight-end
   // ... some query
 
+  // highlight-next-line
   connection.release();
 } catch (err) {
   console.log(err);
@@ -80,6 +83,7 @@ Don't forget to release the connection when finished by using:
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
@@ -88,8 +92,10 @@ try {
     // password: '',
   });
   const connection = await pool.getConnection();
+  // highlight-end
   // ... some query
 
+  // highlight-next-line
   connection.release();
 } catch (err) {
   console.log(err);
@@ -147,6 +153,7 @@ Don't forget to release the connection when finished by using:
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const pool = mysql.createPool({
     // ...
     passwordSha1: Buffer.from(
@@ -155,8 +162,10 @@ try {
     ),
   });
   const connection = await pool.getConnection();
+  // highlight-end
   // ... some query
 
+  // highlight-next-line
   connection.release();
 } catch (err) {
   console.log(err);
@@ -211,6 +220,7 @@ Don't forget to release the connection when finished by using:
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const pool = mysql.createPool({
     // ...
     ssl: {
@@ -220,8 +230,10 @@ try {
     },
   });
   const connection = await pool.getConnection();
+  // highlight-end
   // ... some query
 
+  // highlight-next-line
   connection.release();
 } catch (err) {
   console.log(err);
@@ -293,14 +305,17 @@ In that case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cer
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const pool = mysql.createPool({
     // ...
     host: 'db.id.ap-southeast-2.rds.amazonaws.com',
     ssl: 'Amazon RDS',
   });
   const connection = await pool.getConnection();
+  // highlight-end
   // ... some query
 
+  // highlight-next-line
   connection.release();
 } catch (err) {
   console.log(err);
@@ -397,9 +412,11 @@ const mysql = require('mysql2');
 const SocksConnection = require('socksjs');
 
 const socksProxy = new SocksConnection({ port: 3306 });
+// highlight-start
 const pool = mysql.createPool({
   stream: socksProxy,
 });
+// highlight-end
 ```
 
   </TabItem>
@@ -409,12 +426,14 @@ const pool = mysql.createPool({
 const mysql = require('mysql2');
 const SocksConnection = require('socksjs');
 
+// highlight-start
 const pool = mysql.createPool({
   debug: 1,
   stream: function () {
     return new SocksConnection({ port: 3306 });
   },
 });
+// highlight-end
 ```
 
   </TabItem>

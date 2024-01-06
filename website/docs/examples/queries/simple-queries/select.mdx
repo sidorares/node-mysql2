@@ -73,10 +73,12 @@ The connection used for the query (`.query()`) can be obtained through the `crea
 try {
   const sql = 'SELECT * FROM `users` WHERE `name` = "Page" AND `age` > 45';
 
+  // highlight-start
   const [rows, fields] = await connection.query({
     sql,
     // ... other options
   });
+  // highlight-end
 
   console.log(rows);
   console.log(fields);
@@ -131,11 +133,13 @@ The connection used for the query (`.query()`) can be obtained through the `crea
 try {
   const sql = 'SELECT * FROM `users` WHERE `name` = "Page" AND `age` > 45';
 
+  // highlight-start
   const [rows, fields] = await connection.query({
     sql,
     rowsAsArray: true,
     // ... other options
   });
+  // highlight-end
 
   console.log(rows);
   console.log(fields);

@@ -25,14 +25,17 @@ For queries please see the [**Simple Queries**](/docs/examples/queries/simple-qu
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const poolCluster = mysql.createPoolCluster();
 
   poolCluster.add('clusterA', 'mysql://root:password@localhost:3306/test');
   // poolCluster.add('clusterB', '...');
 
   const connection = await poolCluster.getConnection('clusterA');
+  // highlight-end
   // ... some query
 
+  // highlight-next-line
   connection.release();
 } catch (err) {
   console.log(err);
@@ -86,6 +89,7 @@ Don't forget to release the connection when finished by using:
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const poolCluster = mysql.createPoolCluster();
 
   poolCluster.add('clusterA', {
@@ -98,8 +102,10 @@ try {
   // poolCluster.add('clusterB', '...');
 
   const connection = await poolCluster.getConnection('clusterA');
+  // highlight-end
   // ... some query
 
+  // highlight-next-line
   connection.release();
 } catch (err) {
   console.log(err);
@@ -159,6 +165,7 @@ Don't forget to release the connection when finished by using:
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const poolCluster = mysql.createPoolCluster();
 
   poolCluster.add('clusterA', {
@@ -171,8 +178,10 @@ try {
   // poolCluster.add('clusterB', '...');
 
   const connection = await poolCluster.getConnection('clusterA');
+  // highlight-end
   // ... some query
 
+  // highlight-next-line
   connection.release();
 } catch (err) {
   console.log(err);
@@ -229,6 +238,7 @@ Don't forget to release the connection when finished by using:
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const poolCluster = mysql.createPoolCluster();
 
   poolCluster.add('clusterA', {
@@ -242,8 +252,10 @@ try {
   // poolCluster.add('clusterB', '...');
 
   const connection = await poolCluster.getConnection('clusterA');
+  // highlight-end
   // ... some query
 
+  // highlight-next-line
   connection.release();
 } catch (err) {
   console.log(err);
@@ -317,6 +329,7 @@ In that case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cer
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const poolCluster = mysql.createPoolCluster();
 
   poolCluster.add('clusterA', {
@@ -327,8 +340,10 @@ try {
   // poolCluster.add('clusterB', '...');
 
   const connection = await poolCluster.getConnection('clusterA');
+  // highlight-end
   // ... some query
 
+  // highlight-next-line
   connection.release();
 } catch (err) {
   console.log(err);
@@ -426,8 +441,9 @@ Don't forget to release the connection when finished by using:
 const mysql = require('mysql2');
 const SocksConnection = require('socksjs');
 
-const poolCluster = mysql.createPoolCluster();
 const socksProxy = new SocksConnection({ port: 3306 });
+// highlight-start
+const poolCluster = mysql.createPoolCluster();
 
 poolCluster.add('clusterA', {
   stream: socksProxy,
@@ -435,6 +451,7 @@ poolCluster.add('clusterA', {
 // poolCluster.add('clusterB', '...');
 
 const poolNamespace = poolCluster.of('clusterA');
+// highlight-end
 ```
 
   </TabItem>
@@ -444,6 +461,7 @@ const poolNamespace = poolCluster.of('clusterA');
 const mysql = require('mysql2');
 const SocksConnection = require('socksjs');
 
+// highlight-start
 const poolCluster = mysql.createPoolCluster();
 
 poolCluster.add('clusterA', {
@@ -455,6 +473,7 @@ poolCluster.add('clusterA', {
 // poolCluster.add('clusterB', '...');
 
 const poolNamespace = poolCluster.of('clusterA');
+// highlight-end
 ```
 
   </TabItem>

@@ -74,11 +74,13 @@ try {
   const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
   const values = ['Page', 45];
 
+  // highlight-start
   const [rows, fields] = await connection.execute({
     sql,
     values,
     // ... other options
   });
+  // highlight-end
 
   console.log(rows);
   console.log(fields);
@@ -136,6 +138,7 @@ try {
   const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
   const values = ['Page', 45];
 
+  // highlight-start
   const [rows, fields] = await connection.execute(
     {
       sql,
@@ -143,6 +146,7 @@ try {
     },
     values
   );
+  // highlight-end
 
   console.log(rows);
   console.log(fields);

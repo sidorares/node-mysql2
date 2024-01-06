@@ -74,11 +74,13 @@ try {
   const sql = 'INSERT INTO `users`(`name`, `age`) VALUES (?, ?), (?,?)';
   const values = ['Josh', 19, 'Page', 45];
 
+  // highlight-start
   const [result, fields] = await connection.execute({
     sql,
     values,
     // ... other options
   });
+  // highlight-end
 
   console.log(result);
   console.log(fields);
@@ -136,6 +138,7 @@ try {
   const sql = 'INSERT INTO `users`(`name`, `age`) VALUES (?, ?), (?,?)';
   const values = ['Josh', 19, 'Page', 45];
 
+  // highlight-start
   const [result, fields] = await connection.execute(
     {
       sql,
@@ -143,6 +146,7 @@ try {
     },
     values
   );
+  // highlight-end
 
   console.log(result);
   console.log(fields);

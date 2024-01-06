@@ -25,9 +25,11 @@ For queries please see the [**Simple Queries**](/docs/examples/queries/simple-qu
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const connection = await mysql.createConnection(
     'mysql://root:password@localhost:3306/test'
   );
+  // highlight-end
 } catch (err) {
   console.log(err);
 }
@@ -64,6 +66,7 @@ connection.addListener('error', (err) => {
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -71,6 +74,7 @@ try {
     // port: 3306,
     // password: '',
   });
+  // highlight-end
 } catch (err) {
   console.log(err);
 }
@@ -111,6 +115,7 @@ connection.addListener('error', (err) => {
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const connection = await mysql.createConnection({
     // ...
     passwordSha1: Buffer.from(
@@ -118,6 +123,7 @@ try {
       'hex'
     ),
   });
+  // highlight-end
 } catch (err) {
   console.log(err);
 }
@@ -155,6 +161,7 @@ connection.addListener('error', (err) => {
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const connection = await mysql.createConnection({
     // ...
     ssl: {
@@ -163,6 +170,7 @@ try {
       ca: fs.readFileSync('./certs/ca-cert.pem'),
     },
   });
+  // highlight-end
 } catch (err) {
   console.log(err);
 }
@@ -217,11 +225,13 @@ In that case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cer
 import mysql from 'mysql2/promise';
 
 try {
+  // highlight-start
   const connection = await mysql.createConnection({
     // ...
     host: 'db.id.ap-southeast-2.rds.amazonaws.com',
     ssl: 'Amazon RDS',
   });
+  // highlight-end
 } catch (err) {
   console.log(err);
 }
@@ -301,9 +311,11 @@ const mysql = require('mysql2');
 const SocksConnection = require('socksjs');
 
 const socksProxy = new SocksConnection({ port: 3306 });
+// highlight-start
 const connection = mysql.createConnection({
   stream: socksProxy,
 });
+// highlight-end
 
 connection.addListener('error', (err) => {
   console.log(err);
@@ -317,12 +329,14 @@ connection.addListener('error', (err) => {
 const mysql = require('mysql2');
 const SocksConnection = require('socksjs');
 
+// highlight-start
 const connection = mysql.createConnection({
   debug: 1,
   stream: function () {
     return new SocksConnection({ port: 3306 });
   },
 });
+// highlight-end
 
 connection.addListener('error', (err) => {
   console.log(err);

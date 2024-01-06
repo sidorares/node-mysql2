@@ -73,10 +73,12 @@ The connection used for the query (`.query()`) can be obtained through the `crea
 try {
   const sql = 'UPDATE `users` SET `age` = 20 WHERE `name` = "Josh" LIMIT 1';
 
+  // highlight-start
   const [result, fields] = await connection.query({
     sql,
     // ... other options
   });
+  // highlight-end
 
   console.log(result);
   console.log(fields);

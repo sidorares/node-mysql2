@@ -74,11 +74,13 @@ try {
   const sql = 'DELETE FROM `users` WHERE `name` = ? LIMIT 1';
   const values = ['Page'];
 
+  // highlight-start
   const [result, fields] = await connection.execute({
     sql,
     values,
     // ... other options
   });
+  // highlight-end
 
   console.log(result);
   console.log(fields);
@@ -136,6 +138,7 @@ try {
   const sql = 'DELETE FROM `users` WHERE `name` = ? LIMIT 1';
   const values = ['Page'];
 
+  // highlight-start
   const [result, fields] = await connection.execute(
     {
       sql,
@@ -143,6 +146,7 @@ try {
     },
     values
   );
+  // highlight-end
 
   console.log(result);
   console.log(fields);
