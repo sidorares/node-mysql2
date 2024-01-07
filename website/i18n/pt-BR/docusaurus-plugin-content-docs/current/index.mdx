@@ -46,7 +46,7 @@ O MySQL2 não tem restrições nativas e pode ser instalado no Linux, Mac OS ou 
   </TabItem>
 </Tabs>
 
----
+<hr />
 
 ### Primeira Consulta (_Query_)
 
@@ -127,7 +127,7 @@ connection.query(
   </TabItem>
 </Tabs>
 
----
+<hr />
 
 ### Usando Instruções Preparadas (_Prepared Statements_)
 
@@ -197,7 +197,7 @@ connection.execute(
 Se você executar a mesma declaração novamente, ela será selecionada a partir do LRU Cache, o que economizará tempo de preparação da consulta e proporcionará melhor desempenho.
 :::
 
----
+<hr />
 
 ### Usando Conjunto de Conexões (_pools_) {#using-connection-pools}
 
@@ -256,7 +256,7 @@ const pool = mysql.createPool({
 O _pool_ não estabelece todas as conexões previamente, mas as cria sob demanda até que o limite de conexões seja atingido.
 :::
 
----
+<hr />
 
 Você pode usar o _pool_ da mesma maneira como em uma conexão (usando `pool.query()` e `pool.execute()`):
 
@@ -325,7 +325,7 @@ pool.getConnection(function (err, conn) {
   conn.release();
   ```
 
----
+<hr />
 
 ### Usando o _Promise Wrapper_
 
@@ -417,7 +417,7 @@ conn
   .then(() => conn.end());
 ```
 
----
+<hr />
 
 ### Resultados em _Array_
 
@@ -494,7 +494,7 @@ conn.query(
   </TabItem>
 </Tabs>
 
----
+<hr />
 
 :::tip Obtendo Ajuda
 Precisa de ajuda? Faça sua pergunta no [Stack Overflow](https://stackoverflow.com/questions/tagged/mysql2) ou [GitHub](https://github.com/sidorares/node-mysql2/discussions).

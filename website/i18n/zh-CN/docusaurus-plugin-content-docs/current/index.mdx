@@ -46,7 +46,7 @@ npm install --save-dev @types/node
   </TabItem>
 </Tabs>
 
----
+<hr />
 
 ### 查询数据
 
@@ -127,7 +127,7 @@ connection.query(
   </TabItem>
 </Tabs>
 
----
+<hr />
 
 ### SQL预处理的使用
 
@@ -197,7 +197,7 @@ connection.execute(
 如果再次执行相同的语句，他将从缓存中选取，这能有效的节省准备查询时间获得更好的性能。
 :::
 
----
+<hr />
 
 ### 连接池的使用 {#using-connection-pools}
 
@@ -256,7 +256,7 @@ const pool = mysql.createPool({
 该池不会预先创建所有连接，而是根据需要创建它们，直到达到连接限制。
 :::
 
----
+<hr />
 
 您可以像直接连接一样使用池（使用 `pool.query()` 和 `pool.execute()`）：
 
@@ -325,7 +325,7 @@ pool.getConnection(function (err, conn) {
   conn.release();
   ```
 
----
+<hr />
 
 ### Promise封装
 
@@ -417,7 +417,7 @@ conn
   .then(() => conn.end());
 ```
 
----
+<hr />
 
 ### 结果返回
 
@@ -494,7 +494,7 @@ conn.query(
   </TabItem>
 </Tabs>
 
----
+<hr />
 
 :::tip Getting Help
 Need help? Ask your question on [Stack Overflow](https://stackoverflow.com/questions/tagged/mysql2) or [GitHub](https://github.com/sidorares/node-mysql2/discussions).
