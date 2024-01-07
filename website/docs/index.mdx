@@ -56,7 +56,7 @@ npm install --save-dev @types/node
   </TabItem>
 </Tabs>
 
----
+<hr />
 
 ### First Query
 
@@ -137,7 +137,7 @@ connection.query(
 </TabItem>
 </Tabs>
 
----
+<hr />
 
 ### Using Prepared Statements
 
@@ -207,7 +207,7 @@ connection.execute(
 If you execute same statement again, it will be picked from a LRU cache which will save query preparation time and give better performance.
 :::
 
----
+<hr />
 
 ### Using Connection Pools
 
@@ -266,7 +266,7 @@ const pool = mysql.createPool({
 The pool does not create all connections upfront but creates them on demand until the connection limit is reached.
 :::
 
----
+<hr />
 
 You can use the pool in the same way as connections (using `pool.query()` and `pool.execute()`):
 
@@ -335,7 +335,7 @@ pool.getConnection(function (err, conn) {
 conn.release();
 ```
 
----
+<hr />
 
 ### Using Promise Wrapper
 
@@ -427,7 +427,7 @@ conn
   .then(() => conn.end());
 ```
 
----
+<hr />
 
 ### Array Results
 
@@ -504,7 +504,7 @@ conn.query(
   </TabItem>
 </Tabs>
 
----
+<hr />
 
 :::tip Getting Help
 Need help? Ask your question on [Stack Overflow](https://stackoverflow.com/questions/tagged/mysql2) or [GitHub](https://github.com/sidorares/node-mysql2/discussions).

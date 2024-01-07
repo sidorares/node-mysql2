@@ -16,7 +16,7 @@ npm install --save-dev @types/node
 Requires **TypeScript** `>=4.5.2`.
 :::
 
----
+<hr />
 
 ## Usage
 
@@ -90,7 +90,7 @@ The `rows` output will be these possible types:
 
 In this example, you need to manually check the output types
 
----
+<hr />
 
 ## Type Specification
 
@@ -156,7 +156,7 @@ conn.query<RowDataPacket[]>('SHOW TABLES FROM `test`;', (_err, rows) => {
 });
 ```
 
----
+<hr />
 
 ### RowDataPacket[][]
 
@@ -186,7 +186,7 @@ conn.query<RowDataPacket[][]>(sql, (_err, rows) => {
 });
 ```
 
----
+<hr />
 
 ### ResultSetHeader
 
@@ -244,7 +244,7 @@ conn.query<ResultSetHeader>(sql, (_err, result) => {
 });
 ```
 
----
+<hr />
 
 ### ResultSetHeader[]
 
@@ -306,7 +306,7 @@ conn.query<ResultSetHeader[]>(sql, (_err, results) => {
 });
 ```
 
----
+<hr />
 
 ### ProcedureCallPacket
 
@@ -379,7 +379,7 @@ By using `SELECT` and `SHOW` queries in a **Procedure Call**, it groups the resu
 
 For `ProcedureCallPacket<RowDataPacket[]>`, please see the following examples.
 
----
+<hr />
 
 ### OkPacket
 
@@ -395,7 +395,7 @@ For `ProcedureCallPacket<RowDataPacket[]>`, please see the following examples.
   }
 />
 
----
+<hr />
 
 ## Examples
 

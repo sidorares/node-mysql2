@@ -76,7 +76,7 @@ Don't forget to release the connection when finished by using:
 
 :::
 
----
+<hr />
 
 ## add(group, config)
 
@@ -152,7 +152,7 @@ Don't forget to release the connection when finished by using:
 
 :::
 
----
+<hr />
 
 ## add(group, config) — SHA1
 
@@ -225,7 +225,7 @@ Don't forget to release the connection when finished by using:
 
 :::
 
----
+<hr />
 
 ## add(group, config) — SSL
 
@@ -312,7 +312,7 @@ Don't forget to release the connection when finished by using:
 
 :::
 
----
+<hr />
 
 ## add(group, config) — RDS SSL
 
@@ -428,7 +428,7 @@ Don't forget to release the connection when finished by using:
   - [#2119 — fix: make startTls code compatible with Bun](https://github.com/sidorares/node-mysql2/pull/2119)
   - [#2131 — Update Amazon RDS SSL CA cert](https://github.com/sidorares/node-mysql2/pull/2131)
 
----
+<hr />
 
 ## add(group, config) — Socks
 
@@ -512,22 +512,24 @@ poolNamespace.execute('SELECT SLEEP(1) AS `qqq`', (err, rows, fields) => {
 
 :::
 
----
+<hr />
 
 ## Glossary
 
 ### PoolOptions
 
-> **PoolOptions** extends all options from **ConnectionOptions**:
->
-> <FAQ title='ConnectionOptions Specification'>
->   <ExternalCodeEmbed
->     language='ts'
->     url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/Connection.d.ts'
->     extractMethod='ConnectionOptions'
->     methodType='interface'
->   />
-> </FAQ>
+<blockquote>
+  **PoolOptions** extends all options from **ConnectionOptions**:
+
+  <FAQ title='ConnectionOptions Specification'>
+    <ExternalCodeEmbed
+      language='ts'
+      url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/Connection.d.ts'
+      extractMethod='ConnectionOptions'
+      methodType='interface'
+    />
+  </FAQ>
+</blockquote>
 
 <FAQ title='PoolOptions Specification'>
   <ExternalCodeEmbed
