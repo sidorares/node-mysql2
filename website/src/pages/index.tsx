@@ -6,7 +6,7 @@ function Home() {
   const { baseUrl } = siteConfig;
   const currentLocale = i18n.currentLocale;
   const setLocaleRedirectMap = () =>
-    currentLocale === 'en'
+    currentLocale === 'en' || baseUrl.includes(currentLocale)
       ? `${baseUrl}docs`
       : `${baseUrl}${currentLocale}/docs`;
   const redirectUrl = setLocaleRedirectMap();
