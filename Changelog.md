@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.0](https://github.com/sidorares/node-mysql2/compare/v3.6.5...v3.7.0) (2024-01-07)
+
+
+### Features
+
+* **docs:** release documentation website ([#2339](https://github.com/sidorares/node-mysql2/issues/2339)) ([c0d77c0](https://github.com/sidorares/node-mysql2/commit/c0d77c02d2f4ad22b46a712d270fc2654d26de4e))
+
 ## [3.6.5](https://github.com/sidorares/node-mysql2/compare/v3.6.4...v3.6.5) (2023-11-22)
 
 
