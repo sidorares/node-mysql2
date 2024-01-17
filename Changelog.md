@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.1](https://github.com/sidorares/node-mysql2/compare/v3.7.0...v3.7.1) (2024-01-17)
+
+
+### Bug Fixes
+
+* add condition which allows code in callback to be reachable ([#2376](https://github.com/sidorares/node-mysql2/issues/2376)) ([8d5b903](https://github.com/sidorares/node-mysql2/commit/8d5b903f5c24ef6378d4aa98d3fd4e13d39be4db))
+
 ## [3.7.0](https://github.com/sidorares/node-mysql2/compare/v3.6.5...v3.7.0) (2024-01-07)
 
 
