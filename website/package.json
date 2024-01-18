@@ -24,7 +24,7 @@
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.1.0",
     "docusaurus-plugin-sass": "^0.2.5",
-    "lucide-react": "^0.311.0",
+    "lucide-react": "^0.312.0",
     "prism-react-renderer": "^2.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -44,7 +44,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "prettier": "^3.2.2",
+    "prettier": "^3.2.4",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   },
