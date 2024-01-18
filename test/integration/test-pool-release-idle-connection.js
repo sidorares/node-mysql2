@@ -38,7 +38,6 @@ pool.getConnection((err1, connection1) => {
           connection4.release();
           connection4.destroy();
           pool.end();
-          setTimeout(() => process.exit(0), 1000);
         });
       }, 7000);
     });
