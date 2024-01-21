@@ -11,5 +11,9 @@ connection.query(`SHOW STATUS LIKE 'Ssl_cipher'`, (err, rows) => {
   } else {
     assert.deepEqual(rows, [{ Variable_name: 'Ssl_cipher', Value: '' }]);
   }
-  connection.end();
+
+  connection.end(err => {
+    assert.ifError(err);
+    process.exit(0);
+  });
 });
