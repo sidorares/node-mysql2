@@ -61,10 +61,10 @@ connection.execute('SELECT * FROM announcements', async (err, _rows) => {
       connection.end();
     });
   });
- const s3 = connection.query('SELECT * FROM announcements').stream();
- for await (const row of s3) {
-   rows3.push(row);
- }
+  const s3 = connection.query('SELECT * FROM announcements').stream();
+  for await (const row of s3) {
+    rows3.push(row);
+  }
 });
 
 process.on('exit', () => {
