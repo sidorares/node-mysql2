@@ -7,6 +7,7 @@ const assert = require('assert');
 let rows;
 const rows1 = [];
 const rows2 = [];
+const rows3 = [];
 
 connection.query(
   [
@@ -45,7 +46,7 @@ connection.execute(
     }
   }
 );
-connection.execute('SELECT * FROM announcements', (err, _rows) => {
+connection.execute('SELECT * FROM announcements', async (err, _rows) => {
   rows = _rows;
   const s1 = connection.query('SELECT * FROM announcements').stream();
   s1.on('data', row => {
@@ -60,10 +61,15 @@ connection.execute('SELECT * FROM announcements', (err, _rows) => {
       connection.end();
     });
   });
+  const s3 = connection.query('SELECT * FROM announcements').stream();
+  for await (const row of s3) {
+    rows3.push(row);
+  }
 });
 
 process.on('exit', () => {
   assert.deepEqual(rows.length, 2);
   assert.deepEqual(rows, rows1);
   assert.deepEqual(rows, rows2);
+  assert.deepEqual(rows, rows3);
 });
