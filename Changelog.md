@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.8.0](https://github.com/sidorares/node-mysql2/compare/v3.7.1...v3.8.0) (2024-01-23)
+
+
+### Features
+
+* **perf:** cache iconv decoder ([#2391](https://github.com/sidorares/node-mysql2/issues/2391)) ([b95b3db](https://github.com/sidorares/node-mysql2/commit/b95b3dbe4bb34e36d0d1be6948e4d8a169d28eed))
+
+
+### Bug Fixes
+
+* **stream:** premature close when using `for await` ([#2389](https://github.com/sidorares/node-mysql2/issues/2389)) ([af47148](https://github.com/sidorares/node-mysql2/commit/af4714845603f70e3c1ef635f6c0750ff1987a9e))
+* The removeIdleTimeoutConnectionsTimer did not clean up when the … ([#2384](https://github.com/sidorares/node-mysql2/issues/2384)) ([18a44f6](https://github.com/sidorares/node-mysql2/commit/18a44f6a0a0b7ef41cc874d7a7bb2d3db83ea533))
+* **types:** add missing types to TypeCast ([#2390](https://github.com/sidorares/node-mysql2/issues/2390)) ([78ce495](https://github.com/sidorares/node-mysql2/commit/78ce4953e9c66d6cf40ffc2d252fa3701a2d4fe2))
+
 ## [3.7.1](https://github.com/sidorares/node-mysql2/compare/v3.7.0...v3.7.1) (2024-01-17)
 
 
