@@ -70,10 +70,6 @@ export interface QueryOptions {
    * ```
    *
    * You can find which field function you need to use by looking at `RowDataPacket.prototype._typeCast`.
-   *
-   * ---
-   *
-   * For `execute`, please see: [typeCast not supported with .execute #649](https://github.com/sidorares/node-mysql2/issues/649).
    */
   typeCast?: TypeCast;
 
