@@ -12,8 +12,17 @@ connection.query(`SHOW STATUS LIKE 'Ssl_cipher'`, (err, rows) => {
     assert.deepEqual(rows, [{ Variable_name: 'Ssl_cipher', Value: '' }]);
   }
 
-  connection.end(err => {
+  connection.execute(`SHOW STATUS LIKE 'Ssl_cipher'`, (err, rows) => {
     assert.ifError(err);
-    process.exit(0);
+    if (process.env.MYSQL_USE_TLS === '1') {
+      assert.equal(rows[0].Value.length > 0, true);
+    } else {
+      assert.deepEqual(rows, [{ Variable_name: 'Ssl_cipher', Value: '' }]);
+    }
+
+    connection.end(err => {
+      assert.ifError(err);
+      process.exit(0);
+    });
   });
 });
