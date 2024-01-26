@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.0](https://github.com/sidorares/node-mysql2/compare/v3.8.0...v3.9.0) (2024-01-26)
+
+
+### Features
+
+* introduce typeCast for `execute` method ([#2398](https://github.com/sidorares/node-mysql2/issues/2398)) ([baaa92a](https://github.com/sidorares/node-mysql2/commit/baaa92a228d32012f7da07826674f7a736e3791d))
+
 ## [3.8.0](https://github.com/sidorares/node-mysql2/compare/v3.7.1...v3.8.0) (2024-01-23)
 
 
