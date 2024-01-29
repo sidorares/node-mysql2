@@ -43,7 +43,7 @@ type Field = Type & {
   db: string;
   table: string;
   name: string;
-  string: () => string | null;
+  string: (encoding?: BufferEncoding | string | undefined) => string | null;
   buffer: () => Buffer | null;
   geometry: () => Geometry | Geometry[] | null;
 };

@@ -27,13 +27,14 @@ import { access, sql } from '../promise/baseConnection.js';
       const type: string = field.type;
       const buffer: Buffer | null = field.buffer();
       const string: string | null = field.string();
+      const stringWithEncoding: string | null = field.string('utf-8');
       const geometry:
         | { x: number; y: number }
         | { x: number; y: number }[]
         | null = field.geometry();
 
       console.log(db, length, name, table, type);
-      console.log(buffer, string, geometry);
+      console.log(buffer, string, stringWithEncoding, geometry);
 
       return next();
     },
@@ -64,13 +65,14 @@ import { access, sql } from '../promise/baseConnection.js';
       const type: string = field.type;
       const buffer: Buffer | null = field.buffer();
       const string: string | null = field.string();
+      const stringWithEncoding: string | null = field.string('utf-8');
       const geometry:
         | { x: number; y: number }
         | { x: number; y: number }[]
         | null = field.geometry();
 
       console.log(db, length, name, table, type);
-      console.log(buffer, string, geometry);
+      console.log(buffer, string, stringWithEncoding, geometry);
 
       return next();
     },
@@ -101,13 +103,14 @@ import { access, sql } from '../promise/baseConnection.js';
       const type: string = field.type;
       const buffer: Buffer | null = field.buffer();
       const string: string | null = field.string();
+      const stringWithEncoding: string | null = field.string('utf-8');
       const geometry:
         | { x: number; y: number }
         | { x: number; y: number }[]
         | null = field.geometry();
 
       console.log(db, length, name, table, type);
-      console.log(buffer, string, geometry);
+      console.log(buffer, string, stringWithEncoding, geometry);
 
       return next();
     },
@@ -138,13 +141,14 @@ import { access, sql } from '../promise/baseConnection.js';
       const type: string = field.type;
       const buffer: Buffer | null = field.buffer();
       const string: string | null = field.string();
+      const stringWithEncoding: string | null = field.string('utf-8');
       const geometry:
         | { x: number; y: number }
         | { x: number; y: number }[]
         | null = field.geometry();
 
       console.log(db, length, name, table, type);
-      console.log(buffer, string, geometry);
+      console.log(buffer, string, stringWithEncoding, geometry);
 
       return next();
     },
