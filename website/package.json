@@ -18,7 +18,7 @@
     "test": "npm run typecheck && npm run lintcheck && npm run test:unit && npm run clear && npm run build"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.1.0",
+    "@docusaurus/core": "^3.1.1",
     "@docusaurus/preset-classic": "^3.1.0",
     "@easyops-cn/docusaurus-search-local": "^0.40.1",
     "@mdx-js/react": "^3.0.0",
