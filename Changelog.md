@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.1](https://github.com/sidorares/node-mysql2/compare/v3.9.0...v3.9.1) (2024-01-29)
+
+
+### Bug Fixes
+
+* **types:** support encoding for string type cast ([#2407](https://github.com/sidorares/node-mysql2/issues/2407)) ([1dc2011](https://github.com/sidorares/node-mysql2/commit/1dc201144daceab0b12193ada0f13dbb25e917f6))
+
 ## [3.9.0](https://github.com/sidorares/node-mysql2/compare/v3.8.0...v3.9.0) (2024-01-26)
 
 
