@@ -18,35 +18,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 20.x]
-        mysql-version: ["mysql:8.0.33"]
+        node-version: [20.x]
         use-compression: [0, 1]
         use-tls: [0, 1]
-        mysql_connection_url_key: [""]
-    env:
-      MYSQL_CONNECTION_URL: ${{ secrets[matrix.mysql_connection_url_key] }}
 
-    name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }}${{ matrix.mysql_connection_url_key }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
+    name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Colima
-        run: brew install colima
+      - name: Install MySQL
+        run: |
+          brew install mysql@8.0
+          brew link mysql@8.0 --force
 
-      - name: Install Docker
-        run: brew install --formula docker
-
-      - name: Start Docker
-        run: colima start
-
-      - name: Pull MySQL
-        if: ${{ matrix.mysql-version }}
-        run: docker pull ${{ matrix.mysql-version }}
-
-      - name: Set up MySQL
-        if: ${{ matrix.mysql-version }}
-        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
+      - name: Start MySQL Service
+        run: brew services start mysql@8.0
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -64,8 +51,11 @@ jobs:
         run: npm ci
 
       - name: Wait mysql server is ready
-        if: ${{ matrix.mysql-version }}
         run: node tools/wait-up.js
+
+      - name: Configure MySQL
+        run: |
+          mysql -u root -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
 
       - name: Run tests
         run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run coverage-test
