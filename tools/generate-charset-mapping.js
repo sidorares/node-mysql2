@@ -30,7 +30,7 @@ const mysql2iconv = {
 
 const missing = {};
 
-conn.query('show collation', function(err, res) {
+conn.query('show collation', (err, res) => {
   console.log(res);
   res.forEach(r => {
     const charset = r.Charset;
@@ -43,7 +43,7 @@ conn.query('show collation', function(err, res) {
   //console.log(JSON.stringify(missing, 4, null));
   //console.log(JSON.stringify(charsets, 4, null));
   for (let i = 0; i < charsets.length; i += 8) {
-    console.log("  '" + charsets.slice(i, i + 8).join("', '") + "',");
+    console.log(`  '${charsets.slice(i, i + 8).join("', '")}',`);
   }
 });
 
