@@ -9,7 +9,7 @@ const poolConfig = {}; // config: { connectionConfig: {} } };
 const pool = new mysql.createPool(poolConfig);
 test('Pool', {
   'exposes escape': () => {
-    assert.equal(pool.escape(123), '123');
+    assert.equal(pool.escape(123), '1234');
   },
 
   'exposes escapeId': () => {
