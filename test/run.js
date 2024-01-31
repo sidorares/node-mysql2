@@ -7,8 +7,10 @@ const path = require('node:path');
 const { spawn } = require('node:child_process');
 const { EOL } = require('node:os');
 
+const escapeRegExp = string => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const startTime = Date.now();
-const filter = process.env.FILTER ? new RegExp(process.env.FILTER, 'i') : null;
+const filter = process.env.FILTER ? new RegExp(escapeRegExp(process.env.FILTER), 'i') : null;
 
 const format = {
   time: startTime => {
