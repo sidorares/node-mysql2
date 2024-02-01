@@ -1,9 +1,9 @@
-type Geometry = {
+export type Geometry = {
   x: number;
   y: number;
 };
 
-type Type = {
+export type Type = {
   type:
     | 'DECIMAL'
     | 'TINY'
@@ -38,7 +38,7 @@ type Type = {
     | 'GEOMETRY';
 };
 
-type Field = Type & {
+export type Field = Type & {
   length: number;
   db: string;
   table: string;
@@ -48,6 +48,6 @@ type Field = Type & {
   geometry: () => Geometry | Geometry[] | null;
 };
 
-type Next = () => void;
+export type Next = () => void;
 
 export type TypeCast = ((field: Field, next: Next) => any) | boolean;

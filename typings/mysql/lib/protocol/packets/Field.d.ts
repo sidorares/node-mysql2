@@ -1,15 +1,6 @@
-declare interface Field {
-  constructor: {
-    name: 'Field';
-  };
-  db: string;
-  table: string;
-  name: string;
-  type: string;
-  length: number;
-  string: () => any;
-  buffer: () => any;
-  geometry: () => any;
-}
+import { Field as TypeCastField } from '../../../lib/parsers/typeCast.js';
+
+// TODO (major version): remove workaround for `Field` compatibility.
+declare interface Field extends TypeCastField {}
 
 export { Field };
