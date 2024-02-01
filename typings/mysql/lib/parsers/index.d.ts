@@ -1,12 +1,12 @@
 import { setMaxParserCache, clearParserCache } from './ParserCache.js';
-import { TypeCast, Field, Geometry, Next, Type } from './typeCast.js';
+import { TypeCast, Field as TypeCastField, Geometry as TypeCastGeometry, Next as TypeCastNext, Type as TypeCastType } from './typeCast.js';
 
 export {
   setMaxParserCache,
   clearParserCache,
   TypeCast,
-  Field,
-  Geometry,
-  Next,
-  Type,
+  TypeCastField,
+  TypeCastGeometry,
+  TypeCastNext,
+  TypeCastType,
 };
