@@ -8,7 +8,7 @@
     "strict": true,
     "alwaysStrict": true,
     "strictFunctionTypes": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": true
   },
-  "exclude": ["static", "build", ".docusaurus"],
+  "exclude": ["static", "build", ".docusaurus"]
 }
