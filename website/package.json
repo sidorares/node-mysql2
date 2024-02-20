@@ -14,7 +14,7 @@
     "typecheck": "tsc",
     "lintcheck": "prettier --check . && eslint . --ext .ts,.tsx",
     "lint": "prettier --write . && eslint . --fix",
-    "test:unit": "npx poku test/unit",
+    "test:unit": "npx poku --parallel test/unit",
     "test": "npm run typecheck && npm run lintcheck && npm run test:unit && npm run clear && npm run build",
     "update": "npx npu; npm i; npm run lint"
   },
@@ -46,6 +46,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "packages-update": "^1.2.1",
+    "poku": "^1.3.1",
     "prettier": "^3.2.5",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3"
