@@ -1,48 +1,38 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { EOL } from 'node:os';
+import { listFiles, assert } from 'poku';
+
+const invalidFiles: string[] = [];
+const message = [
+  'Invalid file types found in restricted directories.',
+  'Please ensure that files in these directories have one of the following extensions:',
+];
 
 const checkExtensions = (
-  directoriesToCheck: string[],
-  allowedExtensions: string[],
-  ignoreList: string[] = ['.DS_Store']
+  dirs: string[],
+  allowedExtensions: RegExp,
+  ignoreList: RegExp = /\.DS_Store/
 ) => {
-  const isIgnored = (fileName: string): boolean => {
-    return (
-      ignoreList.includes(fileName) ||
-      allowedExtensions.includes(path.extname(fileName))
-    );
-  };
+  dirs.forEach((dir) => {
+    const files = listFiles(dir, { filter: /\./ });
 
-  const findInvalidFiles = (dir: string): string[] => {
-    return fs.readdirSync(dir, { withFileTypes: true }).flatMap((file) => {
-      const fullPath = path.join(dir, file.name);
-
-      if (file.isDirectory()) return findInvalidFiles(fullPath);
-      if (file.isFile() && !isIgnored(file.name)) return [fullPath];
-
-      return [];
+    files.forEach((file) => {
+      if (!ignoreList.test(file) && !allowedExtensions.test(file)) {
+        invalidFiles.push(file);
+        message.push(`${EOL}${String(allowedExtensions)}`);
+        message.push(`- ${file}`);
+      }
     });
-  };
-
-  const invalidFiles = directoriesToCheck.flatMap((dir) =>
-    findInvalidFiles(dir)
-  );
-
-  if (invalidFiles.length > 0) {
-    console.log(
-      '❌ Invalid file types found in restricted directories:',
-      invalidFiles,
-      EOL,
-      `  Please ensure that files in these directories have one of the following extensions: ${allowedExtensions.join(
-        ', '
-      )}.`
-    );
-    process.exit(1);
-  }
+  });
 };
 
-checkExtensions(['docs', 'i18n'], ['.mdx', '.json']);
-checkExtensions(['helpers', 'plugins', 'test/unit', 'test/utils'], ['.ts']);
-checkExtensions(['src/components', 'src/pages'], ['.tsx']);
-checkExtensions(['src/css'], ['.scss']);
+checkExtensions(['docs', 'i18n'], /\.(mdx|json)$/);
+checkExtensions(['helpers', 'plugins'], /\.ts$/);
+checkExtensions(['test/unit', 'test/utils'], /\.test\.ts$/);
+checkExtensions(['src/components', 'src/pages'], /\.tsx$/);
+checkExtensions(['src/css'], /\.scss$/);
+
+assert.deepStrictEqual(
+  invalidFiles.length,
+  0,
+  Array.from(new Set(message)).join(EOL)
+);
