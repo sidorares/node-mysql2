@@ -1,6 +1,7 @@
 'use strict';
 
 const mysql = require('../..');
+const Pool = require('../../lib/pool');
 const test = require('utest');
 const assert = require('assert');
 
@@ -22,6 +23,20 @@ test('Pool', {
       pool.format('SELECT a FROM ?? WHERE b = ?', params),
       "SELECT a FROM `table name` WHERE b = 'thing'"
     );
+  },
+  'pool is closed error message': () => {
+    const poolIsClosedError = Pool._generatePoolIsClosedError();
+    assert.equal(
+      poolIsClosedError.message,
+      'Pool is closed.'
+    )
+  },
+  'pool is closed error code': () => {
+    const poolIsClosedError = Pool._generatePoolIsClosedError();
+    assert.equal(
+      poolIsClosedError.code,
+      'POOL_CLOSED'
+    )
   }
 });
 
