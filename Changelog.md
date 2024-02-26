@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.9.2](https://github.com/sidorares/node-mysql2/compare/v3.9.1...v3.9.2) (2024-02-26)
+
+
+### Bug Fixes
+
+* **stream:** premature close when it is paused ([#2416](https://github.com/sidorares/node-mysql2/issues/2416)) ([7c6bc64](https://github.com/sidorares/node-mysql2/commit/7c6bc642addb3e6fee1b1fdc84f83a72ff11ca4a))
+* **types:** expose TypeCast types ([#2425](https://github.com/sidorares/node-mysql2/issues/2425)) ([336a7f1](https://github.com/sidorares/node-mysql2/commit/336a7f1259c63d2dfe070fe400b141e89255844e))
+
 ## [3.9.1](https://github.com/sidorares/node-mysql2/compare/v3.9.0...v3.9.1) (2024-01-29)
 
 
