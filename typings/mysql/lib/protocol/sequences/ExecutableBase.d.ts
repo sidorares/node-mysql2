@@ -1,6 +1,6 @@
 import {
   FieldPacket,
-  ExecuteOrQueryResultPackets,
+  QueryResult,
 } from '../packets/index.js';
 import {
   Query,
@@ -13,26 +13,26 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
   Base?: T
 ): {
   new (...args: any[]): {
-    execute<T extends ExecuteOrQueryResultPackets>(
+    execute<T extends QueryResult>(
       sql: string,
       callback?:
         | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
         | undefined
     ): Query;
-    execute<T extends ExecuteOrQueryResultPackets>(
+    execute<T extends QueryResult>(
       sql: string,
       values: any,
       callback?:
         | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
         | undefined
     ): Query;
-    execute<T extends ExecuteOrQueryResultPackets>(
+    execute<T extends QueryResult>(
       options: QueryOptions,
       callback?:
         | ((err: QueryError | null, result: T, fields?: FieldPacket[]) => any)
         | undefined
     ): Query;
-    execute<T extends ExecuteOrQueryResultPackets>(
+    execute<T extends QueryResult>(
       options: QueryOptions,
       values: any,
       callback?:

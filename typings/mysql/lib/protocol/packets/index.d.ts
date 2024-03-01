@@ -7,7 +7,7 @@ import { ResultSetHeader } from './ResultSetHeader.js';
 import { OkPacketParams } from './params/OkPacketParams.js';
 import { ErrorPacketParams } from './params/ErrorPacketParams.js';
 
-export type ExecuteOrQueryResultPackets =
+export type QueryResult =
   | OkPacket
   | ResultSetHeader
   | ResultSetHeader[]
