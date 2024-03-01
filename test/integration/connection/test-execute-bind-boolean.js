@@ -18,5 +18,5 @@ connection.execute(
 );
 
 process.on('exit', () => {
-  assert.deepEqual(rows, [{ trueValue: 1, falseValue: 0 }]);
+  assert.deepEqual(rows, [{ trueValue: 'true', falseValue: 'false' }]);
 });

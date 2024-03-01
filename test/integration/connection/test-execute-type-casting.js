@@ -38,8 +38,8 @@ connection.query('select 1', waitConnectErr => {
 
   let row;
   connection.execute(
-    `SELECT * FROM ${table} WHERE id = ?;`,
-    [1],
+    `SELECT * FROM ${table} WHERE id = ? LIMIT ?`,
+    [1, 1],
     (err, rows) => {
       if (err) {
         throw err;
