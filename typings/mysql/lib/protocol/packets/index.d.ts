@@ -7,6 +7,15 @@ import { ResultSetHeader } from './ResultSetHeader.js';
 import { OkPacketParams } from './params/OkPacketParams.js';
 import { ErrorPacketParams } from './params/ErrorPacketParams.js';
 
+export type QueryResult =
+  | OkPacket
+  | ResultSetHeader
+  | ResultSetHeader[]
+  | RowDataPacket[]
+  | RowDataPacket[][]
+  | OkPacket[]
+  | ProcedureCallPacket;
+
 export {
   OkPacket,
   RowDataPacket,
