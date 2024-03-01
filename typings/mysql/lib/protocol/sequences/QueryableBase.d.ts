@@ -1,9 +1,6 @@
 import {
-  OkPacket,
   FieldPacket,
-  RowDataPacket,
-  ResultSetHeader,
-  ProcedureCallPacket,
+  ExecuteOrQueryResultPackets,
 } from '../packets/index.js';
 import {
   Query,
@@ -16,62 +13,26 @@ export declare function QueryableBase<T extends QueryableConstructor>(
   Base?: T
 ): {
   new (...args: any[]): {
-    query<
-      T extends
-        | OkPacket
-        | ResultSetHeader
-        | ResultSetHeader[]
-        | RowDataPacket[]
-        | RowDataPacket[][]
-        | OkPacket[]
-        | ProcedureCallPacket
-    >(
+    query<T extends ExecuteOrQueryResultPackets>(
       sql: string,
       callback?:
         | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
         | undefined
     ): Query;
-    query<
-      T extends
-        | OkPacket
-        | ResultSetHeader
-        | ResultSetHeader[]
-        | RowDataPacket[]
-        | RowDataPacket[][]
-        | OkPacket[]
-        | ProcedureCallPacket
-    >(
+    query<T extends ExecuteOrQueryResultPackets>(
       sql: string,
       values: any,
       callback?:
         | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
         | undefined
     ): Query;
-    query<
-      T extends
-        | OkPacket
-        | ResultSetHeader
-        | ResultSetHeader[]
-        | RowDataPacket[]
-        | RowDataPacket[][]
-        | OkPacket[]
-        | ProcedureCallPacket
-    >(
+    query<T extends ExecuteOrQueryResultPackets>(
       options: QueryOptions,
       callback?:
         | ((err: QueryError | null, result: T, fields?: FieldPacket[]) => any)
         | undefined
     ): Query;
-    query<
-      T extends
-        | OkPacket
-        | ResultSetHeader
-        | ResultSetHeader[]
-        | RowDataPacket[]
-        | RowDataPacket[][]
-        | OkPacket[]
-        | ProcedureCallPacket
-    >(
+    query<T extends ExecuteOrQueryResultPackets>(
       options: QueryOptions,
       values: any,
       callback?:
