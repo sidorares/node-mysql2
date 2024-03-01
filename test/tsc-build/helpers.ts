@@ -30,7 +30,7 @@ export const isOkPacket = (
     'serverStatus',
     'warningCount',
     'message',
-    'procotol41',
+    'protocol41',
   ];
 
   return keys.every((key) => key in data);

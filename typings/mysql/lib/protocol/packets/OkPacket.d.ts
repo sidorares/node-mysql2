@@ -17,7 +17,7 @@ declare interface OkPacket {
   serverStatus: number;
   warningCount: number;
   message: string;
-  procotol41: boolean;
+  protocol41: boolean;
 }
 
 export { OkPacket };
