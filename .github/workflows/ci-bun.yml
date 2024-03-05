@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bun-version: ["0.6.13", latest, canary]
+        bun-version: [latest, canary]
         mysql-version: ["mysql:8.0.33"]
         use-compression: [0, 1]
         use-tls: [0,1]
