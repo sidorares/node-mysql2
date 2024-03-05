@@ -15,7 +15,6 @@ env:
 jobs:
   coverage:
     permissions: write-all
-    needs: [ tests-linux ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
