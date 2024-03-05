@@ -118,31 +118,34 @@ import packets from '../../../lib/packets/index.js';
           common.describeOptions,
         );
 
-        connection.prepare('select * from user order by ?', (err, stmt) => {
-          if (err) {
-            connection.end();
-            reject(err);
+        connection.prepare(
+          'select * from user order by ?',
+          async (err, stmt) => {
+            if (err) {
+              connection.end();
+              reject(err);
 
-            return;
-          }
+              return;
+            }
 
-          if (isNewerThan8_0_22()) {
-            assert.equal(
-              stmt.parameters.length,
-              0,
-              'parameters length needs to be 0',
-              'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?',
-            );
-          } else {
-            assert.equal(
-              stmt.parameters.length,
-              1,
-              'parameters length needs to be 1',
-            );
-          }
+            if (await isNewerThan8_0_22()) {
+              assert.equal(
+                stmt.parameters.length,
+                0,
+                'parameters length needs to be 0',
+                'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?',
+              );
+            } else {
+              assert.equal(
+                stmt.parameters.length,
+                1,
+                'parameters length needs to be 1',
+              );
+            }
 
-          resolve(null);
-        });
+            resolve(null);
+          },
+        );
       }),
   );
 
@@ -151,7 +154,7 @@ import packets from '../../../lib/packets/index.js';
       new Promise((resolve, reject) => {
         connection.prepare(
           'select * from user where user.User like ? order by ?',
-          (err, stmt) => {
+          async (err, stmt) => {
             if (err) {
               connection.end();
               reject(err);
@@ -159,7 +162,7 @@ import packets from '../../../lib/packets/index.js';
               return;
             }
 
-            if (isNewerThan8_0_22()) {
+            if (await isNewerThan8_0_22()) {
               assert.equal(
                 stmt.parameters.length,
                 1,
