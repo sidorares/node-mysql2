@@ -20,19 +20,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bun-version: [latest, canary]
-        mysql-version: ["mysql:5.7", "mysql:8.0.18", "mysql:8.0.22"]
+        bun-version: ["0.6.13", latest, canary]
+        mysql-version: ["mysql:8.0.33"]
         use-compression: [0, 1]
         use-tls: [0,1]
-        include:
-          - bun-version: "0.6.13"
-            use-compression: 1
-            use-tls: 0
-            mysql-version: "mysql:8.0.18"
-          - bun-version: "0.6.13"
-            use-compression: 1
-            use-tls: 0
-            mysql-version: "mysql:8.0.22"
 
     name: Bun ${{ matrix.bun-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
