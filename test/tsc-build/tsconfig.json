@@ -14,6 +14,6 @@
     "noEmitOnError": true,
     "noEmit": true,
     "noUnusedParameters": true,
-    "isolatedModules": true,
+    "isolatedModules": true
   }
 }
