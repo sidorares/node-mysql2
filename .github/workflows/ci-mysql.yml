@@ -1,10 +1,9 @@
-name: CI - Linux
+name: CI - MySQL
 
 on:
   pull_request:
   push:
     branches: [ main ]
-
   workflow_dispatch:
 
 env:
@@ -18,16 +17,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [14.x, 16.x, 18.x, 20.x, "21.x"]
-        mysql-version: ["mysql:8.0.33"]
+        node-version: [20.x] # LTS
+        mysql-version: ["mysql:5.7", "mysql:8.0.18", "mysql:8.0.22", "mysql:8.0.33", "mysql:latest"]
         use-compression: [0, 1]
         use-tls: [0, 1]
         mysql_connection_url_key: [""]
-        # TODO - add mariadb to the matrix. currently few tests are broken due to mariadb incompatibilities
+        include:
+          ## MySQL 5.1: A number of tests does not work due to old sql syntax, just testing basic connection
+          - filter: "test-select-1"
+            mysql-version: "datagrip/mysql:5.1"
+            use-compression: 0
+            use-tls: 0
     env:
       MYSQL_CONNECTION_URL: ${{ secrets[matrix.mysql_connection_url_key] }}
 
-    name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }}${{ matrix.mysql_connection_url_key }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
+    name: MySQL ${{ matrix.mysql-version }}${{ matrix.mysql_connection_url_key }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
     steps:
       - uses: actions/checkout@v4
