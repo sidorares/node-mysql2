@@ -31,7 +31,7 @@ jobs:
     env:
       MYSQL_CONNECTION_URL: ${{ secrets[matrix.mysql_connection_url_key] }}
 
-    name: MySQL ${{ matrix.mysql-version }}${{ matrix.mysql_connection_url_key }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
+    name: ${{ matrix.mysql-version }}${{ matrix.mysql_connection_url_key }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
     steps:
       - uses: actions/checkout@v4
