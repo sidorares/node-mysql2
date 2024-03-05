@@ -9,6 +9,7 @@
     "lint:code": "eslint index.js promise.js index.d.ts promise.d.ts \"typings/**/*.ts\" \"lib/**/*.js\" \"test/**/*.{js,ts}\" \"benchmarks/**/*.js\"",
     "lint:docs": "eslint Contributing.md README.md",
     "test": "poku --debug --include=\"test/builtin-runner,test/unit,test/integration\"",
+    "test:bun": "poku --debug --platform=\"bun\" --include=\"test/builtin-runner,test/unit,test/integration\"",
     "test:tsc-build": "cd \"test/tsc-build\" && npx tsc -p \"tsconfig.json\"",
     "coverage-test": "c8 -r cobertura -r lcov -r text npm run test",
     "benchmark": "node ./benchmarks/benchmark.js",
