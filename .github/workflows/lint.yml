@@ -34,3 +34,9 @@ jobs:
 
       - name: Lint JS snippets in docs
         run: npm run lint:docs
+
+      - name: Lint Tests
+        run: npm run lint:tests
+
+      - name: Lint Typings
+        run: npm run lint:typings

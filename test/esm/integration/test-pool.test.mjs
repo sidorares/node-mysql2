@@ -1,6 +1,6 @@
 import { assert, test, describe } from 'poku';
 import mysql from '../../../index.js';
-import {describeOptions} from '../../common.test.cjs';
+import { describeOptions } from '../../common.test.cjs';
 
 const poolConfig = {}; // config: { connectionConfig: {} };
 
