@@ -1,5 +1,5 @@
 import { assert, describe, test } from 'poku';
-import common from '../../common.test.js';
+import common from '../../common.test.cjs';
 import PrepareCommand from '../../../lib/commands/prepare.js';
 import packets from '../../../lib/packets/index.js';
 

@@ -1,15 +1,15 @@
 import { EOL } from 'node:os';
 import { listFiles, assert } from 'poku';
 
-const invalidFiles: string[] = [];
+const invalidFiles = [];
 const message = [
   'Check for invalid file types found in restricted directories',
 ];
 
 const checkExtensions = (
-  dirs: string[],
-  allowedExtensions: RegExp,
-  ignoreList: RegExp = /\.DS_Store/
+  dirs,
+  allowedExtensions,
+  ignoreList = /\.DS_Store/,
 ) => {
   dirs.forEach((dir) => {
     const files = listFiles(dir, { filter: /\./ });
@@ -24,14 +24,12 @@ const checkExtensions = (
   });
 };
 
-checkExtensions(['docs', 'i18n'], /\.(mdx|json)$/);
-checkExtensions(['helpers', 'plugins'], /\.ts$/);
-checkExtensions(['test/unit', 'test/utils'], /\.test\.ts$/);
-checkExtensions(['src/components', 'src/pages'], /\.tsx$/);
-checkExtensions(['src/css'], /\.scss$/);
+checkExtensions(['test/unit', 'test/integration'], /\.test\.cjs$/);
+checkExtensions(['test/esm'], /\.test\.mjs$/);
+checkExtensions(['test/tsc-build'], /(\.test\.ts|tsconfig\.json)$/);
 
 assert.deepStrictEqual(
   invalidFiles.length,
   0,
-  Array.from(new Set(message)).join(EOL)
+  Array.from(new Set(message)).join(EOL),
 );

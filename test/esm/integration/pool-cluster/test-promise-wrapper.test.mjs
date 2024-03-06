@@ -1,6 +1,6 @@
 import { test, assert, describe } from 'poku';
 import { createPoolCluster } from '../../../../promise.js';
-import common from '../../../common.test.js';
+import common from '../../../common.test.cjs';
 
 (async () => {
   describe('Test pool cluster', common.describeOptions);

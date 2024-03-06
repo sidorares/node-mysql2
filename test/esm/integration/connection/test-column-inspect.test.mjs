@@ -1,6 +1,6 @@
 import { test, assert, describe, beforeEach } from 'poku';
 import util from 'node:util';
-import common from '../../../common.test.js';
+import common from '../../../common.test.cjs';
 
 (async () => {
   const connection = common.createConnection().promise();
