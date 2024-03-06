@@ -7,7 +7,7 @@ declare type ProcedureCallPacket<
 > = T extends RowDataPacket[]
   ? [T, ResultSetHeader]
   : T extends ResultSetHeader | OkPacket
-  ? ResultSetHeader
-  : [RowDataPacket[], ResultSetHeader] | ResultSetHeader;
+    ? ResultSetHeader
+    : [RowDataPacket[], ResultSetHeader] | ResultSetHeader;
 
 export { ProcedureCallPacket };

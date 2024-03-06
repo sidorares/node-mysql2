@@ -1,5 +1,11 @@
 {
-  "include": ["index.ts", "helpers.ts", "mysql", "promise", "strict-checks"],
+  "include": [
+    "index.test.ts",
+    "helpers.test.ts",
+    "mysql",
+    "promise",
+    "strict-checks"
+  ],
   "compilerOptions": {
     "target": "ES2016",
     "module": "CommonJS",
@@ -14,6 +20,6 @@
     "noEmitOnError": true,
     "noEmit": true,
     "noUnusedParameters": true,
-    "isolatedModules": true,
+    "isolatedModules": true
   }
 }

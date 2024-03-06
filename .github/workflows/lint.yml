@@ -4,28 +4,39 @@ on:
   pull_request:
   push:
     branches: [ master ]
+  workflow_dispatch:
 
 env:
-  NODE_VERSION: 16.x
+  NODE_VERSION: 20.x
 
 jobs:
   lint-js:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
       - name: Install ESLint + ESLint configs/plugins
         run: npm install --only=dev
+
       - name: Lint JS files
         run: npm run lint:code
+
       - name: Lint JS snippets in docs
         run: npm run lint:docs
+
+      - name: Lint Tests
+        run: npm run lint:tests
+
+      - name: Lint Typings
+        run: npm run lint:typings

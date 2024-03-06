@@ -3,8 +3,7 @@ import { listFiles, assert } from 'poku';
 
 const invalidFiles: string[] = [];
 const message = [
-  'Invalid file types found in restricted directories.',
-  'Please ensure that files in these directories have one of the following extensions:',
+  'Check for invalid file types found in restricted directories',
 ];
 
 const checkExtensions = (
