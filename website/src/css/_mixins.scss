@@ -1,0 +1,19 @@
+@mixin flex($direction: unset, $align: unset, $justify: unset, $wrap: unset) {
+  display: flex;
+
+  @if ($direction != unset) {
+    flex-direction: $direction;
+  }
+
+  @if ($align != unset) {
+    align-items: $align;
+  }
+
+  @if ($justify != unset) {
+    justify-content: $justify;
+  }
+
+  @if ($wrap != unset) {
+    flex-wrap: $wrap;
+  }
+}

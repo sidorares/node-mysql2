@@ -1,0 +1,217 @@
+---
+sidebar_position: 3
+tags: [Prepared Statements, Placeholders, Parameters, execute]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { FAQ } from '@site/src/components/FAQ';
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
+
+# DELETE
+
+## execute(sql, values)
+
+> **execute(sql: string, values: any[])**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+try {
+  const sql = 'DELETE FROM `users` WHERE `name` = ? LIMIT 1';
+  const values = ['Page'];
+
+  // highlight-next-line
+  const [result, fields] = await connection.execute(sql, values);
+
+  console.log(result);
+  console.log(fields);
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const sql = 'DELETE FROM `users` WHERE `name` = ? LIMIT 1';
+const values = ['Page'];
+
+connection.execute(sql, values, (err, result, fields) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(result);
+  console.log(fields);
+});
+```
+
+  </TabItem>
+</Tabs>
+
+- **result**: contains a [ResultSetHeader](#resultsetheader) object, which provides details about the operation executed by the server.
+- **fields** contains extra meta data about the operation, if available
+
+:::info
+The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
+<hr />
+
+## execute(options)
+
+> **execute(options: [QueryOptions](#queryoptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+try {
+  const sql = 'DELETE FROM `users` WHERE `name` = ? LIMIT 1';
+  const values = ['Page'];
+
+  // highlight-start
+  const [result, fields] = await connection.execute({
+    sql,
+    values,
+    // ... other options
+  });
+  // highlight-end
+
+  console.log(result);
+  console.log(fields);
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const sql = 'DELETE FROM `users` WHERE `name` = ? LIMIT 1';
+const values = ['Page'];
+
+connection.execute(
+  {
+    sql,
+    values,
+    // ... other options
+  },
+  (err, result, fields) => {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    console.log(result);
+    console.log(fields);
+  }
+);
+```
+
+  </TabItem>
+</Tabs>
+
+- **result**: contains a [ResultSetHeader](#resultsetheader) object, which provides details about the operation executed by the server.
+- **fields** contains extra meta data about the operation, if available
+
+:::info
+The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
+<hr />
+
+## execute(options, values)
+
+> **execute(options: [QueryOptions](#queryoptions), values: any[])**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+try {
+  const sql = 'DELETE FROM `users` WHERE `name` = ? LIMIT 1';
+  const values = ['Page'];
+
+  // highlight-start
+  const [result, fields] = await connection.execute(
+    {
+      sql,
+      // ... other options
+    },
+    values
+  );
+  // highlight-end
+
+  console.log(result);
+  console.log(fields);
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const sql = 'DELETE FROM `users` WHERE `name` = ? LIMIT 1';
+const values = ['Page'];
+
+connection.execute(
+  {
+    sql,
+    // ... other options
+  },
+  values,
+  (err, result, fields) => {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    console.log(result);
+    console.log(fields);
+  }
+);
+```
+
+  </TabItem>
+</Tabs>
+
+- **result**: contains a [ResultSetHeader](#resultsetheader) object, which provides details about the operation executed by the server.
+- **fields** contains extra meta data about the operation, if available
+
+:::info
+The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
+<hr />
+
+## Glossary
+
+### ResultSetHeader
+
+<FAQ title='ResultSetHeader Specification'>
+  <ExternalCodeEmbed
+    language='ts'
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/protocol/packets/ResultSetHeader.d.ts'
+    extractMethod='ResultSetHeader'
+    methodType='interface'
+  />
+</FAQ>
+
+### QueryOptions
+
+<FAQ title='QueryOptions Specification'>
+  <ExternalCodeEmbed
+    language='ts'
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/protocol/sequences/Query.d.ts'
+    extractMethod='QueryOptions'
+    methodType='interface'
+  />
+</FAQ>

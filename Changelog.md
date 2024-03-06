@@ -1,5 +1,70 @@
 # Changelog
 
+## [3.9.2](https://github.com/sidorares/node-mysql2/compare/v3.9.1...v3.9.2) (2024-02-26)
+
+
+### Bug Fixes
+
+* **stream:** premature close when it is paused ([#2416](https://github.com/sidorares/node-mysql2/issues/2416)) ([7c6bc64](https://github.com/sidorares/node-mysql2/commit/7c6bc642addb3e6fee1b1fdc84f83a72ff11ca4a))
+* **types:** expose TypeCast types ([#2425](https://github.com/sidorares/node-mysql2/issues/2425)) ([336a7f1](https://github.com/sidorares/node-mysql2/commit/336a7f1259c63d2dfe070fe400b141e89255844e))
+
+## [3.9.1](https://github.com/sidorares/node-mysql2/compare/v3.9.0...v3.9.1) (2024-01-29)
+
+
+### Bug Fixes
+
+* **types:** support encoding for string type cast ([#2407](https://github.com/sidorares/node-mysql2/issues/2407)) ([1dc2011](https://github.com/sidorares/node-mysql2/commit/1dc201144daceab0b12193ada0f13dbb25e917f6))
+
+## [3.9.0](https://github.com/sidorares/node-mysql2/compare/v3.8.0...v3.9.0) (2024-01-26)
+
+
+### Features
+
+* introduce typeCast for `execute` method ([#2398](https://github.com/sidorares/node-mysql2/issues/2398)) ([baaa92a](https://github.com/sidorares/node-mysql2/commit/baaa92a228d32012f7da07826674f7a736e3791d))
+
+## [3.8.0](https://github.com/sidorares/node-mysql2/compare/v3.7.1...v3.8.0) (2024-01-23)
+
+
+### Features
+
+* **perf:** cache iconv decoder ([#2391](https://github.com/sidorares/node-mysql2/issues/2391)) ([b95b3db](https://github.com/sidorares/node-mysql2/commit/b95b3dbe4bb34e36d0d1be6948e4d8a169d28eed))
+
+
+### Bug Fixes
+
+* **stream:** premature close when using `for await` ([#2389](https://github.com/sidorares/node-mysql2/issues/2389)) ([af47148](https://github.com/sidorares/node-mysql2/commit/af4714845603f70e3c1ef635f6c0750ff1987a9e))
+* The removeIdleTimeoutConnectionsTimer did not clean up when the … ([#2384](https://github.com/sidorares/node-mysql2/issues/2384)) ([18a44f6](https://github.com/sidorares/node-mysql2/commit/18a44f6a0a0b7ef41cc874d7a7bb2d3db83ea533))
+* **types:** add missing types to TypeCast ([#2390](https://github.com/sidorares/node-mysql2/issues/2390)) ([78ce495](https://github.com/sidorares/node-mysql2/commit/78ce4953e9c66d6cf40ffc2d252fa3701a2d4fe2))
+
+## [3.7.1](https://github.com/sidorares/node-mysql2/compare/v3.7.0...v3.7.1) (2024-01-17)
+
+
+### Bug Fixes
+
+* add condition which allows code in callback to be reachable ([#2376](https://github.com/sidorares/node-mysql2/issues/2376)) ([8d5b903](https://github.com/sidorares/node-mysql2/commit/8d5b903f5c24ef6378d4aa98d3fd4e13d39be4db))
+
+## [3.7.0](https://github.com/sidorares/node-mysql2/compare/v3.6.5...v3.7.0) (2024-01-07)
+
+
+### Features
+
+* **docs:** release documentation website ([#2339](https://github.com/sidorares/node-mysql2/issues/2339)) ([c0d77c0](https://github.com/sidorares/node-mysql2/commit/c0d77c02d2f4ad22b46a712d270fc2654d26de4e))
+
+## [3.6.5](https://github.com/sidorares/node-mysql2/compare/v3.6.4...v3.6.5) (2023-11-22)
+
+
+### Bug Fixes
+
+* add decodeuricomponent to parse uri encoded special characters in host, username, password and datbase keys ([#2277](https://github.com/sidorares/node-mysql2/issues/2277)) ([fe573ad](https://github.com/sidorares/node-mysql2/commit/fe573addffa64a842ae37994fcd8879cefa933f2))
+
+## [3.6.4](https://github.com/sidorares/node-mysql2/compare/v3.6.3...v3.6.4) (2023-11-21)
+
+
+### Bug Fixes
+
+* malformed FieldPacket ([#2280](https://github.com/sidorares/node-mysql2/issues/2280)) ([8831e09](https://github.com/sidorares/node-mysql2/commit/8831e092024f8d26fe9272adec8e1a5f115735aa))
+* move missing options to `ConnectionOptions ` ([#2288](https://github.com/sidorares/node-mysql2/issues/2288)) ([5cd7639](https://github.com/sidorares/node-mysql2/commit/5cd76396d962da070452800597a6f86829b35bd4))
+
 ## [3.6.3](https://github.com/sidorares/node-mysql2/compare/v3.6.2...v3.6.3) (2023-11-03)
 
 

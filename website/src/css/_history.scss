@@ -1,0 +1,88 @@
+details {
+  &.history {
+    // Reset Docusaurus styles
+    background-color: unset !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 1.5625rem !important;
+
+    summary {
+      @include flex(row, center);
+      gap: 0.35rem;
+      color: var(--history-summary-color);
+      font-weight: 500;
+
+      svg {
+        width: 1.125rem;
+        height: 1.125rem;
+        stroke: var(--history-summary-icon);
+      }
+    }
+
+    table {
+      width: 100%;
+
+      thead {
+        th {
+          text-align: left;
+        }
+      }
+
+      tbody {
+        tr {
+          td:nth-child(2) {
+            width: 100%;
+
+            .changes {
+              width: 100%;
+
+              section {
+                width: 100%;
+
+                code {
+                  background-color: var(--history-code-background);
+                }
+
+                & + section {
+                  padding-top: 0.46875rem;
+                  margin-top: 0.46875rem;
+                  border-top: var(--ifm-table-border-width) solid
+                    var(--history-separator);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+[data-theme='light'] {
+  details {
+    &.history {
+      --ifm-alert-background-color: #f9fafb;
+      --ifm-alert-border-color: var(--ifm-menu-color-active);
+      --ifm-table-border-color: #bcd7ff;
+      --history-summary-color: #3a85ba;
+      --history-summary-icon: var(--docusaurus-details-decoration-color);
+      --history-code-background: #ecf4ff;
+      --history-separator: var(--ifm-table-border-color);
+    }
+  }
+}
+
+[data-theme='dark'] {
+  details {
+    &.history {
+      --ifm-alert-background-color: #18181b;
+      --ifm-alert-border-color: #7f53bc;
+      --ifm-table-border-color: #4a267c;
+      --history-summary-color: #ddc7ff;
+      --history-summary-icon: var(--docusaurus-details-decoration-color);
+      --history-code-background: #382358;
+      --history-separator: var(--ifm-table-border-color);
+    }
+  }
+}

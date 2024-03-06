@@ -37,30 +37,20 @@ export interface PoolOptions extends ConnectionOptions {
    * is no limit to the number of queued connection requests. (Default: 0)
    */
   queueLimit?: number;
-
-  /**
-   * Enable keep-alive on the socket. (Default: true)
-   */
-  enableKeepAlive?: boolean;
-
-  /**
-   * If keep-alive is enabled users can supply an initial delay. (Default: 0)
-   */
-  keepAliveInitialDelay?: number;
 }
 
 declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
   getConnection(
     callback: (
       err: NodeJS.ErrnoException | null,
-      connection: PoolConnection
-    ) => any
+      connection: PoolConnection,
+    ) => any,
   ): void;
 
   releaseConnection(connection: PoolConnection | PromisePoolConnection): void;
 
   end(
-    callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any
+    callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any,
   ): void;
 
   on(event: string, listener: (...args: any[]) => void): this;

@@ -1,0 +1,147 @@
+---
+sidebar_position: 3
+tags: [query]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { FAQ } from '@site/src/components/FAQ';
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
+
+# DELETE
+
+The examples below also work for the [`execute`](/docs/examples/queries/prepared-statements/delete) method.
+
+## query(sql)
+
+> **query(sql: string)**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+try {
+  const sql = 'DELETE FROM `users` WHERE `name` = "Page" LIMIT 1';
+
+  // highlight-next-line
+  const [result, fields] = await connection.query(sql);
+
+  console.log(result);
+  console.log(fields);
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const sql = 'DELETE FROM `users` WHERE `name` = "Page" LIMIT 1';
+
+connection.query(sql, (err, result, fields) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(result);
+  console.log(fields);
+});
+```
+
+  </TabItem>
+</Tabs>
+
+- **result**: contains a [ResultSetHeader](#resultsetheader) object, which provides details about the operation executed by the server.
+- **fields** contains extra meta data about the operation, if available
+
+:::info
+The connection used for the query (`.query()`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
+<hr />
+
+## query(options)
+
+> **query(options: [QueryOptions](#queryoptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+try {
+  const sql = 'DELETE FROM `users` WHERE `name` = "Page" LIMIT 1';
+
+  // highlight-start
+  const [result, fields] = await connection.query({
+    sql,
+    // ... other options
+  });
+  // highlight-end
+
+  console.log(result);
+  console.log(fields);
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const sql = 'DELETE FROM `users` WHERE `name` = "Page" LIMIT 1';
+
+connection.query(
+  {
+    sql,
+    // ... other options
+  },
+  (err, result, fields) => {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    console.log(result);
+    console.log(fields);
+  }
+);
+```
+
+  </TabItem>
+</Tabs>
+
+- **result**: contains a [ResultSetHeader](#resultsetheader) object, which provides details about the operation executed by the server.
+- **fields** contains extra meta data about the operation, if available
+
+:::info
+The connection used for the query (`.query()`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
+<hr />
+
+## Glossary
+
+### ResultSetHeader
+
+<FAQ title='ResultSetHeader Specification'>
+  <ExternalCodeEmbed
+    language='ts'
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/protocol/packets/ResultSetHeader.d.ts'
+    extractMethod='ResultSetHeader'
+    methodType='interface'
+  />
+</FAQ>
+
+### QueryOptions
+
+<FAQ title='QueryOptions Specification'>
+  <ExternalCodeEmbed
+    language='ts'
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/protocol/sequences/Query.d.ts'
+    extractMethod='QueryOptions'
+    methodType='interface'
+  />
+</FAQ>

@@ -1,0 +1,512 @@
+---
+slug: /
+position: 1
+title: Quickstart
+description: MySQL client for Node.js with focus on performance
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { PageTitle } from '@site/src/components/PageTitle';
+
+<PageTitle title='MySQL2 | Quickstart' />
+
+[npm-image]: https://img.shields.io/npm/v/mysql2.svg
+[npm-url]: https://npmjs.org/package/mysql2
+[node-version-image]: https://img.shields.io/node/v/mysql2.svg
+[node-version-url]: https://nodejs.org/download/
+[downloads-image]: https://img.shields.io/npm/dm/mysql2.svg
+[downloads-url]: https://npmjs.org/package/mysql2
+[license-url]: https://github.com/sidorares/node-mysql2/blob/master/License
+[license-image]: https://img.shields.io/npm/l/mysql2.svg?maxAge=2592000
+[node-mysql]: https://github.com/mysqljs/mysql
+
+# MySQL2
+
+{/* <Logo className='logo' width={150} height={150} /> */}
+
+MySQL client for Node.js with focus on performance. Supports prepared statements, non-utf8 encodings, binary log protocol, compression, ssl much more.
+
+[![NPM Version][npm-image]][npm-url]
+[![NPM Downloads][downloads-image]][downloads-url]
+[![Node.js Version][node-version-image]][node-version-url]
+[![License][license-image]][license-url]
+
+## Installation
+
+MySQL2 is free from native bindings and can be installed on Linux, Mac OS or Windows without any issues.
+
+<Tabs>
+  <TabItem value='JavaScript' default>
+
+```bash
+npm install --save mysql2
+```
+
+  </TabItem>
+  <TabItem value='TypeScript'>
+
+```bash
+npm install --save mysql2
+npm install --save-dev @types/node
+```
+
+    For TypeScript documentation and examples, see [here](/docs/documentation/typescript-examples).
+
+  </TabItem>
+</Tabs>
+
+<hr />
+
+### First Query
+
+> To explore more queries examples, please visit the example sections [**Simple Queries**](/docs/examples/queries/simple-queries) and [**Prepared Statements**](/docs/examples/queries/prepared-statements).
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+// Get the client
+import mysql from 'mysql2/promise';
+
+// Create the connection to database
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+// A simple SELECT query
+try {
+  const [results, fields] = await connection.query(
+    'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45'
+  );
+
+  console.log(results); // results contains rows returned by server
+  console.log(fields); // fields contains extra meta data about results, if available
+} catch (err) {
+  console.log(err);
+}
+
+// Using placeholders
+try {
+  const [results] = await connection.query(
+    'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+    ['Page', 45]
+  );
+
+  console.log(results);
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+// Get the client
+const mysql = require('mysql2');
+
+// Create the connection to database
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+// A simple SELECT query
+connection.query(
+  'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
+  function (err, results, fields) {
+    console.log(results); // results contains rows returned by server
+    console.log(fields); // fields contains extra meta data about results, if available
+  }
+);
+
+// Using placeholders
+connection.query(
+  'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+  ['Page', 45],
+  function (err, results) {
+    console.log(results);
+  }
+);
+```
+
+</TabItem>
+</Tabs>
+
+<hr />
+
+### Using Prepared Statements
+
+With MySQL2 you also get the prepared statements. With prepared statements MySQL doesn't have to prepare plan for same query every time, this results in better performance. If you don't know why they are important, please check these discussions:
+
+- [How prepared statements can protect from SQL Injection attacks](https://stackoverflow.com/questions/8263371/how-can-prepared-statements-protect-from-sql-injection-attacks)
+
+MySQL2 provides `execute` helper which will prepare and query the statement. You can also manually prepare / unprepare statement with `prepare` / `unprepare` methods.
+
+> To explore more Prepared Statements and Placeholders examples, please visit the example section [**Prepared Statements**](/docs/examples/queries/prepared-statements).
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // create the connection to database
+  const connection = await mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+  });
+
+  // execute will internally call prepare and query
+  const [results, fields] = await connection.execute(
+    'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+    ['Rick C-137', 53]
+  );
+
+  console.log(results); // results contains rows returned by server
+  console.log(fields); // fields contains extra meta data about results, if available
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+const mysql = require('mysql2');
+
+// create the connection to database
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+// execute will internally call prepare and query
+connection.execute(
+  'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+  ['Rick C-137', 53],
+  function (err, results, fields) {
+    console.log(results); // results contains rows returned by server
+    console.log(fields); // fields contains extra meta data about results, if available
+  }
+);
+```
+
+  </TabItem>
+</Tabs>
+
+:::tip
+If you execute same statement again, it will be picked from a LRU cache which will save query preparation time and give better performance.
+:::
+
+<hr />
+
+### Using Connection Pools
+
+Connection pools help reduce the time spent connecting to the MySQL server by reusing a previous connection, leaving them open instead of closing when you are done with them.
+
+This improves the latency of queries as you avoid all of the overhead that comes with establishing a new connection.
+
+> To explore more Connection Pools examples, please visit the example section [**createPool**](/docs/examples/connections/create-pool).
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+// Create the connection pool. The pool-specific settings are the defaults
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
+});
+```
+
+    </TabItem>
+    <TabItem value='Callback'>
+
+```js
+const mysql = require('mysql2');
+
+// Create the connection pool. The pool-specific settings are the defaults
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
+});
+```
+
+  </TabItem>
+</Tabs>
+
+:::note
+The pool does not create all connections upfront but creates them on demand until the connection limit is reached.
+:::
+
+<hr />
+
+You can use the pool in the same way as connections (using `pool.query()` and `pool.execute()`):
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+try {
+  // For pool initialization, see above
+  const [rows, fields] = await pool.query('SELECT `field` FROM `table`');
+  // Connection is automatically released when query resolves
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+// For pool initialization, see above
+pool.query('SELECT `field` FROM `table`', function (err, rows, fields) {
+  // Connection is automatically released when query resolves
+});
+```
+
+  </TabItem>
+</Tabs>
+
+Alternatively, there is also the possibility of manually acquiring a connection from the pool and returning it later:
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+// For pool initialization, see above
+const conn = await pool.getConnection();
+
+// Do something with the connection
+await conn.query(/* ... */);
+
+// Don't forget to release the connection when finished!
+pool.releaseConnection(conn);
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+// For pool initialization, see above
+pool.getConnection(function (err, conn) {
+  // Do something with the connection
+  conn.query(/* ... */);
+
+  // Don't forget to release the connection when finished!
+  pool.releaseConnection(conn);
+});
+```
+
+  </TabItem>
+</Tabs>
+
+- Additionally, directly release the connection using the `connection` object:
+
+```js
+conn.release();
+```
+
+<hr />
+
+### Using Promise Wrapper
+
+MySQL2 also support Promise API. Which works very well with ES7 async await.
+
+```js
+import mysql from 'mysql2/promise';
+
+async function main() {
+  // create the connection
+  const connection = await mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+  });
+
+  // query database
+  const [rows, fields] = await connection.execute(
+    'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+    ['Morty', 14]
+  );
+}
+```
+
+MySQL2 use default `Promise` object available in scope. But you can choose which `Promise` implementation you want to use.
+
+```js
+// get the client
+import mysql from 'mysql2/promise';
+
+// get the promise implementation, we will use bluebird
+import bluebird from 'bluebird';
+
+// create the connection, specify bluebird as Promise
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  Promise: bluebird,
+});
+
+// query database
+const [rows, fields] = await connection.execute(
+  'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+  ['Morty', 14]
+);
+```
+
+MySQL2 also exposes a `.promise()` function on Pools, so you can create a promise/non-promise connections from the same pool.
+
+```js
+import mysql from 'mysql2';
+
+async function main() {
+  // create the pool
+  const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+  });
+
+  // now get a Promise wrapped instance of that pool
+  const promisePool = pool.promise();
+
+  // query database using promises
+  const [rows, fields] = await promisePool.query('SELECT 1');
+}
+```
+
+MySQL2 exposes a `.promise()` function on Connections, to "upgrade" an existing non-promise connection to use promise.
+
+```js {11}
+const mysql = require('mysql2');
+
+// create the connection
+const conn = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+conn
+  .promise()
+  .query('SELECT 1')
+  .then(([rows, fields]) => {
+    console.log(rows);
+  })
+  .catch(console.log)
+  .then(() => conn.end());
+```
+
+<hr />
+
+### Array Results
+
+If you have two columns with the same name, you might want to get results as an array rather than an object to prevent them from clashing. This is a deviation from the [Node MySQL][node-mysql] library.
+
+For example: `` SELECT 1 AS `foo`, 2 AS `foo` ``.
+
+You can enable this setting at either the connection level (applies to all queries), or at the query level (applies only to that specific query).
+
+#### Connection Level
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js {5}
+const conn = await mysql.createConnection({
+  host: 'localhost',
+  database: 'test',
+  user: 'root',
+  rowsAsArray: true,
+});
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js {5}
+const conn = mysql.createConnection({
+  host: 'localhost',
+  database: 'test',
+  user: 'root',
+  rowsAsArray: true,
+});
+```
+
+  </TabItem>
+</Tabs>
+
+#### Query Level
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js {4}
+try {
+  const [results, fields] = await conn.query({
+    sql: 'SELECT 1 AS `foo`, 2 AS `foo`',
+    rowsAsArray: true,
+  });
+
+  console.log(results); // in this query, results will be an array of arrays rather than an array of objects
+  console.log(fields); // fields are unchanged
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js {4}
+conn.query(
+  {
+    sql: 'SELECT 1 AS `foo`, 2 AS `foo`',
+    rowsAsArray: true,
+  },
+  function (err, results, fields) {
+    console.log(results); // in this query, results will be an array of arrays rather than an array of objects
+    console.log(fields); // fields are unchanged
+  }
+);
+```
+
+  </TabItem>
+</Tabs>
+
+<hr />
+
+:::tip Getting Help
+Need help? Ask your question on [Stack Overflow](https://stackoverflow.com/questions/tagged/mysql2) or [GitHub](https://github.com/sidorares/node-mysql2/discussions).
+If you've encountered an issue, please [file it on GitHub](https://github.com/sidorares/node-mysql2/issues).
+:::

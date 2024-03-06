@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x] # LTS
         mysql-version: ['8.0']
         use-compression: [0, 1]
         use-tls: [0, 1]
@@ -26,24 +26,20 @@ jobs:
     name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up MySQL
         uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: ${{ matrix.mysql-version }}
+
       - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-
-          
+          cache: 'npm'
+
       - name: Install npm dependencies
-        run: npm install
+        run: npm ci
       - name: Wait mysql server is ready
         run: node tools/wait-up.js
       - run: node tools/create-db.js

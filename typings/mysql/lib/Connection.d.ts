@@ -19,6 +19,7 @@ import { Connection as PromiseConnection } from '../../../promise.js';
 import { AuthPlugin } from './Auth.js';
 import { QueryableBase } from './protocol/sequences/QueryableBase.js';
 import { ExecutableBase } from './protocol/sequences/ExecutableBase.js';
+import { TypeCast } from './parsers/typeCast.js';
 
 export interface SslOptions {
   /**
@@ -172,26 +173,44 @@ export interface ConnectionOptions {
   infileStreamFactory?: (path: string) => Readable;
 
   /**
-   * Determines if column values should be converted to native JavaScript types. It is not recommended (and may go away / change in the future)
-   * to disable type casting, but you can currently do so on either the connection or query level. (Default: true)
+   * Determines if column values should be converted to native JavaScript types.
    *
-   * You can also specify a function (field: any, next: () => void) => {} to do the type casting yourself.
+   * @default true
    *
-   * WARNING: YOU MUST INVOKE the parser using one of these three field functions in your custom typeCast callback. They can only be called once.
+   * It is not recommended (and may go away / change in the future) to disable type casting, but you can currently do so on either the connection or query level.
    *
-   * field.string()
-   * field.buffer()
-   * field.geometry()
+   * ---
    *
-   * are aliases for
+   * You can also specify a function to do the type casting yourself:
+   * ```ts
+   * (field: Field, next: () => void) => {
+   *   return next();
+   * }
+   * ```
    *
-   * parser.parseLengthCodedString()
-   * parser.parseLengthCodedBuffer()
-   * parser.parseGeometryValue()
+   * ---
    *
-   * You can find which field function you need to use by looking at: RowDataPacket.prototype._typeCast
+   * **WARNING:**
+   *
+   * YOU MUST INVOKE the parser using one of these three field functions in your custom typeCast callback. They can only be called once:
+   *
+   * ```js
+   * field.string();
+   * field.buffer();
+   * field.geometry();
+   * ```
+
+   * Which are aliases for:
+   *
+   * ```js
+   * parser.parseLengthCodedString();
+   * parser.parseLengthCodedBuffer();
+   * parser.parseGeometryValue();
+   * ```
+   *
+   * You can find which field function you need to use by looking at `RowDataPacket.prototype._typeCast`.
    */
-  typeCast?: boolean | ((field: any, next: () => void) => any);
+  typeCast?: TypeCast;
 
   /**
    * A custom query format function
@@ -258,6 +277,16 @@ export interface ConnectionOptions {
    */
   rowsAsArray?: boolean;
 
+  /**
+   * Enable keep-alive on the socket. (Default: true)
+   */
+  enableKeepAlive?: boolean;
+
+  /**
+   * If keep-alive is enabled users can supply an initial delay. (Default: 0)
+   */
+  keepAliveInitialDelay?: number;
+
   charsetNumber?: number;
 
   compress?: boolean;
@@ -314,10 +343,14 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
       | RowDataPacket[]
       | OkPacket
       | OkPacket[]
-      | ResultSetHeader
+      | ResultSetHeader,
   >(
     sql: string,
-    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+    callback?: (
+      err: QueryError | null,
+      result: T,
+      fields: FieldPacket[],
+    ) => any,
   ): Query;
   static createQuery<
     T extends
@@ -325,11 +358,15 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
       | RowDataPacket[]
       | OkPacket
       | OkPacket[]
-      | ResultSetHeader
+      | ResultSetHeader,
   >(
     sql: string,
     values: any | any[] | { [param: string]: any },
-    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+    callback?: (
+      err: QueryError | null,
+      result: T,
+      fields: FieldPacket[],
+    ) => any,
   ): Query;
 
   beginTransaction(callback: (err: QueryError | null) => void): void;
@@ -340,7 +377,7 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
 
   changeUser(
     options: ConnectionOptions,
-    callback?: (err: QueryError | null) => void
+    callback?: (err: QueryError | null) => void,
   ): void;
 
   end(callback?: (err: QueryError | null) => void): void;
@@ -365,7 +402,7 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
 
   prepare(
     sql: string,
-    callback?: (err: QueryError | null, statement: PrepareStatementInfo) => any
+    callback?: (err: QueryError | null, statement: PrepareStatementInfo) => any,
   ): Prepare;
 
   unprepare(sql: string): PrepareStatementInfo;

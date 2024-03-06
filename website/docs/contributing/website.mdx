@@ -1,0 +1,250 @@
+---
+title: Documentation Site
+---
+
+import { FAQ } from '@site/src/components/FAQ';
+import { History } from '@site/src/components/History';
+import { Stability } from '@site/src/components/Stability';
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
+
+# Website Contributing Guidelines
+
+This website is built using [Docusaurus 3](https://docusaurus.io/), a modern static website generator.
+
+<hr />
+
+## Environment
+
+You will need these tools installed on your system:
+
+- [Node.js (18.x or higher)](https://nodejs.org/)
+
+<hr />
+
+## Development
+
+1. Fork the [MySQL2](https://github.com/sidorares/node-mysql2) repository.
+2. Download your forked repository locally. The website's workspace is the "_website_" directory in **node-mysql2** root.
+3. Create a new branch from `master` (optional).
+4. Run `cd website` to enter the website workspace.
+5. Run `npm ci` to install the dependecies from _package-lock.json_.
+6. Run `npm start` to starting the local development.
+
+> It will start a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+
+For **Docusaurus** complete documentation, please [see here](https://docusaurus.io/docs).
+
+<FAQ title='CLI example'>
+
+```bash
+git clone https://github.com/sidorares/node-mysql2.git
+git checkout -b website # optional
+cd /path-to/node-mysql2/website
+npm ci
+npm start
+```
+
+</FAQ>
+
+Documentation is auto-generated from **MDX** files placed in these directories:
+
+- _./docs/documentation_
+- _./docs/examples_
+- _./docs/faq_
+
+:::danger Caution
+Note that the website has its own _package.json_.
+
+Please, do not install dependencies for the website in **node-mysql2** root.
+:::
+
+<hr />
+
+## Extras Components
+
+Every extra component is thoroughly documented with complete typings descriptions.
+
+> [**Docusaurus Markdown Features:**](https://docusaurus.io/docs/markdown-features) The MDX compiler transforms Markdown files to React components, and allows you to use JSX in your Markdown content. This enables you to easily interleave React components within your content, and create delightful learning experiences.
+
+### History
+
+The `History` component displays version changes in a table format, listing version numbers alongside their changes.
+
+{/* prettier-ignore-start */}
+```tsx
+import { History } from '@site/src/components/History';
+
+<History
+  records={[
+    {
+      version: '1.0.0',
+      changes: ['Some change message.'],
+    },
+  ]}
+/>
+```
+{/* prettier-ignore-end */}
+
+:::tip
+You can also utilize React components in the `changes` option.
+:::
+
+<FAQ title='Example'>
+  <History
+    records={[
+      {
+        version: '1.0.0',
+        changes: ['Some change message.'],
+      },
+    ]}
+  />
+</FAQ>
+
+<hr />
+
+### Stability
+
+See the [Stability Badges](/docs/stability-badges) for more detais.
+
+{/* prettier-ignore-start */}
+```tsx
+import { Stability } from '@site/src/components/Stability';
+
+<Stability level={2} />
+<Stability level={2} message='Some message' />
+```
+{/* prettier-ignore-end */}
+
+:::tip
+You can also utilize React components in the `message` option.
+:::
+
+Available levels: `0`, `1`, `1.1`, `1.2`, `2` and `3`.
+
+<FAQ title='Example'>
+  <Stability level={2} />
+  <Stability level={2} message='Some message.' />
+</FAQ>
+
+<hr />
+
+### FAQ
+
+{/* prettier-ignore-start */}
+```tsx
+import { FAQ } from '@site/src/components/FAQ';
+
+<FAQ title='Title'>
+
+  > Some markdown (**MDX**) content.
+
+</FAQ>
+```
+{/* prettier-ignore-end */}
+
+:::tip
+
+- The **FAQ** component can be utilized in any section or page.
+- Code blocks are compatible and can be used within the **FAQ** component.
+
+:::
+
+<FAQ title='Example'>
+  <FAQ title='Title'>
+
+    > Some markdown (**MDX**) content.
+
+  </FAQ>
+</FAQ>
+
+<hr />
+
+### ExternalCodeEmbed
+
+{/* prettier-ignore-start */}
+```tsx
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
+
+<ExternalCodeEmbed
+  url='https://github.com/sidorares/node-mysql2/blob/75b05f0765c9edd0c0be8f18d85be05618770cca/.prettierrc'
+  language='json'
+/>
+
+<ExternalCodeEmbed
+  url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/tools/parse-row.js'
+  language='js'
+  extractMethod='parseC'
+  methodType='function'
+/>
+```
+{/* prettier-ignore-end */}
+
+<FAQ title='Example'>
+  <ExternalCodeEmbed
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/.prettierrc'
+    language='json'
+  />
+
+  <ExternalCodeEmbed
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/tools/parse-row.js'
+    language='js'
+    extractMethod='parseC'
+    methodType='function'
+  />
+</FAQ>
+
+<hr />
+
+## Running Tests
+
+```bash
+npm run test
+```
+
+<FAQ title='Check Prettier and ESLint rules for compliance'>
+
+```bash
+npm run lintcheck
+```
+
+- Included in the **GitHub Actions** workflow.
+
+</FAQ>
+<FAQ title='Check for typings errors'>
+
+<Stability
+  level={1}
+  message={
+    <>
+      Checks for <strong>MDX</strong> components are missing.
+    </>
+  }
+/>
+
+```bash
+npm run typecheck
+```
+
+- Included in the **GitHub Actions** workflow.
+
+</FAQ>
+<FAQ title='Clear and build the website'>
+
+```bash
+npm run clear
+npm run build
+```
+
+- Included in the **GitHub Actions** workflow.
+
+</FAQ>
+<FAQ title='Fix issues from Prettier and ESLint rules' open>
+
+```bash
+npm run lint
+```
+
+- To prevent lint issues, it is recommended to execute this command before creating your commit.
+- Not included in the **GitHub Actions** workflow.
+
+</FAQ>

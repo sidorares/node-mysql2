@@ -1,0 +1,59 @@
+section {
+  &.stability {
+    @include flex(column);
+    gap: 0.625rem;
+    width: 100%;
+    padding: 0.46875rem 0.625rem;
+    color: var(--prism-color);
+    margin-bottom: var(--ifm-leading);
+    box-shadow: var(--ifm-global-shadow-lw);
+    border-radius: var(--ifm-code-border-radius);
+    border: 0.0625rem solid var(--stability-border);
+    background-color: var(--stability-background);
+
+    a {
+      text-decoration: none !important;
+
+      header {
+        @include flex(row, center);
+        gap: 0.46875rem;
+
+        strong {
+          display: block;
+          padding: 0 0.46875rem;
+          border-radius: var(--ifm-code-border-radius);
+          font-size: 0.875rem;
+          background-color: var(--stability-title-background);
+          color: var(--stability-title-color);
+        }
+
+        span {
+          flex-grow: 1;
+          @include flex(row, center);
+          gap: 0.125rem;
+          font-weight: 600;
+          color: var(--stability-text);
+        }
+
+        svg {
+          width: 1.25rem;
+          height: 1.25rem;
+          stroke: var(--stability-text);
+        }
+      }
+    }
+
+    p {
+      width: 100%;
+      margin: 0;
+      padding-top: 0.3125rem;
+      border-top: 0.0625rem solid var(--stability-separator);
+      font-size: 0.91rem;
+      color: var(--stability-description);
+    }
+  }
+}
+
+// Themes
+@import 'light';
+@import 'dark';

@@ -1,0 +1,29 @@
+export type HistoryRecords = {
+  /** **Examples:**
+   *
+   * - `3.x`
+   * - `3.2.x`
+   * - `3.2.6`
+   */
+  version: string;
+  /**
+   * Examples:
+   *
+   * ---
+   *
+   * - string
+   * ```plain
+   * Indicate your changes
+   * ```
+   *
+   * ---
+   *
+   * - JSX
+   * ```tsx
+   * <>
+   *   <code>Method Name</code> and your changes
+   * </>
+   * ```
+   */
+  changes: (string | JSX.Element)[];
+};

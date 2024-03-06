@@ -1,0 +1,26 @@
+function handleCompressedPacket(packet) {
+  // eslint-disable-next-line consistent-this, no-invalid-this
+  const connection = this;
+  const deflatedLength = packet.readInt24();
+  const body = packet.readBuffer();
+
+  if (deflatedLength !== 0) {
+    connection.inflateQueue.push(task => {
+      zlib.inflate(body, (err, data) => {
+        if (err) {
+          connection._handleNetworkError(err);
+          return;
+        }
+        connection._bumpCompressedSequenceId(packet.numPackets);
+        connection._inflatedPacketsParser.execute(data);
+        task.done();
+      });
+    });
+  } else {
+    connection.inflateQueue.push(task => {
+      connection._bumpCompressedSequenceId(packet.numPackets);
+      connection._inflatedPacketsParser.execute(body);
+      task.done();
+    });
+  }
+}

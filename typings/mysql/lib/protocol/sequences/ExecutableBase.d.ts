@@ -1,10 +1,4 @@
-import {
-  OkPacket,
-  FieldPacket,
-  RowDataPacket,
-  ResultSetHeader,
-  ProcedureCallPacket,
-} from '../packets/index.js';
+import { FieldPacket, QueryResult } from '../packets/index.js';
 import {
   Query,
   QueryError,
@@ -13,70 +7,34 @@ import {
 } from './Query.js';
 
 export declare function ExecutableBase<T extends QueryableConstructor>(
-  Base?: T
+  Base?: T,
 ): {
   new (...args: any[]): {
-    execute<
-      T extends
-        | OkPacket
-        | ResultSetHeader
-        | ResultSetHeader[]
-        | RowDataPacket[]
-        | RowDataPacket[][]
-        | OkPacket[]
-        | ProcedureCallPacket
-    >(
+    execute<T extends QueryResult>(
       sql: string,
       callback?:
         | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
-        | undefined
+        | undefined,
     ): Query;
-    execute<
-      T extends
-        | OkPacket
-        | ResultSetHeader
-        | ResultSetHeader[]
-        | RowDataPacket[]
-        | RowDataPacket[][]
-        | OkPacket[]
-        | ProcedureCallPacket
-    >(
+    execute<T extends QueryResult>(
       sql: string,
       values: any,
       callback?:
         | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
-        | undefined
+        | undefined,
     ): Query;
-    execute<
-      T extends
-        | OkPacket
-        | ResultSetHeader
-        | ResultSetHeader[]
-        | RowDataPacket[]
-        | RowDataPacket[][]
-        | OkPacket[]
-        | ProcedureCallPacket
-    >(
+    execute<T extends QueryResult>(
       options: QueryOptions,
       callback?:
         | ((err: QueryError | null, result: T, fields?: FieldPacket[]) => any)
-        | undefined
+        | undefined,
     ): Query;
-    execute<
-      T extends
-        | OkPacket
-        | ResultSetHeader
-        | ResultSetHeader[]
-        | RowDataPacket[]
-        | RowDataPacket[][]
-        | OkPacket[]
-        | ProcedureCallPacket
-    >(
+    execute<T extends QueryResult>(
       options: QueryOptions,
       values: any,
       callback?:
         | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
-        | undefined
+        | undefined,
     ): Query;
   };
 } & T;

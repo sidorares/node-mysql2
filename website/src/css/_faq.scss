@@ -1,0 +1,39 @@
+details {
+  &.faq {
+    background-color: var(--faq-background);
+    border-color: var(--faq-border-color);
+
+    pre {
+      code {
+        border: 0.0625rem solid var(--faq-code-border-color);
+      }
+    }
+  }
+}
+
+[data-theme='light'] {
+  details {
+    &.faq {
+      --docusaurus-details-decoration-color: var(--ifm-color-primary);
+      --faq-background: #f8fcff;
+      --faq-border-color: var(--ifm-color-primary);
+      --faq-code-border-color: #add2eb;
+
+      code[class*='language-'],
+      pre[class*='language-'] {
+        background-color: #fbfdff !important;
+      }
+    }
+  }
+}
+
+[data-theme='dark'] {
+  details {
+    &.faq {
+      --docusaurus-details-decoration-color: #7230d6;
+      --faq-background: #151518;
+      --faq-border-color: #36284b;
+      --faq-code-border-color: #38225a;
+    }
+  }
+}

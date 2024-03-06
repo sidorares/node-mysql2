@@ -62,14 +62,14 @@ export function format(
   sql: string,
   values: any[],
   stringifyObjects?: boolean,
-  timeZone?: string
+  timeZone?: string,
 ): string;
 
 export function format(
   sql: string,
   values: any,
   stringifyObjects?: boolean,
-  timeZone?: string
+  timeZone?: string,
 ): string;
 
 export function raw(sql: string): {

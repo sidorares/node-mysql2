@@ -16,10 +16,14 @@ export class PrepareStatementInfo {
       | RowDataPacket[]
       | OkPacket
       | OkPacket[]
-      | ResultSetHeader
+      | ResultSetHeader,
   >(
     parameters: any | any[] | { [param: string]: any },
-    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
+    callback?: (
+      err: QueryError | null,
+      result: T,
+      fields: FieldPacket[],
+    ) => any,
   ): Query;
 }
 
@@ -53,11 +57,11 @@ declare class Prepare extends Sequence {
   on(event: 'error', listener: (err: QueryError) => any): this;
   on(
     event: 'fields',
-    listener: (fields: FieldPacket, index: number) => any
+    listener: (fields: FieldPacket, index: number) => any,
   ): this;
   on(
     event: 'result',
-    listener: (result: RowDataPacket | OkPacket, index: number) => any
+    listener: (result: RowDataPacket | OkPacket, index: number) => any,
   ): this;
   on(event: 'end', listener: () => any): this;
 }

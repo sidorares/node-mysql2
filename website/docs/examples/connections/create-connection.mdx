@@ -1,0 +1,395 @@
+---
+sidebar_position: 1
+tags: [createConnection, URI, SHA1, RDS, SSL, Socks]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { FAQ } from '@site/src/components/FAQ';
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
+
+# createConnection
+
+:::info
+For queries please see the [**Simple Queries**](/docs/examples/queries/simple-queries) and [**Prepared Statements**](/docs/examples/queries/prepared-statements) examples.
+:::
+
+## createConnection(connectionUri)
+
+> **createConnection(connectionUri: string)**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const connection = await mysql.createConnection(
+    'mysql://root:password@localhost:3306/test'
+  );
+  // highlight-end
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection(
+  'mysql://root:password@localhost:3306/test'
+);
+
+connection.addListener('error', (err) => {
+  console.log(err);
+});
+```
+
+  </TabItem>
+</Tabs>
+
+<hr />
+
+## createConnection(config)
+
+> **createConnection(config: [ConnectionOptions](#connectionoptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const connection = await mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+    // port: 3306,
+    // password: '',
+  });
+  // highlight-end
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  // port: 3306,
+  // password: '',
+});
+
+connection.addListener('error', (err) => {
+  console.log(err);
+});
+```
+
+  </TabItem>
+</Tabs>
+
+<hr />
+
+## createConnection(config) — SHA1
+
+> **createConnection(config: [ConnectionOptions](#connectionoptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const connection = await mysql.createConnection({
+    // ...
+    passwordSha1: Buffer.from(
+      '8bb6118f8fd6935ad0876a3be34a717d32708ffd',
+      'hex'
+    ),
+  });
+  // highlight-end
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  // ...
+  passwordSha1: Buffer.from('8bb6118f8fd6935ad0876a3be34a717d32708ffd', 'hex'),
+});
+
+connection.addListener('error', (err) => {
+  console.log(err);
+});
+```
+
+  </TabItem>
+</Tabs>
+
+<hr />
+
+## createConnection(config) — SSL
+
+> **createConnection(config: [ConnectionOptions](#connectionoptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const connection = await mysql.createConnection({
+    // ...
+    ssl: {
+      // key: fs.readFileSync('./certs/client-key.pem'),
+      // cert: fs.readFileSync('./certs/client-cert.pem')
+      ca: fs.readFileSync('./certs/ca-cert.pem'),
+    },
+  });
+  // highlight-end
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  // ...
+  ssl: {
+    // key: fs.readFileSync('./certs/client-key.pem'),
+    // cert: fs.readFileSync('./certs/client-cert.pem')
+    ca: fs.readFileSync('./certs/ca-cert.pem'),
+  },
+});
+
+connection.addListener('error', (err) => {
+  console.log(err);
+});
+```
+
+  </TabItem>
+  <TabItem value='certs/ca-cert.pem'>
+    <ExternalCodeEmbed
+      language='plan'
+      url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/test/fixtures/ssl/certs/ca.pem'
+    />
+
+    - See [ssl/certs](https://github.com/sidorares/node-mysql2/tree/master/test/fixtures/ssl/certs).
+
+  </TabItem>
+</Tabs>
+
+<hr />
+
+## createConnection(config) — RDS SSL
+
+> **createConnection(config: [ConnectionOptions](#connectionoptions))**
+
+You can use **Amazon RDS** string as value to ssl property to connect to **Amazon RDS** MySQL over SSL.
+
+In that case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used:
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const connection = await mysql.createConnection({
+    // ...
+    host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+    ssl: 'Amazon RDS',
+  });
+  // highlight-end
+} catch (err) {
+  console.log(err);
+}
+```
+
+:::tip Testing
+
+```js
+try {
+  const [res] = await connection.query('SHOW `status` LIKE "Ssl_cipher"');
+  await connection.end();
+
+  console.log(res);
+} catch (err) {
+  console.log(err);
+}
+```
+
+:::
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  // ...
+  host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+  ssl: 'Amazon RDS',
+});
+
+connection.addListener('error', (err) => {
+  console.log(err);
+});
+```
+
+:::tip Testing
+
+```js
+connectionquery('SHOW `status` LIKE "Ssl_cipher"', function (err, res) {
+  connection.end();
+
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(res);
+});
+```
+
+:::
+
+  </TabItem>
+</Tabs>
+
+### Related Links
+
+- **Issues**
+  - [#2130 — Update TLS certs for Amazon RDS instances](https://github.com/sidorares/node-mysql2/issues/2130)
+- **Pull Requests**
+  - [#2119 — fix: make startTls code compatible with Bun](https://github.com/sidorares/node-mysql2/pull/2119)
+  - [#2131 — Update Amazon RDS SSL CA cert](https://github.com/sidorares/node-mysql2/pull/2131)
+
+<hr />
+
+## createConnection(config) — Socks
+
+> **createConnection(config: [ConnectionOptions](#connectionoptions))**
+
+<Tabs>
+  <TabItem value='A.js'>
+
+```js
+const mysql = require('mysql2');
+const SocksConnection = require('socksjs');
+
+const socksProxy = new SocksConnection({ port: 3306 });
+// highlight-start
+const connection = mysql.createConnection({
+  stream: socksProxy,
+});
+// highlight-end
+
+connection.addListener('error', (err) => {
+  console.log(err);
+});
+```
+
+  </TabItem>
+  <TabItem value='B.js'>
+
+```js
+const mysql = require('mysql2');
+const SocksConnection = require('socksjs');
+
+// highlight-start
+const connection = mysql.createConnection({
+  debug: 1,
+  stream: function () {
+    return new SocksConnection({ port: 3306 });
+  },
+});
+// highlight-end
+
+connection.addListener('error', (err) => {
+  console.log(err);
+});
+```
+
+  </TabItem>
+</Tabs>
+
+:::tip Testing
+
+```js
+connection.execute('SELECT SLEEP(1.1) AS `www`', (err, rows, fields) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(rows, fields);
+});
+
+connection.execute('SELECT SLEEP(1) AS `qqq`', (err, rows, fields) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(rows, fields);
+});
+
+connection.execute('SELECT SLEEP(1) AS `qqq`', (err, rows, fields) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(rows, fields);
+});
+```
+
+:::
+
+<hr />
+
+## Glossary
+
+### ConnectionOptions
+
+<FAQ title='ConnectionOptions Specification'>
+  <ExternalCodeEmbed
+    language='ts'
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/Connection.d.ts'
+    extractMethod='ConnectionOptions'
+    methodType='interface'
+  />
+</FAQ>

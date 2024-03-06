@@ -1,0 +1,501 @@
+---
+sidebar_position: 2
+tags: [createPool, URI, SHA1, RDS, SSL, Socks]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { FAQ } from '@site/src/components/FAQ';
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
+
+# createPool
+
+:::info
+For queries please see the [**Simple Queries**](/docs/examples/queries/simple-queries) and [**Prepared Statements**](/docs/examples/queries/prepared-statements) examples.
+:::
+
+## createPool(connectionUri)
+
+> **createPool(connectionUri: string)**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const pool = mysql.createPool('mysql://root:password@localhost:3306/test');
+  const connection = await pool.getConnection();
+  // highlight-end
+  // ... some query
+
+  // highlight-next-line
+  connection.release();
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const pool = mysql.createPool('mysql://root:password@localhost:3306/test');
+
+pool.getConnection(function (err, connection) {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  // ... some query
+
+  connection.release();
+});
+```
+
+  </TabItem>
+</Tabs>
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
+:::
+
+<hr />
+
+## createPool(config)
+
+> **createPool(config: [PoolOptions](#pooloptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+    // port: 3306,
+    // password: '',
+  });
+  const connection = await pool.getConnection();
+  // highlight-end
+  // ... some query
+
+  // highlight-next-line
+  connection.release();
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  // port: 3306,
+  // password: '',
+});
+
+pool.getConnection(function (err, connection) {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  // ... some query
+
+  connection.release();
+});
+```
+
+  </TabItem>
+</Tabs>
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
+:::
+
+<hr />
+
+## createPool(config) — SHA1
+
+> **createPool(config: [PoolOptions](#pooloptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const pool = mysql.createPool({
+    // ...
+    passwordSha1: Buffer.from(
+      '8bb6118f8fd6935ad0876a3be34a717d32708ffd',
+      'hex'
+    ),
+  });
+  const connection = await pool.getConnection();
+  // highlight-end
+  // ... some query
+
+  // highlight-next-line
+  connection.release();
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const pool = mysql.createPool({
+  // ...
+  passwordSha1: Buffer.from('8bb6118f8fd6935ad0876a3be34a717d32708ffd', 'hex'),
+});
+
+pool.getConnection(function (err, connection) {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  // ... some query
+
+  connection.release();
+});
+```
+
+  </TabItem>
+</Tabs>
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
+:::
+
+<hr />
+
+## createPool(config) — SSL
+
+> **createPool(config: [PoolOptions](#pooloptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const pool = mysql.createPool({
+    // ...
+    ssl: {
+      // key: fs.readFileSync('./certs/client-key.pem'),
+      // cert: fs.readFileSync('./certs/client-cert.pem')
+      ca: fs.readFileSync('./certs/ca-cert.pem'),
+    },
+  });
+  const connection = await pool.getConnection();
+  // highlight-end
+  // ... some query
+
+  // highlight-next-line
+  connection.release();
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const pool = mysql.createPool({
+  // ...
+  ssl: {
+    // key: fs.readFileSync('./certs/client-key.pem'),
+    // cert: fs.readFileSync('./certs/client-cert.pem')
+    ca: fs.readFileSync('./certs/ca-cert.pem'),
+  },
+});
+
+pool.getConnection(function (err, connection) {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  // ... some query
+
+  connection.release();
+});
+```
+
+  </TabItem>
+    <TabItem value='certs/ca-cert.pem'>
+    <ExternalCodeEmbed
+      language='plan'
+      url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/test/fixtures/ssl/certs/ca.pem'
+    />
+
+    - See [ssl/certs](https://github.com/sidorares/node-mysql2/tree/master/test/fixtures/ssl/certs).
+
+  </TabItem>
+</Tabs>
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
+:::
+
+<hr />
+
+## createPool(config) — RDS SSL
+
+> **createPool(config: [PoolOptions](#pooloptions))**
+
+You can use **Amazon RDS** string as value to ssl property to connect to **Amazon RDS** MySQL over SSL.
+
+In that case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used:
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const pool = mysql.createPool({
+    // ...
+    host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+    ssl: 'Amazon RDS',
+  });
+  const connection = await pool.getConnection();
+  // highlight-end
+  // ... some query
+
+  // highlight-next-line
+  connection.release();
+} catch (err) {
+  console.log(err);
+}
+```
+
+:::tip Testing
+
+```js
+try {
+  const [res] = await connection.query('SHOW `status` LIKE "Ssl_cipher"');
+  await pool.end();
+
+  console.log(res);
+} catch (err) {
+  console.log(err);
+}
+```
+
+:::
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const pool = mysql.createPool({
+  // ...
+  host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+  ssl: 'Amazon RDS',
+});
+
+pool.getConnection(function (err, connection) {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  // ... some query
+
+  connection.release();
+});
+```
+
+:::tip Testing
+
+```js
+connectionquery('SHOW `status` LIKE "Ssl_cipher"', function (err, res) {
+  pool.end();
+
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(res);
+});
+```
+
+:::
+
+  </TabItem>
+</Tabs>
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
+:::
+
+### Related Links
+
+- **Issues**
+  - [#2130 — Update TLS certs for Amazon RDS instances](https://github.com/sidorares/node-mysql2/issues/2130)
+- **Pull Requests**
+  - [#2119 — fix: make startTls code compatible with Bun](https://github.com/sidorares/node-mysql2/pull/2119)
+  - [#2131 — Update Amazon RDS SSL CA cert](https://github.com/sidorares/node-mysql2/pull/2131)
+
+<hr />
+
+## createPool(config) — Socks
+
+> **createPool(config: [PoolOptions](#pooloptions))**
+
+<Tabs>
+  <TabItem value='A.js'>
+
+```js
+const mysql = require('mysql2');
+const SocksConnection = require('socksjs');
+
+const socksProxy = new SocksConnection({ port: 3306 });
+// highlight-start
+const pool = mysql.createPool({
+  stream: socksProxy,
+});
+// highlight-end
+```
+
+  </TabItem>
+  <TabItem value='B.js'>
+
+```js
+const mysql = require('mysql2');
+const SocksConnection = require('socksjs');
+
+// highlight-start
+const pool = mysql.createPool({
+  debug: 1,
+  stream: function () {
+    return new SocksConnection({ port: 3306 });
+  },
+});
+// highlight-end
+```
+
+  </TabItem>
+</Tabs>
+
+:::tip Testing
+
+```js
+pool.execute('SELECT SLEEP(1.1) AS `www`', (err, rows, fields) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(rows, fields);
+});
+
+pool.execute('SELECT SLEEP(1) AS `qqq`', (err, rows, fields) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(rows, fields);
+});
+
+pool.execute('SELECT SLEEP(1) AS `qqq`', (err, rows, fields) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(rows, fields);
+});
+```
+
+:::
+
+<hr />
+
+## Glossary
+
+### PoolOptions
+
+<blockquote>
+  **PoolOptions** extends all options from **ConnectionOptions**:
+
+  <FAQ title='ConnectionOptions Specification'>
+    <ExternalCodeEmbed
+      language='ts'
+      url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/Connection.d.ts'
+      extractMethod='ConnectionOptions'
+      methodType='interface'
+    />
+  </FAQ>
+</blockquote>
+
+<FAQ title='PoolOptions Specification'>
+  <ExternalCodeEmbed
+    language='ts'
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/Pool.d.ts'
+    extractMethod='PoolOptions'
+    methodType='interface'
+  />
+</FAQ>

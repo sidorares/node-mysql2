@@ -1,0 +1,99 @@
+@import 'mixins';
+
+:root {
+  --ifm-color-primary: #45aaf2;
+  --ifm-color-primary-dark: #3d98d1;
+  --ifm-color-primary-darker: #3788bf;
+  --ifm-color-primary-darkest: #2d6e99;
+  --ifm-color-primary-light: #66b5f8;
+  --ifm-color-primary-lighter: #80bff9;
+  --ifm-color-primary-lightest: #99c9fa;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: #21657e0d;
+  --ifm-table-stripe-background: #c6ddff !important;
+  --ifm-table-background: #fdfdfd7a !important;
+}
+
+// Dracula Theme
+[data-theme='dark'] {
+  --ifm-color-primary: #7a77ff;
+  --ifm-color-primary-dark: #5552ff;
+  --ifm-color-primary-darker: #433fff;
+  --ifm-color-primary-darkest: #0c07ff;
+  --ifm-color-primary-light: #9f9cff;
+  --ifm-color-primary-lighter: #b1afff;
+  --ifm-color-primary-lightest: #b1afff;
+  --docusaurus-highlighted-code-line-bg: #0c0d152b;
+  --ifm-table-stripe-background: #5e30a0 !important;
+  --ifm-table-background: transparent !important;
+}
+
+[data-theme='light'] {
+  code[class*='language-'],
+  pre[class*='language-'] {
+    background-color: #f9fafb !important;
+
+    .token {
+      &.comment {
+        color: #6e7781 !important;
+      }
+
+      &.string {
+        color: #0a3069 !important;
+      }
+
+      &.keyword {
+        color: #cf222e !important;
+      }
+
+      &.method {
+        color: #6639ba !important;
+      }
+
+      &.property,
+      &.number {
+        color: #0550ae !important;
+      }
+    }
+  }
+}
+
+code[class*='language-'],
+pre[class*='language-'] {
+  font-size: 0.85em;
+
+  .token {
+    &.comment {
+      font-size: 0.9em;
+      font-style: normal !important;
+    }
+  }
+}
+
+.navbar__brand {
+  margin-right: 0;
+}
+
+.navbar__manual--title {
+  padding: 0;
+  margin-right: 1rem;
+  font-weight: bold;
+}
+
+.navbar.navbar--fixed-top {
+  .navbar__item.dropdown.dropdown--hoverable {
+    svg {
+      display: none;
+    }
+  }
+}
+
+[title='<ExternalCodeEmbed'] {
+  visibility: hidden;
+}
+
+// Components
+@import './loading';
+@import './history';
+@import './stability/main';
+@import './faq';
