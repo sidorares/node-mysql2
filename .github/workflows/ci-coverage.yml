@@ -3,7 +3,7 @@ name: CI - Coverage
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
   workflow_dispatch:
 
@@ -21,8 +21,8 @@ jobs:
       matrix:
         node-version: [20.x]
         mysql-version: ["mysql:8.0.33"]
-        use-compression: [0]
-        use-tls: [0]
+        use-compression: [0, 1]
+        use-tls: [0, 1]
         mysql_connection_url_key: [""]
     env:
       MYSQL_CONNECTION_URL: ${{ secrets[matrix.mysql_connection_url_key] }}
@@ -31,13 +31,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Delete artifacts
-        uses: jimschubert/delete-artifacts-action@v1
-        with:
-          log_level: 'debug'
-          min_bytes: '0'
-          pattern: '\.xml'
 
       - name: Set up MySQL
         if: ${{ matrix.mysql-version }}
@@ -64,23 +57,3 @@ jobs:
 
       - name: Run tests
         run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run coverage-test
-
-      - name: get list of coverage files
-        run: echo "coverage-files=`find coverage | grep xml | paste -s -d\; -`"  >> $GITHUB_ENV
-
-      - name: ReportGenerator
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.2.2
-        with:
-          reports: "${{ env.coverage-files }}"
-          targetdir: '.'
-          reporttypes: 'Cobertura'
-
-      - name: Debug
-        run: cat Cobertura.xml
-
-      - name: Display coverage
-        uses: ewjoachim/coverage-comment-action@v1
-        continue-on-error: true
-        with:
-          COVERAGE_FILE: "Cobertura.xml"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
