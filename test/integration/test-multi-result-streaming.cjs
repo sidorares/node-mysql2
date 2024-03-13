@@ -1,8 +1,8 @@
+const { assert } = require('poku');
 const { createConnection } = require('../common.test.cjs');
-(async function() {
-  'use strict';
 
-  const { assert } = require('poku');
+(async () => {
+  'use strict';
 
   const
     conn = createConnection({ multipleStatements: true }),
