@@ -12,7 +12,7 @@ const { createConnection } = require('../common.test.cjs');
     sql2 =
       'select * from information_schema.columns order by table_schema, table_name limit 1;';
 
-  await conn.promise().query("set global max_allowed_packet=524288000");
+  await conn.promise().query('set global max_allowed_packet=524288000');
 
   const compare1 = await conn.promise().query(sql1);
   const compare2 = await conn.promise().query(sql2);
