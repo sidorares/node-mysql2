@@ -3,7 +3,7 @@ name: CI - Linux
 on:
   pull_request:
   push:
-    branches: [ main, fix/streaming-interface-should-provide-dataset-index ]
+    branches: [ main ]
 
   workflow_dispatch:
 
