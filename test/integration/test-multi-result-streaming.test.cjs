@@ -12,6 +12,8 @@ const { createConnection } = require('../common.test.cjs');
     sql2 =
       'select * from information_schema.columns order by table_schema, table_name limit 1;';
 
+  await conn.promise().query("set global max_allowed_packet=524288000");
+
   const compare1 = await conn.promise().query(sql1);
   const compare2 = await conn.promise().query(sql2);
 
@@ -49,5 +51,5 @@ const { createConnection } = require('../common.test.cjs');
   assert.deepEqual(captured1[0], compare1[0][0]);
   assert.deepEqual(captured2[0], compare2[0][0]);
 
-  process.exit(0);
+  conn.destroy();
 })();
