@@ -49,7 +49,8 @@
     ".": "./index.js",
     "./package.json": "./package.json",
     "./promise": "./promise.js",
-    "./promise.js": "./promise.js"
+    "./promise.js": "./promise.js",
+    "./lib/constants/types": "./lib/constants/types.js"
   },
   "engines": {
     "node": ">= 8.0"
