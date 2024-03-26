@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.3](https://github.com/sidorares/node-mysql2/compare/v3.9.2...v3.9.3) (2024-03-26)
+
+
+### Bug Fixes
+
+* **cache:** improve cache key serialization ([#2424](https://github.com/sidorares/node-mysql2/issues/2424)) ([0d54b0c](https://github.com/sidorares/node-mysql2/commit/0d54b0ca6498c823098426038162ef10df02c818))
+
 ## [3.9.2](https://github.com/sidorares/node-mysql2/compare/v3.9.1...v3.9.2) (2024-02-26)
 
 
