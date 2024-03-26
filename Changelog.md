@@ -5,7 +5,9 @@
 
 ### Bug Fixes
 
-* **cache:** improve cache key serialization ([#2424](https://github.com/sidorares/node-mysql2/issues/2424)) ([0d54b0c](https://github.com/sidorares/node-mysql2/commit/0d54b0ca6498c823098426038162ef10df02c818))
+* **security:** improve cache key formation ([#2424](https://github.com/sidorares/node-mysql2/issues/2424)) ([0d54b0c](https://github.com/sidorares/node-mysql2/commit/0d54b0ca6498c823098426038162ef10df02c818))
+  * Fixes a potential parser cache poisoning attack vulnerability reported by Vsevolod Kokorin (Slonser) of Solidlab
+* update Amazon RDS SSL CA cert ([#2131](https://github.com/sidorares/node-mysql2/pull/2131)) ([d9dccfd](https://github.com/sidorares/node-mysql2/commit/d9dccfd837d701f377574b85a05586be89015460))
 
 ## [3.9.2](https://github.com/sidorares/node-mysql2/compare/v3.9.1...v3.9.2) (2024-02-26)
 
@@ -320,36 +322,36 @@
 
 3.0.0-rc.1 ( 6/11/2021 )
   - fix .ping() return value signature #1650
-  - documentation: clarify `SUM()` and `AVG()` 
+  - documentation: clarify `SUM()` and `AVG()`
     return types difference with mysqljs/myql    #1649
   - misc: add release-please action              #1631, #1647
-  - fix: .end() callback is not called 
+  - fix: .end() callback is not called
     when connection is in closed state           #1642, #1638
   - typescript: getConnection typings fix        #1620
   - fix uncatchable exception                    #1359
   - add mysql_clear_password built in support    #1552
-  - typescript: typings unit test, variouts type 
+  - typescript: typings unit test, variouts type
     improvements, server protocol additions      #1610, #1610
-  - typescript: more complete way of adding 
+  - typescript: more complete way of adding
     typings for the Server module                #1606
-  - typescript, documentation: improve prepared 
+  - typescript, documentation: improve prepared
     typings statements                           #1493
-  - typescript: add type declarations for Prepare 
+  - typescript: add type declarations for Prepare
     & PrepareStatementInfo                       #1565
-  - fix: webpack projects no longer show warning 
+  - fix: webpack projects no longer show warning
     for cardinal dependency                      #1589
-  - typescript: accept Buffer and Buffer[] in 
+  - typescript: accept Buffer and Buffer[] in
     typings for key, cert, and ca                #1599
-  - fix: use rotatingXor instead of xor in 
+  - fix: use rotatingXor instead of xor in
     sha256_password plugin                       #1592, #1044
   - documentation: add Simplified Chinese        #1572
   - fix: add type as an alias to columnType      #1546, #1549
   - Update collation list up to MySQL 8.0.26     #1410
   - typescript: Add minVersion for ssl option.   #1517
   - Add support for multi-factor authentication  #1436
-  - typescript: add namedPlaceholders option to 
+  - typescript: add namedPlaceholders option to
     QueryOptions interface                       #1475
-  - fix: update how the ECONNRESET error is 
+  - fix: update how the ECONNRESET error is
     caught when connection already closing       #1438
 
 
@@ -357,13 +359,13 @@
   - no changes compared to 2.3.3-rc.0
 
 2.3.3-rc.0 ( 5/11/2021 )
-  - fix ColumnDefinition.db is broken when 
-    encoding is not utf-8                         #1423                 
+  - fix ColumnDefinition.db is broken when
+    encoding is not utf-8                         #1423
   - typeCast: Fix field.length to be number       #1427, #1426
   - initiall support for coverage reporting in CI #1425
   - fix performance regression for results with   #1445, #1432
-    large (300+) number of columns                
-                                                  
+    large (300+) number of columns
+
 
 2.3.2 ( 16/10/2021 )
   - fix regression causing typeCast + JSON field
@@ -372,34 +374,34 @@
 2.3.1 ( 15/10/2021 )
   - Update error codes up to mysql 8.0.26          #1411
   - perf: optimize Query.row call                  #1408
-  - build: update to node 12/14/16, migrate from 
+  - build: update to node 12/14/16, migrate from
     travis-ci and appveyor to GH actions, add perf
     benchmarking workflow                          #1406, #1399
   - perf: avoid leaking TextRow/BinaryRow object   #1402
-  - perf: optimize string decoding by removing 
+  - perf: optimize string decoding by removing
     the use of slice()                             #1401
   - perf: cache lazy-evaluated fields              #1400
   - fix: clear timeout after error                 #1390
-  - TS: adds the optional column changedRows to 
+  - TS: adds the optional column changedRows to
     ResultSetHeader                                #1377
 
 2.3.0 ( 5/08/2021 )
   - Add PoolCluster promise wrappers               #1369, #1363
   - support for connect and query timeouts         #1364
   - add missing query() method on PoolCluster      #1362
-  - fix incorrect parsing of passwords 
+  - fix incorrect parsing of passwords
     containing ":"                                 #1357
-  - handle errors generated by asynchronous 
+  - handle errors generated by asynchronous
     authentication plugins                         #1354
   - add proper handshake fatal error handling      #1352
-  - fix tests to work with the latest MySQL 
+  - fix tests to work with the latest MySQL
     server versions (up to 8.0.25)                 #1338
   - expose SQL query in errors                     #1295
   - typing and readme docs for rowAsArray          #1288
-  - allow unnamed placeholders even if the 
+  - allow unnamed placeholders even if the
     namedPlaceholders flag is enabled              #1251
   - better ESM support                             #1217
-  
+
 2.2.5 ( 21/09/2020 )
   - typings: add ResultSetHeader                   #1213
 
@@ -413,18 +415,18 @@
   - Add the authPlugins types to ConnectionOptions #1206
 
 2.2.1 ( 18/09/2020 )
-  - update package.json files entry to include 
+  - update package.json files entry to include
     type definition files                          #1205
 
 2.2.0 ( 18/09/2020 )
   - added TS type definitions                      #1204, #1028
-  - better error handling for invalid JSON row 
+  - better error handling for invalid JSON row
     responses                                      #915
   - fix for iconv-lite and some bundlers issues    #1187
   - error early when callbacks incorrectly passed  #1025
     to a promise wrapper
   - add support for sha256_password authentication #1153, #1152
-    plugin                                          
+    plugin
   - handle backpressure when loading data from     #1167
     file
   - Pass in the callback when ending the pool      #1170
@@ -445,26 +447,26 @@
   - added `enableKeepAlive` connection option      #1081, #683
 
 2.0.2
-  - Fix for clearing connection timeout state when 
+  - Fix for clearing connection timeout state when
     connection is re-attempted (failure or success) #1075
   - Avoid setting numeric config options to NaN     #1074, #721
   - PoolCluster#end now accepts a callback function #1065, #1063
 
 2.0.1
-  - Add missing authPlugins assignment in 
+  - Add missing authPlugins assignment in
     ConnectionConfig                                 #1052
-  - Fix 4.1 auth on old servers not 
+  - Fix 4.1 auth on old servers not
     supporting PLUGIN_AUTH                           #1062, #1054, #1053
 
 2.0.0
-  - Mysql8 caching_sha2_password - fix bug in 
-    authenticating when password is longer 
+  - Mysql8 caching_sha2_password - fix bug in
+    authenticating when password is longer
     than 19 chars                                     #1044 #1045
   - Support ConnectionConfig.flags as an array        #1003
 
 2.0.0-alpha1
-  - MAJOR: new `authPlugins` api replacing 
-    `authSwitchHandler`, added caching_sha2_password 
+  - MAJOR: new `authPlugins` api replacing
+    `authSwitchHandler`, added caching_sha2_password
     and mysql_native_password as default plugins.
     Added tests for mysql 8 and ssl. Mysql 8 server
     now supported with default settings.              #1021, #906, #991
@@ -476,16 +478,16 @@
   - fix pool ignoring namedPlaceholders config        #1022
 
 1.7.0
-  - Fix crashing when session info packet does not 
+  - Fix crashing when session info packet does not
     start with length-coded string                    #1004, #989
   - build: drop node 4 and 6 and add node v12         #997
-  - Add support for timezone connection option        #996, #15, #262, 
+  - Add support for timezone connection option        #996, #15, #262,
                                                       #642, #877, #888
-  - Make mysql2 compatible with minification          #992, #890, #899, 
+  - Make mysql2 compatible with minification          #992, #890, #899,
                                                       #890
   - fix serialisation of '00:00:00' time              #968, #967
   - Allow to set minVersion ssl option                #961, #960
-  - Fix a MaxListenersExceededWarning with stream 
+  - Fix a MaxListenersExceededWarning with stream
     local infile                                      #965
 
 1.6.5 (08/02/2019)
@@ -496,7 +498,7 @@
   - fix(debug): remove usage of callee                #882
 
 1.6.4 (08/11/2018)
- - revert changes breaking node v4 and add v4 to 
+ - revert changes breaking node v4 and add v4 to
    build matrix                                       #872, #873
 
 1.6.3 (06/10/2018)
@@ -516,7 +518,7 @@
  - Fixed `PromiseConnection.ping()` ignoring errors   #813
  - Added a uri parameter to the connection config     #815
  - Added a `.promise()` method shortcut on Pool,
-   Connection and PoolConnection                      #810 
+   Connection and PoolConnection                      #810
  - Added more functions from node-mysql:
    `createQuery`, `raw`, `escape`, `escapeId`,
    `format`                                           #799
@@ -532,7 +534,7 @@
  - use strich lru-cache version                        #751
  - bump sqlstring to 2.3.1
  - remove noAssert flag from Buffer functions          #748
- 
+
 1.5.2 (06/02/2018)
  - perf: Store Compiled Packet Parsers in a global
    cache                                               #722, #723
@@ -552,7 +554,7 @@
 1.5.0 (13/11/2017)
  - Added sqlMessage to Error callback object           #665
  - Normalized sqlState to a string of 5 chars          #667
-   as Mysql specifies it  
+   as Mysql specifies it
  - Remove destroyed promise pool connections from
    pool                                                #674, #672
  - Expose escape & format methods on connection pool   #669, #663
