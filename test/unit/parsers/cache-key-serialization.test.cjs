@@ -1,6 +1,6 @@
 'use strict';
 
-const assert = require('assert');
+const { assert } = require('poku');
 const _keyFromFields =
   require('../../../lib/parsers/parser_cache.js')._keyFromFields;
 
@@ -461,7 +461,8 @@ assert(
 const stringify = JSON.stringify;
 
 // Overwriting the native `JSON.stringify`
-JSON.stringify = (value, replacer, space = 8) => stringify(value, replacer, space);
+JSON.stringify = (value, replacer, space = 8) =>
+  stringify(value, replacer, space);
 
 // Testing twice all existent tests needs to return 7 keys, since two of them expects to be the same
 assert(
