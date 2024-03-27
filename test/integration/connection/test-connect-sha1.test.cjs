@@ -4,9 +4,9 @@ const mysql = require('../../../index.js');
 const auth = require('../../../lib/auth_41.js');
 const { assert } = require('poku');
 
-function authenticate(params, cb) {
-  const doubleSha = auth.doubleSha1('testpassword');
-  const isValid = auth.verifyToken(
+async function authenticate(params, cb) {
+  const doubleSha = await auth.doubleSha1('testpassword');
+  const isValid = await auth.verifyToken(
     params.authPluginData1,
     params.authPluginData2,
     params.authToken,

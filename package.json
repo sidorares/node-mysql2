@@ -85,5 +85,8 @@
     "prettier": "^3.0.0",
     "progress": "^2.0.3",
     "typescript": "^5.0.2"
+  },
+  "optionalDependencies": {
+    "pg-cloudflare": "1.x"
   }
 }
