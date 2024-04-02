@@ -81,9 +81,9 @@ Examples:
 
 Where possible, provide an error test case that your fix covers.
 
-#### Fixes
+#### Features
 
-Please ensure test cases to cover your feature.
+Please ensure test cases to cover your features.
 
 ---
 
