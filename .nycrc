@@ -1,0 +1,11 @@
+{
+  "all": true,
+  "include": ["index.js", "promise.js", "lib/**"],
+  "reporter": ["text", "lcov", "cobertura"],
+  "statements": 88,
+  "branches": 84,
+  "functions": 79,
+  "lines": 88,
+  "checkCoverage": true,
+  "clean": true
+}
