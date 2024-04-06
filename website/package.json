@@ -34,7 +34,7 @@
   "devDependencies": {
     "@docusaurus/eslint-plugin": "^3.2.1",
     "@docusaurus/module-type-aliases": "^3.2.0",
-    "@docusaurus/tsconfig": "^3.2.0",
+    "@docusaurus/tsconfig": "^3.2.1",
     "@docusaurus/types": "^3.2.0",
     "@types/node": "^20.12.2",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
