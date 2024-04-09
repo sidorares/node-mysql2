@@ -5,31 +5,33 @@ const connection = createConnection().promise();
 
 const sql = 'SELECT 9007199254740991+100 AS `total`';
 
-describe('supportBigNumbers Sanitization', describeOptions);
+describe('Text Parser: bigNumberStrings Sanitization', describeOptions);
 
 Promise.all([
   test(async () => {
     const [results] = await connection.query({
       sql,
       supportBigNumbers: true,
+      bigNumberStrings: true,
     });
 
     assert.strictEqual(
       typeof results[0].total,
       'string',
-      'Valid supportBigNumbers enabled',
+      'Valid bigNumberStrings enabled',
     );
   }),
   test(async () => {
     const [results] = await connection.query({
       sql,
       supportBigNumbers: false,
+      bigNumberStrings: false,
     });
 
     assert.strictEqual(
       typeof results[0].total,
       'number',
-      'Valid supportBigNumbers disabled',
+      'Valid bigNumberStrings disabled',
     );
   }),
 
@@ -37,24 +39,26 @@ Promise.all([
     const [results] = await connection.query({
       sql,
       supportBigNumbers: 'text',
+      bigNumberStrings: 'text',
     });
 
     assert.strictEqual(
       typeof results[0].total,
       'string',
-      'supportBigNumbers as a random string should be enabled',
+      'bigNumberStrings as a random string should be enabled',
     );
   }),
   test(async () => {
     const [results] = await connection.query({
       sql,
       supportBigNumbers: '',
+      bigNumberStrings: '',
     });
 
     assert.strictEqual(
       typeof results[0].total,
       'number',
-      'supportBigNumbers as an empty string should be disabled',
+      'bigNumberStrings as an empty string should be disabled',
     );
   }),
 ]).then(async () => {

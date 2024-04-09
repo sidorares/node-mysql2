@@ -1,8 +1,5 @@
-'use strict';
-
-const { assert } = require('poku');
-const _keyFromFields =
-  require('../../../lib/parsers/parser_cache.js')._keyFromFields;
+import { assert } from 'poku';
+import { _keyFromFields } from '../../../../lib/parsers/parser_cache.js';
 
 // Invalid
 const test1 = {
