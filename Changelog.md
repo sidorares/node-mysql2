@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.9.4](https://github.com/sidorares/node-mysql2/compare/v3.9.3...v3.9.4) (2024-04-09)
+
+
+### Bug Fixes
+
+* **docs:** improve the contribution guidelines ([#2552](https://github.com/sidorares/node-mysql2/issues/2552)) ([8a818ce](https://github.com/sidorares/node-mysql2/commit/8a818ce0f30654eba854759e6409c0ac856fc448))
+* **security:** improve results object creation ([#2574](https://github.com/sidorares/node-mysql2/issues/2574)) ([4a964a3](https://github.com/sidorares/node-mysql2/commit/4a964a3910a4b8de008696c554ab1b492e9b4691))
+* **security:** improve supportBigNumbers and bigNumberStrings sanitization ([#2572](https://github.com/sidorares/node-mysql2/issues/2572)) ([74abf9e](https://github.com/sidorares/node-mysql2/commit/74abf9ef94d76114d9a09415e28b496522a94805))
+
 ## [3.9.3](https://github.com/sidorares/node-mysql2/compare/v3.9.2...v3.9.3) (2024-03-26)
 
 
