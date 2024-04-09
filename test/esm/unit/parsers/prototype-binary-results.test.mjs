@@ -50,6 +50,13 @@ Promise.all([
       '2.00',
       'Ensure that the end-user is able to use prototypes (manually): toFixed',
     );
+
+    results[0].customProp = true;
+    assert.strictEqual(
+      results[0].customProp,
+      true,
+      'Ensure that the end-user is able to use custom props',
+    );
   }),
   test(async () => {
     const [result] = await connection.execute('SET @1 = 1;');
