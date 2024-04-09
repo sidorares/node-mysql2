@@ -105,6 +105,7 @@ exports.createConnection = function (args) {
     typeCast: args && args.typeCast,
     namedPlaceholders: args && args.namedPlaceholders,
     connectTimeout: args && args.connectTimeout,
+    nestTables: args && args.nestTables,
     ssl: (args && args.ssl) ?? config.ssl,
   };
 
