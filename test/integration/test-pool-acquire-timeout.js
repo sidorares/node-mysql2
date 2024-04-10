@@ -7,10 +7,10 @@ const common = require('../common');
 
 const poolConfig = common.getConfig();
 
-const ACQUITE_TIMEOUT = 500;
+const ACQUIRE_TIMEOUT = 500;
 const poolWithAcquireTimeout = new mysql.createPool({
   ...poolConfig,
-  acquireTimeout: ACQUITE_TIMEOUT,
+  acquireTimeout: ACQUIRE_TIMEOUT,
   connectionLimit: 2
 });
 
@@ -32,8 +32,8 @@ poolWithAcquireTimeout.getConnection((err, c1) => {
           'timeout of pool is full': () => {
             assert.equal(e3 !== null, true);
             assert.equal(!c3, true);
-            assert.equal(C3_DONE_AT - C3_STARTED_AT >= ACQUITE_TIMEOUT, true);
-            assert.equal(C3_DONE_AT - C3_STARTED_AT < ACQUITE_TIMEOUT * 2, true);
+            assert.equal(C3_DONE_AT - C3_STARTED_AT >= ACQUIRE_TIMEOUT, true);
+            assert.equal(C3_DONE_AT - C3_STARTED_AT < ACQUIRE_TIMEOUT * 2, true);
           },
           'ok if pool is not full': () => {
             assert.equal(e4 === null, true);
