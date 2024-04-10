@@ -75,6 +75,52 @@ function testErrors() {
     });
 }
 
+function testPoolAcquireTimeout() {
+
+  (async () => {
+    const ACQUIRE_TIMEOUT = 500;
+    const pool = createPool({
+      ...config,
+      connectionLimit: 2,
+      acquireTimeout: ACQUIRE_TIMEOUT,
+    });
+
+    const c1 = await pool.getConnection();
+
+    assert.ok(c1);
+
+    const c2 = await pool.getConnection();
+
+    assert.ok(c2);
+
+    const c3StartedAt = Date.now();
+    try {
+
+      await pool.getConnection();
+      assert.fail('should not reach here');
+    }
+    catch (e) {
+
+      assert.equal(Date.now() - c3StartedAt >= ACQUIRE_TIMEOUT, true);
+      assert.equal(e.message, 'Timeout acquiring connection');
+    }
+
+    c2.release();
+
+    const c4 = await pool.getConnection();
+
+    c1.release();
+    c4.release();
+
+    await pool.end();
+
+    assert.ok(c4, 'acquireTimeout is working correctly');
+
+  })().catch((err) => {
+    assert.fail(err);
+  });
+}
+
 function testObjParams() {
   let connResolved;
   createConnection(config)
@@ -473,6 +519,7 @@ testChangeUser();
 testConnectionProperties();
 testPoolConnectionDestroy();
 testPromiseLibrary();
+testPoolAcquireTimeout();
 
 process.on('exit', () => {
   assert.equal(doneCalled, true, 'done not called');
