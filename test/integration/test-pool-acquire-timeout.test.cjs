@@ -10,7 +10,7 @@ const ACQUIRE_TIMEOUT = 500;
 const pool = new mysql.createPool({
   ...poolConfig,
   acquireTimeout: ACQUIRE_TIMEOUT,
-  connectionLimit: 2
+  connectionLimit: 2,
 });
 
 pool.getConnection((err, c1) => {
@@ -29,7 +29,11 @@ pool.getConnection((err, c1) => {
       assert.equal(C3_DONE_AT - C3_STARTED_AT < ACQUIRE_TIMEOUT * 2, true);
 
       assert.notEqual(e3, null);
-      assert.equal(e3.message, 'Timeout acquiring connection', 'Acquire timeout error message is correct');
+      assert.equal(
+        e3.message,
+        'Timeout acquiring connection',
+        'Acquire timeout error message is correct',
+      );
       assert.equal(!c3, true);
       c1.release();
 

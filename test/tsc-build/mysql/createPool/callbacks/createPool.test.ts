@@ -9,8 +9,4 @@ import { uriAccess, access } from '../../baseConnection.test.js';
 
   uriPool = mysql.createPool(uriAccess);
   pool = mysql.createPool(access);
-  pool = mysql.createPool({
-    ...access,
-    acquireTimeout: 1000,
-  });
 })();

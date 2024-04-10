@@ -76,7 +76,6 @@ function testErrors() {
 }
 
 function testPoolAcquireTimeout() {
-
   (async () => {
     const ACQUIRE_TIMEOUT = 500;
     const pool = createPool({
@@ -95,12 +94,9 @@ function testPoolAcquireTimeout() {
 
     const c3StartedAt = Date.now();
     try {
-
       await pool.getConnection();
       assert.fail('should not reach here');
-    }
-    catch (e) {
-
+    } catch (e) {
       assert.equal(Date.now() - c3StartedAt >= ACQUIRE_TIMEOUT, true);
       assert.equal(e.message, 'Timeout acquiring connection');
     }
@@ -115,7 +111,6 @@ function testPoolAcquireTimeout() {
     await pool.end();
 
     assert.ok(c4, 'acquireTimeout is working correctly');
-
   })().catch((err) => {
     assert.fail(err);
   });
