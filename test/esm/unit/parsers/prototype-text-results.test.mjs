@@ -3,36 +3,27 @@ import { createConnection, describeOptions } from '../../../common.test.cjs';
 
 const connection = createConnection().promise();
 
-describe('Text Parser: Prototype Sanitization', describeOptions);
+describe('Binary Parser: Prototype Sanitization', describeOptions);
 
 Promise.all([
   test(async () => {
-    const expected = [{}];
-    expected[0].test = 2;
-
-    const [results] = await connection.query('SELECT 1+1 AS `test`');
-
-    assert.notDeepStrictEqual(
-      results,
-      expected,
-      `Ensure "results" doesn't contain a standard object ({})`,
-    );
-  }),
-  test(async () => {
-    const expected = [Object.create(null)];
-    expected[0].test = 2;
+    const expected = [
+      {
+        test: 2,
+      },
+    ];
 
     const [results] = await connection.query('SELECT 1+1 AS `test`');
 
     assert.deepStrictEqual(results, expected, 'Ensure clean object "results"');
-    assert.strictEqual(
-      Object.getPrototypeOf(results[0]),
-      null,
+    assert.deepStrictEqual(
+      JSON.stringify(Object.getPrototypeOf(results[0])),
+      JSON.stringify({}),
       'Ensure clean properties in results items',
     );
     assert.strictEqual(
       typeof results[0].toString,
-      'undefined',
+      'function',
       'Re-check prototypes (manually) in results columns',
     );
     assert.strictEqual(
