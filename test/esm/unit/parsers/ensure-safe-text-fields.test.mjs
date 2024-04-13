@@ -11,7 +11,7 @@ const blockedFields = nativeObjectProps.map((prop) => [{ name: prop }]);
 blockedFields.forEach((fields) => {
   try {
     TextRowParser(fields, {}, {});
-    assert.fail('An error were expected');
+    assert.fail('An error was expected');
   } catch (error) {
     assert.strictEqual(
       error.message,
