@@ -6,7 +6,9 @@ import { nativeObjectProps } from '../../../../lib/helpers.js';
 
 describe('Text Parser: Block Native Object Props', describeOptions);
 
-const blockedFields = Array.from(nativeObjectProps).map((prop) => [{ name: prop }]);
+const blockedFields = Array.from(nativeObjectProps).map((prop) => [
+  { name: prop },
+]);
 
 blockedFields.forEach((fields) => {
   try {
