@@ -12,12 +12,12 @@ const proto = Object.getPrototypeOf(emptyObject);
 const expected = Object.getOwnPropertyNames(proto).sort();
 
 assert.strictEqual(
-  nativeObjectProps.length,
+  nativeObjectProps.size,
   expected.length,
   'Ensure objects have the same length',
 );
 assert.deepStrictEqual(
-  nativeObjectProps,
+  Array.from(nativeObjectProps).sort(),
   expected,
   'Ensure long term object properties',
 );
