@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.5](https://github.com/sidorares/node-mysql2/compare/v3.9.4...v3.9.5) (2024-04-17)
+
+
+### Bug Fixes
+
+* revert breaking change in results creation ([#2591](https://github.com/sidorares/node-mysql2/issues/2591)) ([f7c60d0](https://github.com/sidorares/node-mysql2/commit/f7c60d01a49666130f51d3847ccfdd3d6e3d33e9))
+
 ## [3.9.4](https://github.com/sidorares/node-mysql2/compare/v3.9.3...v3.9.4) (2024-04-09)
 
 
