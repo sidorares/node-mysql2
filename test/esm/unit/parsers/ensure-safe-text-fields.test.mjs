@@ -17,7 +17,7 @@ blockedFields.forEach((fields) => {
   } catch (error) {
     assert.strictEqual(
       error.message,
-      `The field name (${srcEscape(fields[0].name)}) cannot be the same as the property of a native object.`,
+      `The field name (${srcEscape(fields[0].name)}) can't be the same as an object's private property.`,
       `Ensure safe ${fields[0].name}`,
     );
   }
