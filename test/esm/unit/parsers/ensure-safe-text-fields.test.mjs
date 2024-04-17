@@ -2,11 +2,11 @@ import { describe, assert } from 'poku';
 import { describeOptions } from '../../../common.test.cjs';
 import TextRowParser from '../../../../lib/parsers/text_parser.js';
 import { srcEscape } from '../../../../lib/helpers.js';
-import { nativeObjectProps } from '../../../../lib/helpers.js';
+import { privateObjectProps } from '../../../../lib/helpers.js';
 
 describe('Text Parser: Block Native Object Props', describeOptions);
 
-const blockedFields = Array.from(nativeObjectProps).map((prop) => [
+const blockedFields = Array.from(privateObjectProps).map((prop) => [
   { name: prop },
 ]);
 

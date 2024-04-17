@@ -14,7 +14,7 @@ Promise.all([
     ];
     const emptyObject = {};
     const proto = Object.getPrototypeOf(emptyObject);
-    const nativeObjectProps = Object.getOwnPropertyNames(proto);
+    const privateObjectProps = Object.getOwnPropertyNames(proto);
 
     const [results] = await connection.query('SELECT 1+1 AS `test`');
 
@@ -30,7 +30,7 @@ Promise.all([
       'Ensure clean properties in results items',
     );
 
-    nativeObjectProps.forEach((prop) => {
+    privateObjectProps.forEach((prop) => {
       assert(prop in results[0], `Ensure ${prop} exists`);
     });
 
