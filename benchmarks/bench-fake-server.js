@@ -39,10 +39,7 @@ function benchmarkSelects(n, cb) {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
     console.log(
-      ` rows: ${(numSelects * 1e9) / diff}} results/sec, ${(rowsPerQuery *
-        numSelects *
-        1e9) /
-        diff} rows/sec`
+      ` rows: ${(numSelects * 1e9) / diff}} results/sec, ${(rowsPerQuery * numSelects * 1e9) / diff} rows/sec`
     );
     if (n > 1) benchmarkSelects(n - 1, cb);
     else cb();
