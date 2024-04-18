@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.6](https://github.com/sidorares/node-mysql2/compare/v3.9.5...v3.9.6) (2024-04-18)
+
+
+### Bug Fixes
+
+* binary parser sometimes reads out of packet bounds when results contain null and typecast is false ([#2601](https://github.com/sidorares/node-mysql2/issues/2601)) ([705835d](https://github.com/sidorares/node-mysql2/commit/705835d06ff437cf0bf3169dac0a5f68002c4f87))
+
 ## [3.9.5](https://github.com/sidorares/node-mysql2/compare/v3.9.4...v3.9.5) (2024-04-17)
 
 
