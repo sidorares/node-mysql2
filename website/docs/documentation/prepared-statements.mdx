@@ -1,0 +1,96 @@
+---
+tags: [Prepared Statements, execute]
+---
+
+# Prepared Statements
+
+## Automatic creation, cached and re-used by connection
+
+Similar to `connection.query()`.
+
+```js
+connection.execute('select 1 + ? + ? as result', [5, 6], (err, rows) => {
+  // rows: [ { result: 12 } ]
+  // internally 'select 1 + ? + ? as result' is prepared first. On subsequent calls cached statement is re-used
+});
+
+// close cached statement for 'select 1 + ? + ? as result'. noop if not in cache
+connection.unprepare('select 1 + ? + ? as result');
+```
+
+Note that `connection.execute()` will cache the prepared statement for better performance, remove the cache with `connection.unprepare()` when you're done.
+
+## Manual prepare / execute
+
+Manually prepared statements doesn't comes with LRU cache and SHOULD be closed using `statement.close()` instead of `connection.unprepare()`.
+
+```js
+connection.prepare('select ? + ? as tests', (err, statement) => {
+  // statement.parameters - array of column definitions, length === number of params, here 2
+  // statement.columns - array of result column definitions. Can be empty if result schema is dynamic / not known
+  // statement.id
+  // statement.query
+
+  statement.execute([1, 2], (err, rows, columns) => {
+    // -> [ { tests: 3 } ]
+  });
+
+  // don't use connection.unprepare(), it won't work!
+  // note that there is no callback here. There is no statement close ack at protocol level.
+  statement.close();
+});
+```
+
+Note that you should not use statement after connection reset (`changeUser()` or disconnect). Statement scope is connection, you need to prepare statement for each new connection in order to use it.
+
+## Configuration
+
+`maxPreparedStatements` : We keep the cached statements in a [lru-cache](https://github.com/isaacs/node-lru-cache). Default size is `16000` but you can use this option to override it. Any statements that are dropped from cache will be `closed`.
+
+## Serialization of bind parameters
+
+The bind parameter values passed to `execute` are serialized JS -> MySQL as:
+
+- `null` -> `NULL`
+- `number` -> `DOUBLE`
+- `boolean` -> `TINY` (0 for false, 1 for true)
+- `object` -> depending on prototype:
+  - `Date` -> `DATETIME`
+  - `JSON` like object - `JSON`
+  - `Buffer` -> `VAR_STRING`
+- Other -> `VAR_STRING`
+
+Passing in `undefined` or a `function` will result in an error.
+
+## Prepared Statements Helper
+
+MySQL2 provides `execute` helper which will prepare and query the statement. You can also manually prepare / unprepare statement with `prepare` / `unprepare` methods.
+
+```js
+connection.execute(
+  'select ?+1 as qqq, ? as rrr, ? as yyy',
+  [1, null, 3],
+  (err, rows, fields) => {
+    console.log(err, rows, fields);
+    connection.execute(
+      'select ?+1 as qqq, ? as rrr, ? as yyy',
+      [3, null, 3],
+      (err, rows, fields) => {
+        console.log(err, rows, fields);
+        connection.unprepare('select ?+1 as qqq, ? as rrr, ? as yyy');
+        connection.execute(
+          'select ?+1 as qqq, ? as rrr, ? as yyy',
+          [3, null, 3],
+          (err, rows, fields) => {
+            console.log(err, rows, fields);
+          }
+        );
+      }
+    );
+  }
+);
+```
+
+## Examples
+
+For Prepared Statements examples, please see [here](/docs/examples/queries/prepared-statements).

@@ -1,0 +1,74 @@
+---
+slug: /documentation
+title: Introduction
+---
+
+import { PageTitle } from '@site/src/components/PageTitle';
+
+<PageTitle title='Documentation' />
+
+# Documentation
+
+[node-mysql]: https://github.com/mysqljs/mysql
+
+MySQL2 aims to be a drop in replacement for [Node MySQL][node-mysql].
+
+:::note
+_If you see any API incompatibilities with [Node MySQL][node-mysql], please report via github issue._
+:::
+
+Not only **MySQL2** offers better performance over [Node MySQL][node-mysql], we also support these additional features:
+
+- [Prepared Statements](/docs/documentation/prepared-statements)
+- [Promise Wrapper](/docs/documentation/promise-wrapper)
+- [Authentication Switch](/docs/documentation/authentication-switch)
+- [More Features](/docs/documentation/extras)
+- [MySQL Server](/docs/documentation/mysql-server)
+- Pooling
+- SSL
+- MySQL Compression
+- Binary Log Protocol Client
+
+<hr />
+
+## Examples
+
+Please check these [examples](/docs/examples) for **MySQL2**.
+
+<hr />
+
+## Known incompatibilities with [Node MySQL][node-mysql]
+
+- `zeroFill` flag is ignored in type conversion.
+  You need to check corresponding field's zeroFill flag and convert to string manually if this is of importance to you.
+
+- `DECIMAL` and `NEWDECIMAL` types always returned as `string` unless you pass this config option:
+
+```js
+{
+  decimalNumbers: true,
+}
+```
+
+:::note
+This option could lose precision on the number as Javascript Number is a Float!
+:::
+
+<hr />
+
+## Other Resources
+
+- [Wire protocol documentation](https://dev.mysql.com/doc/internals/en/client-server-protocol.html)
+- [Node MySQL][node-mysql] - Most popular node.js mysql client library
+- [node-mariasql](https://github.com/mscdex/node-mariasql/) - Bindings to libmariasql. One of the fastest clients
+- [node-libmysqlclient](https://github.com/Sannis/node-mysql-libmysqlclient) - Bindings to libmysqlclient
+- [go-mysql](https://github.com/siddontang/go-mysql) - MySQL Go client (prepared statements, binlog protocol, server)
+
+<hr />
+
+## Benchmarks
+
+- https://gist.github.com/sidorares/ffe9ee9c423f763e3b6b
+- `npm run benchmarks`
+- [node-mysql-benchmarks](https://github.com/mscdex/node-mysql-benchmarks)
+- try to run example [benchmarks](https://github.com/sidorares/node-mysql2/tree/master/benchmarks) on your system

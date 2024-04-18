@@ -1,0 +1,11 @@
+{
+  "sidebar.docs.category.Documentation": {
+    "message": "Documentação"
+  },
+  "sidebar.docs.category.Examples": {
+    "message": "Exemplos"
+  },
+  "sidebar.docs.category.Contributing": {
+    "message": "Contribuições"
+  }
+}

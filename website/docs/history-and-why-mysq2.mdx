@@ -1,0 +1,20 @@
+# History and Why MySQL2
+
+[node-mysql]: https://github.com/mysqljs/mysql
+[mysql-native]: https://github.com/sidorares/nodejs-mysql-native
+[mysqljs]: https://github.com/mysqljs
+
+MySQL2 project is a continuation of [MySQL-Native][mysql-native]. Protocol parser code was rewritten from scratch and api changed to match popular [Node MySQL][node-mysql]. MySQL2 team is working together with [Node MySQL][node-mysql] team to factor out shared code and move it under [mysqljs][mysqljs] organization.
+
+MySQL2 is mostly API compatible with [Node MySQL][node-mysql] and supports majority of features. MySQL2 also offers these additional features:
+
+- Faster / Better Performance
+- [Prepared Statements](/docs/documentation/prepared-statements)
+- MySQL Binary Log Protocol
+- [MySQL Server](/docs/documentation/mysql-server)
+- Extended support for Encoding and Collation
+- [Promise Wrapper](/docs/documentation/promise-wrapper)
+- Compression
+- SSL and [Authentication Switch](/docs/documentation/authentication-switch)
+- [Custom Streams](/docs/documentation/extras#connecting-using-custom-stream)
+- [Pooling](/docs/#using-connection-pools)

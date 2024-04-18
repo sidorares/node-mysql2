@@ -1,0 +1,19 @@
+# Prepared Statements
+
+MySQL2 provides `execute` helper which will prepare and query the statement.
+You can also manually prepare / unprepare statement with `prepare` / `unprepare` methods.
+
+See detailed documentaion in [Prepared Statements](/docs/documentation/prepared-statements).
+
+:::tip
+If you execute same statement again, it will be picked form a **LRU cache** which will save query preparation time and give better performance.
+:::
+
+<hr />
+
+Usage examples:
+
+- [x] [**INSERT**](/docs/examples/queries/prepared-statements/insert)
+- [x] [**SELECT**](/docs/examples/queries/prepared-statements/select)
+- [x] [**UPDATE**](/docs/examples/queries/prepared-statements/update)
+- [x] [**DELETE**](/docs/examples/queries/prepared-statements/delete)

@@ -1,0 +1,51 @@
+import { Stability } from '@site/src/components/Stability';
+
+# Stability Badges
+
+The **Stability Badges** are indications of a section's stability.
+
+The stability indices are as follows:
+
+<Stability
+  level={0}
+  message='The feature might generate warnings and does not assure backward compatibility.'
+/>
+
+<hr />
+
+**Experimental**: These features are not bound by semantic versioning. They may undergo non-backward compatible changes or be removed in future releases. Their use in production is discouraged.
+
+> Use caution with Experimental features, especially in libraries. Users might not expect changes from these unstable features. To reduce surprises, consider using a command-line flag for Experimental features.
+
+Experimental features are classified into stages:
+
+<Stability
+  level={1}
+  message='Experimental features at this stage are currently in development and prone to considerable changes.'
+/>
+
+<Stability
+  level={1.1}
+  message='Experimental features at this stage are approaching minimum viability.'
+/>
+
+<Stability
+  level={1.2}
+  message='Experimental features are close to reaching stability. Major changes are not expected, but they could still occur based on user feedback. Testing and feedback are important to ascertain the readiness of these features for stable classification.'
+/>
+
+<hr />
+
+<Stability
+  level={2}
+  message='Compatibility with the MySQL ecosystem is a high priority.'
+/>
+
+<hr />
+
+<Stability
+  level={3}
+  message='This feature, while not likely to be removed and still subject to semantic versioning, is not under active maintenance and other options are available.'
+/>
+
+- Features are classified as legacy instead of deprecated when they cause no harm and have widespread use in the MySQL ecosystem. It's unlikely that bugs in legacy features will be addressed.

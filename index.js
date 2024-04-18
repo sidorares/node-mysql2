@@ -12,8 +12,10 @@ exports.createConnection = function(opts) {
 
 exports.connect = exports.createConnection;
 exports.Connection = Connection;
+exports.ConnectionConfig = ConnectionConfig;
 
 const Pool = require('./lib/pool.js');
+const PoolCluster = require('./lib/pool_cluster.js');
 
 exports.createPool = function(config) {
   const PoolConfig = require('./lib/pool_config.js');
@@ -29,6 +31,8 @@ exports.createQuery = Connection.createQuery;
 
 exports.Pool = Pool;
 
+exports.PoolCluster = PoolCluster;
+
 exports.createServer = function(handler) {
   const Server = require('./lib/server.js');
   const s = new Server();
@@ -39,6 +43,7 @@ exports.createServer = function(handler) {
 };
 
 exports.PoolConnection = require('./lib/pool_connection');
+exports.authPlugins = require('./lib/auth_plugins');
 exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
 exports.format = SqlString.format;

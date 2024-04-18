@@ -1,0 +1,5 @@
+function handler(packet) {
+  //console.log(packet.length(), packet.sequenceId);
+  cc += packet.sequenceId;
+  count++;
+}

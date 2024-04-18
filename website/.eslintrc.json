@@ -1,0 +1,130 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "import", "react", "react-hooks"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:react-hooks/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:@docusaurus/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "import/no-cycle": ["error", { "maxDepth": "∞" }],
+    "import/no-unresolved": ["error", { "ignore": ["^@docusaurus/"] }],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "ImportDeclaration[source.value=/^\\./][source.value!=/\\.(js(on(c)?)?|(s)?css|svg|ico)$/]",
+        "message": "Local imports must have the explicit extension"
+      }
+    ],
+    "max-len": [
+      "error",
+      {
+        "code": 120,
+        "ignoreComments": true,
+        "ignoreTrailingComments": true,
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreRegExpLiterals": true
+      }
+    ],
+    "eol-last": ["error", "always"],
+    "eqeqeq": [2, "always"],
+    "no-var": 2,
+    "block-scoped-var": 2,
+    "no-async-promise-executor": 2,
+    "no-bitwise": [2, { "allow": ["~"] }],
+    "no-duplicate-imports": [2, { "includeExports": true }],
+    "no-eq-null": 2,
+    "no-multiple-empty-lines": [2, { "max": 1, "maxEOF": 0 }],
+    "no-template-curly-in-string": 2,
+    "no-unneeded-ternary": 2,
+    "quote-props": [2, "as-needed"],
+    "require-await": 2,
+    "rest-spread-spacing": [2, "never"],
+    "semi-spacing": 2,
+    "space-before-function-paren": [
+      2,
+      { "anonymous": "always", "named": "never", "asyncArrow": "always" }
+    ],
+    "space-unary-ops": 2,
+    "yoda": 2,
+    "no-const-assign": 2,
+    "no-extra-semi": 2,
+    "for-direction": 2,
+    "no-eval": 2,
+    "indent": ["error", 2, { "offsetTernaryExpressions": true }],
+    "no-empty": ["error", { "allowEmptyCatch": true }]
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/semi": ["error", "always"],
+        "@typescript-eslint/quotes": [
+          "error",
+          "single",
+          { "avoidEscape": true, "allowTemplateLiterals": true }
+        ],
+        "@typescript-eslint/no-empty-function": [
+          "error",
+          { "allow": ["arrowFunctions"] }
+        ],
+        "@typescript-eslint/indent": [
+          "error",
+          2,
+          { "offsetTernaryExpressions": true }
+        ]
+      }
+    },
+    {
+      "files": ["*.js"],
+      "parserOptions": {
+        "project": null
+      },
+      "rules": {
+        "semi": ["error", "always"],
+        "quotes": [
+          "error",
+          "single",
+          { "avoidEscape": true, "allowTemplateLiterals": true }
+        ],
+        "no-unused-vars": 2
+      }
+    },
+    {
+      "files": ["static/**/*"],
+      "rules": {
+        "import/no-unresolved": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "no-unused-vars": "off",
+        "no-bitwise": "off"
+      }
+    }
+  ],
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "extensions": [".js", ".ts", "*.jsx", ".tsx"]
+      }
+    }
+  }
+}

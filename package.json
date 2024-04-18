@@ -1,20 +1,22 @@
 {
   "name": "mysql2",
-  "version": "2.1.0",
+  "version": "3.9.6",
   "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
-  "directories": {
-    "example": "examples"
-  },
+  "typings": "typings/mysql/index",
   "scripts": {
     "lint": "npm run lint:docs && npm run lint:code",
-    "lint:code": "eslint index.js promise.js \"lib/**/*.js\" \"test/**/*.js\" \"benchmarks/**/*.js\"",
-    "lint:docs": "eslint Contributing.md \"documentation/**/*.md\" \"examples/*.js\"",
-    "test": "npm run lint && npm run test:raw",
-    "test:raw": "node ./test/run.js",
-    "benchmark": "./benchmarks/run-unit.js",
-    "prettier": "prettier --single-quote --trailing-comma none --write \"{lib,examples,test}/**/*.js\"",
-    "prettier:docs": "prettier-markdown README.md documentation/*",
+    "lint:code": "eslint index.js promise.js index.d.ts promise.d.ts \"typings/**/*.ts\" \"lib/**/*.js\" \"test/**/*.{js,ts}\" \"benchmarks/**/*.js\"",
+    "lint:docs": "eslint Contributing.md README.md",
+    "lint:typings": "npx prettier --check ./typings",
+    "lint:tests": "npx prettier --check ./test",
+    "test": "poku --debug --include=\"test/esm,test/unit,test/integration\"",
+    "test:bun": "poku --debug --platform=\"bun\" --include=\"test/esm,test/unit,test/integration\"",
+    "test:tsc-build": "cd \"test/tsc-build\" && npx tsc -p \"tsconfig.json\"",
+    "coverage-test": "c8 npm run test",
+    "benchmark": "node ./benchmarks/benchmark.js",
+    "prettier": "prettier --single-quote --trailing-comma none --write \"{lib,test}/**/*.js\"",
+    "prettier:docs": "prettier --single-quote --trailing-comma none --write README.md",
     "precommit": "lint-staged",
     "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check",
     "wait-port": "wait-on"
@@ -29,6 +31,7 @@
     "type": "git",
     "url": "https://github.com/sidorares/node-mysql2"
   },
+  "homepage": "https://sidorares.github.io/node-mysql2/docs",
   "keywords": [
     "mysql",
     "client",
@@ -36,42 +39,51 @@
   ],
   "files": [
     "lib",
+    "typings/mysql",
     "index.js",
-    "promise.js"
+    "index.d.ts",
+    "promise.js",
+    "promise.d.ts"
   ],
   "exports": {
-    "./promise": "./promise.js"
+    ".": "./index.js",
+    "./package.json": "./package.json",
+    "./promise": "./promise.js",
+    "./promise.js": "./promise.js"
   },
   "engines": {
     "node": ">= 8.0"
   },
-  "author": "Andrey Sidorov <sidorares@yandex.ru>",
+  "author": "Andrey Sidorov <andrey.sidorov@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "denque": "^1.4.1",
+    "denque": "^2.1.0",
     "generate-function": "^2.3.1",
-    "iconv-lite": "^0.5.0",
-    "long": "^4.0.0",
-    "lru-cache": "^5.1.1",
-    "named-placeholders": "^1.1.2",
+    "iconv-lite": "^0.6.3",
+    "long": "^5.2.1",
+    "lru-cache": "^8.0.0",
+    "named-placeholders": "^1.1.3",
     "seq-queue": "^0.0.5",
     "sqlstring": "^2.3.2"
   },
   "devDependencies": {
-    "assert-diff": "^3.0.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.42.1",
+    "@typescript-eslint/parser": "^5.42.1",
+    "assert-diff": "^3.0.2",
+    "benchmark": "^2.1.4",
+    "c8": "^9.0.0",
     "error-stack-parser": "^2.0.3",
-    "eslint": "^6.2.2",
-    "eslint-config-prettier": "^6.1.0",
+    "eslint": "^8.27.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-async-await": "0.0.0",
-    "eslint-plugin-markdown": "^1.0.0",
-    "husky": "^3.0.4",
-    "is-async-supported": "^1.2.0",
-    "lint-staged": "^10.0.3",
-    "portfinder": "^1.0.23",
-    "prettier": "^1.18.2",
-    "prettier-markdown": "^0.1.6",
+    "eslint-plugin-markdown": "^4.0.1",
+    "husky": "^9.0.2",
+    "lint-staged": "^15.0.1",
+    "poku": "^1.8.1",
+    "portfinder": "^1.0.28",
+    "prettier": "^3.0.0",
     "progress": "^2.0.3",
-    "urun": "0.0.8",
-    "utest": "0.0.8"
+    "typescript": "^5.0.2"
   }
 }

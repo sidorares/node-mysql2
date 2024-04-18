@@ -1,0 +1,4 @@
+/build
+/.docusaurus
+/.cache-loader
+# /**/*.mdx
