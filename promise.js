@@ -352,9 +352,7 @@ class PromisePool extends EventEmitter {
         if (err) {
           reject(err);
         } else {
-          resolve(
-            new PromisePoolConnection(this.pool, coreConnection, this.Promise)
-          );
+          resolve(new PromisePoolConnection(this.pool, coreConnection, this.Promise));
         }
       });
     });

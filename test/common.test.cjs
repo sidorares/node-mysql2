@@ -22,9 +22,7 @@ if (process.env.MYSQL_USE_TLS === '1') {
   };
 }
 
-const configURI = `mysql://${config.user}:${config.password}@${config.host}:${
-  config.port
-}/${config.database}`;
+const configURI = `mysql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
 
 exports.SqlString = require('sqlstring');
 exports.config = config;
