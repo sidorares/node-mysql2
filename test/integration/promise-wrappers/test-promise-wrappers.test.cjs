@@ -466,7 +466,7 @@ async function testCatchSyncUndefinedError() {
   try {
     await pool.execute('select 1+?', [undefined]);
   } catch (e) {
-    console.log('It would be great if I could catch the ball!');
+    assert.ok(true, 'sync exception caught');
   } finally {
     await pool.end();
     doneAwaitPool = true;
