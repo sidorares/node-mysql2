@@ -18,11 +18,14 @@ connection.query(
 );
 
 function benchmarkInsert(numLeft, callback) {
-  connection.query(`INSERT INTO ${table} SET title="${text}"`, err => {
-    if (err) throw err;
-    if (numLeft > 1) benchmarkInsert(numLeft - 1, callback);
-    else callback();
-  });
+  connection.query(
+    `INSERT INTO ${table} SET title="${text}"`,
+    err => {
+      if (err) throw err;
+      if (numLeft > 1) benchmarkInsert(numLeft - 1, callback);
+      else callback();
+    }
+  );
 }
 
 function benchmarkInserts(n, cb) {
@@ -48,8 +51,7 @@ function benchmarkParallelSelects(n, size, cb) {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
     console.log(
-      `${size} rows: ${(n * 1e9) / diff} results/sec, ${(size * n * 1e9) /
-        diff} rows/sec`
+      `${size} rows: ${(n * 1e9) / diff} results/sec, ${(size * n * 1e9) / diff} rows/sec`
     );
     cb();
   }

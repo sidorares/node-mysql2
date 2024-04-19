@@ -370,11 +370,11 @@ class PromisePool extends EventEmitter {
         'Callback function is not available with promise clients.'
       );
     }
-    return this.getConnection().then(async conn => {
+    return this.getConnection().then(conn => {
       try {
         const promise = conn.query(sql, args);
         conn.once('done', () => conn.release());
-        return await promise;
+        return promise;
       } catch (e) {
         conn.release();
         throw e;
@@ -388,11 +388,11 @@ class PromisePool extends EventEmitter {
         'Callback function is not available with promise clients.'
       );
     }
-    return this.getConnection().then(async conn => {
+    return this.getConnection().then(conn => {
       try {
         const promise = conn.execute(sql, args);
         conn.once('done', () => conn.release());
-        return await promise;
+        return promise;
       } catch (e) {
         conn.release();
         throw e;
