@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.7](https://github.com/sidorares/node-mysql2/compare/v3.9.6...v3.9.7) (2024-04-21)
+
+
+### Bug Fixes
+
+* **security:** sanitize timezone parameter value to prevent code injection ([#2608](https://github.com/sidorares/node-mysql2/issues/2608)) ([7d4b098](https://github.com/sidorares/node-mysql2/commit/7d4b098c7e29d5a6cb9eac2633bfcc2f0f1db713))
+
 ## [3.9.6](https://github.com/sidorares/node-mysql2/compare/v3.9.5...v3.9.6) (2024-04-18)
 
 
