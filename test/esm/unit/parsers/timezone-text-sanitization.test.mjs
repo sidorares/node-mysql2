@@ -7,7 +7,7 @@ describe('Text Parser: timezone Sanitization', describeOptions);
 
 Promise.all([
   test(async () => {
-    process.env.TEST_ENV_VALUE = "secure";
+    process.env.TEST_ENV_VALUE = 'secure';
     await connection.query({
       sql: 'SELECT NOW()',
       timezone: `'); process.env.TEST_ENV_VALUE = "not so much"; //`,
