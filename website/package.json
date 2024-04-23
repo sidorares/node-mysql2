@@ -37,7 +37,7 @@
     "@docusaurus/tsconfig": "^3.2.1",
     "@docusaurus/types": "^3.2.0",
     "@types/node": "^20.12.2",
-    "@typescript-eslint/eslint-plugin": "^7.7.0",
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.0",
     "eslint": "^8.57.0",
     "eslint-import-resolver-typescript": "^3.6.1",
