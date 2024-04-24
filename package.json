@@ -1,6 +1,6 @@
 {
   "name": "mysql2",
-  "version": "3.9.2",
+  "version": "3.9.7",
   "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
   "typings": "typings/mysql/index",
@@ -13,7 +13,7 @@
     "test": "poku --debug --include=\"test/esm,test/unit,test/integration\"",
     "test:bun": "poku --debug --platform=\"bun\" --include=\"test/esm,test/unit,test/integration\"",
     "test:tsc-build": "cd \"test/tsc-build\" && npx tsc -p \"tsconfig.json\"",
-    "coverage-test": "c8 -r cobertura -r lcov -r text npm run test",
+    "coverage-test": "c8 npm run test",
     "benchmark": "node ./benchmarks/benchmark.js",
     "prettier": "prettier --single-quote --trailing-comma none --write \"{lib,test}/**/*.js\"",
     "prettier:docs": "prettier --single-quote --trailing-comma none --write README.md",

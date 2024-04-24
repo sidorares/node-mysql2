@@ -1,0 +1,12 @@
+{
+  "all": true,
+  "include": ["index.js", "promise.js", "lib/**/*.js"],
+  "exclude": ["mysqldata/**", "node_modules/**", "test/**"],
+  "reporter": ["text", "lcov", "cobertura"],
+  "statements": 88,
+  "branches": 84,
+  "functions": 77,
+  "lines": 88,
+  "checkCoverage": true,
+  "clean": true
+}
