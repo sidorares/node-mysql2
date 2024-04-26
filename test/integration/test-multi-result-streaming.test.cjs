@@ -1,16 +1,16 @@
+'use strict';
+
 const { assert } = require('poku');
 const { createConnection } = require('../common.test.cjs');
 
 (async () => {
-  'use strict';
-
-  const conn = createConnection({ multipleStatements: true }),
-    captured1 = [],
-    captured2 = [],
-    sql1 =
-      'select * from information_schema.columns order by table_schema, table_name, column_name limit 1;',
-    sql2 =
-      'select * from information_schema.columns order by table_schema, table_name limit 1;';
+  const conn = createConnection({ multipleStatements: true });
+  const captured1 = [];
+  const captured2 = [];
+  const sql1 =
+    'select * from information_schema.columns order by table_schema, table_name, column_name limit 1;';
+  const sql2 =
+    'select * from information_schema.columns order by table_schema, table_name, ordinal_position limit 1;';
 
   await conn.promise().query('set global max_allowed_packet=524288000');
 
@@ -51,5 +51,5 @@ const { createConnection } = require('../common.test.cjs');
   assert.deepEqual(captured1[0], compare1[0][0]);
   assert.deepEqual(captured2[0], compare2[0][0]);
 
-  conn.destroy();
+  conn.end();
 })();
