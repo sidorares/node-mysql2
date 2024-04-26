@@ -6,7 +6,7 @@
   "typings": "typings/mysql/index",
   "scripts": {
     "lint": "npm run lint:docs && npm run lint:code",
-    "lint:code": "eslint index.js promise.js index.d.ts promise.d.ts \"typings/**/*.ts\" \"lib/**/*.js\" \"test/**/*.{js,ts}\" \"benchmarks/**/*.js\"",
+    "lint:code": "eslint index.js promise.js index.d.ts promise.d.ts \"typings/**/*.ts\" \"lib/**/*.js\" \"test/**/*.{js,cjs,mjs,ts}\" \"benchmarks/**/*.js\"",
     "lint:docs": "eslint Contributing.md README.md",
     "lint:typings": "npx prettier --check ./typings",
     "lint:tests": "npx prettier --check ./test",
