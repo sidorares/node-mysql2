@@ -43,7 +43,7 @@
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-react": "^7.34.1",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-hooks": "^4.6.1",
     "eslint-plugin-react-refresh": "^0.4.6",
     "packages-update": "^1.2.1",
     "poku": "^1.9.3",
