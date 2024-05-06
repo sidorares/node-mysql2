@@ -19,8 +19,8 @@
     "update": "npx npu; npm i; npm run lint"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.2.0",
-    "@docusaurus/preset-classic": "^3.2.1",
+    "@docusaurus/core": "^3.3.2",
+    "@docusaurus/preset-classic": "^3.3.2",
     "@easyops-cn/docusaurus-search-local": "^0.40.1",
     "@mdx-js/react": "^3.0.1",
     "clsx": "^2.1.1",
@@ -32,11 +32,11 @@
     "sass": "^1.76.0"
   },
   "devDependencies": {
-    "@docusaurus/eslint-plugin": "^3.3.0",
+    "@docusaurus/eslint-plugin": "^3.3.2",
     "@docusaurus/module-type-aliases": "^3.3.2",
     "@docusaurus/tsconfig": "^3.3.2",
     "@docusaurus/types": "^3.3.2",
-    "@types/node": "^20.12.2",
+    "@types/node": "^20.12.10",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@typescript-eslint/parser": "^7.8.0",
     "eslint": "^8.57.0",
