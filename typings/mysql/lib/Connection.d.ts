@@ -327,6 +327,11 @@ export interface ConnectionOptions {
     [key: string]: AuthPlugin;
   };
 
+  /**
+   * Force JSON to be returned as string
+   *
+   * (Default: false)
+   */
   jsonStrings?: boolean;
 }
 
