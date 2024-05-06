@@ -19,7 +19,7 @@
     "update": "npx npu; npm i; npm run lint"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.2.0",
+    "@docusaurus/core": "^3.3.2",
     "@docusaurus/preset-classic": "^3.2.1",
     "@easyops-cn/docusaurus-search-local": "^0.40.1",
     "@mdx-js/react": "^3.0.1",
