@@ -327,7 +327,7 @@ export interface ConnectionOptions {
     [key: string]: AuthPlugin;
   };
 
-  useStaticParser?: boolean;
+  disableEval?: boolean;
 }
 
 declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
