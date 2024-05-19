@@ -1,6 +1,6 @@
 ##
 
-https://mysqlserverteam.com/mysql-8-0-4-new-default-authentication-plugin-caching_sha2_password/
+https://dev.mysql.com/doc/refman/8.0/en/caching-sha2-pluggable-authentication.html
 
 ```js
 const mysql = require('mysql');
