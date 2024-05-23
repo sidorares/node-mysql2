@@ -48,7 +48,7 @@
     "packages-update": "^1.2.1",
     "poku": "^1.13.0",
     "prettier": "^3.2.5",
-    "tsx": "^4.10.5",
+    "tsx": "^4.11.0",
     "typescript": "^5.4.5"
   },
   "browserslist": {
