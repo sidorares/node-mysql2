@@ -1,4 +1,4 @@
-import { createRequire } from 'node:module'
+import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const mysql = require('../index.js');
 
@@ -16,11 +16,11 @@ connection.on('error', (err) => {
 });
 
 connection.on('connect', () => {
-    connection.query('SELECT 1 + 1 AS solution', (err, rows) => {
+  connection.query('SELECT 1 + 1 AS solution', (err) => {
     if (err) {
-        console.error(err);
-        Deno.exit(1);
+      console.error(err);
+      Deno.exit(1);
     }
     connection.end();
-    });
+  });
 });

@@ -114,7 +114,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        deno-version: [latest, canary]
+        deno-version: [v1.43.6, canary]
         mysql-version: ["mysql:8.0.33"]
         use-compression: [0, 1]
         use-tls: [0,1]
