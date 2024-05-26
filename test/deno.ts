@@ -1,4 +1,4 @@
-import { createRequire } from "https://deno.land/std@0.177.0/node/module.ts";
+import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const mysql = require('../index.js');
 
