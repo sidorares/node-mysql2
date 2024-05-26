@@ -1,7 +1,4 @@
-// TODO: fix "[warn] Code style issues found in the above file. Run Prettier to fix." error
-/* eslint-disable */
-
-import { createRequire } from "node:module";
+import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const mysql = require('../index.js');
 
