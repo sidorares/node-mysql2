@@ -3,9 +3,11 @@
 const portfinder = require('portfinder');
 const common = require('../../common.test.cjs');
 const mysql = require('../../../index.js');
+const assert = require('node:assert');
+const process = require('node:process');
 
-// Poku intentionally doesn't allow "rewriting" after uncaughtException
-const assert = require('assert');
+// The process is not terminated in Deno
+if (typeof Deno !== 'undefined') process.exit(0);
 
 const connection = common.createConnection({ debug: false });
 

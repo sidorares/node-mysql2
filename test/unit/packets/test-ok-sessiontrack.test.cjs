@@ -4,6 +4,7 @@ const { assert } = require('poku');
 const Packet = require('../../../lib/packets/packet.js');
 const ResultSetHeader = require('../../../lib/packets/resultset_header.js');
 const clientConstants = require('../../../lib/constants/client.js');
+const { Buffer } = require('node:buffer');
 
 const mockConnection = {
   config: {},

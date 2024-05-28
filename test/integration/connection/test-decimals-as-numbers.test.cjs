@@ -1,6 +1,7 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
+const { assert } = require('poku');
 
 const connection1 = common.createConnection({
   decimalNumbers: false,
@@ -8,7 +9,6 @@ const connection1 = common.createConnection({
 const connection2 = common.createConnection({
   decimalNumbers: true,
 });
-const { assert } = require('poku');
 
 const largeDecimal = 900719.547409;
 const largeDecimalExpected = '900719.547409000000000000000000000000';

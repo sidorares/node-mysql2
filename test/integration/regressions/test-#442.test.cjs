@@ -1,8 +1,10 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
-const connection = common.createConnection();
 const { assert } = require('poku');
+const process = require('node:process');
+
+const connection = common.createConnection();
 
 const tableName = '商城';
 const testFields = ['商品类型', '商品说明', '价格', '剩余'];

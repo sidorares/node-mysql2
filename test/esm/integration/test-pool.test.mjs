@@ -1,6 +1,9 @@
 import { assert, test, describe } from 'poku';
-import mysql from '../../../index.js';
-import { describeOptions } from '../../common.test.cjs';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const { describeOptions } = require('../../common.test.cjs');
+const mysql = require('../../../index.js');
 
 const poolConfig = {}; // config: { connectionConfig: {} };
 

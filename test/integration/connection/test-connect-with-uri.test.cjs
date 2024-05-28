@@ -1,5 +1,9 @@
 'use strict';
 
+const common = require('../../common.test.cjs');
+const { assert } = require('poku');
+const process = require('node:process');
+
 if (process.env.MYSQL_CONNECTION_URL) {
   console.log(
     'skipping test when mysql server is configured using MYSQL_CONNECTION_URL',
@@ -7,9 +11,7 @@ if (process.env.MYSQL_CONNECTION_URL) {
   process.exit(0);
 }
 
-const common = require('../../common.test.cjs');
 const connection = common.createConnectionWithURI();
-const { assert } = require('poku');
 
 let rows = undefined;
 let fields = undefined;

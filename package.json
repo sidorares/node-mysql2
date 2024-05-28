@@ -80,7 +80,7 @@
     "eslint-plugin-markdown": "^5.0.0",
     "husky": "^9.0.2",
     "lint-staged": "^15.0.1",
-    "poku": "^1.8.1",
+    "poku": "^1.13.0",
     "portfinder": "^1.0.28",
     "prettier": "^3.0.0",
     "progress": "^2.0.3",

@@ -2,6 +2,7 @@
 
 const common = require('../../common.test.cjs');
 const { assert } = require('poku');
+const process = require('node:process');
 
 let callCount = 0;
 let exceptionCount = 0;

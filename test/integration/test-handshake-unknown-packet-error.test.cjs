@@ -6,9 +6,12 @@ const mysql = require('../../index.js');
 const Command = require('../../lib/commands/command.js');
 const Packet = require('../../lib/packets/packet.js');
 const Packets = require('../../lib/packets/index.js');
+const { Buffer } = require('node:buffer');
+const assert = require('node:assert');
+const process = require('node:process');
 
-// Poku intentionally doesn't allow "rewriting" after uncaughtException
-const assert = require('assert');
+// The process is not terminated in Deno
+if (typeof Deno !== 'undefined') process.exit(0);
 
 class TestUnknownHandshakePacket extends Command {
   constructor(args) {

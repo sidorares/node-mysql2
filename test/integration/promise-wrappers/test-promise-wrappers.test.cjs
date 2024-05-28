@@ -1,13 +1,13 @@
 'use strict';
 
+const config = require('../../common.test.cjs').config;
+const { assert } = require('poku');
+const process = require('node:process');
+
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
   process.exit(0);
 }
-
-const config = require('../../common.test.cjs').config;
-
-const { assert } = require('poku');
 
 const createConnection = require('../../../promise.js').createConnection;
 const createPool = require('../../../promise.js').createPool;

@@ -1,5 +1,9 @@
 'use strict';
 
+const common = require('../../common.test.cjs');
+const { assert } = require('poku');
+const process = require('node:process');
+
 // PlanetScale response has trailing 000 in 2017-07-26 09:36:42.000
 // TODO: rewrite test to account for variations. Skipping for now on PS
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -7,9 +11,7 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   process.exit(0);
 }
 
-const common = require('../../common.test.cjs');
 const connection = common.createConnection({ dateStrings: true });
-const { assert } = require('poku');
 
 const tableName = 'dates';
 const testFields = ['id', 'date', 'name'];

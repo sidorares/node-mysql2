@@ -1,5 +1,12 @@
+import process from 'node:process';
 import { describe, test, assert } from 'poku';
-import { createConnection, describeOptions } from '../../../common.test.cjs';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const {
+  createConnection,
+  describeOptions,
+} = require('../../../common.test.cjs');
 
 const connection = createConnection().promise();
 

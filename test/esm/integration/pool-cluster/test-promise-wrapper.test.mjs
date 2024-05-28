@@ -1,6 +1,9 @@
 import { test, assert, describe } from 'poku';
-import { createPoolCluster } from '../../../../promise.js';
-import common from '../../../common.test.cjs';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const common = require('../../../common.test.cjs');
+const { createPoolCluster } = require('../../../../promise.js');
 
 (async () => {
   describe('Test pool cluster', common.describeOptions);

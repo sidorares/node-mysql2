@@ -1,5 +1,9 @@
 import { assert } from 'poku';
-import { _keyFromFields } from '../../../../lib/parsers/parser_cache.js';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
+const { _keyFromFields } = require('../../../../lib/parsers/parser_cache.js');
 
 // Invalid
 const test1 = {

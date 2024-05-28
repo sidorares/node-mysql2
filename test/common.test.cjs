@@ -2,6 +2,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const process = require('node:process');
 
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
@@ -179,7 +180,7 @@ exports.createConnectionWithURI = function () {
 
 exports.createTemplate = function () {
   const jade = require('jade');
-  const template = require('fs').readFileSync(
+  const template = require('node:fs').readFileSync(
     `${__dirname}/template.jade`,
     'ascii',
   );

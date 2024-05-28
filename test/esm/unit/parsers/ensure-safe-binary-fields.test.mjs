@@ -1,7 +1,10 @@
 import { describe, assert } from 'poku';
-import { describeOptions } from '../../../common.test.cjs';
-import getBinaryParser from '../../../../lib/parsers/binary_parser.js';
-import { privateObjectProps } from '../../../../lib/helpers.js';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const { describeOptions } = require('../../../common.test.cjs');
+const getBinaryParser = require('../../../../lib/parsers/binary_parser.js');
+const { privateObjectProps } = require('../../../../lib/helpers.js');
 
 describe('Binary Parser: Block Native Object Props', describeOptions);
 

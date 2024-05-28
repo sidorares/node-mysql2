@@ -1,6 +1,9 @@
 import { test, assert, describe, beforeEach } from 'poku';
 import util from 'node:util';
-import common from '../../../common.test.cjs';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const common = require('../../../common.test.cjs');
 
 (async () => {
   const connection = common.createConnection().promise();
