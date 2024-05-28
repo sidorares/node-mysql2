@@ -1,14 +1,16 @@
 'use strict';
 
+const mysql = require('../../../../index.js');
+const common = require('../../../common.test.cjs');
+const { assert } = require('poku');
+const process = require('node:process');
+
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale (unsupported non utf8 charsets)');
   process.exit(0);
 }
 
-const mysql = require('../../../../index.js');
-const common = require('../../../common.test.cjs');
 const connection = common.createConnection();
-const { assert } = require('poku');
 
 const payload = 'привет, мир';
 

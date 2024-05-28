@@ -1,9 +1,8 @@
 'use strict';
 
+const assert = require('node:assert');
 const common = require('../../common.test.cjs');
-
-// Poku intentionally doesn't allow "rewriting" after uncaughtException
-const assert = require('assert');
+const process = require('node:process');
 
 const error = new Error('read ECONNRESET');
 error.code = 'ECONNRESET';

@@ -2,6 +2,7 @@
 
 const { assert } = require('poku');
 const packets = require('../../../lib/packets/index.js');
+const { Buffer } = require('node:buffer');
 
 let buf = Buffer.from('0a000004000007dd070116010203', 'hex');
 

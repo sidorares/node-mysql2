@@ -3,6 +3,7 @@
 const common = require('../../common.test.cjs');
 const connection = common.createConnection();
 const { assert } = require('poku');
+const process = require('node:process');
 
 // test data stores
 const testData = [

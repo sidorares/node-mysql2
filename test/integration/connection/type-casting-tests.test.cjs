@@ -1,5 +1,7 @@
 'use strict';
 
+const { Buffer } = require('node:buffer');
+
 module.exports = function (connection) {
   const serverVersion = connection._handshakePacket.serverVersion;
   // mysql8 renamed some standard functions

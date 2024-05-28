@@ -1,5 +1,11 @@
 'use strict';
 
+const { assert } = require('poku');
+const portfinder = require('portfinder');
+const common = require('../../common.test.cjs');
+const mysql = require('../../../index.js');
+const process = require('node:process');
+
 // TODO: config poolCluster to work with MYSQL_CONNECTION_URL run
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
@@ -11,10 +17,9 @@ if (process.platform === 'win32') {
   process.exit(0);
 }
 
-const { assert } = require('poku');
-const portfinder = require('portfinder');
-const common = require('../../common.test.cjs');
-const mysql = require('../../../index.js');
+// The process is not terminated in Deno
+if (typeof Deno !== 'undefined') process.exit(0);
+
 const cluster = common.createPoolCluster({
   canRetry: true,
   removeNodeErrorCount: 1,

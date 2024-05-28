@@ -3,6 +3,11 @@
 const mysql = require('../../../index.js');
 const auth = require('../../../lib/auth_41.js');
 const { assert } = require('poku');
+const { Buffer } = require('node:buffer');
+const process = require('node:process');
+
+// The process is not terminated in Deno
+if (typeof Deno !== 'undefined') process.exit(0);
 
 function authenticate(params, cb) {
   const doubleSha = auth.doubleSha1('testpassword');

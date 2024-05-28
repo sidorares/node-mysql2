@@ -1,8 +1,11 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
-const connection = common.createConnection();
 const { assert } = require('poku');
+const { Buffer } = require('node:buffer');
+const process = require('node:process');
+
+const connection = common.createConnection();
 
 // TODO - this could be re-enabled
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {

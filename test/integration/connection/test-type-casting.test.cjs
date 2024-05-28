@@ -2,8 +2,11 @@
 
 const common = require('../../common.test.cjs');
 const driver = require('../../../index.js'); //needed to check driver.Types
-const connection = common.createConnection();
 const { assert } = require('poku');
+const { Buffer } = require('node:buffer');
+const process = require('node:process');
+
+const connection = common.createConnection();
 
 common.useTestDb(connection);
 
