@@ -16,7 +16,7 @@
     "lint": "prettier --write . && eslint . --fix",
     "test:unit": "npx poku --parallel test/unit",
     "test": "npm run typecheck && npm run lintcheck && npm run test:unit && npm run clear && npm run build",
-    "update": "npx npu; npm i; npm run lint"
+    "update": "pu; npm i; npm run lint"
   },
   "dependencies": {
     "@docusaurus/core": "^3.3.2",
@@ -45,7 +45,7 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
-    "packages-update": "^1.2.1",
+    "packages-update": "^2.0.0",
     "poku": "^1.13.0",
     "prettier": "^3.2.5",
     "tsx": "^4.11.0",
