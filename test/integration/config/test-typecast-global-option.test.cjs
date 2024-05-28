@@ -16,7 +16,6 @@ const connection = common.createConnection({
   typeCast: typeCastWrapper('toUpperCase'),
 });
 
-
 // query option override global typeCast
 connection.query(
   {
