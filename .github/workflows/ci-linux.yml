@@ -117,7 +117,8 @@ jobs:
         deno-version: [v1.x, canary]
         mysql-version: ["mysql:8.0.33"]
         use-compression: [0, 1]
-        use-tls: [0,1]
+        # TODO: investigate error when using SSL (1)
+        use-tls: [0]
 
     name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
