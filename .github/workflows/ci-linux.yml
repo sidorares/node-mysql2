@@ -114,7 +114,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        deno-version: [v1.43.6, canary]
+        deno-version: [latest, canary]
         mysql-version: ["mysql:8.0.33"]
         use-compression: [0, 1]
         use-tls: [0,1]
@@ -148,7 +148,6 @@ jobs:
       - name: Wait mysql server is ready
         run: node tools/wait-up.js
 
-      # todo: check what we need to do to run all tests with deno
       - name: run tests
         env:
           MYSQL_USER: ${{ env.MYSQL_USER }}
@@ -156,5 +155,5 @@ jobs:
           MYSQL_PORT: ${{ env.MYSQL_PORT }}
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
-        run: deno test --allow-net --allow-env --allow-read test/deno.ts
-        timeout-minutes: 1      
+        run: npm run test:deno
+        timeout-minutes: 1
