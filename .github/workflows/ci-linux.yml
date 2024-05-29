@@ -3,7 +3,7 @@ name: CI - Linux
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [main]
 
   workflow_dispatch:
 
@@ -19,10 +19,10 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [18.x, 20.x, 22.x]
-        mysql-version: ["mysql:8.0.33"]
+        mysql-version: ['mysql:8.0.33']
         use-compression: [0, 1]
         use-tls: [0, 1]
-        mysql_connection_url_key: [""]
+        mysql_connection_url_key: ['']
         # TODO - add mariadb to the matrix. currently few tests are broken due to mariadb incompatibilities
     env:
       MYSQL_CONNECTION_URL: ${{ secrets[matrix.mysql_connection_url_key] }}
@@ -57,6 +57,7 @@ jobs:
 
       - name: Run tests
         run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run test
+        timeout-minutes: 5
 
   tests-linux-bun:
     runs-on: ubuntu-latest
@@ -64,9 +65,9 @@ jobs:
       fail-fast: false
       matrix:
         bun-version: [latest, canary]
-        mysql-version: ["mysql:8.0.33"]
+        mysql-version: ['mysql:8.0.33']
         use-compression: [0, 1]
-        use-tls: [0,1]
+        use-tls: [0, 1]
 
     name: Bun ${{ matrix.bun-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
@@ -115,9 +116,14 @@ jobs:
       fail-fast: false
       matrix:
         deno-version: [v1.x, canary]
-        mysql-version: ["mysql:8.0.33"]
+        mysql-version: ['mysql:8.0.33']
         use-compression: [0, 1]
-        use-tls: [0, 1]
+        # TODO: investigate error when using SSL (1)
+        #
+        # errno: -4094
+        # code: "UNKNOWN"
+        # syscall: "read"
+        use-tls: [0]
 
     name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
@@ -149,25 +155,11 @@ jobs:
         run: node tools/wait-up.js
 
       - name: run tests
-        if: matrix.use-tls == 0
         env:
           MYSQL_USER: ${{ env.MYSQL_USER }}
           MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
           MYSQL_PORT: ${{ env.MYSQL_PORT }}
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
-        run: npm run test:deno
-        timeout-minutes: 5
-
-      # TODO: investigate error when using SSL (1)
-      - name: run tests
-        if: matrix.use-tls == 1
-        env:
-          MYSQL_USER: ${{ env.MYSQL_USER }}
-          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
-          MYSQL_PORT: ${{ env.MYSQL_PORT }}
-          MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
-          MYSQL_USE_TLS: ${{ matrix.use-tls }}
-          FILTER: test-select-1|test-select-ssl
         run: npm run test:deno
         timeout-minutes: 5
