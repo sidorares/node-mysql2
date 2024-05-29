@@ -132,10 +132,22 @@ jobs:
         with:
           deno-version: ${{ matrix.deno-version }}
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
+      - name: Install npm dependencies
+        run: npm ci
+
       - name: Wait mysql server is ready
-        run: |
-          deno add npm:sqlstring
-          deno run --allow-run --allow-read --allow-env npm:poku@experimental --deno-allow=read,env,net,sys --deno-cjs tools/wait-up.js
+        run: node tools/wait-up.js
 
       - name: run tests
         env:
