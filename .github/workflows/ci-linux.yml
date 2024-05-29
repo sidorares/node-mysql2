@@ -161,5 +161,5 @@ jobs:
           MYSQL_PORT: ${{ env.MYSQL_PORT }}
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
-        run: npm run test:deno
+        run: deno task test:deno
         timeout-minutes: 5
