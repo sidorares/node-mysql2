@@ -133,7 +133,9 @@ jobs:
           deno-version: ${{ matrix.deno-version }}
 
       - name: Wait mysql server is ready
-        run: deno run --allow-run --allow-read --allow-env npm:poku@experimental --deno-allow=read,env,net,sys --deno-cjs tools/wait-up.js
+        run: |
+          deno add npm:sqlstring
+          deno run --allow-run --allow-read --allow-env npm:poku@experimental --deno-allow=read,env,net,sys --deno-cjs tools/wait-up.js
 
       - name: run tests
         env:
