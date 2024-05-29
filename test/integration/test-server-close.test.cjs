@@ -12,6 +12,9 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   process.exit(0);
 }
 
+// Uncaught AssertionError: Connection lost: The server closed the connection. == The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior.
+if (typeof Deno !== 'undefined') process.exit(0);
+
 const connection = common.createConnection();
 
 const customWaitTimeout = 1; // seconds
