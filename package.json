@@ -79,7 +79,6 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-async-await": "0.0.0",
     "eslint-plugin-markdown": "^5.0.0",
-    "husky": "^9.0.2",
     "lint-staged": "^15.0.1",
     "poku": "^1.13.1-experimental.1",
     "portfinder": "^1.0.28",
