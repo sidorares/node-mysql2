@@ -117,8 +117,7 @@ jobs:
         deno-version: [v1.x, canary]
         mysql-version: ["mysql:8.0.33"]
         use-compression: [0, 1]
-        # TODO: investigate error when using SSL (1)
-        use-tls: [0]
+        use-tls: [0, 1]
 
     name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
@@ -150,11 +149,25 @@ jobs:
         run: node tools/wait-up.js
 
       - name: run tests
+        if: matrix.use-tls == 0
         env:
           MYSQL_USER: ${{ env.MYSQL_USER }}
           MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
           MYSQL_PORT: ${{ env.MYSQL_PORT }}
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
+        run: npm run test:deno
+        timeout-minutes: 5
+
+      # TODO: investigate error when using SSL (1)
+      - name: run tests
+        if: matrix.use-tls == 1
+        env:
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_PORT: ${{ env.MYSQL_PORT }}
+          MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
+          MYSQL_USE_TLS: ${{ matrix.use-tls }}
+          FILTER: test-select-1|test-select-ssl
         run: npm run test:deno
         timeout-minutes: 5
