@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.9](https://github.com/sidorares/node-mysql2/compare/v3.9.8...v3.9.9) (2024-05-29)
+
+
+### Bug Fixes
+
+* **connection config:** remove keepAliveInitialDelay default value ([#2712](https://github.com/sidorares/node-mysql2/issues/2712)) ([688ebab](https://github.com/sidorares/node-mysql2/commit/688ebab84961ae82863f811fa772cfd26fbadc0e))
+
 ## [3.9.8](https://github.com/sidorares/node-mysql2/compare/v3.9.7...v3.9.8) (2024-05-26)
 
 
