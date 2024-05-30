@@ -1,12 +1,14 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
+const { assert } = require('poku');
+const process = require('node:process');
+
 const connection = common.createConnection();
 const connection1 = common.createConnection({ dateStrings: true });
 const connection2 = common.createConnection({ dateStrings: ['DATE'] });
 const connectionZ = common.createConnection({ timezone: 'Z' });
 const connection0930 = common.createConnection({ timezone: '+09:30' });
-const { assert } = require('poku');
 
 let rows,
   rowsZ,

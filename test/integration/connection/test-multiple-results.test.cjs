@@ -5,6 +5,9 @@
 
 'use strict';
 
+const assert = require('assert-diff');
+const process = require('node:process');
+
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
   process.exit(0);
@@ -13,7 +16,6 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 const mysql = require('../../common.test.cjs').createConnection({
   multipleStatements: true,
 });
-const assert = require('assert-diff');
 mysql.query('CREATE TEMPORARY TABLE no_rows (test int)');
 mysql.query('CREATE TEMPORARY TABLE some_rows (test int)');
 mysql.query('INSERT INTO some_rows values(0)');

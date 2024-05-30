@@ -1,5 +1,9 @@
 import { assert, test, describe } from 'poku';
-import { describeOptions, SqlString } from '../../../common.test.cjs';
+import { createRequire } from 'node:module';
+import { Buffer } from 'node:buffer';
+
+const require = createRequire(import.meta.url);
+const { SqlString, describeOptions } = require('../../../common.test.cjs');
 
 describe('SqlString.escapeId tests', describeOptions);
 

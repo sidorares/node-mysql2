@@ -1,5 +1,33 @@
 # Changelog
 
+## [3.10.0](https://github.com/sidorares/node-mysql2/compare/v3.9.9...v3.10.0) (2024-05-30)
+
+
+### Features
+
+* add jsonStrings option ([#2642](https://github.com/sidorares/node-mysql2/issues/2642)) ([9820fe5](https://github.com/sidorares/node-mysql2/commit/9820fe51b48cadd48024956e62d9fceac2e5a880))
+
+
+### Bug Fixes
+
+* **stream:** reads should emit the dataset number for each dataset ([#2628](https://github.com/sidorares/node-mysql2/issues/2628)) ([4dab4ca](https://github.com/sidorares/node-mysql2/commit/4dab4cad2c3b9b165d6118636a179b5443e50442))
+
+## [3.9.9](https://github.com/sidorares/node-mysql2/compare/v3.9.8...v3.9.9) (2024-05-29)
+
+
+### Bug Fixes
+
+* **connection config:** remove keepAliveInitialDelay default value ([#2712](https://github.com/sidorares/node-mysql2/issues/2712)) ([688ebab](https://github.com/sidorares/node-mysql2/commit/688ebab84961ae82863f811fa772cfd26fbadc0e))
+
+## [3.9.8](https://github.com/sidorares/node-mysql2/compare/v3.9.7...v3.9.8) (2024-05-26)
+
+
+### Bug Fixes
+
+* **security:** sanitize fields and tables when using nestTables ([#2702](https://github.com/sidorares/node-mysql2/issues/2702)) ([efe3db5](https://github.com/sidorares/node-mysql2/commit/efe3db527a2c94a63c2d14045baba8dfefe922bc))
+* support deno + caching_sha2_password FULL_AUTHENTICATION_PACKET flow ([#2704](https://github.com/sidorares/node-mysql2/issues/2704)) ([2e03694](https://github.com/sidorares/node-mysql2/commit/2e0369445ba1581b427f78689a935ac3debfbf07))
+* **typings:** typo from `jonServerPublicKey` to `onServerPublicKey` ([#2699](https://github.com/sidorares/node-mysql2/issues/2699)) ([8b5f691](https://github.com/sidorares/node-mysql2/commit/8b5f6911b69b766a3732fa160049d263460da74b))
+
 ## [3.9.7](https://github.com/sidorares/node-mysql2/compare/v3.9.6...v3.9.7) (2024-04-21)
 
 

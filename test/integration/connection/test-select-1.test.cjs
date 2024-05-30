@@ -2,6 +2,8 @@
 
 const { assert } = require('poku');
 const common = require('../../common.test.cjs');
+const process = require('node:process');
+
 const connection = common.createConnection();
 
 connection.query('SELECT 1 as result', (err, rows, fields) => {

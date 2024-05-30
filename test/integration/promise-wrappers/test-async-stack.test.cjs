@@ -1,8 +1,12 @@
 'use strict';
 
+const process = require('node:process');
 const config = require('../../common.test.cjs').config;
 const { assert } = require('poku');
 const ErrorStackParser = require('error-stack-parser');
+
+// Uncaught Error: connect ECONNREFUSED 127.0.0.1:33066 - Local (undefined:undefined)
+if (typeof Deno !== 'undefined') process.exit(0);
 
 const createConnection = async function (args) {
   const connect = require('../../../promise.js').createConnection;

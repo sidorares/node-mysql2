@@ -1,5 +1,9 @@
 'use strict';
 
+const common = require('../../common.test.cjs');
+const { assert } = require('poku');
+const process = require('node:process');
+
 // "changedRows" is not part of the mysql protocol and extracted from "info string" response
 // while valid for most mysql servers, it's not guaranteed to be present in all cases
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -12,9 +16,7 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
  *
  * issue#288: https://github.com/sidorares/node-mysql2/issues/288
  */
-const common = require('../../common.test.cjs');
 const connection = common.createConnection();
-const { assert } = require('poku');
 
 let result1 = undefined;
 let result2 = undefined;

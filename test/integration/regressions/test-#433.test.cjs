@@ -1,14 +1,16 @@
 'use strict';
 
+const common = require('../../common.test.cjs');
+const { assert } = require('poku');
+const process = require('node:process');
+
 // TODO: reach out to PlanetScale to clarify charset support
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
   process.exit(0);
 }
 
-const common = require('../../common.test.cjs');
 const connection = common.createConnection({ charset: 'KOI8R_GENERAL_CI' });
-const { assert } = require('poku');
 
 const tableName = 'МояТаблица';
 const testFields = ['поле1', 'поле2', 'поле3', 'поле4'];

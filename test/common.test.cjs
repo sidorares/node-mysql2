@@ -2,6 +2,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const process = require('node:process');
 
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
@@ -107,6 +108,7 @@ exports.createConnection = function (args) {
     connectTimeout: args && args.connectTimeout,
     nestTables: args && args.nestTables,
     ssl: (args && args.ssl) ?? config.ssl,
+    jsonStrings: args && args.jsonStrings,
   };
 
   const conn = driver.createConnection(params);
@@ -136,6 +138,7 @@ exports.getConfig = function (input) {
     connectionLimit: args && args.connectionLimit,
     maxIdle: args && args.maxIdle,
     idleTimeout: args && args.idleTimeout,
+    jsonStrings: args && args.jsonStrings,
   };
   return params;
 };
@@ -179,7 +182,7 @@ exports.createConnectionWithURI = function () {
 
 exports.createTemplate = function () {
   const jade = require('jade');
-  const template = require('fs').readFileSync(
+  const template = require('node:fs').readFileSync(
     `${__dirname}/template.jade`,
     'ascii',
   );

@@ -1,7 +1,11 @@
 import { assert, describe, test } from 'poku';
-import common from '../../common.test.cjs';
-import PrepareCommand from '../../../lib/commands/prepare.js';
-import packets from '../../../lib/packets/index.js';
+import { createRequire } from 'node:module';
+import { Buffer } from 'node:buffer';
+
+const require = createRequire(import.meta.url);
+const common = require('../../common.test.cjs');
+const packets = require('../../../lib/packets/index.js');
+const PrepareCommand = require('../../../lib/commands/prepare.js');
 
 (async () => {
   await test(async () => {

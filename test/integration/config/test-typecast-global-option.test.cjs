@@ -1,5 +1,8 @@
 'use strict';
 
+const common = require('../../common.test.cjs');
+const { assert } = require('poku');
+
 const typeCastWrapper = function (stringMethod) {
   return function (field, next) {
     if (field.type === 'VAR_STRING') {
@@ -9,12 +12,9 @@ const typeCastWrapper = function (stringMethod) {
   };
 };
 
-const common = require('../../common.test.cjs');
 const connection = common.createConnection({
   typeCast: typeCastWrapper('toUpperCase'),
 });
-
-const { assert } = require('poku');
 
 // query option override global typeCast
 connection.query(

@@ -2,6 +2,10 @@
 
 const mysql = require('../../../index.js');
 const { assert } = require('poku');
+const process = require('node:process');
+
+// The process is not terminated in Deno
+if (typeof Deno !== 'undefined') process.exit(0);
 
 const ERROR_TEXT = 'Connection lost: The server closed the connection.';
 
