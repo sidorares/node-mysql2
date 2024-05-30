@@ -23,6 +23,13 @@ export interface PoolOptions extends ConnectionOptions {
   connectionLimit?: number;
 
   /**
+   * The maximum time (in milliseconds) to wait for getting a connection from the pool. (Default: 10 seconds)
+   *
+   * @default 10000
+   */
+  acquireTimeout?: number;
+
+  /**
    * The maximum number of idle connections. (Default: same as `connectionLimit`)
    */
   maxIdle?: number;
