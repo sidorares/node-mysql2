@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.10.0](https://github.com/sidorares/node-mysql2/compare/v3.9.9...v3.10.0) (2024-05-30)
+
+
+### Features
+
+* add jsonStrings option ([#2642](https://github.com/sidorares/node-mysql2/issues/2642)) ([9820fe5](https://github.com/sidorares/node-mysql2/commit/9820fe51b48cadd48024956e62d9fceac2e5a880))
+
+
+### Bug Fixes
+
+* **stream:** reads should emit the dataset number for each dataset ([#2628](https://github.com/sidorares/node-mysql2/issues/2628)) ([4dab4ca](https://github.com/sidorares/node-mysql2/commit/4dab4cad2c3b9b165d6118636a179b5443e50442))
+
 ## [3.9.9](https://github.com/sidorares/node-mysql2/compare/v3.9.8...v3.9.9) (2024-05-29)
 
 
