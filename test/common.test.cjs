@@ -108,6 +108,7 @@ exports.createConnection = function (args) {
     connectTimeout: args && args.connectTimeout,
     nestTables: args && args.nestTables,
     ssl: (args && args.ssl) ?? config.ssl,
+    jsonStrings: args && args.jsonStrings,
   };
 
   const conn = driver.createConnection(params);
@@ -137,6 +138,7 @@ exports.getConfig = function (input) {
     connectionLimit: args && args.connectionLimit,
     maxIdle: args && args.maxIdle,
     idleTimeout: args && args.idleTimeout,
+    jsonStrings: args && args.jsonStrings,
   };
   return params;
 };
