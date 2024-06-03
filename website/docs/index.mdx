@@ -105,6 +105,9 @@ try {
 } catch (err) {
   console.log(err);
 }
+
+// Close the connection
+await connection.end();
 ```
 
   </TabItem>
@@ -138,6 +141,9 @@ connection.query(
     console.log(results);
   }
 );
+
+// Close the connection
+connection.end();
 ```
 
 </TabItem>
@@ -179,6 +185,8 @@ try {
   console.log(fields); // fields contains extra meta data about results, if available
 } catch (err) {
   console.log(err);
+} finally {
+  connection.end()
 }
 ```
 
@@ -204,6 +212,9 @@ connection.execute(
     console.log(fields); // fields contains extra meta data about results, if available
   }
 );
+
+// Close the connection
+connection.end();
 ```
 
   </TabItem>
