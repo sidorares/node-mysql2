@@ -167,9 +167,11 @@ MySQL2 provides `execute` helper which will prepare and query the statement. You
 ```js
 import mysql from 'mysql2/promise';
 
+let connection;
+
 try {
   // create the connection to database
-  const connection = await mysql.createConnection({
+  connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
     database: 'test',
