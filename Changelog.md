@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.10.1](https://github.com/sidorares/node-mysql2/compare/v3.10.0...v3.10.1) (2024-06-13)
+
+
+### Bug Fixes
+
+* setMaxParserCache throws TypeError ([#2757](https://github.com/sidorares/node-mysql2/issues/2757)) ([aa8604a](https://github.com/sidorares/node-mysql2/commit/aa8604a32b28c2024da006edce30d88ad22d8a06))
+
 ## [3.10.0](https://github.com/sidorares/node-mysql2/compare/v3.9.9...v3.10.0) (2024-05-30)
 
 
