@@ -1,9 +1,9 @@
 {
   "sidebar.docs.category.Documentation": {
-    "message": "Documentation"
+    "message": "文档"
   },
   "sidebar.docs.category.Examples": {
-    "message": "Examples"
+    "message": "示例"
   },
   "sidebar.docs.category.Contributing": {
     "message": "贡献"
