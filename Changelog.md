@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.10.2](https://github.com/sidorares/node-mysql2/compare/v3.10.1...v3.10.2) (2024-07-01)
+
+
+### Bug Fixes
+
+* **typeCast:** ensure the same behavior for `field.string()` with `query` and `execute` ([#2820](https://github.com/sidorares/node-mysql2/issues/2820)) ([27e38ea](https://github.com/sidorares/node-mysql2/commit/27e38ea3f084f445a8e5a4909341b5e740bdf474))
+
 ## [3.10.1](https://github.com/sidorares/node-mysql2/compare/v3.10.0...v3.10.1) (2024-06-13)
 
 
