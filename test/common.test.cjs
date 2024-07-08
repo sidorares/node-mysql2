@@ -232,3 +232,20 @@ exports.describeOptions = {
   icon: '🔬',
   background: false,
 };
+
+exports.getMysqlVersion = async function (connection) {
+  const conn = connection.promise ? connection.promise() : connection;
+
+  const [rows] = await conn.query('SELECT VERSION() AS `version`');
+  const serverVersion = rows[0].version;
+
+  const [major, minor, patch] = serverVersion
+    .split('.')
+    .map((x) => parseInt(x, 10));
+
+  return {
+    major,
+    minor,
+    patch,
+  };
+};
