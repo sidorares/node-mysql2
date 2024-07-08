@@ -7,7 +7,7 @@ const common = require('../../common.test.cjs');
 const packets = require('../../../lib/packets/index.js');
 const PrepareCommand = require('../../../lib/commands/prepare.js');
 
-(async () => {
+test(async () => {
   await test(async () => {
     describe(
       'Unit Test - Prepare result with number of parameters incorrectly reported by the server',
@@ -97,22 +97,29 @@ const PrepareCommand = require('../../../lib/commands/prepare.js');
     database: 'mysql',
   });
 
-  const isNewerThan8_0_22 = async () => {
-    const { serverVersion } = await connection._handshakePacket;
-    const [major, minor, patch] = serverVersion
-      .split('.')
-      .map((x) => parseInt(x, 10));
+  const mySqlVersion = await common.getMysqlVersion(connection);
+
+  const hasIncorrectPrepareParameter = (() => {
+    const { major, minor, patch } = mySqlVersion;
+
+    if (major === 9) return false;
+    if (major === 8 && minor === 4 && patch === 1) return false;
+    if (major === 8 && minor === 0 && patch === 38) return false;
+
     if (major > 8) {
       return true;
     }
+
     if (major === 8 && minor > 0) {
       return true;
     }
+
     if (major === 8 && minor === 0 && patch >= 22) {
       return true;
     }
+
     return false;
-  };
+  })();
 
   await test(
     async () =>
@@ -132,7 +139,7 @@ const PrepareCommand = require('../../../lib/commands/prepare.js');
               return;
             }
 
-            if (await isNewerThan8_0_22()) {
+            if (hasIncorrectPrepareParameter) {
               assert.equal(
                 stmt.parameters.length,
                 0,
@@ -166,7 +173,7 @@ const PrepareCommand = require('../../../lib/commands/prepare.js');
               return;
             }
 
-            if (await isNewerThan8_0_22()) {
+            if (hasIncorrectPrepareParameter) {
               assert.equal(
                 stmt.parameters.length,
                 1,
@@ -190,4 +197,4 @@ const PrepareCommand = require('../../../lib/commands/prepare.js');
   connection.end((err) => {
     assert.ifError(err);
   });
-})();
+});
