@@ -298,18 +298,23 @@ You can use **Amazon RDS** string as value to ssl property to connect to **Amazo
 
 In that case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used:
 
+```sh
+npm install --save aws-ssl-profiles
+```
+
 <Tabs>
   <TabItem value='promise.js' default>
 
 ```js
 import mysql from 'mysql2/promise';
+import awsCaBundle from 'aws-ssl-profiles';
 
 try {
   // highlight-start
   const pool = mysql.createPool({
     // ...
     host: 'db.id.ap-southeast-2.rds.amazonaws.com',
-    ssl: 'Amazon RDS',
+    ssl: awsCaBundle,
   });
   const connection = await pool.getConnection();
   // highlight-end
@@ -321,6 +326,10 @@ try {
   console.log(err);
 }
 ```
+
+:::info
+For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
 
 :::tip Testing
 
@@ -342,11 +351,12 @@ try {
 
 ```js
 const mysql = require('mysql2');
+const awsCaBundle = require('aws-ssl-profiles');
 
 const pool = mysql.createPool({
   // ...
   host: 'db.id.ap-southeast-2.rds.amazonaws.com',
-  ssl: 'Amazon RDS',
+  ssl: awsCaBundle,
 });
 
 pool.getConnection(function (err, connection) {
@@ -360,6 +370,10 @@ pool.getConnection(function (err, connection) {
   connection.release();
 });
 ```
+
+:::info
+For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
 
 :::tip Testing
 
