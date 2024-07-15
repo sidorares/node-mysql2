@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.10.3](https://github.com/sidorares/node-mysql2/compare/v3.10.2...v3.10.3) (2024-07-15)
+
+
+### Bug Fixes
+
+* handshake SSL error with AWS RDS ([#2857](https://github.com/sidorares/node-mysql2/issues/2857)) ([de071bb](https://github.com/sidorares/node-mysql2/commit/de071bb1d7738693793ff3ea24d5f933f6fa4792))
+
 ## [3.10.2](https://github.com/sidorares/node-mysql2/compare/v3.10.1...v3.10.2) (2024-07-01)
 
 
