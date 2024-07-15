@@ -58,6 +58,7 @@
   "author": "Andrey Sidorov <andrey.sidorov@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "aws-ssl-profiles": "^1.1.1",
     "denque": "^2.1.0",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.6.3",
