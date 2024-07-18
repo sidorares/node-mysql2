@@ -16,6 +16,7 @@ interface Types {
   0x0e: string;
   0x0f: string;
   0x10: string;
+  0xf2: string;
   0xf5: string;
   0xf6: string;
   0xf7: string;
@@ -45,6 +46,7 @@ interface Types {
   NEWDATE: number;
   VARCHAR: number;
   BIT: number;
+  VECTOR: number;
   JSON: number;
   NEWDECIMAL: number;
   ENUM: number;

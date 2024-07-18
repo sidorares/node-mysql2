@@ -25,6 +25,7 @@ export type Type = {
     | 'NEWDATE'
     | 'VARCHAR'
     | 'BIT'
+    | 'VECTOR'
     | 'JSON'
     | 'NEWDECIMAL'
     | 'ENUM'
