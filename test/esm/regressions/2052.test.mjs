@@ -125,7 +125,7 @@ test(async () => {
     async () =>
       new Promise((resolve, reject) => {
         describe(
-          'E2E Prepare result with number of parameters incorrectly reported by the server',
+          `E2E Prepare result with number of parameters incorrectly reported by the server (hasIncorrectPrepareParameter: ${hasIncorrectPrepareParameter}), mysql version: ${mySqlVersion.major}.${mySqlVersion.minor}.${mySqlVersion.patch}`,
           common.describeOptions,
         );
 
