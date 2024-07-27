@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.0](https://github.com/sidorares/node-mysql2/compare/v3.10.3...v3.11.0) (2024-07-27)
+
+
+### Features
+
+* fully support VECTOR type results ([9576742](https://github.com/sidorares/node-mysql2/commit/9576742f56f234ac50bfd099bc84c8f593971e74))
+
 ## [3.10.3](https://github.com/sidorares/node-mysql2/compare/v3.10.2...v3.10.3) (2024-07-15)
 
 
