@@ -24,6 +24,7 @@ jobs:
             'mysql:8.0.18',
             'mysql:8.0.22',
             'mysql:8.0.33',
+            'mysql:9.0.1',
             'mysql:latest',
           ]
         use-compression: [0, 1]
