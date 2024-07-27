@@ -104,7 +104,7 @@ test(async () => {
 
     if (major === 9) return false;
     if (major === 8 && minor === 4 && patch === 1) return false;
-    if (major === 8 && minor === 0 && patch === 38) return false;
+    if (major === 8 && minor === 0 && patch >= 38) return false;
 
     if (major > 8) {
       return true;
@@ -125,7 +125,7 @@ test(async () => {
     async () =>
       new Promise((resolve, reject) => {
         describe(
-          `E2E Prepare result with number of parameters incorrectly reported by the server (hasIncorrectPrepareParameter: ${hasIncorrectPrepareParameter}), mysql version: ${mySqlVersion.major}.${mySqlVersion.minor}.${mySqlVersion.patch}`,
+          `E2E Prepare result with number of parameters incorrectly reported by the server`,
           common.describeOptions,
         );
 
