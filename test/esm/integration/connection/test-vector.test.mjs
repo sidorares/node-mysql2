@@ -11,18 +11,18 @@ const epsilon = 1e-6;
 const compareFloat = (a, b) => Math.abs((a - b) / a) < epsilon;
 const compareFLoatsArray = (a, b) => a.every((v, i) => compareFloat(v, b[i]));
 
-
 (async () => {
   const connection = common.createConnection().promise();
 
   const mySqlVersion = await common.getMysqlVersion(connection);
 
   if (mySqlVersion.major < 9) {
-    console.log(`Skipping the test, required mysql version is 9 and above, actual version is ${mySqlVersion.major}`);
+    console.log(
+      `Skipping the test, required mysql version is 9 and above, actual version is ${mySqlVersion.major}`,
+    );
     await connection.end();
     return;
   }
-
 
   await test(async () => {
     describe(
@@ -34,7 +34,7 @@ const compareFLoatsArray = (a, b) => a.every((v, i) => compareFloat(v, b[i]));
     assert.equal(
       compareFLoatsArray(_rows[0].test, expectedArray),
       true,
-      `${_rows[0].test} should be equal to ${expectedArray}`
+      `${_rows[0].test} should be equal to ${expectedArray}`,
     );
   });
 
@@ -48,9 +48,8 @@ const compareFLoatsArray = (a, b) => a.every((v, i) => compareFloat(v, b[i]));
     assert.equal(
       compareFLoatsArray(_rows[0].test, expectedArray),
       true,
-      `${_rows[0].test}  should be equal to  ${expectedArray}`
+      `${_rows[0].test}  should be equal to  ${expectedArray}`,
     );
-
   });
 
   await connection.end();
