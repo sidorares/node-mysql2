@@ -46,7 +46,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.9",
     "packages-update": "^2.0.0",
-    "poku": "^2.4.2",
+    "poku": "^2.4.3",
     "prettier": "^3.3.3",
     "tsx": "^4.17.0",
     "typescript": "^5.5.4"
