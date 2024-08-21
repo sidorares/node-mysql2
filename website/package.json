@@ -44,7 +44,7 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.9",
+    "eslint-plugin-react-refresh": "^0.4.10",
     "packages-update": "^2.0.0",
     "poku": "^2.5.0",
     "prettier": "^3.3.3",
