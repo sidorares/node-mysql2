@@ -24,7 +24,6 @@ connection.query(`SHOW STATUS LIKE 'Ssl_cipher'`, (err, rows) => {
 
     connection.end((err) => {
       assert.ifError(err);
-      process.exit(0);
     });
   });
 });
