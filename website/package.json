@@ -26,7 +26,7 @@
     "clsx": "^2.1.1",
     "docusaurus-plugin-sass": "^0.2.5",
     "lucide-react": "^0.436.0",
-    "prism-react-renderer": "^2.3.1",
+    "prism-react-renderer": "^2.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sass": "^1.77.8"
