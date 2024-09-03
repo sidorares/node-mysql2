@@ -22,6 +22,7 @@ const charsets = [];
 const mysql2iconv = {
   utf8: 'cesu8',
   utf8mb4: 'utf8',
+  utf8mb3: 'utf8',
   utf16le: 'utf16-le',
   ujis: 'eucjp',
   // need to check that this is correct mapping
