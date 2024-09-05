@@ -451,10 +451,10 @@ class PromisePoolCluster extends EventEmitter {
     inheritEvents(poolCluster, this, ['warn', 'remove']);
   }
 
-  getConnection() {
+  getConnection(pattern, selector) {
     const corePoolCluster = this.poolCluster;
     return new this.Promise((resolve, reject) => {
-      corePoolCluster.getConnection((err, coreConnection) => {
+      corePoolCluster.getConnection(pattern, selector, (err, coreConnection) => {
         if (err) {
           reject(err);
         } else {
