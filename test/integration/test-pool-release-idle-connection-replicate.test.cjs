@@ -63,6 +63,8 @@ pool.getConnection((err1, connection1) => {
           pool._freeConnections.length === 0,
           `Expected all free connections to be closed, but found ${pool._freeConnections.length}`,
         );
+
+        pool.end();
       }, 5000);
     });
   });
