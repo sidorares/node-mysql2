@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.11.1](https://github.com/sidorares/node-mysql2/compare/v3.11.0...v3.11.1) (2024-09-10)
+
+
+### Bug Fixes
+
+* **createPoolCluster:** add pattern and selector to promise-based `getConnection` ([#3017](https://github.com/sidorares/node-mysql2/issues/3017)) ([ab7c49f](https://github.com/sidorares/node-mysql2/commit/ab7c49f24fad7b241cdc0046ead9917bbddccced)), closes [#1381](https://github.com/sidorares/node-mysql2/issues/1381)
+* update connection cleanup process to handle expired connections and exceeding `config.maxIdle` ([#3022](https://github.com/sidorares/node-mysql2/issues/3022)) ([b091cf4](https://github.com/sidorares/node-mysql2/commit/b091cf49d4165e991cb7c51dd6074be1c996a98e))
+
 ## [3.11.0](https://github.com/sidorares/node-mysql2/compare/v3.10.3...v3.11.0) (2024-07-27)
 
 
