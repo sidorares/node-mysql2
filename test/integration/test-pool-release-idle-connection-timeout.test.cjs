@@ -4,9 +4,9 @@ const createPool = require('../common.test.cjs').createPool;
 const { assert } = require('poku');
 
 const pool = new createPool({
-  connectionLimit: 5, // 5 connections
+  connectionLimit: 3, // 5 connections
   maxIdle: 1, // 1 idle connection
-  idleTimeout: 5000, // 5 seconds
+  idleTimeout: 1000, // remove idle connections after 1 second
 });
 
 pool.getConnection((err1, connection1) => {
@@ -26,22 +26,21 @@ pool.getConnection((err1, connection1) => {
       connection3.release();
       assert(pool._allConnections.length === 3);
       assert(pool._freeConnections.length === 3);
+      // after two seconds, the above 3 connection should have been destroyed
       setTimeout(() => {
-        assert(pool._allConnections.length === 1);
-        assert(pool._freeConnections.length === 1);
+        assert(pool._allConnections.length === 0);
+        assert(pool._freeConnections.length === 0);
+        // Creating a new connection should create a fresh one
         pool.getConnection((err4, connection4) => {
           assert.ifError(err4);
           assert.ok(connection4);
-          assert.strictEqual(connection3, connection4);
           assert(pool._allConnections.length === 1);
           assert(pool._freeConnections.length === 0);
           connection4.release();
           connection4.destroy();
           pool.end();
         });
-        // Setting the time to a lower value than idleTimeout will ensure that the connection is not considered idle
-        // during our assertions
-      }, 4000);
+      }, 2000);
     });
   });
 });
