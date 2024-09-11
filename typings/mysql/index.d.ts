@@ -53,9 +53,9 @@ export function createPool(config: PoolOptions): BasePool;
 
 export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
 
-export function escape(value: any): string;
+export function escape(value: any, stringifyObjects?: boolean, timeZone?: 'local' | NonNullable<unknown>): string;
 
-export function escapeId(value: any): string;
+export function escapeId(value: any, forbidQualified?: boolean): string;
 
 export function format(sql: string): string;
 export function format(
