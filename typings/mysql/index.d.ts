@@ -21,8 +21,6 @@ import {
 } from './lib/protocol/sequences/Prepare.js';
 import { Server } from './lib/Server.js';
 
-export type * from "sqlstring";
-
 export {
   ConnectionOptions,
   SslOptions,
@@ -54,6 +52,29 @@ export function createPool(connectionUri: string): BasePool;
 export function createPool(config: PoolOptions): BasePool;
 
 export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
+
+export function escape(value: any): string;
+
+export function escapeId(value: any): string;
+
+export function format(sql: string): string;
+export function format(
+  sql: string,
+  values: any[],
+  stringifyObjects?: boolean,
+  timeZone?: string,
+): string;
+
+export function format(
+  sql: string,
+  values: any,
+  stringifyObjects?: boolean,
+  timeZone?: string,
+): string;
+
+export function raw(sql: string): {
+  toSqlString: () => string;
+};
 
 export interface ConnectionConfig extends ConnectionOptions {
   mergeFlags(defaultFlags: string[], userFlags: string[] | string): number;
