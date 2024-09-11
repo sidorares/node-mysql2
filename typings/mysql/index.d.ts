@@ -60,16 +60,9 @@ export function escapeId(value: any): string;
 export function format(sql: string): string;
 export function format(
   sql: string,
-  values: any[],
+  values: any | any[],
   stringifyObjects?: boolean,
-  timeZone?: string,
-): string;
-
-export function format(
-  sql: string,
-  values: any,
-  stringifyObjects?: boolean,
-  timeZone?: string,
+  timeZone?: 'local' | NonNullable<unknown>,
 ): string;
 
 export function raw(sql: string): {
