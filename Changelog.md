@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.2](https://github.com/sidorares/node-mysql2/compare/v3.11.1...v3.11.2) (2024-09-11)
+
+
+### Bug Fixes
+
+* resolve LRU conflicts, cache loss and premature engine breaking change ([#2988](https://github.com/sidorares/node-mysql2/issues/2988)) ([2c3c858](https://github.com/sidorares/node-mysql2/commit/2c3c858fd0425b29f488a7cd24df749539c93aa2))
+
 ## [3.11.1](https://github.com/sidorares/node-mysql2/compare/v3.11.0...v3.11.1) (2024-09-10)
 
 
