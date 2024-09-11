@@ -39,7 +39,7 @@ jobs:
              [[ "$MESSAGE" =~ docs\(.*\): ]] ||
              [[ "$MESSAGE" =~ ci\(.*\): ]] ||
              [[ "$MESSAGE" =~ cd\(.*\): ]] ||
-             [[ "$MESSAGE" =~ chore\(website\):\ update\ dependencies ]]; then
+             [[ "$MESSAGE" =~ chore\(website\) ]]; then
             echo "publish=false" >> $GITHUB_OUTPUT
             echo "Skip publish"
           else
