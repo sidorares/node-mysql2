@@ -56,8 +56,12 @@ export function createPool(config: PoolOptions): BasePool;
 
 export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
 
-type TimeZone = 'local' | 'Z' | string & NonNullable<unknown>;
-export function escape(value: any, stringifyObjects?: boolean, timeZone?: TimeZone): string;
+type TimeZone = 'local' | 'Z' | (string & NonNullable<unknown>);
+export function escape(
+  value: any,
+  stringifyObjects?: boolean,
+  timeZone?: TimeZone,
+): string;
 
 export function escapeId(value: any, forbidQualified?: boolean): string;
 
