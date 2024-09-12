@@ -56,7 +56,8 @@ export function createPool(config: PoolOptions): BasePool;
 
 export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
 
-export function escape(value: any, stringifyObjects?: boolean, timeZone?: 'local' | NonNullable<unknown>): string;
+type TimeZone = 'local' | 'Z' | string & NonNullable<unknown>;
+export function escape(value: any, stringifyObjects?: boolean, timeZone?: TimeZone): string;
 
 export function escapeId(value: any, forbidQualified?: boolean): string;
 
@@ -65,7 +66,7 @@ export function format(
   sql: string,
   values: any | any[],
   stringifyObjects?: boolean,
-  timeZone?: 'local' | NonNullable<unknown>,
+  timeZone?: TimeZone,
 ): string;
 
 export function raw(sql: string): {
