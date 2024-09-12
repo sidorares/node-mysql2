@@ -1,3 +1,6 @@
+/**
+ * sqlstring types are based on https://www.npmjs.com/package/@types/sqlstring, version 2.3.2
+ */
 import { Pool as BasePool, PoolOptions } from './lib/Pool.js';
 import {
   Connection as BaseConnection,
@@ -53,35 +56,10 @@ export function createPool(config: PoolOptions): BasePool;
 
 export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
 
-/**
- * @file index.d.ts
- * 
- * @author marvinhagemeister
- * @date 11 July 2017
- * 
- * @dependency \@types/sqlstring
- * @see {@link https://www.npmjs.com/package/@types/sqlstring} for more information
- */
 export function escape(value: any, stringifyObjects?: boolean, timeZone?: 'local' | NonNullable<unknown>): string;
-/**
- * @file index.d.ts
- * 
- * @author marvinhagemeister
- * @date 11 July 2017
- * 
- * @dependency \@types/sqlstring
- * @see {@link https://www.npmjs.com/package/@types/sqlstring} for more information
- */
+
 export function escapeId(value: any, forbidQualified?: boolean): string;
-/**
- * @file index.d.ts
- * 
- * @author marvinhagemeister
- * @date 11 July 2017
- * 
- * @dependency \@types/sqlstring
- * @see {@link https://www.npmjs.com/package/@types/sqlstring} for more information
- */
+
 export function format(sql: string): string;
 export function format(
   sql: string,
@@ -89,15 +67,7 @@ export function format(
   stringifyObjects?: boolean,
   timeZone?: 'local' | NonNullable<unknown>,
 ): string;
-/**
- * @file index.d.ts
- * 
- * @author David Gomes
- * @date 3 January 2019
- * 
- * @dependency \@types/sqlstring
- * @see {@link https://www.npmjs.com/package/@types/sqlstring} for more information
- */
+
 export function raw(sql: string): {
   toSqlString: () => string;
 };
