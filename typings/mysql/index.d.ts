@@ -1,3 +1,6 @@
+/**
+ * sqlstring types are based on https://www.npmjs.com/package/@types/sqlstring, version 2.3.2
+ */
 import { Pool as BasePool, PoolOptions } from './lib/Pool.js';
 import {
   Connection as BaseConnection,
@@ -53,23 +56,21 @@ export function createPool(config: PoolOptions): BasePool;
 
 export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
 
-export function escape(value: any): string;
+type TimeZone = 'local' | 'Z' | (string & NonNullable<unknown>);
+export function escape(
+  value: any,
+  stringifyObjects?: boolean,
+  timeZone?: TimeZone,
+): string;
 
-export function escapeId(value: any): string;
+export function escapeId(value: any, forbidQualified?: boolean): string;
 
 export function format(sql: string): string;
 export function format(
   sql: string,
-  values: any[],
+  values: any | any[],
   stringifyObjects?: boolean,
-  timeZone?: string,
-): string;
-
-export function format(
-  sql: string,
-  values: any,
-  stringifyObjects?: boolean,
-  timeZone?: string,
+  timeZone?: TimeZone,
 ): string;
 
 export function raw(sql: string): {
