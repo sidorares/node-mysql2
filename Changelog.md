@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.3](https://github.com/sidorares/node-mysql2/compare/v3.11.2...v3.11.3) (2024-09-14)
+
+
+### Bug Fixes
+
+* **typings:** synchronize types of sqlstring ([#3047](https://github.com/sidorares/node-mysql2/issues/3047)) ([81be01b](https://github.com/sidorares/node-mysql2/commit/81be01b1bce30cac3f6fcc130aaf859349c5d3d2))
+
 ## [3.11.2](https://github.com/sidorares/node-mysql2/compare/v3.11.1...v3.11.2) (2024-09-11)
 
 
