@@ -2,32 +2,24 @@
 
 const SqlString = require('sqlstring');
 
-const Connection = require('./lib/connection.js');
 const ConnectionConfig = require('./lib/connection_config.js');
 const parserCache = require('./lib/parsers/parser_cache');
 
-exports.createConnection = function(opts) {
-  return new Connection({ config: new ConnectionConfig(opts) });
-};
+const common = require('./common');
+exports.createConnection = common.createConnection
 
 exports.connect = exports.createConnection;
-exports.Connection = Connection;
+exports.Connection = common.Connection;
 exports.ConnectionConfig = ConnectionConfig;
 
 const Pool = require('./lib/pool.js');
 const PoolCluster = require('./lib/pool_cluster.js');
 
-exports.createPool = function(config) {
-  const PoolConfig = require('./lib/pool_config.js');
-  return new Pool({ config: new PoolConfig(config) });
-};
+exports.createPool = common.createPool
 
-exports.createPoolCluster = function(config) {
-  const PoolCluster = require('./lib/pool_cluster.js');
-  return new PoolCluster(config);
-};
+exports.createPoolCluster = common.createPoolCluster;
 
-exports.createQuery = Connection.createQuery;
+exports.createQuery = common.Connection.createQuery;
 
 exports.Pool = Pool;
 
