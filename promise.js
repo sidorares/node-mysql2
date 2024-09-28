@@ -1,12 +1,15 @@
 'use strict';
 
 const SqlString = require('sqlstring');
-const common = require('./common.js');
 const EventEmitter = require('events').EventEmitter;
 const parserCache = require('./lib/parsers/parser_cache.js');
 const PoolConnection = require('./lib/pool_connection.js');
 const Pool = require('./lib/pool.js');
 const PoolCluster = require('./lib/pool_cluster.js');
+const createConnection = require('./lib/create_connection.js');
+const Connection = require('./lib/connection.js');
+const createPool = require('./lib/create_pool.js');
+const createPoolCluster = require('./lib/create_pool_cluster.js');
 
 function makeDoneCb(resolve, reject, localErr) {
   return function (err, rows, fields) {
@@ -252,8 +255,8 @@ class PromiseConnection extends EventEmitter {
   }
 }
 
-function createConnection(opts) {
-  const coreConnection = common.createConnection(opts);
+function createConnectionPromise(opts) {
+  const coreConnection = createConnection(opts);
   const createConnectionErr = new Error();
   const thePromise = opts.Promise || Promise;
   if (!thePromise) {
@@ -290,12 +293,12 @@ function createConnection(opts) {
     const func = functionsToWrap[i];
 
     if (
-      typeof common.Connection.prototype[func] === 'function' &&
+      typeof Connection.prototype[func] === 'function' &&
       PromiseConnection.prototype[func] === undefined
     ) {
       PromiseConnection.prototype[func] = (function factory(funcName) {
         return function () {
-          return common.Connection.prototype[funcName].apply(
+          return Connection.prototype[funcName].apply(
             this.connection,
             arguments
           );
@@ -411,8 +414,8 @@ class PromisePool extends EventEmitter {
   }
 }
 
-function createPool(opts) {
-  const corePool = common.createPool(opts);
+function createPromisePool(opts) {
+  const corePool = createPool(opts);
   const thePromise = opts.Promise || Promise;
   if (!thePromise) {
     throw new Error(
@@ -545,8 +548,8 @@ class PromisePoolCluster extends EventEmitter {
   'add'
 ]);
 
-function createPoolCluster(opts) {
-  const corePoolCluster = common.createPoolCluster(opts);
+function createPromisePoolCluster(opts) {
+  const corePoolCluster = createPoolCluster(opts);
   const thePromise = (opts && opts.Promise) || Promise;
   if (!thePromise) {
     throw new Error(
@@ -558,9 +561,9 @@ function createPoolCluster(opts) {
   return new PromisePoolCluster(corePoolCluster, thePromise);
 }
 
-exports.createConnection = createConnection;
-exports.createPool = createPool;
-exports.createPoolCluster = createPoolCluster;
+exports.createConnection = createConnectionPromise;
+exports.createPool = createPromisePool;
+exports.createPoolCluster = createPromisePoolCluster;
 exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
 exports.format = SqlString.format;

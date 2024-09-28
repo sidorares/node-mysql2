@@ -3,23 +3,25 @@
 const SqlString = require('sqlstring');
 
 const ConnectionConfig = require('./lib/connection_config.js');
-const parserCache = require('./lib/parsers/parser_cache');
+const parserCache = require('./lib/parsers/parser_cache.js');
 
-const common = require('./common');
-exports.createConnection = common.createConnection
+const Connection = require('./lib/connection.js');
 
+exports.createConnection = require('./lib/create_connection.js');
 exports.connect = exports.createConnection;
-exports.Connection = common.Connection;
+exports.Connection = Connection
 exports.ConnectionConfig = ConnectionConfig;
 
 const Pool = require('./lib/pool.js');
 const PoolCluster = require('./lib/pool_cluster.js');
+const createPool = require('./lib/create_pool.js');
+const createPoolCluster = require('./lib/create_pool_cluster.js');
 
-exports.createPool = common.createPool
+exports.createPool = createPool
 
-exports.createPoolCluster = common.createPoolCluster;
+exports.createPoolCluster = createPoolCluster;
 
-exports.createQuery = common.Connection.createQuery;
+exports.createQuery = Connection.createQuery;
 
 exports.Pool = Pool;
 
@@ -34,7 +36,7 @@ exports.createServer = function(handler) {
   return s;
 };
 
-exports.PoolConnection = require('./lib/pool_connection');
+exports.PoolConnection = require('./lib/pool_connection.js');
 exports.authPlugins = require('./lib/auth_plugins');
 exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;

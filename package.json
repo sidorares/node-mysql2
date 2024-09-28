@@ -43,7 +43,6 @@
     "typings/mysql",
     "index.js",
     "index.d.ts",
-    "common.js",
     "promise.js",
     "promise.d.ts"
   ],
