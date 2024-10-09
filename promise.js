@@ -1,8 +1,15 @@
 'use strict';
 
-const core = require('./index.js');
+const SqlString = require('sqlstring');
 const EventEmitter = require('events').EventEmitter;
 const parserCache = require('./lib/parsers/parser_cache.js');
+const PoolConnection = require('./lib/pool_connection.js');
+const Pool = require('./lib/pool.js');
+const PoolCluster = require('./lib/pool_cluster.js');
+const createConnection = require('./lib/create_connection.js');
+const Connection = require('./lib/connection.js');
+const createPool = require('./lib/create_pool.js');
+const createPoolCluster = require('./lib/create_pool_cluster.js');
 
 function makeDoneCb(resolve, reject, localErr) {
   return function (err, rows, fields) {
@@ -248,8 +255,8 @@ class PromiseConnection extends EventEmitter {
   }
 }
 
-function createConnection(opts) {
-  const coreConnection = core.createConnection(opts);
+function createConnectionPromise(opts) {
+  const coreConnection = createConnection(opts);
   const createConnectionErr = new Error();
   const thePromise = opts.Promise || Promise;
   if (!thePromise) {
@@ -286,12 +293,12 @@ function createConnection(opts) {
     const func = functionsToWrap[i];
 
     if (
-      typeof core.Connection.prototype[func] === 'function' &&
+      typeof Connection.prototype[func] === 'function' &&
       PromiseConnection.prototype[func] === undefined
     ) {
       PromiseConnection.prototype[func] = (function factory(funcName) {
         return function () {
-          return core.Connection.prototype[funcName].apply(
+          return Connection.prototype[funcName].apply(
             this.connection,
             arguments
           );
@@ -319,7 +326,7 @@ class PromisePoolConnection extends PromiseConnection {
   }
 
   destroy() {
-    return core.PoolConnection.prototype.destroy.apply(
+    return PoolConnection.prototype.destroy.apply(
       this.connection,
       arguments
     );
@@ -407,8 +414,8 @@ class PromisePool extends EventEmitter {
   }
 }
 
-function createPool(opts) {
-  const corePool = core.createPool(opts);
+function createPromisePool(opts) {
+  const corePool = createPool(opts);
   const thePromise = opts.Promise || Promise;
   if (!thePromise) {
     throw new Error(
@@ -426,12 +433,12 @@ function createPool(opts) {
     const func = functionsToWrap[i];
 
     if (
-      typeof core.Pool.prototype[func] === 'function' &&
+      typeof Pool.prototype[func] === 'function' &&
       PromisePool.prototype[func] === undefined
     ) {
       PromisePool.prototype[func] = (function factory(funcName) {
         return function () {
-          return core.Pool.prototype[funcName].apply(this.pool, arguments);
+          return Pool.prototype[funcName].apply(this.pool, arguments);
         };
       })(func);
     }
@@ -527,12 +534,12 @@ class PromisePoolCluster extends EventEmitter {
     const func = functionsToWrap[i];
 
     if (
-      typeof core.PoolCluster.prototype[func] === 'function' &&
+      typeof PoolCluster.prototype[func] === 'function' &&
       PromisePoolCluster.prototype[func] === undefined
     ) {
       PromisePoolCluster.prototype[func] = (function factory(funcName) {
         return function () {
-          return core.PoolCluster.prototype[funcName].apply(this.poolCluster, arguments);
+          return PoolCluster.prototype[funcName].apply(this.poolCluster, arguments);
         };
       })(func);
     }
@@ -541,8 +548,8 @@ class PromisePoolCluster extends EventEmitter {
   'add'
 ]);
 
-function createPoolCluster(opts) {
-  const corePoolCluster = core.createPoolCluster(opts);
+function createPromisePoolCluster(opts) {
+  const corePoolCluster = createPoolCluster(opts);
   const thePromise = (opts && opts.Promise) || Promise;
   if (!thePromise) {
     throw new Error(
@@ -554,13 +561,13 @@ function createPoolCluster(opts) {
   return new PromisePoolCluster(corePoolCluster, thePromise);
 }
 
-exports.createConnection = createConnection;
-exports.createPool = createPool;
-exports.createPoolCluster = createPoolCluster;
-exports.escape = core.escape;
-exports.escapeId = core.escapeId;
-exports.format = core.format;
-exports.raw = core.raw;
+exports.createConnection = createConnectionPromise;
+exports.createPool = createPromisePool;
+exports.createPoolCluster = createPromisePoolCluster;
+exports.escape = SqlString.escape;
+exports.escapeId = SqlString.escapeId;
+exports.format = SqlString.format;
+exports.raw = SqlString.raw;
 exports.PromisePool = PromisePool;
 exports.PromiseConnection = PromiseConnection;
 exports.PromisePoolConnection = PromisePoolConnection;
