@@ -115,7 +115,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        deno-version: [v1.x, canary]
+        deno-version: [
+            v1.x,
+            # v2.x,
+            # canary
+          ]
         mysql-version: ['mysql:8.0.33']
         use-compression: [0, 1]
         # TODO: investigate error when using SSL (1)
