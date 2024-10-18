@@ -2,30 +2,24 @@
 
 const SqlString = require('sqlstring');
 
-const Connection = require('./lib/connection.js');
 const ConnectionConfig = require('./lib/connection_config.js');
-const parserCache = require('./lib/parsers/parser_cache');
+const parserCache = require('./lib/parsers/parser_cache.js');
 
-exports.createConnection = function(opts) {
-  return new Connection({ config: new ConnectionConfig(opts) });
-};
+const Connection = require('./lib/connection.js');
 
+exports.createConnection = require('./lib/create_connection.js');
 exports.connect = exports.createConnection;
-exports.Connection = Connection;
+exports.Connection = Connection
 exports.ConnectionConfig = ConnectionConfig;
 
 const Pool = require('./lib/pool.js');
 const PoolCluster = require('./lib/pool_cluster.js');
+const createPool = require('./lib/create_pool.js');
+const createPoolCluster = require('./lib/create_pool_cluster.js');
 
-exports.createPool = function(config) {
-  const PoolConfig = require('./lib/pool_config.js');
-  return new Pool({ config: new PoolConfig(config) });
-};
+exports.createPool = createPool
 
-exports.createPoolCluster = function(config) {
-  const PoolCluster = require('./lib/pool_cluster.js');
-  return new PoolCluster(config);
-};
+exports.createPoolCluster = createPoolCluster;
 
 exports.createQuery = Connection.createQuery;
 
@@ -42,7 +36,7 @@ exports.createServer = function(handler) {
   return s;
 };
 
-exports.PoolConnection = require('./lib/pool_connection');
+exports.PoolConnection = require('./lib/pool_connection.js');
 exports.authPlugins = require('./lib/auth_plugins');
 exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
