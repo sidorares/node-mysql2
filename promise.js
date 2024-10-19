@@ -3,7 +3,6 @@
 const SqlString = require('sqlstring');
 const EventEmitter = require('events').EventEmitter;
 const parserCache = require('./lib/parsers/parser_cache.js');
-const Pool = require('./lib/pool.js');
 const PoolCluster = require('./lib/pool_cluster.js');
 const createConnection = require('./lib/create_connection.js');
 const createPool = require('./lib/create_pool.js');
