@@ -6,7 +6,6 @@ const parserCache = require('./lib/parsers/parser_cache.js');
 const Pool = require('./lib/pool.js');
 const PoolCluster = require('./lib/pool_cluster.js');
 const createConnection = require('./lib/create_connection.js');
-const Connection = require('./lib/connection.js');
 const createPool = require('./lib/create_pool.js');
 const createPoolCluster = require('./lib/create_pool_cluster.js');
 const PromiseConnection = require('./lib/promise_connection.js');
@@ -43,42 +42,7 @@ function createConnectionPromise(opts) {
 // note: the callback of "changeUser" is not called on success
 // hence there is no possibility to call "resolve"
 
-// patching PromiseConnection
-// create facade functions for prototype functions on "Connection" that are not yet
-// implemented with PromiseConnection
 
-// proxy synchronous functions only
-(function (functionsToWrap) {
-  for (let i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
-    const func = functionsToWrap[i];
-
-    if (
-      typeof Connection.prototype[func] === 'function' &&
-      PromiseConnection.prototype[func] === undefined
-    ) {
-      PromiseConnection.prototype[func] = (function factory(funcName) {
-        return function () {
-          return Connection.prototype[funcName].apply(
-            this.connection,
-            arguments
-          );
-        };
-      })(func);
-    }
-  }
-})([
-  // synchronous functions
-  'close',
-  'createBinlogStream',
-  'destroy',
-  'escape',
-  'escapeId',
-  'format',
-  'pause',
-  'pipe',
-  'resume',
-  'unprepare'
-]);
 
 function createPromisePool(opts) {
   const corePool = createPool(opts);
@@ -94,27 +58,7 @@ function createPromisePool(opts) {
   return new PromisePool(corePool, thePromise);
 }
 
-(function (functionsToWrap) {
-  for (let i = 0; functionsToWrap && i < functionsToWrap.length; i++) {
-    const func = functionsToWrap[i];
 
-    if (
-      typeof Pool.prototype[func] === 'function' &&
-      PromisePool.prototype[func] === undefined
-    ) {
-      PromisePool.prototype[func] = (function factory(funcName) {
-        return function () {
-          return Pool.prototype[funcName].apply(this.pool, arguments);
-        };
-      })(func);
-    }
-  }
-})([
-  // synchronous functions
-  'escape',
-  'escapeId',
-  'format'
-]);
 
 class PromisePoolCluster extends EventEmitter {
   constructor(poolCluster, thePromise) {
