@@ -183,7 +183,7 @@ export interface ConnectionOptions {
    *
    * You can also specify a function to do the type casting yourself:
    * ```ts
-   * (field: Field, next: () => void) => {
+   * (field: Field, next: () => unknown) => {
    *   return next();
    * }
    * ```
