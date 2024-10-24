@@ -9,7 +9,7 @@ const Connection = require('./lib/connection.js');
 
 exports.createConnection = require('./lib/create_connection.js');
 exports.connect = exports.createConnection;
-exports.Connection = Connection
+exports.Connection = Connection;
 exports.ConnectionConfig = ConnectionConfig;
 
 const Pool = require('./lib/pool.js');
@@ -17,7 +17,7 @@ const PoolCluster = require('./lib/pool_cluster.js');
 const createPool = require('./lib/create_pool.js');
 const createPoolCluster = require('./lib/create_pool_cluster.js');
 
-exports.createPool = createPool
+exports.createPool = createPool;
 
 exports.createPoolCluster = createPoolCluster;
 
