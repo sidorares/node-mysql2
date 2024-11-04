@@ -76,7 +76,7 @@
     "benchmark": "^2.1.4",
     "c8": "^10.1.1",
     "error-stack-parser": "^2.0.3",
-    "eslint": "^8.27.0",
+    "eslint": "^9.14.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-async-await": "0.0.0",
     "eslint-plugin-markdown": "^5.0.0",
