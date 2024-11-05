@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.4](https://github.com/sidorares/node-mysql2/compare/v3.11.3...v3.11.4) (2024-11-05)
+
+
+### Bug Fixes
+
+* **types:** correct TypeCast's Next callback to return unknown ([#3129](https://github.com/sidorares/node-mysql2/issues/3129)) ([401db79](https://github.com/sidorares/node-mysql2/commit/401db79b88cae8731a9eb334e456528134f821f9))
+
 ## [3.11.3](https://github.com/sidorares/node-mysql2/compare/v3.11.2...v3.11.3) (2024-09-14)
 
 
