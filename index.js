@@ -64,15 +64,18 @@ exports.__defineGetter__(
   () => require('./promise.js').createPoolCluster
 );
 
+exports.__defineGetter__('CharsetToEncoding', () => require('./lib/constants/charset_encodings.js'));
+exports.__defineGetter__('Charsets', () => require('./lib/constants/charsets.js'));
+exports.__defineGetter__('ClientFlags', () => require('./lib/constants/client.js'));
+exports.__defineGetter__('Commands', () => require('./lib/constants/commands.js'));
+exports.__defineGetter__('Cursor', () => require('./lib/constants/cursor.js'));
+exports.__defineGetter__('EncodingToCharset', () => require('./lib/constants/encoding_charset.js'));
+exports.__defineGetter__('Errors', () => require('./lib/constants/errors.js'));
+exports.__defineGetter__('FieldFlags', () => require('./lib/constants/field_flags.js'));
+exports.__defineGetter__('ServerStatus', () => require('./lib/constants/server_status.js'));
+exports.__defineGetter__('SessionTrack', () => require('./lib/constants/session_track.js'));
+exports.__defineGetter__('SslProfiles', () => require('./lib/constants/ssl_profiles.js'));
 exports.__defineGetter__('Types', () => require('./lib/constants/types.js'));
-
-exports.__defineGetter__('Charsets', () =>
-  require('./lib/constants/charsets.js')
-);
-
-exports.__defineGetter__('CharsetToEncoding', () =>
-  require('./lib/constants/charset_encodings.js')
-);
 
 exports.setMaxParserCache = function(max) {
   parserCache.setMaxCache(max);
