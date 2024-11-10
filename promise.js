@@ -4,9 +4,10 @@ const core = require('./index.js');
 const EventEmitter = require('events').EventEmitter;
 const parserCache = require('./lib/parsers/parser_cache.js');
 
-function makeDoneCb(resolve, reject, localErr) {
+function makeDoneCb(resolve, reject) {
   return function (err, rows, fields) {
     if (err) {
+      const localErr = new Error();
       localErr.message = err.message;
       localErr.code = err.code;
       localErr.errno = err.errno;
@@ -52,9 +53,8 @@ class PromisePreparedStatementInfo {
 
   execute(parameters) {
     const s = this.statement;
-    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
+      const done = makeDoneCb(resolve, reject);
       if (parameters) {
         s.execute(parameters, done);
       } else {
@@ -91,14 +91,13 @@ class PromiseConnection extends EventEmitter {
 
   query(query, params) {
     const c = this.connection;
-    const localErr = new Error();
     if (typeof params === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
+      const done = makeDoneCb(resolve, reject);
       if (params !== undefined) {
         c.query(query, params, done);
       } else {
@@ -109,14 +108,13 @@ class PromiseConnection extends EventEmitter {
 
   execute(query, params) {
     const c = this.connection;
-    const localErr = new Error();
     if (typeof params === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
+      const done = makeDoneCb(resolve, reject);
       if (params !== undefined) {
         c.execute(query, params, done);
       } else {
@@ -133,37 +131,34 @@ class PromiseConnection extends EventEmitter {
 
   beginTransaction() {
     const c = this.connection;
-    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
+      const done = makeDoneCb(resolve, reject);
       c.beginTransaction(done);
     });
   }
 
   commit() {
     const c = this.connection;
-    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
+      const done = makeDoneCb(resolve, reject);
       c.commit(done);
     });
   }
 
   rollback() {
     const c = this.connection;
-    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
+      const done = makeDoneCb(resolve, reject);
       c.rollback(done);
     });
   }
 
   ping() {
     const c = this.connection;
-    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       c.ping(err => {
         if (err) {
+          const localErr = new Error();
           localErr.message = err.message;
           localErr.code = err.code;
           localErr.errno = err.errno;
@@ -179,10 +174,10 @@ class PromiseConnection extends EventEmitter {
 
   connect() {
     const c = this.connection;
-    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       c.connect((err, param) => {
         if (err) {
+          const localErr = new Error();
           localErr.message = err.message;
           localErr.code = err.code;
           localErr.errno = err.errno;
@@ -199,10 +194,10 @@ class PromiseConnection extends EventEmitter {
   prepare(options) {
     const c = this.connection;
     const promiseImpl = this.Promise;
-    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       c.prepare(options, (err, statement) => {
         if (err) {
+          const localErr = new Error();
           localErr.message = err.message;
           localErr.code = err.code;
           localErr.errno = err.errno;
@@ -222,10 +217,10 @@ class PromiseConnection extends EventEmitter {
 
   changeUser(options) {
     const c = this.connection;
-    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       c.changeUser(options, err => {
         if (err) {
+          const localErr = new Error();
           localErr.message = err.message;
           localErr.code = err.code;
           localErr.errno = err.errno;
@@ -250,7 +245,6 @@ class PromiseConnection extends EventEmitter {
 
 function createConnection(opts) {
   const coreConnection = core.createConnection(opts);
-  const createConnectionErr = new Error();
   const thePromise = opts.Promise || Promise;
   if (!thePromise) {
     throw new Error(
@@ -264,6 +258,7 @@ function createConnection(opts) {
       resolve(new PromiseConnection(coreConnection, thePromise));
     });
     coreConnection.once('error', err => {
+      const createConnectionErr = new Error();
       createConnectionErr.message = err.message;
       createConnectionErr.code = err.code;
       createConnectionErr.errno = err.errno;
@@ -353,14 +348,13 @@ class PromisePool extends EventEmitter {
 
   query(sql, args) {
     const corePool = this.pool;
-    const localErr = new Error();
     if (typeof args === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
+      const done = makeDoneCb(resolve, reject);
       if (args !== undefined) {
         corePool.query(sql, args, done);
       } else {
@@ -371,14 +365,13 @@ class PromisePool extends EventEmitter {
 
   execute(sql, args) {
     const corePool = this.pool;
-    const localErr = new Error();
     if (typeof args === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
+      const done = makeDoneCb(resolve, reject);
       if (args) {
         corePool.execute(sql, args, done);
       } else {
@@ -389,10 +382,10 @@ class PromisePool extends EventEmitter {
 
   end() {
     const corePool = this.pool;
-    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       corePool.end(err => {
         if (err) {
+          const localErr = new Error();
           localErr.message = err.message;
           localErr.code = err.code;
           localErr.errno = err.errno;
@@ -466,28 +459,26 @@ class PromisePoolCluster extends EventEmitter {
 
   query(sql, args) {
     const corePoolCluster = this.poolCluster;
-    const localErr = new Error();
     if (typeof args === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
+      const done = makeDoneCb(resolve, reject);
       corePoolCluster.query(sql, args, done);
     });
   }
 
   execute(sql, args) {
     const corePoolCluster = this.poolCluster;
-    const localErr = new Error();
     if (typeof args === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
+      const done = makeDoneCb(resolve, reject);
       corePoolCluster.execute(sql, args, done);
     });
   }
@@ -501,10 +492,10 @@ class PromisePoolCluster extends EventEmitter {
 
   end() {
     const corePoolCluster = this.poolCluster;
-    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       corePoolCluster.end(err => {
         if (err) {
+          const localErr = new Error();
           localErr.message = err.message;
           localErr.code = err.code;
           localErr.errno = err.errno;
