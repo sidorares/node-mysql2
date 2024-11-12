@@ -7,11 +7,11 @@ const PoolCluster = require('./lib/pool_cluster.js');
 const createConnection = require('./lib/create_connection.js');
 const createPool = require('./lib/create_pool.js');
 const createPoolCluster = require('./lib/create_pool_cluster.js');
-const PromiseConnection = require('./lib/promise_connection.js');
-const PromisePool = require('./lib/promise_pool.js');
-const makeDoneCb = require('./lib/make_done_cb.js');
-const PromisePoolConnection = require('./lib/promise_pool_connection.js');
-const inheritEvents = require('./lib/inherit_events.js');
+const PromiseConnection = require('./lib/promise/connection.js');
+const PromisePool = require('./lib/promise/pool.js');
+const makeDoneCb = require('./lib/promise/make_done_cb.js');
+const PromisePoolConnection = require('./lib/promise/pool_connection.js');
+const inheritEvents = require('./lib/promise/inherit_events.js');
 
 function createConnectionPromise(opts) {
   const coreConnection = createConnection(opts);
