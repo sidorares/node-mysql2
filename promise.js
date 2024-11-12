@@ -20,15 +20,15 @@ function createConnectionPromise(opts) {
   if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
-      'Use promise-enabled node version or pass userland Promise' +
-      " implementation as parameter, for example: { Promise: require('bluebird') }"
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }",
     );
   }
   return new thePromise((resolve, reject) => {
     coreConnection.once('connect', () => {
       resolve(new PromiseConnection(coreConnection, thePromise));
     });
-    coreConnection.once('error', err => {
+    coreConnection.once('error', (err) => {
       createConnectionErr.message = err.message;
       createConnectionErr.code = err.code;
       createConnectionErr.errno = err.errno;
@@ -41,23 +41,19 @@ function createConnectionPromise(opts) {
 // note: the callback of "changeUser" is not called on success
 // hence there is no possibility to call "resolve"
 
-
-
 function createPromisePool(opts) {
   const corePool = createPool(opts);
   const thePromise = opts.Promise || Promise;
   if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
-      'Use promise-enabled node version or pass userland Promise' +
-      " implementation as parameter, for example: { Promise: require('bluebird') }"
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }",
     );
   }
 
   return new PromisePool(corePool, thePromise);
 }
-
-
 
 class PromisePoolCluster extends EventEmitter {
   constructor(poolCluster, thePromise) {
@@ -70,13 +66,17 @@ class PromisePoolCluster extends EventEmitter {
   getConnection(pattern, selector) {
     const corePoolCluster = this.poolCluster;
     return new this.Promise((resolve, reject) => {
-      corePoolCluster.getConnection(pattern, selector, (err, coreConnection) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(new PromisePoolConnection(coreConnection, this.Promise));
-        }
-      });
+      corePoolCluster.getConnection(
+        pattern,
+        selector,
+        (err, coreConnection) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(new PromisePoolConnection(coreConnection, this.Promise));
+          }
+        },
+      );
     });
   }
 
@@ -85,7 +85,7 @@ class PromisePoolCluster extends EventEmitter {
     const localErr = new Error();
     if (typeof args === 'function') {
       throw new Error(
-        'Callback function is not available with promise clients.'
+        'Callback function is not available with promise clients.',
       );
     }
     return new this.Promise((resolve, reject) => {
@@ -99,7 +99,7 @@ class PromisePoolCluster extends EventEmitter {
     const localErr = new Error();
     if (typeof args === 'function') {
       throw new Error(
-        'Callback function is not available with promise clients.'
+        'Callback function is not available with promise clients.',
       );
     }
     return new this.Promise((resolve, reject) => {
@@ -111,7 +111,7 @@ class PromisePoolCluster extends EventEmitter {
   of(pattern, selector) {
     return new PromisePoolCluster(
       this.poolCluster.of(pattern, selector),
-      this.Promise
+      this.Promise,
     );
   }
 
@@ -119,7 +119,7 @@ class PromisePoolCluster extends EventEmitter {
     const corePoolCluster = this.poolCluster;
     const localErr = new Error();
     return new this.Promise((resolve, reject) => {
-      corePoolCluster.end(err => {
+      corePoolCluster.end((err) => {
         if (err) {
           localErr.message = err.message;
           localErr.code = err.code;
@@ -148,14 +148,15 @@ class PromisePoolCluster extends EventEmitter {
     ) {
       PromisePoolCluster.prototype[func] = (function factory(funcName) {
         return function () {
-          return PoolCluster.prototype[funcName].apply(this.poolCluster, arguments);
+          return PoolCluster.prototype[funcName].apply(
+            this.poolCluster,
+            arguments,
+          );
         };
       })(func);
     }
   }
-})([
-  'add'
-]);
+})(['add']);
 
 function createPromisePoolCluster(opts) {
   const corePoolCluster = createPoolCluster(opts);
@@ -163,8 +164,8 @@ function createPromisePoolCluster(opts) {
   if (!thePromise) {
     throw new Error(
       'no Promise implementation available.' +
-      'Use promise-enabled node version or pass userland Promise' +
-      " implementation as parameter, for example: { Promise: require('bluebird') }"
+        'Use promise-enabled node version or pass userland Promise' +
+        " implementation as parameter, for example: { Promise: require('bluebird') }",
     );
   }
   return new PromisePoolCluster(corePoolCluster, thePromise);
@@ -184,17 +185,17 @@ exports.PromisePoolConnection = PromisePoolConnection;
 exports.__defineGetter__('Types', () => require('./lib/constants/types.js'));
 
 exports.__defineGetter__('Charsets', () =>
-  require('./lib/constants/charsets.js')
+  require('./lib/constants/charsets.js'),
 );
 
 exports.__defineGetter__('CharsetToEncoding', () =>
-  require('./lib/constants/charset_encodings.js')
+  require('./lib/constants/charset_encodings.js'),
 );
 
-exports.setMaxParserCache = function(max) {
+exports.setMaxParserCache = function (max) {
   parserCache.setMaxCache(max);
 };
 
-exports.clearParserCache = function() {
+exports.clearParserCache = function () {
   parserCache.clearCache();
 };
