@@ -4,6 +4,7 @@
   "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
   "typings": "typings/mysql/index",
+  "type": "commonjs",
   "scripts": {
     "lint": "npm run lint:docs && npm run lint:code",
     "lint:code": "eslint index.js promise.js index.d.ts promise.d.ts \"typings/**/*.ts\" \"lib/**/*.js\" \"test/**/*.{js,cjs,mjs,ts}\" \"benchmarks/**/*.js\"",
