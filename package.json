@@ -13,7 +13,7 @@
     "lint:tests": "npx prettier --check ./test",
     "test": "poku --debug --include=\"test/esm,test/unit,test/integration\"",
     "test:bun": "poku --debug --platform=\"bun\" --include=\"test/esm,test/unit,test/integration\"",
-    "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku --debug --platform=\"deno\" --deno-allow=\"read,env,net,sys\" --deno-cjs=\".js,.cjs\" --include=\"test/esm,test/unit,test/integration\"",
+    "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku --debug --platform=\"deno\" --deno-allow=\"read,env,net,sys\" --include=\"test/esm,test/unit,test/integration\"",
     "test:tsc-build": "cd \"test/tsc-build\" && npx tsc -p \"tsconfig.json\"",
     "coverage-test": "c8 npm run test",
     "benchmark": "node ./benchmarks/benchmark.js",
