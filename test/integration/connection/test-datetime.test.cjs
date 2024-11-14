@@ -32,6 +32,7 @@ const date2 = '2010-12-10 14:12:09.019473';
 const date3 = null;
 const date4 = '2010-12-10 14:12:09.123456';
 const date5 = '2010-12-10 14:12:09.019';
+const date6 = '2024-11-10 00:00:00';
 
 function adjustTZ(d, offset) {
   if (offset === undefined) {
@@ -72,28 +73,20 @@ connection.query('INSERT INTO t set d1=?, d2=?, d3=?', [
 ]);
 
 connection1.query(
-  'CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME, d5 DATETIME(6), d6 DATETIME(3))',
+  'CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME, d5 DATETIME(6), d6 DATETIME(3), d7 DATETIME)',
 );
-connection1.query('INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?, d6=?', [
-  date,
-  date1,
-  date2,
-  date3,
-  date4,
-  date5,
-]);
+connection1.query(
+  'INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?, d6=?, d7=?',
+  [date, date1, date2, date3, date4, date5, date6],
+);
 
 connection2.query(
-  'CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME, d5 DATETIME(6), d6 DATETIME(3))',
+  'CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME, d5 DATETIME(6), d6 DATETIME(3), d7 DATETIME)',
 );
-connection2.query('INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?, d6=?', [
-  date,
-  date1,
-  date2,
-  date3,
-  date4,
-  date5,
-]);
+connection2.query(
+  'INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?, d6=?, d7=?',
+  [date, date1, date2, date3, date4, date5, date6],
+);
 
 connectionZ.query(
   'CREATE TEMPORARY TABLE t (d1 DATE, d2 DATETIME(3), d3 DATETIME(6))',
@@ -123,6 +116,7 @@ const dateAsStringExpected = [
     d4: date3,
     d5: date4,
     d6: date5,
+    d7: date6,
   },
 ];
 
