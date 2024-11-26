@@ -32,7 +32,7 @@
     "sass": "^1.81.0"
   },
   "devDependencies": {
-    "@docusaurus/eslint-plugin": "^3.6.2",
+    "@docusaurus/eslint-plugin": "^3.6.3",
     "@docusaurus/module-type-aliases": "^3.6.3",
     "@docusaurus/tsconfig": "^3.6.1",
     "@docusaurus/types": "^3.6.3",
