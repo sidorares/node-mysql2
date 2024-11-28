@@ -16,11 +16,11 @@
     "lint": "prettier --write . && eslint . --fix",
     "test:unit": "npx poku --parallel test/unit",
     "test": "npm run typecheck && npm run lintcheck && npm run test:unit && npm run clear && npm run build",
-    "update": "pu; npm i; npm run lint"
+    "update": "pu minor; npm i; npm run lint"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.3.2",
-    "@docusaurus/preset-classic": "^3.6.2",
+    "@docusaurus/core": "^3.6.3",
+    "@docusaurus/preset-classic": "^3.6.3",
     "@easyops-cn/docusaurus-search-local": "^0.46.1",
     "@mdx-js/react": "^3.1.0",
     "clsx": "^2.1.1",
@@ -49,7 +49,7 @@
     "poku": "^2.7.1",
     "prettier": "^3.4.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.3"
+    "typescript": "^5.7.2"
   },
   "browserslist": {
     "production": [
