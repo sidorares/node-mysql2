@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.11.5](https://github.com/sidorares/node-mysql2/compare/v3.11.4...v3.11.5) (2024-11-28)
+
+
+### Bug Fixes
+
+* 1040 datetime fields returned without time part when time is 00:00:00 ([#3204](https://github.com/sidorares/node-mysql2/issues/3204)) ([bded498](https://github.com/sidorares/node-mysql2/commit/bded4980065319e58a4f87d828cc355fb79f5bd3))
+* circular dependencies ([#3081](https://github.com/sidorares/node-mysql2/issues/3081)) ([d5a76e6](https://github.com/sidorares/node-mysql2/commit/d5a76e6c49fbb1bfea405ad809e3076fe5bda39d))
+* Deno `v2` requires `commonjs` type explicitly ([#3209](https://github.com/sidorares/node-mysql2/issues/3209)) ([cdc9415](https://github.com/sidorares/node-mysql2/commit/cdc9415c7cbe5806996b05415841b283ae0bd85d))
+
 ## [3.11.4](https://github.com/sidorares/node-mysql2/compare/v3.11.3...v3.11.4) (2024-11-05)
 
 
