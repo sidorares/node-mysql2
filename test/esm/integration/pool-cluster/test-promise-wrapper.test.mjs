@@ -43,4 +43,40 @@ const { createPoolCluster } = require('../../../../promise.js');
 
     poolCluster.poolCluster.emit('remove');
   });
+
+  await test(async () => {
+    const poolCluster = createPoolCluster();
+
+    poolCluster.once('offline', async function () {
+      await new Promise((resolve) => {
+        assert.equal(
+          // eslint-disable-next-line no-invalid-this
+          this,
+          poolCluster,
+          'should propagate offline event to promise wrapper',
+        );
+        resolve(true);
+      });
+    });
+
+    poolCluster.poolCluster.emit('offline');
+  });
+
+  await test(async () => {
+    const poolCluster = createPoolCluster();
+
+    poolCluster.once('online', async function () {
+      await new Promise((resolve) => {
+        assert.equal(
+          // eslint-disable-next-line no-invalid-this
+          this,
+          poolCluster,
+          'should propagate online event to promise wrapper',
+        );
+        resolve(true);
+      });
+    });
+
+    poolCluster.poolCluster.emit('online');
+  });
 })();

@@ -22,11 +22,12 @@ if (typeof Deno !== 'undefined') process.exit(0);
 
 const cluster = common.createPoolCluster({
   canRetry: true,
-  removeNodeErrorCount: 1,
+  removeNodeErrorCount: 2,
   restoreNodeTimeout: 100,
 });
 
 let connCount = 0;
+let offline = true;
 
 const server = mysql.createServer();
 
@@ -38,39 +39,47 @@ portfinder.getPort((err, port) => {
   server.listen(port + 0, (err) => {
     assert.ifError(err);
 
-    const pool = cluster.of('*', 'ORDER');
-    let removedNodeId;
-
-    cluster.on('remove', (nodeId) => {
-      removedNodeId = nodeId;
-    });
-
-    pool.getConnection((err) => {
+    cluster.getConnection('MASTER', (err) => {
       assert.ok(err);
-      console.log(connCount, cluster._serviceableNodeIds, removedNodeId);
-    });
+      assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+      assert.equal(err.fatal, true);
+      assert.equal(connCount, 2);
 
-    setTimeout(() => {
-      pool.getConnection(() => {
-        // TODO: restoreNodeTimeout is not supported now
-        console.log(connCount, cluster._serviceableNodeIds, removedNodeId);
+      cluster.getConnection('MASTER', (err) => {
+        assert.ok(err);
+        assert.equal(err.code, 'POOL_NONEONLINE');
 
-        cluster.end((err) => {
-          assert.ifError(err);
-          server._server.close();
-        });
+        cluster._nodes.MASTER.errorCount = 3;
+
+        offline = false;
       });
-    }, 200);
+
+      setTimeout(() => {
+        cluster.getConnection('MASTER', (err, conn) => {
+          assert.ifError(err);
+          conn.release();
+
+          cluster.end((err) => {
+            assert.ifError(err);
+            server.close();
+          });
+        });
+      }, 200);
+    });
   });
 
   server.on('connection', (conn) => {
     connCount += 1;
-    console.log(connCount);
-    if (connCount < 2) {
+
+    if (offline) {
       conn.close();
     } else {
       conn.serverHandshake({
         serverVersion: 'node.js rocks',
+      });
+      conn.on('error', () => {
+        // server side of the connection
+        // ignore disconnects
       });
     }
   });

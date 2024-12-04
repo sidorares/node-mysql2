@@ -60,7 +60,7 @@ class PromisePoolCluster extends EventEmitter {
     super();
     this.poolCluster = poolCluster;
     this.Promise = thePromise || Promise;
-    inheritEvents(poolCluster, this, ['warn', 'remove']);
+    inheritEvents(poolCluster, this, ['warn', 'remove' , 'online', 'offline']);
   }
 
   getConnection(pattern, selector) {
@@ -156,7 +156,7 @@ class PromisePoolCluster extends EventEmitter {
       })(func);
     }
   }
-})(['add']);
+})(['add', 'remove']);
 
 function createPromisePoolCluster(opts) {
   const corePoolCluster = createPoolCluster(opts);
