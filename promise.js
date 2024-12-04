@@ -55,6 +55,27 @@ function createPromisePool(opts) {
   return new PromisePool(corePool, thePromise);
 }
 
+class PromisePoolNamespace {
+
+  constructor(poolNamespace, thePromise) {
+    this.poolNamespace = poolNamespace;
+    this.Promise = thePromise || Promise;
+  }
+
+  getConnection() {
+    const corePoolNamespace = this.poolNamespace;
+    return new this.Promise((resolve, reject) => {
+      corePoolNamespace.getConnection((err, coreConnection) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(new PromisePoolConnection(coreConnection, this.Promise));
+        }
+      });
+    });
+  }
+}
+
 class PromisePoolCluster extends EventEmitter {
   constructor(poolCluster, thePromise) {
     super();
@@ -109,7 +130,7 @@ class PromisePoolCluster extends EventEmitter {
   }
 
   of(pattern, selector) {
-    return new PromisePoolCluster(
+    return new PromisePoolNamespace(
       this.poolCluster.of(pattern, selector),
       this.Promise,
     );
