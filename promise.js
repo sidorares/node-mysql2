@@ -74,6 +74,34 @@ class PromisePoolNamespace {
       });
     });
   }
+
+  query(sql, values) {
+    const corePoolNamespace = this.poolNamespace;
+    const localErr = new Error();
+    if (typeof values === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.',
+      );
+    }
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      corePoolNamespace.query(sql, values, done);
+    });
+  }
+
+  execute(sql, values) {
+    const corePoolNamespace = this.poolNamespace;
+    const localErr = new Error();
+    if (typeof values === 'function') {
+      throw new Error(
+        'Callback function is not available with promise clients.',
+      );
+    }
+    return new this.Promise((resolve, reject) => {
+      const done = makeDoneCb(resolve, reject, localErr);
+      corePoolNamespace.execute(sql, values, done);
+    });
+  }
 }
 
 class PromisePoolCluster extends EventEmitter {
