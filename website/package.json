@@ -25,11 +25,11 @@
     "@mdx-js/react": "^3.1.0",
     "clsx": "^2.1.1",
     "docusaurus-plugin-sass": "^0.2.6",
-    "lucide-react": "^0.464.0",
+    "lucide-react": "^0.465.0",
     "prism-react-renderer": "^2.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sass": "^1.81.0"
+    "sass": "^1.82.0"
   },
   "devDependencies": {
     "@docusaurus/eslint-plugin": "^3.6.3",
@@ -40,14 +40,14 @@
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.1",
-    "eslint-import-resolver-typescript": "^3.6.3",
+    "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "packages-update": "^2.0.0",
     "poku": "^2.7.1",
-    "prettier": "^3.4.1",
+    "prettier": "^3.4.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
