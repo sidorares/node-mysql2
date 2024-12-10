@@ -86,23 +86,24 @@ const { createPoolCluster } = require('../../../../promise.js');
 
     const poolNamespace = poolCluster.of('MASTER');
 
-    assert.equal(poolNamespace.poolNamespace, poolCluster.poolCluster.of('MASTER'));
+    assert.equal(
+      poolNamespace.poolNamespace,
+      poolCluster.poolCluster.of('MASTER'),
+    );
 
     const connection = await poolNamespace.getConnection();
 
     assert.ok(connection, 'should get connection');
     connection.release();
 
-    const [result] = await poolNamespace.query(
-      'SELECT 1 as a where 1 = ?',
-      [1],
-    );
+    const [result] = await poolNamespace.query('SELECT 1 as a where 1 = ?', [
+      1,
+    ]);
     assert.equal(result[0]['a'], 1, 'should query successfully');
 
-    const [result2] = await poolNamespace.execute(
-      'SELECT 1 as a where 1 = ?',
-      [1],
-    );
+    const [result2] = await poolNamespace.execute('SELECT 1 as a where 1 = ?', [
+      1,
+    ]);
     assert.equal(result2[0]['a'], 1, 'should execute successfully');
 
     poolCluster.end();
