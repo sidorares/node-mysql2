@@ -107,5 +107,7 @@ const { createPoolCluster } = require('../../../../promise.js');
       [1],
     );
     assert.equal(result2[0]['a'], 1, 'should execute successfully');
+
+    poolCluster.end();
   });
 })();
