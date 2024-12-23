@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.12.0](https://github.com/sidorares/node-mysql2/compare/v3.11.5...v3.12.0) (2024-12-23)
+
+
+### Features
+
+* **PoolCluster:** `restoreNodeTimeout` implementation ([#3218](https://github.com/sidorares/node-mysql2/issues/3218)) ([9a38601](https://github.com/sidorares/node-mysql2/commit/9a3860186c12452c8e4b60d700d4e1599cc7aefa))
+
 ## [3.11.5](https://github.com/sidorares/node-mysql2/compare/v3.11.4...v3.11.5) (2024-11-28)
 
 
