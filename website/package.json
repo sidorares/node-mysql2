@@ -19,7 +19,7 @@
     "update": "pu minor; npm i; npm run lint"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.6.3",
+    "@docusaurus/core": "^3.7.0",
     "@docusaurus/preset-classic": "^3.6.3",
     "@easyops-cn/docusaurus-search-local": "^0.46.1",
     "@mdx-js/react": "^3.1.0",
