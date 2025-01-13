@@ -84,7 +84,7 @@ export interface PoolConnection extends Connection {
   release(): void;
 }
 
-export interface Pool extends Pick<CorePool, 'execute' | 'query' | 'escape' | 'escapeId' | 'format'> {
+export interface Pool extends QueryableAndExecutableBase, Pick<CorePool, 'escape' | 'escapeId' | 'format'> {
   getConnection(): Promise<PoolConnection>;
 
   releaseConnection(connection: PoolConnection): void;
