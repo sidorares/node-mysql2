@@ -335,7 +335,9 @@ export interface ConnectionOptions {
   jsonStrings?: boolean;
 }
 
-declare class BaseConnection extends QueryableBase(ExecutableBase(EventEmitter)) {
+declare class BaseConnection extends QueryableBase(
+  ExecutableBase(EventEmitter),
+) {
   config: ConnectionOptions;
 
   threadId: number;
