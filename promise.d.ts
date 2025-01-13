@@ -7,9 +7,11 @@ import {
   FieldPacket,
   QueryOptions,
   ConnectionOptions,
+  Connection as CoreConnection,
   PoolOptions,
   PoolClusterOptions,
   Pool as CorePool,
+  PoolConnection as CorePoolConnection,
 } from './index.js';
 import { ExecutableBase as ExecutableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/ExecutableBase.js';
 import { QueryableBase as QueryableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/QueryableBase.js';
@@ -41,6 +43,8 @@ export interface PreparedStatementInfo {
 
 export interface Connection extends QueryableAndExecutableBase {
   config: ConnectionOptions;
+
+  connection: CoreConnection;
 
   threadId: number;
 
@@ -78,17 +82,16 @@ export interface Connection extends QueryableAndExecutableBase {
 
 export interface PoolConnection extends Connection {
   release(): void;
-  connection: Connection;
 }
 
-export interface Pool extends Connection {
+export interface Pool extends Pick<CorePool, 'execute' | 'query' | 'escape' | 'escapeId' | 'format'> {
   getConnection(): Promise<PoolConnection>;
 
   releaseConnection(connection: PoolConnection): void;
 
-  on(event: 'connection', listener: (connection: PoolConnection) => any): this;
-  on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
-  on(event: 'release', listener: (connection: PoolConnection) => any): this;
+  on(event: 'connection', listener: (connection: CorePoolConnection) => any): this;
+  on(event: 'acquire', listener: (connection: CorePoolConnection) => any): this;
+  on(event: 'release', listener: (connection: CorePoolConnection) => any): this;
   on(event: 'enqueue', listener: () => any): this;
 
   end(): Promise<void>;
