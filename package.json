@@ -82,7 +82,7 @@
     "eslint-plugin-async-await": "0.0.0",
     "eslint-plugin-markdown": "^5.0.0",
     "lint-staged": "^15.0.1",
-    "poku": "^2.0.0",
+    "poku": "^3.0.0",
     "portfinder": "^1.0.28",
     "prettier": "^3.0.0",
     "progress": "^2.0.3",
