@@ -79,7 +79,7 @@ process.on('exit', () => {
     assert.equal(aRow[cols[2]], tRow[2]);
     assert.equal(aRow[cols[3]], tRow[3]);
   });
-  
+
   if (connection._handshakePacket.serverVersion.match(/MariaDB/)) {
     assert.equal(actualError, expectedErrorMariaDB);
   } else {
