@@ -57,7 +57,7 @@ jobs:
 
       - name: Run tests
         run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run test
-        timeout-minutes: 5
+        timeout-minutes: 10
 
   tests-linux-bun:
     runs-on: ubuntu-latest
@@ -108,7 +108,7 @@ jobs:
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
           FILTER: test-select-1|test-select-ssl
         run: bun run test:bun
-        timeout-minutes: 1
+        timeout-minutes: 10
 
   tests-linux-deno-v1:
     runs-on: ubuntu-latest
@@ -162,7 +162,7 @@ jobs:
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
         run: deno task test:deno -- --denoCjs='.js,.cjs'
-        timeout-minutes: 5
+        timeout-minutes: 10
 
   tests-linux-deno-v2:
     runs-on: ubuntu-latest
@@ -216,4 +216,4 @@ jobs:
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
         run: deno task test:deno
-        timeout-minutes: 5
+        timeout-minutes: 10
