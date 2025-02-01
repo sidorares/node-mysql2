@@ -1,16 +1,13 @@
-import { skip, test, describe, assert } from 'poku';
+import { test, describe, assert } from 'poku';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const {
   createConnection,
   describeOptions,
-  useStaticParser,
 } = require('../../../common.test.cjs');
 
 describe('JSON String', describeOptions);
-
-if (useStaticParser) skip('Skipping during debugging process');
 
 const connection = createConnection({
   jsonStrings: true,
