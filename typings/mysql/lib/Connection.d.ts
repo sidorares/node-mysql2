@@ -323,7 +323,7 @@ export interface ConnectionOptions {
 
   waitForConnections?: boolean;
 
-  useStaticParser?: boolean;
+  disableEval?: boolean;
 
   authPlugins?: {
     [key: string]: AuthPlugin;
