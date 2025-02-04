@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20.x] # LTS
+        node-version: [22] # LTS
         use-compression: [0, 1]
         use-tls: [0, 1]
 
