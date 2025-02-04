@@ -36,7 +36,7 @@
     "@docusaurus/module-type-aliases": "^3.6.3",
     "@docusaurus/tsconfig": "^3.7.0",
     "@docusaurus/types": "^3.7.0",
-    "@types/node": "^22.12.0",
+    "@types/node": "^22.13.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.1",
