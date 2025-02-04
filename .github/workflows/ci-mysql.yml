@@ -30,16 +30,20 @@ jobs:
             'mysql:9.1',
             'mysql:9.2',
           ]
+        use-compression: [0, 1]
+        use-tls: [0, 1]
         mysql_connection_url_key: ['']
         include:
           ## MySQL 5.1: A number of tests does not work due to old sql syntax, just testing basic connection
           - filter: 'test-select-1'
             mysql-version: 'datagrip/mysql:5.1'
+            use-compression: 0
+            use-tls: 0
 
     env:
       MYSQL_CONNECTION_URL: ${{ secrets[matrix.mysql_connection_url_key] }}
 
-    name: ${{ matrix.mysql-version }}${{ matrix.mysql_connection_url_key }}
+    name: ${{ matrix.mysql-version }}${{ matrix.mysql_connection_url_key }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
     steps:
       - uses: actions/checkout@v4
