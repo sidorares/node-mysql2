@@ -323,6 +323,8 @@ export interface ConnectionOptions {
 
   waitForConnections?: boolean;
 
+  disableEval?: boolean;
+
   authPlugins?: {
     [key: string]: AuthPlugin;
   };

@@ -8,10 +8,11 @@
   "scripts": {
     "lint": "npm run lint:docs && npm run lint:code",
     "lint:code": "eslint index.js promise.js index.d.ts promise.d.ts \"typings/**/*.ts\" \"lib/**/*.js\" \"test/**/*.{js,cjs,mjs,ts}\" \"benchmarks/**/*.js\"",
+    "lint:fix": "npm run lint:docs -- --fix &&npm run lint:code -- --fix",
     "lint:docs": "eslint Contributing.md README.md",
     "lint:typings": "npx prettier --check ./typings",
     "lint:tests": "npx prettier --check ./test",
-    "test": "poku -d --sequential test/esm test/unit test/integration",
+    "test": "poku -d -r=verbose --sequential test/esm test/unit test/integration",
     "test:bun": "bun poku -d --sequential test/esm test/unit test/integration",
     "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku -d --sequential --denoAllow=\"read,env,net,sys\" test/esm test/unit test/integration",
     "test:tsc-build": "cd \"test/tsc-build\" && npx tsc -p \"tsconfig.json\"",
