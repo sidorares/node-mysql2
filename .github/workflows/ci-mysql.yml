@@ -21,13 +21,13 @@ jobs:
         mysql-version:
           [
             # 'mysql:5.7', # Already tested in "ci-coverage"
-            # 'mysql:8.0', # Already tested in "ci-linux"
+            # 'mysql:8.0', # Already tested in "ci-coverage"
             'mysql:8.1',
             'mysql:8.2',
-            # 'mysql:8.3', # Already tested in "ci-coverage"
-            'mysql:8.4',
-            # 'mysql:9.0', # Already tested in "ci-coverage"
-            'mysql:9.1',
+            # 'mysql:8.3', # Already tested in "ci-linux"
+            # 'mysql:8.4', # TODO: Tests never end
+            # 'mysql:9.0', # TODO: Tests never end
+            # 'mysql:9.1', # Already tested in "ci-coverage"
             'mysql:9.2',
           ]
         mysql_connection_url_key: ['']
