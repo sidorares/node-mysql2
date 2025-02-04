@@ -26,9 +26,9 @@ jobs:
             'mysql:8.2',
             # 'mysql:8.3', # Already tested in "ci-linux"
             # 'mysql:8.4', # TODO: Tests never end
-            # 'mysql:9.0', # TODO: Tests never end
-            # 'mysql:9.1', # Already tested in "ci-coverage"
-            'mysql:9.2',
+            'mysql:9.0',
+            'mysql:9.1',
+            # 'mysql:9.2', # Already tested in "ci-coverage"
           ]
         mysql_connection_url_key: ['']
         include:
