@@ -20,6 +20,8 @@ import { PageTitle } from '@site/src/components/PageTitle';
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Node.js Version][node-version-image]][node-version-url]
+[![GitHub Workflow Status (with event)][ci-image]][ci-url]
+[![Codecov][coverage]][coverage-url]
 [![License][license-image]][license-url]
 
 ## 安装
@@ -41,7 +43,7 @@ npm install --save mysql2
 npm install --save-dev @types/node
 ```
 
-    For TypeScript documentation and examples, see [here](/docs/documentation/typescript-examples).
+    更多关于`TypeScript`相关文档内容，请点击 [这里](/docs/documentation/typescript-examples) 查看。
 
   </TabItem>
 </Tabs>
@@ -50,7 +52,7 @@ npm install --save-dev @types/node
 
 ### 查询数据
 
-> To explore more queries examples, please visit the example sections [**Simple Queries**](/docs/examples/queries/simple-queries) and [**Prepared Statements**](/docs/examples/queries/prepared-statements).
+> 更多查询语法内容，请点击 [**简单查询**](/docs/examples/queries/simple-queries) 和 [**预处理**](/docs/examples/queries/prepared-statements)。
 
 <Tabs>
   <TabItem value='Promise' default>
@@ -137,7 +139,7 @@ connection.query(
 
 MySQL2 提供了 `execute` 辅助函数，它将准备和查询语句。 您还可以使用 `prepare` / `unprepare` 方法手动准备/取消准备。
 
-> To explore more Prepared Statements and Placeholders examples, please visit the example section [**Prepared Statements**](/docs/examples/queries/prepared-statements).
+> 更多关于预处理和占位符相关内容，请点击 [**预处理**](/docs/examples/queries/prepared-statements)。
 
 <Tabs>
   <TabItem value='Promise' default>
@@ -205,7 +207,7 @@ connection.execute(
 
 这改善了查询的延迟，因为您避免了建立新连接所带来的所有开销。
 
-> To explore more Connection Pools examples, please visit the example section [**createPool**](/docs/examples/connections/create-pool).
+> 更多关于连接池等相关内容，请点击 [**创建连接池**](/docs/examples/connections/create-pool).
 
 <Tabs>
   <TabItem value='Promise' default>
@@ -220,8 +222,8 @@ const pool = mysql.createPool({
   database: 'test',
   waitForConnections: true,
   connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  maxIdle: 10, // 最大空闲连接数，默认等于 `connectionLimit`
+  idleTimeout: 60000, // 空闲连接超时，以毫秒为单位，默认值为 60000 ms
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
@@ -241,8 +243,8 @@ const pool = mysql.createPool({
   database: 'test',
   waitForConnections: true,
   connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  maxIdle: 10, // 最大空闲连接数，默认等于 `connectionLimit`
+  idleTimeout: 60000, // 空闲连接超时，以毫秒为单位，默认值为 60000 ms
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
@@ -265,9 +267,9 @@ const pool = mysql.createPool({
 
 ```js
 try {
-  // For pool initialization, see above
+  // 关于连接池初始化，请参阅上文
   const [rows, fields] = await pool.query('SELECT `field` FROM `table`');
-  // Connection is automatically released when query resolves
+  // 查询解析时，连接会自动释放
 } catch (err) {
   console.log(err);
 }
@@ -277,9 +279,9 @@ try {
   <TabItem value='Callback'>
 
 ```js
-// For pool initialization, see above
+// 关于连接池初始化，请参阅上文
 pool.query('SELECT `field` FROM `table`', function (err, rows, fields) {
-  // Connection is automatically released when query resolves
+  // 查询解析时，连接会自动释放
 });
 ```
 
@@ -292,13 +294,13 @@ pool.query('SELECT `field` FROM `table`', function (err, rows, fields) {
   <TabItem value='Promise' default>
 
 ```js
-// For pool initialization, see above
+// 关于连接池初始化，请参阅上文
 const conn = await pool.getConnection();
 
-// Do something with the connection
+// 对连接执行某些操作
 await conn.query(/* ... */);
 
-// Don't forget to release the connection when finished!
+// 不要忘记释放连接！
 pool.releaseConnection(conn);
 ```
 
@@ -306,12 +308,12 @@ pool.releaseConnection(conn);
   <TabItem value='Callback'>
 
 ```js
-// For pool initialization, see above
+// 关于连接池初始化，请参阅上文
 pool.getConnection(function (err, conn) {
-  // Do something with the connection
+  // 对连接执行某些操作
   conn.query(/* ... */);
 
-  // Don't forget to release the connection when finished!
+  // 不要忘记释放连接！
   pool.releaseConnection(conn);
 });
 ```
@@ -319,7 +321,7 @@ pool.getConnection(function (err, conn) {
   </TabItem>
 </Tabs>
 
-- Additionally, directly release the connection using the `connection` object:
+- 此外，使用`connection`对象直接释放连接:
 
   ```js
   conn.release();
@@ -335,14 +337,14 @@ MySQL2 也支持 Promise API。 这与 ES7 异步等待非常有效。
 import mysql from 'mysql2/promise';
 
 async function main() {
-  // create the connection
+  // 创建链接
   const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
     database: 'test',
   });
 
-  // query database
+  // 查询数据库
   const [rows, fields] = await connection.execute(
     'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
     ['Morty', 14]
@@ -356,10 +358,10 @@ MySQL2 使用范围内可用的默认 `Promise` 对象。 但是你可以选择�
 // 导入模块
 import mysql from 'mysql2/promise';
 
-// get the promise implementation, we will use bluebird
+// 获取 promise 实现，这里我们将使用 bluebird 这个库来实现
 import bluebird from 'bluebird';
 
-// create the connection, specify bluebird as Promise
+// 创建连接，将 bluebird 指定为 Promise
 const connection = await mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -367,7 +369,7 @@ const connection = await mysql.createConnection({
   Promise: bluebird,
 });
 
-// query database
+// 查询数据
 const [rows, fields] = await connection.execute(
   'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
   ['Morty', 14]
@@ -380,7 +382,7 @@ MySQL2 还在 Pools 上公开了一个 `.promise()`函数，因此您可以从�
 import mysql from 'mysql2';
 
 async function main() {
-  // create the pool
+  // 创建连接池
   const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
@@ -388,9 +390,10 @@ async function main() {
   });
 
   // now get a Promise wrapped instance of that pool
+  // 现在获取一个链接池的 Promise 包装实例
   const promisePool = pool.promise();
 
-  // query database using promises
+  // 使用 Promise 查询数据库
   const [rows, fields] = await promisePool.query('SELECT 1');
 }
 ```
@@ -400,7 +403,7 @@ MySQL2 在 Connections 上公开了一个 `.promise()`函数，以“升级”�
 ```js {11}
 const mysql = require('mysql2');
 
-// create the connection
+// 创建连接
 const conn = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -485,8 +488,8 @@ conn.query(
     rowsAsArray: true,
   },
   function (err, results, fields) {
-    console.log(results); // in this query, results will be an array of arrays rather than an array of objects
-    console.log(fields); // fields are unchanged
+    console.log(results); // 在此查询中，结果将是数组数组，而不是对象数组
+    console.log(fields); // 字段保持不变
   }
 );
 ```
@@ -497,8 +500,8 @@ conn.query(
 <hr />
 
 :::tip Getting Help
-Need help? Ask your question on [Stack Overflow](https://stackoverflow.com/questions/tagged/mysql2) or [GitHub](https://github.com/sidorares/node-mysql2/discussions).
-If you've encountered an issue, please [file it on GitHub](https://github.com/sidorares/node-mysql2/issues).
+需要帮助吗？请在这里提问 [Stack Overflow](https://stackoverflow.com/questions/tagged/mysql2) 或 [GitHub](https://github.com/sidorares/node-mysql2/discussions).
+如果您遇到问题，请 [在 GitHub 上提交 issues](https://github.com/sidorares/node-mysql2/issues).
 :::
 
 [npm-image]: https://img.shields.io/npm/v/mysql2.svg
@@ -510,3 +513,7 @@ If you've encountered an issue, please [file it on GitHub](https://github.com/si
 [license-url]: https://github.com/sidorares/node-mysql2/blob/master/License
 [license-image]: https://img.shields.io/npm/l/mysql2.svg?maxAge=2592000
 [node-mysql]: https://github.com/mysqljs/mysql
+[coverage]: https://img.shields.io/codecov/c/github/sidorares/node-mysql2
+[coverage-url]: https://app.codecov.io/github/sidorares/node-mysql2
+[ci-url]: https://github.com/sidorares/node-mysql2/actions/workflows/ci-coverage.yml?query=branch%3Amaster
+[ci-image]: https://img.shields.io/github/actions/workflow/status/sidorares/node-mysql2/ci-coverage.yml?event=push&style=flat&label=CI&branch=master

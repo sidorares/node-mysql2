@@ -2,17 +2,20 @@
 
 'use strict';
 
-const errors = require('../../lib/constants/errors');
+const errors = require('../../lib/constants/errors.js');
 const common = require('../common.test.cjs');
-const connection = common.createConnection();
-
-// Poku intentionally doesn't allow "rewriting" after uncaughtException
-const assert = require('assert');
+const assert = require('node:assert');
+const process = require('node:process');
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
   process.exit(0);
 }
+
+// Uncaught AssertionError: Connection lost: The server closed the connection. == The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior.
+if (typeof Deno !== 'undefined') process.exit(0);
+
+const connection = common.createConnection();
 
 const customWaitTimeout = 1; // seconds
 

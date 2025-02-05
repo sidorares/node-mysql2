@@ -1,11 +1,13 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
+const { assert } = require('poku');
+const process = require('node:process');
+
 const connection = common.createConnection({
   dateStrings: false,
   timezone: 'Z',
 });
-const { assert } = require('poku');
 
 const tableName = 'dates';
 const testFields = ['id', 'date1', 'date2', 'name'];

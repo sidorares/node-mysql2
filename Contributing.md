@@ -16,6 +16,8 @@ Contributions are always welcomed. You can help **MySQL2** community in various 
 - Performance improvements
 - Add Features
 
+---
+
 ## Security Issues
 
 Please contact project maintainers privately before opening a security issue on Github. It will allow us to fix the issue before attackers know about it.
@@ -24,9 +26,13 @@ Please contact project maintainers privately before opening a security issue on 
 
 - Andrey Sidorov, sidorares@yandex.ru
 
+---
+
 ## New Features
 
 It's better to discuss an API before actually start implementing it. You can open an issue on Github. We can discuss design of API and implementation ideas.
+
+---
 
 ## Development
 
@@ -35,7 +41,7 @@ We assume you already have these tools installed on your system:
 - MySQL Server
 - Node.JS
 
-As **MySQL2** is purely JS based you can develop it on Linux, Mac or Windows. Please follow these steps
+As **MySQL2** is purely JS based, you can develop it on Linux, Mac or Windows. Please follow these steps
 
 ```bash
 # clone node-mysql2
@@ -46,6 +52,40 @@ cd /path/to/node-mysql2
 # install node modules
 npm install
 ```
+
+---
+
+### Commits and Pull Request Titles
+
+To ensure a clean commit history pattern, please use the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) format.
+
+Prefixes that will trigger a new release version:
+
+- `fix:` for patches, e.g., bug fixes that result in a patch version release.
+- `feat:` for new features, e.g., additions that result in a minor version release.
+
+Examples:
+
+- `fix: message`
+- `feat: message`
+- `docs: message`
+- `fix(module): message`
+- `feat(module): message`
+- etc.
+
+---
+
+### Including Tests
+
+#### Fixes
+
+Where possible, provide an error test case that your fix covers.
+
+#### Features
+
+Please ensure test cases to cover your features.
+
+---
 
 ### Running Tests
 
@@ -76,4 +116,13 @@ Use `FILTER` environment variable to run a subset of tests with matching names, 
 FILTER='test-timestamp' npm run test
 # or
 FILTER='timeout' npm run test
+```
+
+> [!Tip]
+> You can also run a single test by performing `node ./test/path-to-test-file`.
+
+For testing **coverage**:
+
+```bash
+npm run coverage-test
 ```

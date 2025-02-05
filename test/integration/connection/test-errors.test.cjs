@@ -1,14 +1,16 @@
 'use strict';
 
+const common = require('../../common.test.cjs');
+const { assert } = require('poku');
+const process = require('node:process');
+
 // different error codes for PS, disabling for now
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
   process.exit(0);
 }
 
-const common = require('../../common.test.cjs');
 const connection = common.createConnection();
-const { assert } = require('poku');
 
 let onExecuteResultError = undefined;
 let onQueryResultError = undefined;

@@ -1,8 +1,9 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
-const connection = common.createConnection();
 const { assert } = require('poku');
+
+const connection = common.createConnection();
 
 common.useTestDb(connection);
 

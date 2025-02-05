@@ -1,10 +1,13 @@
 // TODO: `namedPlaceholders` can't be disabled at query level
 import { assert, test, describe } from 'poku';
-import {
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const {
   createConnection,
   describeOptions,
   createPool,
-} from '../../common.test.cjs';
+} = require('../../common.test.cjs');
 
 const query =
   'SELECT result FROM (SELECT 1 as result) temp WHERE temp.result=:named';

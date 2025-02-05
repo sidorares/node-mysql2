@@ -1,8 +1,12 @@
 'use strict';
 
 const mysql = require('../../index.js');
-
 const { assert } = require('poku');
+const process = require('node:process');
+const portfinder = require('portfinder');
+
+// The process is not terminated in Deno
+if (typeof Deno !== 'undefined') process.exit(0);
 
 const server = mysql.createServer((conn) => {
   conn.serverHandshake({
@@ -20,7 +24,6 @@ const server = mysql.createServer((conn) => {
 
 let err1, err2;
 
-const portfinder = require('portfinder');
 portfinder.getPort((err, port) => {
   server.listen(port);
   const conn = mysql.createConnection({

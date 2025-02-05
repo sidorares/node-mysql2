@@ -1,11 +1,12 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
+const { assert } = require('poku');
+
 const connection = common.createConnection({
   supportBigNumbers: true,
   bigNumberStrings: true,
 });
-const { assert } = require('poku');
 
 connection.query(
   [

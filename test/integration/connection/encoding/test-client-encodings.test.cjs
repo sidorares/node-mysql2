@@ -1,12 +1,13 @@
 'use strict';
 
+const common = require('../../../common.test.cjs');
+const { assert } = require('poku');
+const process = require('node:process');
+
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale (unsupported non utf8 charsets)');
   process.exit(0);
 }
-
-const common = require('../../../common.test.cjs');
-const { assert } = require('poku');
 
 const connection = common.createConnection({ charset: 'UTF8MB4_GENERAL_CI' });
 connection.query('drop table if exists __test_client_encodings');

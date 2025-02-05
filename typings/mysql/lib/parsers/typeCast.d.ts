@@ -25,6 +25,7 @@ export type Type = {
     | 'NEWDATE'
     | 'VARCHAR'
     | 'BIT'
+    | 'VECTOR'
     | 'JSON'
     | 'NEWDECIMAL'
     | 'ENUM'
@@ -48,6 +49,6 @@ export type Field = Type & {
   geometry: () => Geometry | Geometry[] | null;
 };
 
-export type Next = () => void;
+export type Next = () => unknown;
 
 export type TypeCast = ((field: Field, next: Next) => any) | boolean;

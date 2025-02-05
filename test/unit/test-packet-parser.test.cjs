@@ -2,7 +2,7 @@
 
 const PacketParser = require('../../lib/packet_parser.js');
 const Packet = require('../../lib/packets/packet.js');
-
+const { Buffer } = require('node:buffer');
 const { assert } = require('poku');
 
 let pp;

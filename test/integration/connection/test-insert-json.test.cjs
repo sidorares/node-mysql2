@@ -6,8 +6,10 @@
  */
 
 const common = require('../../common.test.cjs');
-const connection = common.createConnection();
 const { assert } = require('poku');
+const process = require('node:process');
+
+const connection = common.createConnection();
 
 let result;
 let errorCodeInvalidJSON;

@@ -3,6 +3,8 @@
 const common = require('../../common.test.cjs');
 const connection = common.createConnection();
 const { assert } = require('poku');
+const { Buffer } = require('node:buffer');
+const process = require('node:process');
 
 let rows = undefined;
 let rows1 = undefined;

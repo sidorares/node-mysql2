@@ -1,5 +1,5 @@
 {
-  "extends": ["prettier", "eslint:recommended", "plugin:markdown/recommended"],
+  "extends": ["prettier", "eslint:recommended", "plugin:markdown/recommended-legacy"],
   "parserOptions": {
     "ecmaVersion": "latest"
   },

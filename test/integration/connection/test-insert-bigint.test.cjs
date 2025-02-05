@@ -1,9 +1,10 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
-const connection = common.createConnection();
 const { assert } = require('poku');
 const Long = require('long');
+
+const connection = common.createConnection();
 
 connection.query(
   [

@@ -1,6 +1,9 @@
 import { test, assert, describe } from 'poku';
-import { createPoolCluster } from '../../../../promise.js';
-import common from '../../../common.test.cjs';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const common = require('../../../common.test.cjs');
+const { createPoolCluster } = require('../../../../promise.js');
 
 (async () => {
   describe('Test pool cluster', common.describeOptions);
@@ -39,5 +42,41 @@ import common from '../../../common.test.cjs';
     });
 
     poolCluster.poolCluster.emit('remove');
+  });
+
+  await test(async () => {
+    const poolCluster = createPoolCluster();
+
+    poolCluster.once('offline', async function () {
+      await new Promise((resolve) => {
+        assert.equal(
+          // eslint-disable-next-line no-invalid-this
+          this,
+          poolCluster,
+          'should propagate offline event to promise wrapper',
+        );
+        resolve(true);
+      });
+    });
+
+    poolCluster.poolCluster.emit('offline');
+  });
+
+  await test(async () => {
+    const poolCluster = createPoolCluster();
+
+    poolCluster.once('online', async function () {
+      await new Promise((resolve) => {
+        assert.equal(
+          // eslint-disable-next-line no-invalid-this
+          this,
+          poolCluster,
+          'should propagate online event to promise wrapper',
+        );
+        resolve(true);
+      });
+    });
+
+    poolCluster.poolCluster.emit('online');
   });
 })();

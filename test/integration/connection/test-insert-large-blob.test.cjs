@@ -4,6 +4,10 @@
 // eslint-disable-next-line no-constant-condition
 if (false) {
   const common = require('../../common.test.cjs');
+  const { assert } = require('poku');
+  const { Buffer } = require('node:buffer');
+  const process = require('node:process');
+
   const connection = common.createConnection();
 
   /*
@@ -14,8 +18,6 @@ if (false) {
   });
   return;
 */
-
-  const { assert } = require('poku');
 
   const table = 'insert_large_test';
   const length = 35777416;

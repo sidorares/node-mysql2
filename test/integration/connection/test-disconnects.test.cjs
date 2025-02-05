@@ -9,6 +9,10 @@
 
 const common = require('../../common.test.cjs');
 const { assert } = require('poku');
+const process = require('node:process');
+
+// The process is not terminated in Deno
+if (typeof Deno !== 'undefined') process.exit(0);
 
 let rows;
 let fields;

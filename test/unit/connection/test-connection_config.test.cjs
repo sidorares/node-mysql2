@@ -1,7 +1,6 @@
 'use strict';
 
 const ConnectionConfig = require('../../../lib/connection_config.js');
-
 const { assert } = require('poku');
 
 const expectedMessage = "SSL profile must be an object, instead it's a boolean";

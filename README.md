@@ -31,12 +31,18 @@
 [docs-faq]: https://sidorares.github.io/node-mysql2/docs/faq
 [docs-documentation]: https://sidorares.github.io/node-mysql2/docs/documentation
 [docs-contributing]: https://sidorares.github.io/node-mysql2/docs/contributing/website
+[coverage]: https://img.shields.io/codecov/c/github/sidorares/node-mysql2
+[coverage-url]: https://app.codecov.io/github/sidorares/node-mysql2
+[ci-url]: https://github.com/sidorares/node-mysql2/actions/workflows/ci-coverage.yml?query=branch%3Amaster
+[ci-image]: https://img.shields.io/github/actions/workflow/status/sidorares/node-mysql2/ci-coverage.yml?event=push&style=flat&label=CI&branch=master
 
 # MySQL2
 
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Node.js Version][node-version-image]][node-version-url]
+[![GitHub Workflow Status (with event)][ci-image]][ci-url]
+[![Codecov][coverage]][coverage-url]
 [![License][license-image]][license-url]
 
 [English][docs-base] | [简体中文][docs-base-zh-CN] | [Português (BR)][docs-base-pt-BR]
@@ -102,7 +108,7 @@ npm install --save-dev @types/node
 
 ## Contributing
 
-Want to improve something in **MySQL2**?  
+Want to improve something in **MySQL2**?
 Please check [Contributing.md][contributing] for detailed instruction on how to get started.
 
 To contribute in **MySQL2 Documentation**, please visit the [Website Contributing Guidelines][docs-contributing] for detailed instruction on how to get started.

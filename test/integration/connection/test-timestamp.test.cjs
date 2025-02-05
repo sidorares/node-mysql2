@@ -1,8 +1,10 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
-const connection = common.createConnection();
 const { assert } = require('poku');
+const process = require('node:process');
+
+const connection = common.createConnection();
 
 connection.query('SET SQL_MODE="ALLOW_INVALID_DATES";');
 connection.query('CREATE TEMPORARY TABLE t (f TIMESTAMP)');

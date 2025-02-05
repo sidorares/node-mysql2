@@ -183,7 +183,7 @@ export interface ConnectionOptions {
    *
    * You can also specify a function to do the type casting yourself:
    * ```ts
-   * (field: Field, next: () => void) => {
+   * (field: Field, next: () => unknown) => {
    *   return next();
    * }
    * ```
@@ -323,11 +323,18 @@ export interface ConnectionOptions {
 
   waitForConnections?: boolean;
 
+  disableEval?: boolean;
+
   authPlugins?: {
     [key: string]: AuthPlugin;
   };
 
-  disableEval?: boolean;
+  /**
+   * Force JSON to be returned as string
+   *
+   * (Default: false)
+   */
+  jsonStrings?: boolean;
 }
 
 declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {

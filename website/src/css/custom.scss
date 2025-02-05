@@ -1,4 +1,5 @@
-@import 'mixins';
+@use 'sass:meta' as *;
+@use 'mixins' as *;
 
 :root {
   --ifm-color-primary: #45aaf2;
@@ -93,7 +94,7 @@ pre[class*='language-'] {
 }
 
 // Components
-@import './loading';
-@import './history';
-@import './stability/main';
-@import './faq';
+@include load-css('loading');
+@include load-css('history');
+@include load-css('stability/main');
+@include load-css('faq');

@@ -1,10 +1,10 @@
 'use strict';
 
 const config = require('../../common.test.cjs').config;
-
 const { assert } = require('poku');
 const createPoolPromise = require('../../../promise.js').createPool;
 const PoolConnection = require('../../../lib/pool_connection.js');
+const process = require('node:process');
 
 function createPool(args) {
   if (!args && process.env.MYSQL_CONNECTION_URL) {

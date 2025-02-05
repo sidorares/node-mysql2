@@ -39,7 +39,9 @@ pool.getConnection((err1, connection1) => {
           connection4.destroy();
           pool.end();
         });
-      }, 7000);
+        // Setting the time to a lower value than idleTimeout will ensure that the connection is not considered idle
+        // during our assertions
+      }, 4000);
     });
   });
 });

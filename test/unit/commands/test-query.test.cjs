@@ -1,7 +1,7 @@
 'use strict';
 
 const { assert } = require('poku');
-const Query = require('../../../lib/commands/query');
+const Query = require('../../../lib/commands/query.js');
 
 const testError = new Error('something happened');
 const testQuery = new Query({}, (err, res) => {

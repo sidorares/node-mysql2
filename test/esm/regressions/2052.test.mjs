@@ -1,9 +1,13 @@
 import { assert, describe, test } from 'poku';
-import common from '../../common.test.cjs';
-import PrepareCommand from '../../../lib/commands/prepare.js';
-import packets from '../../../lib/packets/index.js';
+import { createRequire } from 'node:module';
+import { Buffer } from 'node:buffer';
 
-(async () => {
+const require = createRequire(import.meta.url);
+const common = require('../../common.test.cjs');
+const packets = require('../../../lib/packets/index.js');
+const PrepareCommand = require('../../../lib/commands/prepare.js');
+
+test(async () => {
   await test(async () => {
     describe(
       'Unit Test - Prepare result with number of parameters incorrectly reported by the server',
@@ -93,28 +97,35 @@ import packets from '../../../lib/packets/index.js';
     database: 'mysql',
   });
 
-  const isNewerThan8_0_22 = async () => {
-    const { serverVersion } = await connection._handshakePacket;
-    const [major, minor, patch] = serverVersion
-      .split('.')
-      .map((x) => parseInt(x, 10));
+  const mySqlVersion = await common.getMysqlVersion(connection);
+
+  const hasIncorrectPrepareParameter = (() => {
+    const { major, minor, patch } = mySqlVersion;
+
+    if (major === 9) return false;
+    if (major === 8 && minor === 4 && patch === 1) return false;
+    if (major === 8 && minor === 0 && patch >= 38) return false;
+
     if (major > 8) {
       return true;
     }
+
     if (major === 8 && minor > 0) {
       return true;
     }
+
     if (major === 8 && minor === 0 && patch >= 22) {
       return true;
     }
+
     return false;
-  };
+  })();
 
   await test(
     async () =>
       new Promise((resolve, reject) => {
         describe(
-          'E2E Prepare result with number of parameters incorrectly reported by the server',
+          `E2E Prepare result with number of parameters incorrectly reported by the server`,
           common.describeOptions,
         );
 
@@ -128,7 +139,7 @@ import packets from '../../../lib/packets/index.js';
               return;
             }
 
-            if (await isNewerThan8_0_22()) {
+            if (hasIncorrectPrepareParameter) {
               assert.equal(
                 stmt.parameters.length,
                 0,
@@ -162,7 +173,7 @@ import packets from '../../../lib/packets/index.js';
               return;
             }
 
-            if (await isNewerThan8_0_22()) {
+            if (hasIncorrectPrepareParameter) {
               assert.equal(
                 stmt.parameters.length,
                 1,
@@ -186,4 +197,4 @@ import packets from '../../../lib/packets/index.js';
   connection.end((err) => {
     assert.ifError(err);
   });
-})();
+});

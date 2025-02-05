@@ -2,6 +2,7 @@
 
 const { assert } = require('poku');
 const packets = require('../../../lib/packets/index.js');
+const { Buffer } = require('node:buffer');
 
 [
   ['01:23:45', '0b000004000008000000000001172d'], // CONVERT('01:23:45', TIME)

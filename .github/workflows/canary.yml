@@ -1,0 +1,84 @@
+name: 'Canary Publishing'
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    name: Canary
+    steps:
+      - name: Actions - Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check Commit Message
+        id: check_commit
+        run: |
+          MESSAGE=$(git log -1 --pretty=%s --no-merges)
+          echo "Commit message: $MESSAGE"
+
+          if [[ "$MESSAGE" =~ build\(deps-dev\) ]] ||
+             [[ "$MESSAGE" =~ build\(deps\) ]] ||
+             [[ "$MESSAGE" =~ chore\(master\) ]] ||
+             [[ "$MESSAGE" =~ chore\(deps\) ]] ||
+             [[ "$MESSAGE" =~ chore:\ update\ dependencies ]] ||
+             [[ "$MESSAGE" =~ docs: ]] ||
+             [[ "$MESSAGE" =~ ci: ]] ||
+             [[ "$MESSAGE" =~ cd: ]] ||
+             [[ "$MESSAGE" =~ docs\(.*\): ]] ||
+             [[ "$MESSAGE" =~ ci\(.*\): ]] ||
+             [[ "$MESSAGE" =~ cd\(.*\): ]] ||
+             [[ "$MESSAGE" =~ chore\(website\) ]]; then
+            echo "publish=false" >> $GITHUB_OUTPUT
+            echo "Skip publish"
+          else
+            echo "publish=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Actions - Setup Node.js
+        if: steps.check_commit.outputs.publish == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Cache dependencies
+        if: steps.check_commit.outputs.publish == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
+      - name: Installing Dependencies
+        if: steps.check_commit.outputs.publish == 'true'
+        run: npm ci
+
+      - name: Git Hash
+        if: steps.check_commit.outputs.publish == 'true'
+        run: |
+          npm version patch --no-git-tag-version
+          VERSION=$(node -p "require('./package.json').version")
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "VERSION=${VERSION}-canary.${SHORT_SHA}" >> $GITHUB_ENV
+
+      - name: Increment Canary Version
+        if: steps.check_commit.outputs.publish == 'true'
+        run: npm version $VERSION --no-git-tag-version
+
+      - name: Publishing Package
+        if: steps.check_commit.outputs.publish == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag canary --provenance

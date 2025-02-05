@@ -4,6 +4,10 @@ on:
       - master
   workflow_dispatch:
 name: release-please
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
 jobs:
   release-please:
     runs-on: ubuntu-latest
@@ -21,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v4
         if: ${{ steps.release.outputs.release_created }}
         with:
-          node-version: '20.x'
+          node-version: 22
           registry-url: 'https://registry.npmjs.org'
 
       - name: Cache dependencies
@@ -34,7 +38,7 @@ jobs:
       - run: npm ci
         if: ${{ steps.release.outputs.release_created }}
 
-      - run: npm publish
+      - run: npm publish --provenance
         if: ${{ steps.release.outputs.release_created }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

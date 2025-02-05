@@ -4,8 +4,12 @@ const mysql = require('../../index.js');
 const Command = require('../../lib/commands/command.js');
 const Packets = require('../../lib/packets/index.js');
 const { version } = require('../../package.json');
-
+const { Buffer } = require('node:buffer');
 const { assert } = require('poku');
+const process = require('node:process');
+
+// The process is not terminated in Deno
+if (typeof Deno !== 'undefined') process.exit(0);
 
 const connectAttributes = { foo: 'bar', baz: 'foo' };
 

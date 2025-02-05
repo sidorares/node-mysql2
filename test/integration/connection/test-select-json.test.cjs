@@ -5,8 +5,10 @@
  * issue#409: https://github.com/sidorares/node-mysql2/issues/409
  */
 const common = require('../../common.test.cjs');
-const connection = common.createConnection();
 const { assert } = require('poku');
+const process = require('node:process');
+
+const connection = common.createConnection();
 
 let textFetchedRows = undefined;
 let binaryFetchedRows = undefined;

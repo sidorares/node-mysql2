@@ -2,6 +2,7 @@
 
 const { assert } = require('poku');
 const mysql = require('../common.test.cjs');
+const process = require('node:process');
 
 // planetscale does not support KILL, skipping this test
 // https://planetscale.com/docs/reference/mysql-compatibility

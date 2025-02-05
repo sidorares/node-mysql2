@@ -1,14 +1,16 @@
 'use strict';
 
+const common = require('../../common.test.cjs');
+const { assert } = require('poku');
+const fs = require('node:fs');
+const process = require('node:process');
+
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
   process.exit(0);
 }
 
-const common = require('../../common.test.cjs');
 const connection = common.createConnection();
-const { assert } = require('poku');
-const fs = require('fs');
 
 const table = 'load_data_test';
 connection.query('SET GLOBAL local_infile = true', assert.ifError);
@@ -62,7 +64,7 @@ connection.query(sql, [badPath, ','], (err, result) => {
 
 // test path mapping
 const createMyStream = function () {
-  const Stream = require('stream').PassThrough;
+  const Stream = require('node:stream').PassThrough;
   const myStream = new Stream();
   setTimeout(() => {
     myStream.write('11,Hello World\n');

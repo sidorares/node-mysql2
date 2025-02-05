@@ -2,6 +2,10 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const process = require('node:process');
+
+const disableEval = process.env.STATIC_PARSER === '1';
+exports.disableEval = disableEval;
 
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
@@ -10,6 +14,7 @@ const config = {
   database: process.env.MYSQL_DATABASE || 'test',
   compress: process.env.MYSQL_USE_COMPRESSION,
   port: process.env.MYSQL_PORT || 3306,
+  disableEval,
 };
 
 if (process.env.MYSQL_USE_TLS === '1') {
@@ -105,7 +110,10 @@ exports.createConnection = function (args) {
     typeCast: args && args.typeCast,
     namedPlaceholders: args && args.namedPlaceholders,
     connectTimeout: args && args.connectTimeout,
+    nestTables: args && args.nestTables,
     ssl: (args && args.ssl) ?? config.ssl,
+    jsonStrings: args && args.jsonStrings,
+    disableEval,
   };
 
   const conn = driver.createConnection(params);
@@ -135,6 +143,8 @@ exports.getConfig = function (input) {
     connectionLimit: args && args.connectionLimit,
     maxIdle: args && args.maxIdle,
     idleTimeout: args && args.idleTimeout,
+    jsonStrings: args && args.jsonStrings,
+    disableEval,
   };
   return params;
 };
@@ -178,7 +188,7 @@ exports.createConnectionWithURI = function () {
 
 exports.createTemplate = function () {
   const jade = require('jade');
-  const template = require('fs').readFileSync(
+  const template = require('node:fs').readFileSync(
     `${__dirname}/template.jade`,
     'ascii',
   );
@@ -227,4 +237,21 @@ exports.version = Number(process.version.match(/v(\d+)\./)?.[1]);
 exports.describeOptions = {
   icon: '🔬',
   background: false,
+};
+
+exports.getMysqlVersion = async function (connection) {
+  const conn = connection.promise ? connection.promise() : connection;
+
+  const [rows] = await conn.query('SELECT VERSION() AS `version`');
+  const serverVersion = rows[0].version;
+
+  const [major, minor, patch] = serverVersion
+    .split('.')
+    .map((x) => parseInt(x, 10));
+
+  return {
+    major,
+    minor,
+    patch,
+  };
 };

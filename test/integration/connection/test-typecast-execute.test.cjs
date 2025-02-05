@@ -1,8 +1,10 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
-const connection = common.createConnection();
 const { assert } = require('poku');
+const { Buffer } = require('node:buffer');
+
+const connection = common.createConnection();
 
 connection.execute('CREATE TEMPORARY TABLE json_test (json_test JSON)');
 connection.execute('INSERT INTO json_test VALUES (?)', [

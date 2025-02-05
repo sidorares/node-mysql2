@@ -52,6 +52,8 @@ declare class PoolCluster extends EventEmitter {
   add(group: string, connectionUri: string): void;
   add(group: string, config: PoolOptions): void;
 
+  remove(pattern: string): void;
+
   end(): void;
 
   getConnection(
@@ -79,6 +81,8 @@ declare class PoolCluster extends EventEmitter {
   of(pattern: string, selector?: string): PoolNamespace;
 
   on(event: string, listener: (...args: any[]) => void): this;
+  on(event: 'online', listener: (nodeId: number) => void): this;
+  on(event: 'offline', listener: (nodeId: number) => void): this;
   on(event: 'remove', listener: (nodeId: number) => void): this;
   on(event: 'warn', listener: (err: Error) => void): this;
 }

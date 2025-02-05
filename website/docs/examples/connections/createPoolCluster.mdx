@@ -322,11 +322,16 @@ You can use **Amazon RDS** string as value to ssl property to connect to **Amazo
 
 In that case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used:
 
+```sh
+npm install --save aws-ssl-profiles
+```
+
 <Tabs>
   <TabItem value='promise.js' default>
 
 ```js
 import mysql from 'mysql2/promise';
+import awsCaBundle from 'aws-ssl-profiles';
 
 try {
   // highlight-start
@@ -335,7 +340,7 @@ try {
   poolCluster.add('clusterA', {
     // ...
     host: 'db.id.ap-southeast-2.rds.amazonaws.com',
-    ssl: 'Amazon RDS',
+    ssl: awsCaBundle,
   });
   // poolCluster.add('clusterB', '...');
 
@@ -349,6 +354,10 @@ try {
   console.log(err);
 }
 ```
+
+:::info
+For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
 
 :::tip Testing
 
@@ -370,13 +379,14 @@ try {
 
 ```js
 const mysql = require('mysql2');
+const awsCaBundle = require('aws-ssl-profiles');
 
 const poolCluster = mysql.createPoolCluster();
 
 poolCluster.add('clusterA', {
   // ...
   host: 'db.id.ap-southeast-2.rds.amazonaws.com',
-  ssl: 'Amazon RDS',
+  ssl: awsCaBundle,
 });
 // poolCluster.add('clusterB', '...');
 
@@ -391,6 +401,10 @@ poolCluster.getConnection('clusterA', function (err, connection) {
   connection.release();
 });
 ```
+
+:::info
+For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
 
 :::tip Testing
 
@@ -419,14 +433,6 @@ Don't forget to release the connection when finished by using:
 - `connection.release()`
 
 :::
-
-### Related Links
-
-- **Issues**
-  - [#2130 — Update TLS certs for Amazon RDS instances](https://github.com/sidorares/node-mysql2/issues/2130)
-- **Pull Requests**
-  - [#2119 — fix: make startTls code compatible with Bun](https://github.com/sidorares/node-mysql2/pull/2119)
-  - [#2131 — Update Amazon RDS SSL CA cert](https://github.com/sidorares/node-mysql2/pull/2131)
 
 <hr />
 

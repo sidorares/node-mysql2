@@ -54,6 +54,14 @@ Please check these [examples](/docs/examples) for **MySQL2**.
 This option could lose precision on the number as Javascript Number is a Float!
 :::
 
+- By default, the `JSON` type is always returned parsed into an object. However, you can modify this behavior by specifying the following configuration:
+
+```js
+{
+  jsonStrings: true,
+}
+```
+
 <hr />
 
 ## Other Resources

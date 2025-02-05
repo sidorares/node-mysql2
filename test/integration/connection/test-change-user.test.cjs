@@ -1,12 +1,15 @@
 'use strict';
 
+const { assert } = require('poku');
+const common = require('../../common.test.cjs');
+const { Buffer } = require('node:buffer');
+const process = require('node:process');
+
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
   process.exit(0);
 }
 
-const { assert } = require('poku');
-const common = require('../../common.test.cjs');
 const connection = common.createConnection();
 const onlyUsername = function (name) {
   return name.substring(0, name.indexOf('@'));

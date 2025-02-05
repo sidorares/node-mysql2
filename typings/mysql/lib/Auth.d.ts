@@ -14,7 +14,7 @@ export const authPlugins: {
   caching_sha2_password: AuthPluginDefinition<{
     overrideIsSecure?: boolean;
     serverPublicKey?: RsaPublicKey | RsaPrivateKey | KeyLike;
-    jonServerPublicKey?: (data: Buffer) => void;
+    onServerPublicKey?: (data: Buffer) => void;
   }>;
   mysql_clear_password: AuthPluginDefinition<{
     password?: string;
@@ -25,6 +25,6 @@ export const authPlugins: {
   }>;
   sha256_password: AuthPluginDefinition<{
     serverPublicKey?: RsaPublicKey | RsaPrivateKey | KeyLike;
-    joinServerPublicKey?: (data: Buffer) => void;
+    onServerPublicKey?: (data: Buffer) => void;
   }>;
 };

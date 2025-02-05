@@ -1,8 +1,10 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
-const connection = common.createConnection();
 const { assert } = require('poku');
+const { Buffer } = require('node:buffer');
+
+const connection = common.createConnection();
 
 connection.query('CREATE TEMPORARY TABLE json_test (json_test JSON)');
 connection.query(
@@ -42,7 +44,7 @@ connection.query(
   },
   (err, res) => {
     assert.ifError(err);
-    assert(Buffer.isBuffer(res[0].foo));
+    assert(Buffer.isBuffer(res[0].foo), 'Check for Buffer');
     assert.equal(res[0].foo.toString('utf8'), 'foobar');
   },
 );

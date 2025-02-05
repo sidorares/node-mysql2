@@ -218,24 +218,33 @@ You can use **Amazon RDS** string as value to ssl property to connect to **Amazo
 
 In that case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used:
 
+```sh
+npm install --save aws-ssl-profiles
+```
+
 <Tabs>
   <TabItem value='promise.js' default>
 
 ```js
 import mysql from 'mysql2/promise';
+import awsCaBundle from 'aws-ssl-profiles';
 
 try {
   // highlight-start
   const connection = await mysql.createConnection({
     // ...
     host: 'db.id.ap-southeast-2.rds.amazonaws.com',
-    ssl: 'Amazon RDS',
+    ssl: awsCaBundle,
   });
   // highlight-end
 } catch (err) {
   console.log(err);
 }
 ```
+
+:::info
+For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
 
 :::tip Testing
 
@@ -257,17 +266,22 @@ try {
 
 ```js
 const mysql = require('mysql2');
+const awsCaBundle = require('aws-ssl-profiles');
 
 const connection = mysql.createConnection({
   // ...
   host: 'db.id.ap-southeast-2.rds.amazonaws.com',
-  ssl: 'Amazon RDS',
+  ssl: awsCaBundle,
 });
 
 connection.addListener('error', (err) => {
   console.log(err);
 });
 ```
+
+:::info
+For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
 
 :::tip Testing
 
@@ -288,14 +302,6 @@ connectionquery('SHOW `status` LIKE "Ssl_cipher"', function (err, res) {
 
   </TabItem>
 </Tabs>
-
-### Related Links
-
-- **Issues**
-  - [#2130 — Update TLS certs for Amazon RDS instances](https://github.com/sidorares/node-mysql2/issues/2130)
-- **Pull Requests**
-  - [#2119 — fix: make startTls code compatible with Bun](https://github.com/sidorares/node-mysql2/pull/2119)
-  - [#2131 — Update Amazon RDS SSL CA cert](https://github.com/sidorares/node-mysql2/pull/2131)
 
 <hr />
 

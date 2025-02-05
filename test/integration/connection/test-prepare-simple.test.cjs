@@ -1,8 +1,10 @@
 'use strict';
 
 const common = require('../../common.test.cjs');
-const connection = common.createConnection();
 const { assert } = require('poku');
+const process = require('node:process');
+
+const connection = common.createConnection();
 
 let _stmt1, _stmt2, _stmt3;
 const query1 = 'select 1 + ? + ? as test';
