@@ -1,6 +1,6 @@
 # SSL
 
-As part of the connection options one can specify an object with ssl parameters or a string containing name of SSL profile.
+As part of the connection options one can specify an object with ssl parameters or a string containing name of SSL profile (__deprecated__).
 
 ```ts
 ssl?: string | SslOptions;
@@ -13,58 +13,75 @@ See full list of [SslOptions](../../../typings/mysql/lib/Connection.d.ts), which
 To enable SSL without manually providing certificates and assuming they are already trusted by the host machine, you can specify empty object:
 
 ```ts
-const connection = mysql.createConnection({
+const connection = await mysql.createConnection({
   host: 'localhost',
   ssl: {}
-});
+})
 ```
 
 You can also specify custom certificate(s) as an individual string or array of strings. Please note the arguments expect a string of the certificate, not a file name to the certificate:
 
 ```ts
-const connection = mysql.createConnection({
+const connection = await mysql.createConnection({
   host: 'localhost',
   ssl: {
     ca: fs.readFileSync(__dirname + '/mysql-ca.crt')
   }
-});
+})
 ```
 
-When cerificate is read from environment variable, you might need to replace escaped `\n` characters with proper new line characters:
+When certificate is read from environment variable, you might need to replace escaped `\n` characters with proper new line characters:
 
 ```ts
-const connection = mysql.createConnection({
+const connection = await mysql.createConnection({
   host: 'localhost',
   ssl: {
     ca: process.env.DB_SSL_CA?.replace(/\\n/gm, '\n')
   }
-});
+})
 ```
 
-You can also connect to a MySQL server without properly providing an appropriate CA to trust. **This is highly discouraged** as being insecure.
+## SSL Certificate Bundle
+
+Alternatively, you can use a bundle with CA certificates. For example for Amazon RDS you could use:
 
 ```ts
-const connection = mysql.createConnection({
+import awsCaBundle from 'aws-ssl-profiles';
+
+const connection = await mysql.createConnection({
+  host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+  ssl: awsCaBundle,
+})
+```
+
+For detailed instructions, please follow [aws-ssl-profiles](https://github.com/mysqljs/aws-ssl-profiles) documentation.
+
+## SSL Profile (deprecated)
+
+There is also a **deprecated option** allowing to specify a string containing name of SSL profile:
+
+```ts
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  ssl: 'Amazon RDS'
+})
+```
+
+Following profiles are included in the package:
+
+* `Amazon RDS` - in this case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used
+
+## Ignoring Unauthorized SSL Errors
+
+You can also connect to a MySQL server without providing an appropriate CA to trust. **This is highly discouraged** as being insecure.
+
+```ts
+const connection = await mysql.createConnection({
   host: 'localhost',
   ssl: {
     // DO NOT DO THIS
     // set up your ca correctly to trust the connection
     rejectUnauthorized: false
   }
-});
+})
 ```
-
-## SSL Profile (deprecated)
-
-Alternativelly you can also specify a string containing name of SSL profile:
-
-```ts
-const connection = mysql.createConnection({
-  host: 'localhost',
-  ssl: 'Amazon RDS'
-});
-```
-
-Following profiles are included in the package:
-
-* `Amazon RDS` - contains certificates from https://rds.amazonaws.com/doc/rds-ssl-ca-cert.pem and https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
