@@ -32,7 +32,7 @@ const connection = mysql.createConnection({
 });
 ```
 
-When cerificate is read from environment variable, you might need to replace escaped `\n` characters with proper new line characters:
+When a certificate is read from an environment variable, it's recommended to replace escaped `\n` characters with proper new line characters, for example:
 
 ```ts
 const connection = mysql.createConnection({
