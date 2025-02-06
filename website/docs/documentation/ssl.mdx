@@ -1,32 +1,52 @@
 # SSL
 
-As part of the connection options one can specify an object with ssl parameters or a string containing name of ssl profile.
+As part of the connection options one can specify an object with ssl parameters or a string containing name of SSL profile.
 
 ```ts
 ssl?: string | SslOptions;
 ```
 
-See full list of [SslOptions](../../typings/mysql/lib/Connection.d.ts)
+See full list of [SslOptions](../../typings/mysql/lib/Connection.d.ts), which are in the same format as [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options).
 
 ## SSL Options
 
-When connecting to other servers, you will need to provide an object of options, in the same format as [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options). Please note the arguments expect a string of the certificate, not a file name to the certificate. Here is a simple example:
+To enable SSL without manually providing certificates and assuming they are already trusted by the host machine, you can specify empty object:
 
 ```ts
 const connection = mysql.createConnection({
-  host : 'localhost',
-  ssl  : {
-    ca : fs.readFileSync(__dirname + '/mysql-ca.crt')
+  host: 'localhost',
+  ssl: {}
+});
+```
+
+You can also specify custom certificate(s) as an individual string or array of strings. Please note the arguments expect a string of the certificate, not a file name to the certificate:
+
+```ts
+const connection = mysql.createConnection({
+  host: 'localhost',
+  ssl: {
+    ca: fs.readFileSync(__dirname + '/mysql-ca.crt')
   }
 });
 ```
 
-You can also connect to a MySQL server without properly providing an appropriate CA to trust. **This is highly not recommended.**
+When cerificate is read from environment variable, you might need to replace escaped `\n` characters with proper new line characters:
 
 ```ts
 const connection = mysql.createConnection({
-  host : 'localhost',
-  ssl  : {
+  host: 'localhost',
+  ssl: {
+    ca: process.env.DB_SSL_CA?.replace(/\\n/gm, '\n')
+  }
+});
+```
+
+You can also connect to a MySQL server without properly providing an appropriate CA to trust. **This is highly discouraged** as being insecure.
+
+```ts
+const connection = mysql.createConnection({
+  host: 'localhost',
+  ssl: {
     // DO NOT DO THIS
     // set up your ca correctly to trust the connection
     rejectUnauthorized: false
@@ -34,4 +54,17 @@ const connection = mysql.createConnection({
 });
 ```
 
-## SSL Profile
+## SSL Profile (deprecated)
+
+Alternativelly you can also specify a string containing name of SSL profile:
+
+```ts
+const connection = mysql.createConnection({
+  host: 'localhost',
+  ssl: 'Amazon RDS'
+});
+```
+
+Following profiles are included in the package:
+
+* `Amazon RDS` - contains certificates from https://rds.amazonaws.com/doc/rds-ssl-ca-cert.pem and https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
