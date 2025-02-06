@@ -49,8 +49,7 @@ You can also connect to a MySQL server without properly providing an appropriate
 const connection = mysql.createConnection({
   host: 'localhost',
   ssl: {
-    // DO NOT DO THIS
-    // set up your ca correctly to trust the connection
+    // Beware, set `rejectUnauthorized` as `false` is strongly discouraged for security reasons:
     rejectUnauthorized: false
   }
 });
