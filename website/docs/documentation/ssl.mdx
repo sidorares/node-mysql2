@@ -22,6 +22,8 @@ const connection = mysql.createConnection({
 You can also specify custom certificate(s) as an individual string or array of strings. Please note the arguments expect a string of the certificate, not a file name to the certificate:
 
 ```ts
+const fs = require('node:fs');
+
 const connection = mysql.createConnection({
   host: 'localhost',
   ssl: {
