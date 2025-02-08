@@ -180,7 +180,7 @@ const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
   // ...
-  ssl: {},
+  ssl: true,
 });
 
 connection.addListener('error', (err) => {
