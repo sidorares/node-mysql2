@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.13.0](https://github.com/sidorares/node-mysql2/compare/v3.12.0...v3.13.0) (2025-02-18)
+
+
+### Features
+
+* **`disableEval`:** add static parsers ([#3365](https://github.com/sidorares/node-mysql2/issues/3365)) ([51da653](https://github.com/sidorares/node-mysql2/commit/51da653448855a57f87fa686a10fd8aa482da498))
+
+
+### Bug Fixes
+
+* **query:** support `VECTOR` packets in static parser ([#3379](https://github.com/sidorares/node-mysql2/issues/3379)) ([603c246](https://github.com/sidorares/node-mysql2/commit/603c24630da0f999a01227d44cf2633d703e40ed))
+
 ## [3.12.0](https://github.com/sidorares/node-mysql2/compare/v3.11.5...v3.12.0) (2024-12-23)
 
 
