@@ -9,9 +9,9 @@ const process = require('node:process');
 // The process is not terminated in Deno
 if (typeof Deno !== 'undefined') process.exit(0);
 
-function authenticate(params, cb) {
-  const doubleSha = auth.doubleSha1('testpassword');
-  const isValid = auth.verifyToken(
+async function authenticate(params, cb) {
+  const doubleSha = await auth.doubleSha1('testpassword');
+  const isValid = await auth.verifyToken(
     params.authPluginData1,
     params.authPluginData2,
     params.authToken,
