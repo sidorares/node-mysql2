@@ -1,0 +1,251 @@
+# Cloudflare Workers
+
+This document is a step-by-step tutorial on how to use `node-mysql2` on Cloudflare Workers.
+
+## Before you begin
+
+Before you try the steps in this article, you need to prepare the following things:
+
+- A [Cloudflare Workers](https://dash.cloudflare.com/login) account.
+- npm is installed.
+
+## Step 1: Set up project
+
+[Wrangler](https://developers.cloudflare.com/workers/wrangler/) is the official Cloudflare Worker CLI. You can use it to generate, build, preview, and publish your Workers.
+
+1. Install Wrangler:
+
+   ```
+   npm install wrangler
+   ```
+
+2. To authenticate Wrangler, run wrangler login:
+
+   ```
+   wrangler login
+   ```
+
+3. Use Wrangler to create a project:
+
+   ```
+   wrangler init mysql2-cloudflare -y
+   ```
+
+## Step 2: Install node-mysql2
+
+1. Enter your project directory:
+
+   ```
+   cd mysql2-cloudflare
+   ```
+
+2. Install the node-mysql2 with npm:
+
+   ```
+   npm install mysql2
+   ```
+
+   This adds the node-mysql2 dependency in `package.json`.
+
+## Step 3: Use node-mysql2 on Cloudflare Workers
+
+Develop your code in the `src/index.ts`. Here are some examples:
+
+1. local mysql example
+
+```ts
+import { createConnection } from 'mysql2';
+
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+export default {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<Response> {
+    let result;
+    const connection = createConnection({
+      host: '127.0.0.1',
+      port: 3306,
+      user: 'user',
+      password: 'password',
+      disableEval: true,
+    });
+    connection.query('show databases', function (err, rows, fields) {
+      if (err) {
+        throw err;
+      }
+      result = rows;
+    });
+    await sleep(2000);
+    return new Response(JSON.stringify(result));
+  },
+};
+```
+
+2. TiDB Serverless example with TLS:
+
+```ts
+import { createConnection } from 'mysql2';
+
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+export default {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<Response> {
+    let result;
+    const connection = createConnection({
+      host: 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
+      port: 4000,
+      user: 'your_user',
+      password: 'your_password',
+      database: 'test',
+      ssl: {
+        minVersion: 'TLSv1.2',
+        rejectUnauthorized: true,
+      },
+      disableEval: true,
+    });
+    connection.query('show databases', function (err, rows, fields) {
+      if (err) {
+        throw err;
+      }
+      result = rows;
+    });
+    await sleep(2000);
+    return new Response(JSON.stringify(result));
+  },
+};
+```
+
+3. PlanetScale example with TLS:
+
+```ts
+import { createConnection } from 'mysql2';
+
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export default {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<Response> {
+    let result;
+    const connection = createConnection({
+      host: 'aws.connect.psdb.cloud',
+      port: 3306,
+      user: 'your_user',
+      password: 'your_password',
+      database: 'test',
+      ssl: {
+        minVersion: 'TLSv1.2',
+        rejectUnauthorized: true,
+      },
+      disableEval: true,
+    });
+    connection.query('show databases', function (err, rows, fields) {
+      if (err) {
+        throw err;
+      }
+      result = rows;
+    });
+    await sleep(2000);
+    return new Response(JSON.stringify(result));
+  },
+};
+```
+
+## Step 4: Test locally
+
+1. Add `node_compat = true` in the `wrangler.toml` to make Cloudflare Workers compatible with node dependencies.
+
+```
+vim wrangler.toml
+```
+
+2. Upgrade wrangler
+
+```
+npm install wrangler@3.22.1 --save-dev
+```
+
+2. Run locally
+
+```
+wrangler dev
+```
+
+## Step 5: Deploy
+
+You can also deploy it to Cloudflare, run `wrangler deploy`. If you meet any issues, please refer to the [Cloudflare doc](https://developers.cloudflare.com/workers/get-started/guide/#4-deploy-your-project)
+
+## Develop Guide
+
+If you want to develop the corresponding feature. Here is a simaple example of testing locally.
+
+1. enter to node-mysql2
+
+```
+cd node-mysql2
+```
+
+2. vim wrangler.toml
+
+```
+name = "mysql2-cloudflare"
+main = "src/worker.js"
+compatibility_date = "2023-08-21"
+node_compat = true
+```
+
+3. add worker.js
+
+```
+mkdir src
+cd src
+vim workers.js
+```
+
+4. write your test code inside worker.js
+
+```js
+const { createConnection } = require('../index');
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+export default {
+  async fetch(request, env, ctx) {
+    let result;
+    const connection = createConnection({
+      host: '127.0.0.1',
+      port: 3306,
+      user: 'test',
+      password: 'password',
+      disableEval: true,
+    });
+    connection.query('show databases', function (err, rows, fields) {
+      if (err) {
+        throw err;
+      }
+      result = rows;
+    });
+    await sleep(2000);
+    return new Response(JSON.stringify(result));
+  },
+};
+```
+
+5. Test locally
+
+```
+npx wrangler dev
+```
