@@ -28,7 +28,7 @@ connection.execute(
     }
     rows = _rows;
     connection.end();
-  },
+  }
 );
 
 process.on('exit', () => {

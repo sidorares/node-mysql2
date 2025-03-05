@@ -4,7 +4,7 @@ const mysql = require('../index.js');
 
 const conn = mysql.createConnection({
   user: 'mycause_dev',
-  password: 'mycause'
+  password: 'mycause',
 });
 
 const iconv = require('iconv-lite');
@@ -25,14 +25,14 @@ const mysql2iconv = {
   utf16le: 'utf16-le',
   ujis: 'eucjp',
   // need to check that this is correct mapping
-  macce: 'macintosh' // Mac Central European
+  macce: 'macintosh', // Mac Central European
 };
 
 const missing = {};
 
 conn.query('show collation', (err, res) => {
   console.log(res);
-  res.forEach(r => {
+  res.forEach((r) => {
     const charset = r.Charset;
     const iconvCharset = mysql2iconv[charset] || charset; // if there is manuall mapping, override
     if (!iconv.encodingExists(iconvCharset)) {

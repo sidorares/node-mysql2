@@ -23,7 +23,7 @@ Promise.all([
     assert.strictEqual(
       typeof results[0].total,
       'string',
-      'Valid supportBigNumbers enabled',
+      'Valid supportBigNumbers enabled'
     );
   }),
   test(async () => {
@@ -35,7 +35,7 @@ Promise.all([
     assert.strictEqual(
       typeof results[0].total,
       'number',
-      'Valid supportBigNumbers disabled',
+      'Valid supportBigNumbers disabled'
     );
   }),
 
@@ -48,7 +48,7 @@ Promise.all([
     assert.strictEqual(
       typeof results[0].total,
       'string',
-      'supportBigNumbers as a random string should be enabled',
+      'supportBigNumbers as a random string should be enabled'
     );
   }),
   test(async () => {
@@ -60,7 +60,7 @@ Promise.all([
     assert.strictEqual(
       typeof results[0].total,
       'number',
-      'supportBigNumbers as an empty string should be disabled',
+      'supportBigNumbers as an empty string should be disabled'
     );
   }),
 ]).then(async () => {

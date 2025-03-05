@@ -13,7 +13,7 @@ function dotest() {
     if (params.length < 50) {
       assert.equal(
         _rows[0].t,
-        params.reduce((x, y) => x + y),
+        params.reduce((x, y) => x + y)
       );
       query += ' + ?';
       params.push(params.length);

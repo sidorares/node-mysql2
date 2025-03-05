@@ -61,7 +61,7 @@ class TestAuthSwitchHandshake extends Command {
     count++;
     if (count < 10) {
       const asrmd = new Packets.AuthSwitchRequestMoreData(
-        Buffer.from(`hahaha ${count}`),
+        Buffer.from(`hahaha ${count}`)
       );
       connection.writePacket(asrmd.toPacket());
       return TestAuthSwitchHandshake.prototype.readClientAuthSwitchResponse;
@@ -85,7 +85,7 @@ const server = mysql.createServer((conn) => {
     new TestAuthSwitchHandshake({
       pluginName: 'auth_test_plugin',
       pluginData: Buffer.from('f{tU-{K@BhfHt/-4^Z,'),
-    }),
+    })
   );
 });
 

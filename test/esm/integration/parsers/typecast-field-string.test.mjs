@@ -17,28 +17,28 @@ const query = {};
 const execute = {};
 
 await conn.query(
-  'CREATE TEMPORARY TABLE `tmp_tiny` (`signed` TINYINT, `unsigned` TINYINT UNSIGNED)',
+  'CREATE TEMPORARY TABLE `tmp_tiny` (`signed` TINYINT, `unsigned` TINYINT UNSIGNED)'
 );
 await conn.query('CREATE TEMPORARY TABLE `tmp_date` (`timestamp` TIMESTAMP)');
 
 await conn.query('INSERT INTO `tmp_tiny` (`signed`, `unsigned`) VALUES (0, 1)');
 await conn.query(
-  'INSERT INTO `tmp_date` (`timestamp`) VALUES (CURRENT_TIMESTAMP())',
+  'INSERT INTO `tmp_date` (`timestamp`) VALUES (CURRENT_TIMESTAMP())'
 );
 
 {
   const [date] = await conn.query(
-    'SELECT STR_TO_DATE("2022-06-28", "%Y-%m-%d") AS `date`',
+    'SELECT STR_TO_DATE("2022-06-28", "%Y-%m-%d") AS `date`'
   );
   const [time] = await conn.query(
-    'SELECT STR_TO_DATE("12:34:56", "%H:%i:%s") AS `time`',
+    'SELECT STR_TO_DATE("12:34:56", "%H:%i:%s") AS `time`'
   );
   const [datetime] = await conn.query(
-    'SELECT STR_TO_DATE("2022-06-28 12:34:56", "%Y-%m-%d %H:%i:%s") AS `datetime`',
+    'SELECT STR_TO_DATE("2022-06-28 12:34:56", "%Y-%m-%d %H:%i:%s") AS `datetime`'
   );
   const [timestamp] = await conn.query('SELECT `timestamp` FROM `tmp_date`');
   const [tiny] = await conn.query(
-    'SELECT `signed`, `unsigned` FROM `tmp_tiny`',
+    'SELECT `signed`, `unsigned` FROM `tmp_tiny`'
   );
 
   query.date = date[0].date;
@@ -50,17 +50,17 @@ await conn.query(
 
 {
   const [date] = await conn.execute(
-    'SELECT STR_TO_DATE("2022-06-28", "%Y-%m-%d") AS `date`',
+    'SELECT STR_TO_DATE("2022-06-28", "%Y-%m-%d") AS `date`'
   );
   const [time] = await conn.execute(
-    'SELECT STR_TO_DATE("12:34:56", "%H:%i:%s") AS `time`',
+    'SELECT STR_TO_DATE("12:34:56", "%H:%i:%s") AS `time`'
   );
   const [datetime] = await conn.execute(
-    'SELECT STR_TO_DATE("2022-06-28 12:34:56", "%Y-%m-%d %H:%i:%s") AS `datetime`',
+    'SELECT STR_TO_DATE("2022-06-28 12:34:56", "%Y-%m-%d %H:%i:%s") AS `datetime`'
   );
   const [timestamp] = await conn.execute('SELECT `timestamp` FROM `tmp_date`');
   const [tiny] = await conn.execute(
-    'SELECT `signed`, `unsigned` FROM `tmp_tiny`',
+    'SELECT `signed`, `unsigned` FROM `tmp_tiny`'
   );
 
   execute.date = date[0].date;
@@ -80,5 +80,5 @@ assert.deepStrictEqual(query.tiny.signed, execute.tiny.signed, 'TINY (signed)');
 assert.deepStrictEqual(
   query.tiny.unsigned,
   execute.tiny.unsigned,
-  'TINY (unsigned)',
+  'TINY (unsigned)'
 );

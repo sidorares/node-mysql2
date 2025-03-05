@@ -48,7 +48,7 @@ const server = mysql.createServer((conn) => {
     new TestAuthSwitchPluginError({
       pluginName: 'auth_test_plugin',
       pluginData: Buffer.allocUnsafe(0),
-    }),
+    })
   );
 });
 

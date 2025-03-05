@@ -51,7 +51,7 @@ test(async () => {
 
         row = rows[0];
         connection.end();
-      },
+      }
     );
 
     process.on('exit', () => {
@@ -74,7 +74,7 @@ test(async () => {
 
         if (test.deep) {
           message = `got: "${JSON.stringify(got)}" expected: "${JSON.stringify(
-            expected,
+            expected
           )}" test: ${test.type}`;
           assert.deepEqual(expected, got, message);
         } else {

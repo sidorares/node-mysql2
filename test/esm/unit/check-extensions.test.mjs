@@ -9,7 +9,7 @@ const message = [
 const checkExtensions = async (
   dirs,
   allowedExtensions,
-  ignoreList = /\.DS_Store/,
+  ignoreList = /\.DS_Store/
 ) => {
   for (const dir of dirs) {
     const files = await listFiles(dir, { filter: /\./ });
@@ -32,6 +32,6 @@ test(async () => {
   assert.deepStrictEqual(
     invalidFiles.length,
     0,
-    Array.from(new Set(message)).join(EOL),
+    Array.from(new Set(message)).join(EOL)
   );
 });

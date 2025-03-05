@@ -45,27 +45,27 @@ exports.raw = SqlString.raw;
 
 exports.__defineGetter__(
   'createConnectionPromise',
-  () => require('./promise.js').createConnection,
+  () => require('./promise.js').createConnection
 );
 
 exports.__defineGetter__(
   'createPoolPromise',
-  () => require('./promise.js').createPool,
+  () => require('./promise.js').createPool
 );
 
 exports.__defineGetter__(
   'createPoolClusterPromise',
-  () => require('./promise.js').createPoolCluster,
+  () => require('./promise.js').createPoolCluster
 );
 
 exports.__defineGetter__('Types', () => require('./lib/constants/types.js'));
 
 exports.__defineGetter__('Charsets', () =>
-  require('./lib/constants/charsets.js'),
+  require('./lib/constants/charsets.js')
 );
 
 exports.__defineGetter__('CharsetToEncoding', () =>
-  require('./lib/constants/charset_encodings.js'),
+  require('./lib/constants/charset_encodings.js')
 );
 
 exports.setMaxParserCache = function (max) {

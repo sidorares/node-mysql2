@@ -26,7 +26,7 @@ connection.query(
   (err, rows) => {
     assert.ifError(err);
     assert.notEqual(rows[0].i.test, '😀');
-  },
+  }
 );
 
 // JSON with encoding explicitly set to utf8
@@ -38,7 +38,7 @@ connection.query(
   (err, rows) => {
     assert.ifError(err);
     assert.equal(rows[0].i.test, '😀');
-  },
+  }
 );
 
 connection.end();

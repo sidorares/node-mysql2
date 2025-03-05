@@ -20,14 +20,14 @@ blockedFields.forEach((fields) => {
     assert.strictEqual(
       error.message,
       `The field name (${fields[0].name}) can't be the same as an object's private property.`,
-      `Ensure safe ${fields[0].name}`,
+      `Ensure safe ${fields[0].name}`
     );
   }
 });
 
 blockedFields
   .map((fields) =>
-    fields.map((field) => ({ ...field, name: field.name.slice(1) })),
+    fields.map((field) => ({ ...field, name: field.name.slice(1) }))
   )
   .forEach((fields) => {
     try {
@@ -37,14 +37,14 @@ blockedFields
       assert.strictEqual(
         error.message,
         `The field name (_${fields[0].name}) can't be the same as an object's private property.`,
-        `Ensure safe _${fields[0].name} for nestTables as string`,
+        `Ensure safe _${fields[0].name} for nestTables as string`
       );
     }
   });
 
 blockedFields
   .map((fields) =>
-    fields.map((field) => ({ ...field, name: '', table: field.name })),
+    fields.map((field) => ({ ...field, name: '', table: field.name }))
   )
   .forEach((fields) => {
     try {
@@ -54,7 +54,7 @@ blockedFields
       assert.strictEqual(
         error.message,
         `The field name (${fields[0].table}) can't be the same as an object's private property.`,
-        `Ensure safe ${fields[0].table} for nestTables as true`,
+        `Ensure safe ${fields[0].table} for nestTables as true`
       );
     }
   });

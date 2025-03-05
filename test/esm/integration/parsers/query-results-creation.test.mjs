@@ -28,12 +28,12 @@ Promise.all([
     assert.deepStrictEqual(
       Object.getOwnPropertyNames(results[0]),
       Object.getOwnPropertyNames(expected[0]),
-      'Deep ensure exact object "results"',
+      'Deep ensure exact object "results"'
     );
     assert.deepStrictEqual(
       Object.getPrototypeOf(results[0]),
       Object.getPrototypeOf({}),
-      'Ensure clean properties in results items',
+      'Ensure clean properties in results items'
     );
 
     privateObjectProps.forEach((prop) => {
@@ -44,7 +44,7 @@ Promise.all([
     assert.strictEqual(
       results[0].customProp,
       true,
-      'Ensure that the end-user is able to use custom props',
+      'Ensure that the end-user is able to use custom props'
     );
   }),
   test(async () => {
@@ -53,7 +53,7 @@ Promise.all([
     assert.strictEqual(
       result.constructor.name,
       'ResultSetHeader',
-      'Ensure constructor name in result object',
+      'Ensure constructor name in result object'
     );
   }),
 ]).then(async () => {

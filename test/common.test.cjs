@@ -22,7 +22,7 @@ if (process.env.MYSQL_USE_TLS === '1') {
     rejectUnauthorized: false,
     ca: fs.readFileSync(
       path.join(__dirname, '../test/fixtures/ssl/certs/ca.pem'),
-      'utf-8',
+      'utf-8'
     ),
   };
 }
@@ -190,7 +190,7 @@ exports.createTemplate = function () {
   const jade = require('jade');
   const template = require('node:fs').readFileSync(
     `${__dirname}/template.jade`,
-    'ascii',
+    'ascii'
   );
   return jade.compile(template);
 };

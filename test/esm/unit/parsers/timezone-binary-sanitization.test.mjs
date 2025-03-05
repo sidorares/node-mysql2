@@ -23,7 +23,7 @@ Promise.all([
     assert.strictEqual(
       process.env.TEST_ENV_VALUE,
       'secure',
-      'Timezone sanitization failed - code injection possible',
+      'Timezone sanitization failed - code injection possible'
     );
   }),
 ]).then(async () => {

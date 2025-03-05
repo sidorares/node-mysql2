@@ -26,7 +26,7 @@ test(async () => {
       (err, res) => {
         assert.ifError(err);
         assert.deepEqual(res[0].foo, { x: 11, y: 0 });
-      },
+      }
     );
 
     connection.execute(
@@ -42,7 +42,7 @@ test(async () => {
       (err, res) => {
         assert.ifError(err);
         assert.equal(Buffer.isBuffer(res[0].foo), true);
-      },
+      }
     );
 
     connection.end();

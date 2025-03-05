@@ -12,6 +12,6 @@
     "moduleResolution": "node",
     "removeComments": false,
     "noUnusedParameters": true,
-    "isolatedModules": true,
+    "isolatedModules": true
   }
 }

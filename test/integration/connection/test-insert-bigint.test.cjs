@@ -13,7 +13,7 @@ connection.query(
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 
 connection.query("INSERT INTO bigs SET title='test', id=123");
@@ -31,15 +31,15 @@ connection.query("INSERT INTO bigs SET title='test1'", (err, result) => {
     connection.query("INSERT INTO bigs SET title='test3'", (err, result) => {
       assert.strictEqual(
         Long.fromString('9007199254740993').compare(result.insertId),
-        0,
+        0
       );
       connection.query(
-        "INSERT INTO bigs SET title='test', id=90071992547409924",
+        "INSERT INTO bigs SET title='test', id=90071992547409924"
       );
       connection.query("INSERT INTO bigs SET title='test4'", (err, result) => {
         assert.strictEqual(
           Long.fromString('90071992547409925').compare(result.insertId),
-          0,
+          0
         );
         connection.query(
           {
@@ -57,7 +57,7 @@ connection.query("INSERT INTO bigs SET title='test1'", (err, result) => {
             assert.strictEqual(result[6].id, '90071992547409924');
             assert.strictEqual(result[7].id, '90071992547409925');
             connection.end();
-          },
+          }
         );
       });
     });

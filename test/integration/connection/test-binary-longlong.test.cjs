@@ -11,7 +11,7 @@ conn.query(
     ' `ls` BIGINT SIGNED, ' +
     ' `lu` BIGINT UNSIGNED, ' +
     ' PRIMARY KEY (`id`) ' +
-    ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8',
+    ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8'
 );
 
 const values = [
@@ -78,7 +78,7 @@ conn.connect((err) => {
         if (completed === started) {
           conn.end();
         }
-      },
+      }
     );
   }
 
@@ -97,7 +97,7 @@ conn.connect((err) => {
         if (completed === started) {
           conn.end();
         }
-      },
+      }
     );
   }
 

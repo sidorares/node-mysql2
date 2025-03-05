@@ -17,13 +17,13 @@ function executeTests(res) {
 }
 
 connection.query(
-  'CREATE TEMPORARY TABLE binpar_null_test (v1 VARCHAR(16) NOT NULL, n1 VARCHAR(16), v2 VARCHAR(16) NOT NULL)',
+  'CREATE TEMPORARY TABLE binpar_null_test (v1 VARCHAR(16) NOT NULL, n1 VARCHAR(16), v2 VARCHAR(16) NOT NULL)'
 );
 connection.query(
   `INSERT INTO binpar_null_test (v1, n1, v2) VALUES ("${COL_1_VALUE}", NULL, "${COL_2_VALUE}")`,
   (err) => {
     if (err) throw err;
-  },
+  }
 );
 
 connection.execute('SELECT * FROM binpar_null_test', (err, res) => {

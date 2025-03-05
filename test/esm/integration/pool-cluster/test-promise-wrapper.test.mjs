@@ -17,7 +17,7 @@ const { createPoolCluster } = require('../../../../promise.js');
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
-          'should propagate warn event to promise wrapper',
+          'should propagate warn event to promise wrapper'
         );
         resolve(true);
       });
@@ -35,7 +35,7 @@ const { createPoolCluster } = require('../../../../promise.js');
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
-          'should propagate remove event to promise wrapper',
+          'should propagate remove event to promise wrapper'
         );
         resolve(true);
       });
@@ -53,7 +53,7 @@ const { createPoolCluster } = require('../../../../promise.js');
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
-          'should propagate offline event to promise wrapper',
+          'should propagate offline event to promise wrapper'
         );
         resolve(true);
       });
@@ -71,7 +71,7 @@ const { createPoolCluster } = require('../../../../promise.js');
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
-          'should propagate online event to promise wrapper',
+          'should propagate online event to promise wrapper'
         );
         resolve(true);
       });
@@ -88,7 +88,7 @@ const { createPoolCluster } = require('../../../../promise.js');
 
     assert.equal(
       poolNamespace.poolNamespace,
-      poolCluster.poolCluster.of('MASTER'),
+      poolCluster.poolCluster.of('MASTER')
     );
 
     const connection = await poolNamespace.getConnection();
@@ -98,13 +98,13 @@ const { createPoolCluster } = require('../../../../promise.js');
 
     const [result] = await poolNamespace.query(
       'SELECT 1 as a from dual where 1 = ?',
-      [1],
+      [1]
     );
     assert.equal(result[0]['a'], 1, 'should query successfully');
 
     const [result2] = await poolNamespace.execute(
       'SELECT 1 as a from dual where 1 = ?',
-      [1],
+      [1]
     );
     assert.equal(result2[0]['a'], 1, 'should execute successfully');
 

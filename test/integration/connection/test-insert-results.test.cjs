@@ -18,7 +18,7 @@ connection.query(
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 
 let result, result2;
@@ -32,7 +32,7 @@ connection.query(`INSERT INTO ${table} SET title="${text}"`, (err, _result) => {
     (err, _result2) => {
       result2 = _result2;
       connection.end();
-    },
+    }
   );
 });
 
