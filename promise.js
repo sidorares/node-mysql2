@@ -12,6 +12,7 @@ const PromisePool = require('./lib/promise/pool.js');
 const makeDoneCb = require('./lib/promise/make_done_cb.js');
 const PromisePoolConnection = require('./lib/promise/pool_connection.js');
 const inheritEvents = require('./lib/promise/inherit_events.js');
+const PromisePoolNamespace = require('./lib/promise/pool_cluster');
 
 function createConnectionPromise(opts) {
   const coreConnection = createConnection(opts);
@@ -53,55 +54,6 @@ function createPromisePool(opts) {
   }
 
   return new PromisePool(corePool, thePromise);
-}
-
-class PromisePoolNamespace {
-
-  constructor(poolNamespace, thePromise) {
-    this.poolNamespace = poolNamespace;
-    this.Promise = thePromise || Promise;
-  }
-
-  getConnection() {
-    const corePoolNamespace = this.poolNamespace;
-    return new this.Promise((resolve, reject) => {
-      corePoolNamespace.getConnection((err, coreConnection) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(new PromisePoolConnection(coreConnection, this.Promise));
-        }
-      });
-    });
-  }
-
-  query(sql, values) {
-    const corePoolNamespace = this.poolNamespace;
-    const localErr = new Error();
-    if (typeof values === 'function') {
-      throw new Error(
-        'Callback function is not available with promise clients.',
-      );
-    }
-    return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
-      corePoolNamespace.query(sql, values, done);
-    });
-  }
-
-  execute(sql, values) {
-    const corePoolNamespace = this.poolNamespace;
-    const localErr = new Error();
-    if (typeof values === 'function') {
-      throw new Error(
-        'Callback function is not available with promise clients.',
-      );
-    }
-    return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject, localErr);
-      corePoolNamespace.execute(sql, values, done);
-    });
-  }
 }
 
 class PromisePoolCluster extends EventEmitter {
