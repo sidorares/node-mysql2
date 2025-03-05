@@ -17,7 +17,7 @@ const { createPoolCluster } = require('../../../../promise.js');
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
-          'should propagate warn event to promise wrapper',
+          'should propagate warn event to promise wrapper'
         );
         resolve(true);
       });
@@ -35,7 +35,7 @@ const { createPoolCluster } = require('../../../../promise.js');
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
-          'should propagate remove event to promise wrapper',
+          'should propagate remove event to promise wrapper'
         );
         resolve(true);
       });
@@ -53,7 +53,7 @@ const { createPoolCluster } = require('../../../../promise.js');
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
-          'should propagate offline event to promise wrapper',
+          'should propagate offline event to promise wrapper'
         );
         resolve(true);
       });
@@ -71,12 +71,43 @@ const { createPoolCluster } = require('../../../../promise.js');
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
-          'should propagate online event to promise wrapper',
+          'should propagate online event to promise wrapper'
         );
         resolve(true);
       });
     });
 
     poolCluster.poolCluster.emit('online');
+  });
+
+  await test(async () => {
+    const poolCluster = createPoolCluster();
+    poolCluster.add('MASTER', common.config);
+
+    const poolNamespace = poolCluster.of('MASTER');
+
+    assert.equal(
+      poolNamespace.poolNamespace,
+      poolCluster.poolCluster.of('MASTER')
+    );
+
+    const connection = await poolNamespace.getConnection();
+
+    assert.ok(connection, 'should get connection');
+    connection.release();
+
+    const [result] = await poolNamespace.query(
+      'SELECT 1 as a from dual where 1 = ?',
+      [1]
+    );
+    assert.equal(result[0]['a'], 1, 'should query successfully');
+
+    const [result2] = await poolNamespace.execute(
+      'SELECT 1 as a from dual where 1 = ?',
+      [1]
+    );
+    assert.equal(result2[0]['a'], 1, 'should execute successfully');
+
+    poolCluster.end();
   });
 })();

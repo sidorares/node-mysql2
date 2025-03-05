@@ -195,7 +195,7 @@ function do_test(testIndex) {
       } else {
         assert.deepEqual(
           arrOrColumn(_columns[fieldIndex]),
-          arrOrColumn(fields),
+          arrOrColumn(fields)
         );
       }
     }

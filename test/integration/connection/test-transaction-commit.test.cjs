@@ -14,7 +14,7 @@ connection.query(
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 
 connection.beginTransaction((err) => {

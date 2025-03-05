@@ -4,7 +4,7 @@ const createConnection = require('../test/common').createConnection;
 
 const sql = process.argv[2];
 
-(function(cb) {
+(function (cb) {
   const db = createConnection();
 
   let left = 10000;

@@ -14,24 +14,24 @@ const connection = createConnection().promise();
 Promise.all([
   test(async () => {
     const [result] = await connection.query(
-      `SELECT CAST('{"test": true}' AS JSON) AS json_result`,
+      `SELECT CAST('{"test": true}' AS JSON) AS json_result`
     );
 
     assert.deepStrictEqual(
       result[0].json_result,
       { test: true },
-      'Ensure JSON return parsed (query)',
+      'Ensure JSON return parsed (query)'
     );
   }),
   test(async () => {
     const [result] = await connection.execute(
-      `SELECT CAST('{"test": true}' AS JSON) AS json_result`,
+      `SELECT CAST('{"test": true}' AS JSON) AS json_result`
     );
 
     assert.deepStrictEqual(
       result[0].json_result,
       { test: true },
-      'Ensure JSON return parsed (execute)',
+      'Ensure JSON return parsed (execute)'
     );
   }),
 ]).then(async () => {

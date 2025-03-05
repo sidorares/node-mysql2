@@ -6,7 +6,7 @@ const process = require('node:process');
 
 if (process.env.MYSQL_CONNECTION_URL) {
   console.log(
-    'skipping test when mysql server is configured using MYSQL_CONNECTION_URL',
+    'skipping test when mysql server is configured using MYSQL_CONNECTION_URL'
   );
   process.exit(0);
 }

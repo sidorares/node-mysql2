@@ -3,7 +3,7 @@ name: CI - OSX
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [main]
 
   workflow_dispatch:
 

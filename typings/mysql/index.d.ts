@@ -60,7 +60,7 @@ type TimeZone = 'local' | 'Z' | (string & NonNullable<unknown>);
 export function escape(
   value: any,
   stringifyObjects?: boolean,
-  timeZone?: TimeZone,
+  timeZone?: TimeZone
 ): string;
 
 export function escapeId(value: any, forbidQualified?: boolean): string;
@@ -70,7 +70,7 @@ export function format(
   sql: string,
   values: any | any[],
   stringifyObjects?: boolean,
-  timeZone?: TimeZone,
+  timeZone?: TimeZone
 ): string;
 
 export function raw(sql: string): {

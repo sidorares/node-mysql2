@@ -25,7 +25,7 @@ function tryEncoding(encoding, cb) {
       }
       assert.equal(
         mysql.CharsetToEncoding[fields[0].characterSet],
-        iconvEncoding,
+        iconvEncoding
       );
       assert.equal(fields[0].name, payload);
       assert.equal(rows[0][fields[0].name], payload);
@@ -45,7 +45,7 @@ function tryEncodingExecute(encoding, cb) {
       }
       assert.equal(
         mysql.CharsetToEncoding[fields[0].characterSet],
-        iconvEncoding,
+        iconvEncoding
       );
       // TODO: figure out correct metadata encodings setup for binary protocol
       //  assert.equal(fields[0].name, payload);

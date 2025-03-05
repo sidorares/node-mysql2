@@ -11,7 +11,7 @@ test(async () => {
   await test(async () => {
     describe(
       'Unit Test - Prepare result with number of parameters incorrectly reported by the server',
-      common.describeOptions,
+      common.describeOptions
     );
 
     const connection = {
@@ -33,7 +33,7 @@ test(async () => {
         assert.equal(
           packet.buffer.toString('hex'),
           '1f0000011673656c656374202a2066726f6d207573657273206f72646572206279203f',
-          'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?',
+          'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
         );
       },
     };
@@ -53,7 +53,7 @@ test(async () => {
           } catch (error) {
             reject(error);
           }
-        },
+        }
       );
 
       prepareCommand.execute(null, connection);
@@ -61,14 +61,14 @@ test(async () => {
         0,
         Buffer.from('0000000000010000003300010000000005000002', 'hex'),
         0,
-        20,
+        20
       );
       prepareCommand.execute(headerPacket, connection);
       const paramsEofPacket = new packets.Packet(
         0,
         Buffer.from('00000000fe000002002b000004', 'hex'),
         0,
-        11,
+        11
       );
       prepareCommand.execute(paramsEofPacket, connection);
       for (let i = 0; i < 51; ++i) {
@@ -76,10 +76,10 @@ test(async () => {
           0,
           Buffer.from(
             '0000000003646566056d7973716c0475736572047573657204486f737404486f73740ce000fc030000fe034000000005000005',
-            'hex',
+            'hex'
           ),
           0,
-          47,
+          47
         );
         prepareCommand.execute(columnDefinitionPacket, connection);
       }
@@ -87,7 +87,7 @@ test(async () => {
         0,
         Buffer.from('00000000fe000002002b000004', 'hex'),
         0,
-        11,
+        11
       );
       prepareCommand.execute(columnsEofPacket, connection);
     });
@@ -126,7 +126,7 @@ test(async () => {
       new Promise((resolve, reject) => {
         describe(
           `E2E Prepare result with number of parameters incorrectly reported by the server`,
-          common.describeOptions,
+          common.describeOptions
         );
 
         connection.prepare(
@@ -144,20 +144,20 @@ test(async () => {
                 stmt.parameters.length,
                 0,
                 'parameters length needs to be 0',
-                'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?',
+                'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
               );
             } else {
               assert.equal(
                 stmt.parameters.length,
                 1,
-                'parameters length needs to be 1',
+                'parameters length needs to be 1'
               );
             }
 
             resolve(null);
-          },
+          }
         );
-      }),
+      })
   );
 
   await test(
@@ -178,20 +178,20 @@ test(async () => {
                 stmt.parameters.length,
                 1,
                 'parameters length needs to be 1',
-                'should report 1 actual parameters when 2 placeholders used in ORDER BY?',
+                'should report 1 actual parameters when 2 placeholders used in ORDER BY?'
               );
             } else {
               assert.equal(
                 stmt.parameters.length,
                 2,
-                'parameters length needs to be 2',
+                'parameters length needs to be 2'
               );
             }
 
             resolve(null);
-          },
+          }
         );
-      }),
+      })
   );
 
   connection.end((err) => {

@@ -219,7 +219,7 @@ process.on('exit', () => {
 
     assert.deepEqual(
       Object.keys(fi).sort(),
-      Object.keys(expectedFields[index]).sort(),
+      Object.keys(expectedFields[index]).sort()
     );
     assert.deepEqual(expectedFields[index], fi);
   });

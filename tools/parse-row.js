@@ -3,7 +3,7 @@
 const Packet = require('./lib/packets/packet.js');
 const Packets = require('./lib/packets/index.js');
 
-const SAParser = (function() {
+const SAParser = (function () {
   return function BinaryRow(packet) {
     packet.readInt8(); // statusByte
     const nullBitmaskByte0 = packet.readInt8();

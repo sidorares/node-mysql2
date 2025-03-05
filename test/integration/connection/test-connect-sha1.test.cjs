@@ -15,7 +15,7 @@ function authenticate(params, cb) {
     params.authPluginData1,
     params.authPluginData2,
     params.authToken,
-    doubleSha,
+    doubleSha
   );
   assert(isValid);
   cb(null);
@@ -53,7 +53,7 @@ portfinder.getPort((err, port) => {
     database: 'testdatabase',
     passwordSha1: Buffer.from(
       '8bb6118f8fd6935ad0876a3be34a717d32708ffd',
-      'hex',
+      'hex'
     ),
   });
 

@@ -12,6 +12,7 @@ const PromisePool = require('./lib/promise/pool.js');
 const makeDoneCb = require('./lib/promise/make_done_cb.js');
 const PromisePoolConnection = require('./lib/promise/pool_connection.js');
 const inheritEvents = require('./lib/promise/inherit_events.js');
+const PromisePoolNamespace = require('./lib/promise/pool_cluster');
 
 function createConnectionPromise(opts) {
   const coreConnection = createConnection(opts);
@@ -21,7 +22,7 @@ function createConnectionPromise(opts) {
     throw new Error(
       'no Promise implementation available.' +
         'Use promise-enabled node version or pass userland Promise' +
-        " implementation as parameter, for example: { Promise: require('bluebird') }",
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
   return new thePromise((resolve, reject) => {
@@ -48,7 +49,7 @@ function createPromisePool(opts) {
     throw new Error(
       'no Promise implementation available.' +
         'Use promise-enabled node version or pass userland Promise' +
-        " implementation as parameter, for example: { Promise: require('bluebird') }",
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
 
@@ -60,7 +61,7 @@ class PromisePoolCluster extends EventEmitter {
     super();
     this.poolCluster = poolCluster;
     this.Promise = thePromise || Promise;
-    inheritEvents(poolCluster, this, ['warn', 'remove' , 'online', 'offline']);
+    inheritEvents(poolCluster, this, ['warn', 'remove', 'online', 'offline']);
   }
 
   getConnection(pattern, selector) {
@@ -75,7 +76,7 @@ class PromisePoolCluster extends EventEmitter {
           } else {
             resolve(new PromisePoolConnection(coreConnection, this.Promise));
           }
-        },
+        }
       );
     });
   }
@@ -85,7 +86,7 @@ class PromisePoolCluster extends EventEmitter {
     const localErr = new Error();
     if (typeof args === 'function') {
       throw new Error(
-        'Callback function is not available with promise clients.',
+        'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
@@ -99,7 +100,7 @@ class PromisePoolCluster extends EventEmitter {
     const localErr = new Error();
     if (typeof args === 'function') {
       throw new Error(
-        'Callback function is not available with promise clients.',
+        'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
@@ -109,9 +110,9 @@ class PromisePoolCluster extends EventEmitter {
   }
 
   of(pattern, selector) {
-    return new PromisePoolCluster(
+    return new PromisePoolNamespace(
       this.poolCluster.of(pattern, selector),
-      this.Promise,
+      this.Promise
     );
   }
 
@@ -150,7 +151,7 @@ class PromisePoolCluster extends EventEmitter {
         return function () {
           return PoolCluster.prototype[funcName].apply(
             this.poolCluster,
-            arguments,
+            arguments
           );
         };
       })(func);
@@ -165,7 +166,7 @@ function createPromisePoolCluster(opts) {
     throw new Error(
       'no Promise implementation available.' +
         'Use promise-enabled node version or pass userland Promise' +
-        " implementation as parameter, for example: { Promise: require('bluebird') }",
+        " implementation as parameter, for example: { Promise: require('bluebird') }"
     );
   }
   return new PromisePoolCluster(corePoolCluster, thePromise);
@@ -185,11 +186,11 @@ exports.PromisePoolConnection = PromisePoolConnection;
 exports.__defineGetter__('Types', () => require('./lib/constants/types.js'));
 
 exports.__defineGetter__('Charsets', () =>
-  require('./lib/constants/charsets.js'),
+  require('./lib/constants/charsets.js')
 );
 
 exports.__defineGetter__('CharsetToEncoding', () =>
-  require('./lib/constants/charset_encodings.js'),
+  require('./lib/constants/charset_encodings.js')
 );
 
 exports.setMaxParserCache = function (max) {

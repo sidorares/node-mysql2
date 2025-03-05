@@ -18,7 +18,7 @@ conn.query(
     ' `access_token` varchar(30) NOT NULL, ' +
     ' `refresh_token` tinytext NOT NULL, ' +
     ' PRIMARY KEY (`id`) ' +
-    ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8',
+    ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8'
 );
 conn.query("INSERT INTO `tmp_account` VALUES ('1', 'xgredx', '', '', '')");
 
@@ -27,7 +27,7 @@ conn.query(
     ' `account` int(11) NOT NULL, ' +
     ' `flag` tinyint(3) NOT NULL, ' +
     ' PRIMARY KEY (`account`,`flag`) ' +
-    ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8',
+    ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8'
 );
 
 conn.query("INSERT INTO `tmp_account_flags` VALUES ('1', '100')");
@@ -39,11 +39,11 @@ conn.query(
     ' `session` varchar(114) NOT NULL, ' +
     ' `time` int(11) NOT NULL, ' +
     ' PRIMARY KEY (`account`,`ip`) ' +
-    ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8',
+    ' ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8'
 );
 
 conn.query(
-  "INSERT INTO `tmp_account_session` VALUES ('1', '::1', '75efb145482ce22f4544390cad233c749c1b43e4', '1')",
+  "INSERT INTO `tmp_account_session` VALUES ('1', '::1', '75efb145482ce22f4544390cad233c749c1b43e4', '1')"
 );
 
 conn.connect((err) => {
@@ -67,6 +67,6 @@ conn.connect((err) => {
       const valueIsNull = rows[0][fields[0].name] === null;
       assert(valueIsNull);
       conn.end();
-    },
+    }
   );
 });
