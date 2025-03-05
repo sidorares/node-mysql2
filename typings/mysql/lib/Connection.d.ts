@@ -353,11 +353,7 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
       | ResultSetHeader,
   >(
     sql: string,
-    callback?: (
-      err: QueryError | null,
-      result: T,
-      fields: FieldPacket[],
-    ) => any,
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
   ): Query;
   static createQuery<
     T extends
@@ -369,11 +365,7 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
   >(
     sql: string,
     values: any | any[] | { [param: string]: any },
-    callback?: (
-      err: QueryError | null,
-      result: T,
-      fields: FieldPacket[],
-    ) => any,
+    callback?: (err: QueryError | null, result: T, fields: FieldPacket[]) => any
   ): Query;
 
   beginTransaction(callback: (err: QueryError | null) => void): void;
@@ -384,7 +376,7 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
 
   changeUser(
     options: ConnectionOptions,
-    callback?: (err: QueryError | null) => void,
+    callback?: (err: QueryError | null) => void
   ): void;
 
   end(callback?: (err: QueryError | null) => void): void;
@@ -409,7 +401,7 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
 
   prepare(
     sql: string,
-    callback?: (err: QueryError | null, statement: PrepareStatementInfo) => any,
+    callback?: (err: QueryError | null, statement: PrepareStatementInfo) => any
   ): Prepare;
 
   unprepare(sql: string): PrepareStatementInfo;

@@ -5,7 +5,7 @@ export type AuthPlugin = (pluginMetadata: {
   connection: Connection;
   command: string;
 }) => (
-  pluginData: Buffer,
+  pluginData: Buffer
 ) => Promise<string> | string | Buffer | Promise<Buffer> | null;
 
 type AuthPluginDefinition<T> = (pluginOptions?: T) => AuthPlugin;

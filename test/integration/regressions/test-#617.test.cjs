@@ -59,9 +59,9 @@ connection.query(
         `(${testRows[0][0]},"${testRows[0][1]}", "${testRows[0][2]}"),`,
         `(${testRows[1][0]},"${testRows[1][1]}", "${testRows[1][2]}")`,
       ].join(' '),
-      executeTest,
+      executeTest
     );
-  },
+  }
 );
 
 process.on('exit', () => {

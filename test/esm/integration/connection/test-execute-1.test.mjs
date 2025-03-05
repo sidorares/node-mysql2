@@ -10,7 +10,7 @@ const common = require('../../../common.test.cjs');
   await test(async () => {
     describe(
       'Simple execute should return expected values',
-      common.describeOptions,
+      common.describeOptions
     );
 
     const [_rows, _fields] = await connection.execute('SELECT 1 as test');
@@ -18,7 +18,7 @@ const common = require('../../../common.test.cjs');
     assert.deepEqual(
       _rows,
       [{ test: 1 }],
-      'should execute simple SELECT 1 statement',
+      'should execute simple SELECT 1 statement'
     );
     assert.equal(_fields[0].name, 'test', 'should field name test');
   });
@@ -26,7 +26,7 @@ const common = require('../../../common.test.cjs');
   await test(async () => {
     describe(
       'Simple execute with parameters should return expected values',
-      common.describeOptions,
+      common.describeOptions
     );
 
     const [_rows, _fields] = await connection.execute('SELECT 1+? as test', [
@@ -36,7 +36,7 @@ const common = require('../../../common.test.cjs');
     assert.deepEqual(
       _rows,
       [{ test: 124 }],
-      'should execute simple SELECT 1+? statement',
+      'should execute simple SELECT 1+? statement'
     );
     assert.equal(_fields[0].name, 'test', 'should field name test');
   });
@@ -44,7 +44,7 @@ const common = require('../../../common.test.cjs');
   await test(async () => {
     describe(
       'should execute simple INSERT + SELECT statements',
-      common.describeOptions,
+      common.describeOptions
     );
 
     await connection.query(
@@ -55,12 +55,12 @@ const common = require('../../../common.test.cjs');
         '`text` varchar(255) DEFAULT NULL,',
         'PRIMARY KEY (`id`)',
         ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-      ].join('\n'),
+      ].join('\n')
     );
 
     await connection.execute(
       'INSERT INTO announcements(title, text) VALUES(?, ?)',
-      ['Есть место, где заканчивается тротуар', 'Расти борода, расти'],
+      ['Есть место, где заканчивается тротуар', 'Расти борода, расти']
     );
     connection.execute('INSERT INTO announcements(title, text) VALUES(?, ?)', [
       'Граждане Российской Федерации имеют право собираться мирно без оружия',
@@ -73,18 +73,18 @@ const common = require('../../../common.test.cjs');
     assert.equal(
       _rows[0].title,
       'Есть место, где заканчивается тротуар',
-      'first row title',
+      'first row title'
     );
     assert.equal(_rows[0].text, 'Расти борода, расти', 'first row text');
     assert.equal(
       _rows[1].title,
       'Граждане Российской Федерации имеют право собираться мирно без оружия',
-      'second row title',
+      'second row title'
     );
     assert.equal(
       _rows[1].text,
       'проводить собрания, митинги и демонстрации, шествия и пикетирование',
-      'second row text',
+      'second row text'
     );
   });
 

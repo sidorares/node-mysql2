@@ -20,23 +20,23 @@ const prepareTestSet = function (cb) {
   connection.query(`drop view if exists ${config.view1}`);
   connection.query(`drop view if exists ${config.view2}`);
   connection.query(
-    `create table ${config.table1} (name1 varchar(20), linkId1 integer(11))`,
+    `create table ${config.table1} (name1 varchar(20), linkId1 integer(11))`
   );
   connection.query(
-    `create table ${config.table2} (name2 varchar(20), linkId2 integer(11))`,
+    `create table ${config.table2} (name2 varchar(20), linkId2 integer(11))`
   );
   connection.query(
-    `insert into ${config.table1} (name1, linkId1) values ("A", 1),("B", 2),("C", 3),("D", 4)`,
+    `insert into ${config.table1} (name1, linkId1) values ("A", 1),("B", 2),("C", 3),("D", 4)`
   );
   connection.query(
-    `insert into ${config.table2} (name2, linkId2) values ("AA", 1),("BB", 2),("CC", 3),("DD", 4)`,
+    `insert into ${config.table2} (name2, linkId2) values ("AA", 1),("BB", 2),("CC", 3),("DD", 4)`
   );
   connection.query(
-    `create view ${config.view1} as select name1, linkId1, name2 from ${config.table1} INNER JOIN ${config.table2} ON linkId1 = linkId2`,
+    `create view ${config.view1} as select name1, linkId1, name2 from ${config.table1} INNER JOIN ${config.table2} ON linkId1 = linkId2`
   );
   connection.query(
     `create view ${config.view2} as select name1, name2 from ${config.view1}`,
-    cb,
+    cb
   );
 };
 
@@ -48,7 +48,7 @@ prepareTestSet((err) => {
       assert.ifError(err);
       results = rows;
       connection.end();
-    },
+    }
   );
 });
 

@@ -25,7 +25,7 @@ connection.query(
   (err, res) => {
     assert.ifError(err);
     assert.equal(res[0].foo, 'foobar');
-  },
+  }
 );
 
 // global typecast works
@@ -36,7 +36,7 @@ connection.query(
   (err, res) => {
     assert.ifError(err);
     assert.equal(res[0].foo, 'FOOBAR');
-  },
+  }
 );
 
 connection.end();

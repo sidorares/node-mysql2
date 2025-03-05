@@ -126,7 +126,7 @@ testBigPackets([pbuff, pbuff], assert2FullPackets);
 
 testBigPackets(
   [pbuff.slice(0, 120000), pbuff.slice(120000, 123004), pbuff],
-  assert2FullPackets,
+  assert2FullPackets
 );
 const frameEnd = 120000;
 testBigPackets(
@@ -134,7 +134,7 @@ testBigPackets(
     pbuff.slice(0, frameEnd),
     Buffer.concat([pbuff.slice(frameEnd, 123004), pbuff]),
   ],
-  assert2FullPackets,
+  assert2FullPackets
 );
 for (let frameStart = 1; frameStart < 100; frameStart++) {
   testBigPackets(
@@ -142,6 +142,6 @@ for (let frameStart = 1; frameStart < 100; frameStart++) {
       Buffer.concat([pbuff, pbuff.slice(0, frameStart)]),
       pbuff.slice(frameStart, 123004),
     ],
-    assert2FullPackets,
+    assert2FullPackets
   );
 }

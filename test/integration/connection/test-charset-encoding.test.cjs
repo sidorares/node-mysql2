@@ -27,7 +27,7 @@ const testEncoding = function (err) {
       [data],
       (err2) => {
         assert.ifError(err2);
-      },
+      }
     );
   });
 
@@ -47,7 +47,7 @@ const testEncoding = function (err) {
       (err) => {
         assert.ifError(err);
         connection.query('DELETE from `test-charset-encoding`', testEncoding);
-      },
+      }
     );
   });
 })();

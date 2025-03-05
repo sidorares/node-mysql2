@@ -7,12 +7,12 @@ const mysql = require('mysql');
 mysql.createConnection({
   authPlugins: {
     caching_sha2_password: mysql.authPlugins.caching_sha2_password({
-      onServerPublikKey: function(key) {
+      onServerPublikKey: function (key) {
         console.log(key);
       },
       serverPublicKey: 'xxxyyy',
-      overrideIsSecure: true //
-    })
-  }
+      overrideIsSecure: true, //
+    }),
+  },
 });
 ```

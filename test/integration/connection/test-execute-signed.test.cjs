@@ -16,14 +16,14 @@ connection.query(
     '`l` long,',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 
 connection.query('insert into test_table(num,l) values(?, 3)', [1]);
 connection.query('insert into test_table(num,l) values(3-?, -10)', [5]);
 connection.query(
   'insert into test_table(num,l) values(4+?, 4000000-?)',
-  [-5, 8000000],
+  [-5, 8000000]
 );
 
 connection.execute('SELECT * from test_table', [], (err, _rows) => {

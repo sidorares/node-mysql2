@@ -16,7 +16,7 @@ assert.equal(pool.escape(123), '123', 'escape method works correctly');
 assert.equal(
   pool.escapeId('table name'),
   '`table name`',
-  'escapeId method works correctly',
+  'escapeId method works correctly'
 );
 
 test(() => {
@@ -24,7 +24,7 @@ test(() => {
   assert.equal(
     pool.format('SELECT a FROM ?? WHERE b = ?', params),
     "SELECT a FROM `table name` WHERE b = 'thing'",
-    'format method works correctly',
+    'format method works correctly'
   );
 });
 
@@ -35,13 +35,13 @@ describe('Pool.promise() methods tests', describeOptions);
 assert.equal(
   poolDotPromise.escape(123),
   '123',
-  'promise escape method works correctly',
+  'promise escape method works correctly'
 );
 
 assert.equal(
   poolDotPromise.escapeId('table name'),
   '`table name`',
-  'promise escapeId method works correctly',
+  'promise escapeId method works correctly'
 );
 
 test(() => {
@@ -49,7 +49,7 @@ test(() => {
   assert.equal(
     poolDotPromise.format('SELECT a FROM ?? WHERE b = ?', params),
     "SELECT a FROM `table name` WHERE b = 'thing'",
-    'promise format method works correctly',
+    'promise format method works correctly'
   );
 });
 
@@ -60,13 +60,13 @@ describe('PromisePool methods tests', describeOptions);
 assert.equal(
   promisePool.escape(123),
   '123',
-  'PromisePool escape method works correctly',
+  'PromisePool escape method works correctly'
 );
 
 assert.equal(
   promisePool.escapeId('table name'),
   '`table name`',
-  'PromisePool escapeId method works correctly',
+  'PromisePool escapeId method works correctly'
 );
 
 test(() => {
@@ -74,6 +74,6 @@ test(() => {
   assert.equal(
     promisePool.format('SELECT a FROM ?? WHERE b = ?', params),
     "SELECT a FROM `table name` WHERE b = 'thing'",
-    'PromisePool format method works correctly',
+    'PromisePool format method works correctly'
   );
 });

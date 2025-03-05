@@ -2,7 +2,7 @@
 
 const createConnection = require('../test/common').createConnection;
 
-(function(cb) {
+(function (cb) {
   const db = createConnection();
 
   let left = 10000;

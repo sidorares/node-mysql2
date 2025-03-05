@@ -37,10 +37,10 @@ connection.query(
               assert.ifError(err);
               assert.equal(rows[0].name, 'привет, мир');
               connection2.end();
-            },
+            }
           );
-        },
+        }
       );
     });
-  },
+  }
 );

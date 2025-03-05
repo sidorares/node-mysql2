@@ -44,7 +44,7 @@ const server = common.createServer(
         'trying to enqueue command to a connection which is already in error state',
         (err1) => {
           receivedError3 = err1;
-        },
+        }
       );
     });
   },
@@ -70,7 +70,7 @@ const server = common.createServer(
       clientConnection.stream.end();
       server.close();
     });
-  },
+  }
 );
 
 process.on('exit', () => {
@@ -81,6 +81,6 @@ process.on('exit', () => {
   assert.equal(receivedError3.fatal, true);
   assert.equal(
     receivedError3.message,
-    "Can't add new command when connection is in closed state",
+    "Can't add new command when connection is in closed state"
   );
 });
