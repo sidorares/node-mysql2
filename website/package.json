@@ -38,7 +38,7 @@
     "@docusaurus/types": "^3.7.0",
     "@types/node": "^22.13.9",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
+    "@typescript-eslint/parser": "^8.26.0",
     "eslint": "^8.57.1",
     "eslint-import-resolver-typescript": "^3.8.3",
     "eslint-plugin-import": "^2.31.0",
