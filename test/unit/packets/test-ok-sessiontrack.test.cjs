@@ -27,14 +27,14 @@ assert.doesNotThrow(() => {
     `1b 00 00 01
            00
            01 fe 65 96 fc 02 00 00 00 00 03 40 00 00 00 0a 14 08 fe 60 63 9b 05 00 00 00
-          `,
+          `
   );
   new ResultSetHeader(packet, mockConnection);
 });
 
 assert.doesNotThrow(() => {
   const packet = mkpacket(
-    `13 00 00 01 00 01 00 02 40 00 00 00 0a 14 08 fe 18 25 e7 06 00 00 00`,
+    `13 00 00 01 00 01 00 02 40 00 00 00 0a 14 08 fe 18 25 e7 06 00 00 00`
   );
   new ResultSetHeader(packet, mockConnection);
 });

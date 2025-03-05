@@ -57,11 +57,11 @@ pool.getConnection((err1, connection1) => {
       setTimeout(() => {
         assert(
           pool._allConnections.length === 0,
-          `Expected all connections to be closed, but found ${pool._allConnections.length}`,
+          `Expected all connections to be closed, but found ${pool._allConnections.length}`
         );
         assert(
           pool._freeConnections.length === 0,
-          `Expected all free connections to be closed, but found ${pool._freeConnections.length}`,
+          `Expected all free connections to be closed, but found ${pool._freeConnections.length}`
         );
 
         pool.end();

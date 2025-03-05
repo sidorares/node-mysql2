@@ -81,7 +81,7 @@ const server = mysql.createServer((conn) => {
         pluginName: 'auth_test_plugin2',
         pluginData: Buffer.from('bar'),
       },
-    ]),
+    ])
   );
 });
 

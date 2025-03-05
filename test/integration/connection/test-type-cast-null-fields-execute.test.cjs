@@ -20,7 +20,7 @@ connection.execute(
   ].join('\n'),
   (err) => {
     if (err) throw err;
-  },
+  }
 );
 
 connection.execute(
@@ -28,7 +28,7 @@ connection.execute(
   [null, null],
   (err) => {
     if (err) throw err;
-  },
+  }
 );
 
 let results;

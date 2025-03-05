@@ -3,7 +3,7 @@ name: CI - Windows
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [main]
 
   workflow_dispatch:
 

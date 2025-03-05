@@ -12,7 +12,7 @@ const common = require('../../../common.test.cjs');
 
   beforeEach(
     async () => await connection.query(`DROP TABLE IF EXISTS test_fields`),
-    { assert: false },
+    { assert: false }
   );
 
   await test(async () => {
@@ -42,7 +42,7 @@ const common = require('../../../common.test.cjs');
       `;
 
     await connection.query(
-      `CREATE TEMPORARY TABLE test_fields (${schema} PRIMARY KEY (id))`,
+      `CREATE TEMPORARY TABLE test_fields (${schema} PRIMARY KEY (id))`
     );
 
     const [, columns] = await connection.query('select * from test_fields');
@@ -71,7 +71,7 @@ const common = require('../../../common.test.cjs');
       assert.equal(
         inspectLine,
         schemaLine,
-        'Loop: Should map fields to a schema-like description when depth is > 1',
+        'Loop: Should map fields to a schema-like description when depth is > 1'
       );
     }
   });
@@ -106,7 +106,7 @@ const common = require('../../../common.test.cjs');
           decimals: 10,
           typeName: 'NEWDECIMAL',
         }),
-        'should show detailed description when depth is < 1',
+        'should show detailed description when depth is < 1'
       );
     }));
 

@@ -62,12 +62,12 @@ const server = common.createServer(
             flags: 129,
             decimals: 0,
           },
-        ],
+        ]
       );
       // this is extra (incorrect) packet - client should emit error on receiving it
       conn.writeOk();
     });
-  },
+  }
 );
 
 process.on('exit', () => {
@@ -75,7 +75,7 @@ process.on('exit', () => {
   assert.equal(fields[0].name, '1');
   assert.equal(
     error.message,
-    'Unexpected packet while no commands in the queue',
+    'Unexpected packet while no commands in the queue'
   );
   assert.equal(error.fatal, true);
   assert.equal(error.code, 'PROTOCOL_UNEXPECTED_PACKET');

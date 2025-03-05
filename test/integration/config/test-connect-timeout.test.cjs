@@ -34,7 +34,7 @@ portfinder.getPort((err, port) => {
 process.on('uncaughtException', (err) => {
   assert.equal(
     err.message,
-    'Connection lost: The server closed the connection.',
+    'Connection lost: The server closed the connection.'
   );
   assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
 });

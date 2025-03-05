@@ -50,7 +50,7 @@ if (false) {
           '`content` longblob NOT NULL,',
           'PRIMARY KEY (`id`)',
           ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-        ].join('\n'),
+        ].join('\n')
       );
       connection2.query(
         `INSERT INTO ${table} (content) VALUES(?)`,
@@ -74,15 +74,15 @@ if (false) {
                       assert.ifError(err);
                       result4 = _result;
                       connection2.end();
-                    },
+                    }
                   );
-                },
+                }
               );
-            },
+            }
           );
-        },
+        }
       );
-    },
+    }
   );
 
   process.on('exit', () => {

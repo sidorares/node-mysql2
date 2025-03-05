@@ -20,7 +20,7 @@ connection.query(
   (err, res) => {
     assert.ifError(err);
     assert.equal(res[0].foo, 'FOO UPPERCASE');
-  },
+  }
 );
 
 connection.query(
@@ -37,7 +37,7 @@ connection.query(
   (err, res) => {
     assert.ifError(err);
     assert.equal(res[0].foo, 'foo lowercase');
-  },
+  }
 );
 
 connection.end();

@@ -16,7 +16,7 @@ connection.query(
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 connection.query(
   [
@@ -25,7 +25,7 @@ connection.query(
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 
 connection.query(`INSERT INTO ${table} SET ?`, { title: 'test' });
@@ -142,7 +142,7 @@ process.on('exit', () => {
         title: 'test',
       },
     },
-    'Fourth row value',
+    'Fourth row value'
   );
   assert.equal(rows5.length, 1, 'Fifth row length');
   assert.deepEqual(
@@ -156,7 +156,7 @@ process.on('exit', () => {
         title: 'test',
       },
     },
-    'Fifth row value',
+    'Fifth row value'
   );
 
   assert.deepEqual(rows1, rows1e, 'Compare rows1 with rows1e');

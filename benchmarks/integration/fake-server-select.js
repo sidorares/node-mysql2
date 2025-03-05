@@ -1,7 +1,7 @@
 'use strict';
 
-const Benchmark = require('benchmark')
-const suite = new Benchmark.Suite;
+const Benchmark = require('benchmark');
+const suite = new Benchmark.Suite();
 const portfinder = require('portfinder');
 
 let connection = null;
@@ -17,7 +17,7 @@ function prepareReply(columns, row, n) {
   const rsHeader = Packets.ResultSetHeader.toPacket(columns.length);
   length += rsHeader.length();
   const columnPackets = [];
-  columns.forEach(column => {
+  columns.forEach((column) => {
     const packet = Packets.ColumnDefinition.toPacket(column);
     length += packet.length();
     columnPackets.push(packet);
@@ -47,16 +47,16 @@ function prepareReply(columns, row, n) {
   return replyBuffer;
 }
 
-const server = mysql.createServer(conn => {
+const server = mysql.createServer((conn) => {
   conn.serverHandshake({
     protocolVersion: 10,
     serverVersion: 'node.js rocks',
     connectionId: 1234,
     statusFlags: 2,
     characterSet: 8,
-    capabilityFlags: 0xffffff
+    capabilityFlags: 0xffffff,
   });
-  conn.on('query', query => {
+  conn.on('query', (query) => {
     // when client sends "1" query we return 1 trow, when "1000" - 1000
     const limit = parseInt(query, 10);
     const buff = prepareReply(
@@ -70,10 +70,11 @@ const server = mysql.createServer(conn => {
           orgName: 'beta',
           characterSet: 33,
           columnLength: 384,
-          columnType: 3, 
+          columnType: 3,
           flags: 0,
-          decimals: 0
-        }, {
+          decimals: 0,
+        },
+        {
           catalog: 'def',
           schema: 'test',
           table: 'test_table',
@@ -82,10 +83,10 @@ const server = mysql.createServer(conn => {
           orgName: 'beta2',
           characterSet: 33,
           columnLength: 384,
-          columnType: 3, 
+          columnType: 3,
           flags: 0,
-          decimals: 0
-        }
+          decimals: 0,
+        },
       ],
       ['12345', '1237788'],
       limit
@@ -95,28 +96,44 @@ const server = mysql.createServer(conn => {
   });
 });
 
-
 // add tests
-suite.add('Select 1 row x 2 small text column from fake server', async () => new Promise(accept => {
-  connection.query('1', (err, rows) => {
-    const result = rows[0].beta + rows[0].beta2;
-    accept(result);
-  });
-})).add('Select 2 rows x 2 small text column from fake server', async () => new Promise(accept => {
-  connection.query('1000', accept)
-})).on('start', async () => new Promise(accept => {
-  portfinder.getPort((_, port) => {
-    server.listen(port);
-    connection = mysql.createConnection({
-      port: port,
-    });
-    connection.on('connect', accept);
+suite
+  .add(
+    'Select 1 row x 2 small text column from fake server',
+    async () =>
+      new Promise((accept) => {
+        connection.query('1', (err, rows) => {
+          const result = rows[0].beta + rows[0].beta2;
+          accept(result);
+        });
+      })
+  )
+  .add(
+    'Select 2 rows x 2 small text column from fake server',
+    async () =>
+      new Promise((accept) => {
+        connection.query('1000', accept);
+      })
+  )
+  .on(
+    'start',
+    async () =>
+      new Promise((accept) => {
+        portfinder.getPort((_, port) => {
+          server.listen(port);
+          connection = mysql.createConnection({
+            port: port,
+          });
+          connection.on('connect', accept);
+        });
+      })
+  )
+  .on('complete', () => {
+    console.log('done!');
+    connection.end();
+    server.close();
   })
-})).on('complete', () => {
-  console.log('done!')
-  connection.end()
-  server.close();
-}).on('cycle', event => {
-  console.log(String(event.target));
-})
-  .run({ 'async': true, minSamples: 100 });
+  .on('cycle', (event) => {
+    console.log(String(event.target));
+  })
+  .run({ async: true, minSamples: 100 });

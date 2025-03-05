@@ -3,7 +3,7 @@ name: lint
 on:
   pull_request:
   push:
-    branches: [ master ]
+    branches: [master]
   workflow_dispatch:
 
 env:
@@ -29,14 +29,5 @@ jobs:
       - name: Install ESLint + ESLint configs/plugins
         run: npm install --only=dev
 
-      - name: Lint JS files
-        run: npm run lint:code
-
-      - name: Lint JS snippets in docs
-        run: npm run lint:docs
-
-      - name: Lint Tests
-        run: npm run lint:tests
-
-      - name: Lint Typings
-        run: npm run lint:typings
+      - name: Lint
+        run: npm run lint
