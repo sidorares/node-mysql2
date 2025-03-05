@@ -12,5 +12,5 @@ assert.equal(
   `${
     'OK packets with 0 affectedRows and a minimal insertId should be ' +
     '11 bytes long, got '
-  }${packet.length()} byte(s)`,
+  }${packet.length()} byte(s)`
 );

@@ -58,14 +58,17 @@ connection.query(
         `("${testRows[0][0]}","${testRows[0][1]}", ${testRows[0][2]}, ${testRows[0][3]}),`,
         `("${testRows[1][0]}","${testRows[1][1]}", ${testRows[1][2]}, ${testRows[1][3]})`,
       ].join(' '),
-      executeTest,
+      executeTest
     );
-  },
+  }
 );
 
 /* eslint quotes: 0 */
-const expectedError =
+const expectedErrorMysql =
   "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`МояТаблица' at line 1";
+
+const expectedErrorMariaDB =
+  "You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '`МояТаблица' at line 1";
 
 process.on('exit', () => {
   testRows.map((tRow, index) => {
@@ -77,5 +80,9 @@ process.on('exit', () => {
     assert.equal(aRow[cols[3]], tRow[3]);
   });
 
-  assert.equal(actualError, expectedError);
+  if (connection._handshakePacket.serverVersion.match(/MariaDB/)) {
+    assert.equal(actualError, expectedErrorMariaDB);
+  } else {
+    assert.equal(actualError, expectedErrorMysql);
+  }
 });

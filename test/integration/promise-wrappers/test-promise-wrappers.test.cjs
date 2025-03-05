@@ -120,7 +120,7 @@ function testPrepared() {
         connResolved.end();
       } else {
         console.log(
-          'Warning: promise rejected before executing prepared statement',
+          'Warning: promise rejected before executing prepared statement'
         );
       }
     });
@@ -146,7 +146,7 @@ function testEventsConnect() {
         assert.equal(
           conn.connection.listenerCount(eventName),
           expectedListeners[eventName],
-          eventName,
+          eventName
         );
       }
 
@@ -187,7 +187,7 @@ function testEventsConnect() {
         assert.equal(
           conn.connection.listenerCount(eventName),
           expectedListeners[eventName],
-          eventName,
+          eventName
         );
       }
 
@@ -199,7 +199,7 @@ function testEventsConnect() {
         connResolved.end();
       } else {
         console.log(
-          'Warning: promise rejected before executing prepared statement',
+          'Warning: promise rejected before executing prepared statement'
         );
       }
     });
@@ -308,7 +308,7 @@ function testEventsPool() {
     assert.equal(
       pool.pool.listenerCount(eventName),
       expectedListeners[eventName],
-      eventName,
+      eventName
     );
   }
 
@@ -343,7 +343,7 @@ function testEventsPool() {
     assert.equal(
       pool.pool.listenerCount(eventName),
       expectedListeners[eventName],
-      eventName,
+      eventName
     );
   }
 }
@@ -358,12 +358,12 @@ function testChangeUser() {
     .then((conn) => {
       connResolved = conn;
       return connResolved.query(
-        "CREATE USER IF NOT EXISTS 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'",
+        "CREATE USER IF NOT EXISTS 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
       );
     })
     .then(() => {
       connResolved.query(
-        "CREATE USER IF NOT EXISTS 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'",
+        "CREATE USER IF NOT EXISTS 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
       );
       connResolved.query("GRANT ALL ON *.* TO 'changeuser1'@'%'");
       connResolved.query("GRANT ALL ON *.* TO 'changeuser2'@'%'");

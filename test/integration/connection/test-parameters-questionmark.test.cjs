@@ -13,7 +13,7 @@ pool.query(
     '`str` varchar(64),',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 pool.query('insert into test_table(str) values(?)', ['abc?']);
 pool.query('UPDATE test_table SET str = ? WHERE id = ?', [

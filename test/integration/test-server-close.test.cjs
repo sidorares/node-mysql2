@@ -40,7 +40,7 @@ process.on('uncaughtException', (err) => {
 
   assert.equal(
     error.message,
-    'Connection lost: The server closed the connection.',
+    'Connection lost: The server closed the connection.'
   );
   assert.equal(error.code, 'PROTOCOL_CONNECTION_LOST');
 });
@@ -48,7 +48,7 @@ process.on('uncaughtException', (err) => {
 process.on('exit', () => {
   assert.equal(
     error.message,
-    'The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior.',
+    'The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior.'
   );
   assert.equal(error.code, errors.ER_CLIENT_INTERACTION_TIMEOUT);
 });

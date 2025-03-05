@@ -21,7 +21,7 @@ connection.query(
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 
 const path = './test/fixtures/data.csv';
@@ -41,7 +41,7 @@ connection.query(
       throw err;
     }
     ok = _ok;
-  },
+  }
 );
 
 let rows;
@@ -88,7 +88,7 @@ connection.query(
     }
     streamResult = result;
     connection.end();
-  },
+  }
 );
 
 process.on('exit', () => {
@@ -99,7 +99,7 @@ process.on('exit', () => {
 
   assert.equal(
     loadErr.message,
-    `As a result of LOCAL INFILE command server wants to read /does_not_exist.csv file, but as of v2.0 you must provide streamFactory option returning ReadStream.`,
+    `As a result of LOCAL INFILE command server wants to read /does_not_exist.csv file, but as of v2.0 you must provide streamFactory option returning ReadStream.`
   );
   assert.equal(loadResult.affectedRows, 0);
 

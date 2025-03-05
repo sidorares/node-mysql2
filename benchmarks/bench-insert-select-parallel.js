@@ -13,19 +13,16 @@ connection.query(
     '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
     '`title` varchar(255) NOT NULL,',
     'PRIMARY KEY (`id`)',
-    ') ENGINE=InnoDB DEFAULT CHARSET=utf8'
+    ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
   ].join('\n')
 );
 
 function benchmarkInsert(numLeft, callback) {
-  connection.query(
-    `INSERT INTO ${table} SET title="${text}"`,
-    err => {
-      if (err) throw err;
-      if (numLeft > 1) benchmarkInsert(numLeft - 1, callback);
-      else callback();
-    }
-  );
+  connection.query(`INSERT INTO ${table} SET title="${text}"`, (err) => {
+    if (err) throw err;
+    if (numLeft > 1) benchmarkInsert(numLeft - 1, callback);
+    else callback();
+  });
 }
 
 function benchmarkInserts(n, cb) {
@@ -68,7 +65,7 @@ function benchmarkParallelSelects(n, size, cb) {
   }
 }
 
-module.exports = function(done) {
+module.exports = function (done) {
   const testStart = process.hrtime();
   benchmarkInserts(1, () => {
     benchmarkParallelSelects(8, 50000, () => {

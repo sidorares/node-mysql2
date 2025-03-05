@@ -43,14 +43,14 @@ declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
   getConnection(
     callback: (
       err: NodeJS.ErrnoException | null,
-      connection: PoolConnection,
-    ) => any,
+      connection: PoolConnection
+    ) => any
   ): void;
 
   releaseConnection(connection: PoolConnection | PromisePoolConnection): void;
 
   end(
-    callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any,
+    callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any
   ): void;
 
   on(event: string, listener: (...args: any[]) => void): this;

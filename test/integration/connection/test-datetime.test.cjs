@@ -32,6 +32,7 @@ const date2 = '2010-12-10 14:12:09.019473';
 const date3 = null;
 const date4 = '2010-12-10 14:12:09.123456';
 const date5 = '2010-12-10 14:12:09.019';
+const date6 = '2024-11-10 00:00:00';
 
 function adjustTZ(d, offset) {
   if (offset === undefined) {
@@ -63,7 +64,7 @@ function formatUTCDateTime(d, precision) {
 }
 
 connection.query(
-  'CREATE TEMPORARY TABLE t (d1 DATE, d2 DATETIME(3), d3 DATETIME(6))',
+  'CREATE TEMPORARY TABLE t (d1 DATE, d2 DATETIME(3), d3 DATETIME(6))'
 );
 connection.query('INSERT INTO t set d1=?, d2=?, d3=?', [
   date,
@@ -72,31 +73,23 @@ connection.query('INSERT INTO t set d1=?, d2=?, d3=?', [
 ]);
 
 connection1.query(
-  'CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME, d5 DATETIME(6), d6 DATETIME(3))',
+  'CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME, d5 DATETIME(6), d6 DATETIME(3), d7 DATETIME)'
 );
-connection1.query('INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?, d6=?', [
-  date,
-  date1,
-  date2,
-  date3,
-  date4,
-  date5,
-]);
+connection1.query(
+  'INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?, d6=?, d7=?',
+  [date, date1, date2, date3, date4, date5, date6]
+);
 
 connection2.query(
-  'CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME, d5 DATETIME(6), d6 DATETIME(3))',
+  'CREATE TEMPORARY TABLE t (d1 DATE, d2 TIMESTAMP, d3 DATETIME, d4 DATETIME, d5 DATETIME(6), d6 DATETIME(3), d7 DATETIME)'
 );
-connection2.query('INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?, d6=?', [
-  date,
-  date1,
-  date2,
-  date3,
-  date4,
-  date5,
-]);
+connection2.query(
+  'INSERT INTO t set d1=?, d2=?, d3=?, d4=?, d5=?, d6=?, d7=?',
+  [date, date1, date2, date3, date4, date5, date6]
+);
 
 connectionZ.query(
-  'CREATE TEMPORARY TABLE t (d1 DATE, d2 DATETIME(3), d3 DATETIME(6))',
+  'CREATE TEMPORARY TABLE t (d1 DATE, d2 DATETIME(3), d3 DATETIME(6))'
 );
 connectionZ.query("set time_zone = '+00:00'");
 connectionZ.query('INSERT INTO t set d1=?, d2=?, d3=?', [
@@ -106,7 +99,7 @@ connectionZ.query('INSERT INTO t set d1=?, d2=?, d3=?', [
 ]);
 
 connection0930.query(
-  'CREATE TEMPORARY TABLE t (d1 DATE, d2 DATETIME(3), d3 DATETIME(6))',
+  'CREATE TEMPORARY TABLE t (d1 DATE, d2 DATETIME(3), d3 DATETIME(6))'
 );
 connection0930.query("set time_zone = '+09:30'");
 connection0930.query('INSERT INTO t set d1=?, d2=?, d3=?', [
@@ -123,6 +116,7 @@ const dateAsStringExpected = [
     d4: date3,
     d5: date4,
     d6: date5,
+    d7: date6,
   },
 ];
 
@@ -134,7 +128,7 @@ connection.execute(
       throw err;
     }
     rows = _rows;
-  },
+  }
 );
 
 connectionZ.execute(
@@ -145,7 +139,7 @@ connectionZ.execute(
       throw err;
     }
     rowsZ = _rows;
-  },
+  }
 );
 
 connection0930.execute(
@@ -156,7 +150,7 @@ connection0930.execute(
       throw err;
     }
     rows0930 = _rows;
-  },
+  }
 );
 
 connection.query('select from_unixtime(631152000) t', (err, _rows) => {
@@ -188,7 +182,7 @@ connection.query(
     }
     rows2 = _rows;
     connection.end();
-  },
+  }
 );
 
 connectionZ.execute(
@@ -199,7 +193,7 @@ connectionZ.execute(
     }
     rows3 = _rows;
     connectionZ.end();
-  },
+  }
 );
 
 connection1.query('select * from t', (err, _rows) => {
@@ -225,7 +219,7 @@ connection1.execute(
     }
     rows6 = _rows;
     connection1.end();
-  },
+  }
 );
 
 connection2.execute('select * from t', (err, _rows) => {
@@ -244,7 +238,7 @@ connection0930.execute(
     }
     rows7 = _rows;
     connection0930.end();
-  },
+  }
 );
 
 process.on('exit', () => {
@@ -277,21 +271,21 @@ process.on('exit', () => {
   assert.equal(rows1[0].t.constructor, Date);
   assert.equal(
     rows1[0].t.getTime(),
-    new Date('Mon Jan 01 1990 00:00:00 UTC').getTime(),
+    new Date('Mon Jan 01 1990 00:00:00 UTC').getTime()
   );
 
   // UTC
   assert.equal(rows1Z[0].t.constructor, Date);
   assert.equal(
     rows1Z[0].t.getTime(),
-    new Date('Mon Jan 01 1990 00:00:00 UTC').getTime(),
+    new Date('Mon Jan 01 1990 00:00:00 UTC').getTime()
   );
 
   // +09:30
   assert.equal(rows10930[0].t.constructor, Date);
   assert.equal(
     rows10930[0].t.getTime(),
-    new Date('Mon Jan 01 1990 00:00:00 UTC').getTime(),
+    new Date('Mon Jan 01 1990 00:00:00 UTC').getTime()
   );
 
   // local TZ

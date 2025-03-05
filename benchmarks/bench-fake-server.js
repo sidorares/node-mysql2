@@ -35,7 +35,7 @@ function benchmarkSelect(numLeft, callback) {
 function benchmarkSelects(n, cb) {
   const numSelects = 100000;
   const start = process.hrtime();
-  benchmarkSelect(numSelects, rowsPerQuery => {
+  benchmarkSelect(numSelects, (rowsPerQuery) => {
     const end = process.hrtime();
     const diff = common.hrdiff(start, end);
     console.log(
@@ -46,7 +46,7 @@ function benchmarkSelects(n, cb) {
   });
 }
 
-module.exports = function(done) {
+module.exports = function (done) {
   const testStart = process.hrtime();
   benchmarkSelects(5, () => {
     const testEnd = process.hrtime();

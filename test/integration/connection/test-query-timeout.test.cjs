@@ -33,14 +33,14 @@ connection.execute(
     assert.ok(err);
     assert.equal(err.code, 'PROTOCOL_SEQUENCE_TIMEOUT');
     assert.equal(err.message, 'Query inactivity timeout');
-  },
+  }
 );
 
 connection.execute(
   { sql: 'SELECT sleep(1) as a', timeout: 5000 },
   (err, res) => {
     assert.deepEqual(res, [{ a: 0 }]);
-  },
+  }
 );
 
 connection.query(
@@ -49,7 +49,7 @@ connection.query(
     assert.equal(res, null);
     assert.ok(err);
     assert.equal(err.code, 'ER_NO_SUCH_TABLE');
-  },
+  }
 );
 
 connection.execute('SELECT sleep(1) as a', (err, res) => {
@@ -85,14 +85,14 @@ portfinder.getPort((err, port) => {
       assert.equal(err.message, 'connect ETIMEDOUT');
       connectionTimeout.destroy();
       server._server.close();
-    },
+    }
   );
 });
 
 process.on('uncaughtException', (err) => {
   assert.equal(
     err.message,
-    'Connection lost: The server closed the connection.',
+    'Connection lost: The server closed the connection.'
   );
   assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
 });

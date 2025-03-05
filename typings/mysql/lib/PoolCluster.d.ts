@@ -6,7 +6,7 @@ import { QueryableBase as QueryableBaseClass } from './protocol/sequences/Querya
 
 // Expose class interfaces
 declare class QueryableAndExecutableBase extends QueryableBaseClass(
-  ExecutableBaseClass(EventEmitter),
+  ExecutableBaseClass(EventEmitter)
 ) {}
 
 export interface PoolClusterOptions {
@@ -40,8 +40,8 @@ export interface PoolNamespace extends QueryableAndExecutableBase {
   getConnection(
     callback: (
       err: NodeJS.ErrnoException | null,
-      connection: PoolConnection,
-    ) => any,
+      connection: PoolConnection
+    ) => any
   ): void;
 }
 
@@ -52,33 +52,37 @@ declare class PoolCluster extends EventEmitter {
   add(group: string, connectionUri: string): void;
   add(group: string, config: PoolOptions): void;
 
+  remove(pattern: string): void;
+
   end(): void;
 
   getConnection(
     callback: (
       err: NodeJS.ErrnoException | null,
-      connection: PoolConnection,
-    ) => void,
+      connection: PoolConnection
+    ) => void
   ): void;
   getConnection(
     group: string,
     callback: (
       err: NodeJS.ErrnoException | null,
-      connection: PoolConnection,
-    ) => void,
+      connection: PoolConnection
+    ) => void
   ): void;
   getConnection(
     group: string,
     selector: string,
     callback: (
       err: NodeJS.ErrnoException | null,
-      connection: PoolConnection,
-    ) => void,
+      connection: PoolConnection
+    ) => void
   ): void;
 
   of(pattern: string, selector?: string): PoolNamespace;
 
   on(event: string, listener: (...args: any[]) => void): this;
+  on(event: 'online', listener: (nodeId: number) => void): this;
+  on(event: 'offline', listener: (nodeId: number) => void): this;
   on(event: 'remove', listener: (nodeId: number) => void): this;
   on(event: 'warn', listener: (err: Error) => void): this;
 }

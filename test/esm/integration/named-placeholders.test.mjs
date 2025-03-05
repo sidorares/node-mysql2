@@ -15,7 +15,7 @@ const values = { named: 1 };
 
 describe(
   'Test namedPlaceholder as command parameter in connection',
-  describeOptions,
+  describeOptions
 );
 
 // test(() => {
@@ -41,7 +41,7 @@ test(() => {
     assert.equal(
       rows[0].result,
       1,
-      'Disabled in connection config, enabled in query command',
+      'Disabled in connection config, enabled in query command'
     );
   });
 });
@@ -69,7 +69,7 @@ test(() => {
     assert.equal(
       rows[0].result,
       1,
-      'Disabled in connection config, enabled in execute command',
+      'Disabled in connection config, enabled in execute command'
     );
   });
 });
@@ -97,7 +97,7 @@ test(() => {
     assert.equal(
       rows[0].result,
       1,
-      'Disabled in pool config, enabled in query command',
+      'Disabled in pool config, enabled in query command'
     );
   });
 });
@@ -125,7 +125,7 @@ test(() => {
     assert.equal(
       rows[0].result,
       1,
-      'Disabled in pool config, enabled in execute command',
+      'Disabled in pool config, enabled in execute command'
     );
   });
 });

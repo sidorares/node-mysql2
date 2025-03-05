@@ -44,7 +44,7 @@ connection.query(
         connection.end();
       });
     });
-  },
+  }
 );
 
 function isInvalidTime(t) {

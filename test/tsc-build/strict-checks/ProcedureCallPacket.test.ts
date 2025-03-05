@@ -56,7 +56,7 @@ const procedureCall = {
               console.log(id);
             });
           });
-        },
+        }
       );
     });
   });
@@ -72,7 +72,7 @@ const procedureCall = {
         // Strict checking the `ResultSetHeader`
         (_err, procedureResult: mysql.ResultSetHeader) => {
           console.log(procedureResult);
-        },
+        }
       );
     });
   });

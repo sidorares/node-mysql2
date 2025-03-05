@@ -65,7 +65,7 @@ test(async () => {
         assert.equal(
           test.columnType === driver.Types[columnType],
           true,
-          test.columnName,
+          test.columnName
         );
         let expected = test.expect || test.insert;
         let got = row[test.columnName];
@@ -85,7 +85,7 @@ test(async () => {
 
         if (test.deep) {
           message = `got: "${JSON.stringify(got)}" expected: "${JSON.stringify(
-            expected,
+            expected
           )}" test: ${test.type}`;
           assert.deepEqual(expected, got, message);
         } else {

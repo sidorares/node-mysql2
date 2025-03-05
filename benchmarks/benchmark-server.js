@@ -8,7 +8,7 @@ function prepareReply(columns, row, n) {
   const rsHeader = Packets.ResultSetHeader.toPacket(columns.length);
   length += rsHeader.length();
   const columnPackets = [];
-  columns.forEach(column => {
+  columns.forEach((column) => {
     const packet = Packets.ColumnDefinition.toPacket(column);
     length += packet.length();
     columnPackets.push(packet);
@@ -51,8 +51,8 @@ const buff = prepareReply(
       columnLength: 384,
       columnType: 3, //253,
       flags: 0,
-      decimals: 0
-    }
+      decimals: 0,
+    },
   ],
   ['12345'],
   1
@@ -60,14 +60,14 @@ const buff = prepareReply(
 
 const server = mysql.createServer();
 server.listen('/tmp/mybench3.sock');
-server.on('connection', conn => {
+server.on('connection', (conn) => {
   conn.serverHandshake({
     protocolVersion: 10,
     serverVersion: 'node.js rocks',
     connectionId: 1234,
     statusFlags: 2,
     characterSet: 8,
-    capabilityFlags: 0xffffff
+    capabilityFlags: 0xffffff,
   });
   conn.on('query', () => {
     //console.log(query);
