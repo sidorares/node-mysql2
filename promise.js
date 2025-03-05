@@ -12,6 +12,7 @@ const PromisePool = require('./lib/promise/pool.js');
 const makeDoneCb = require('./lib/promise/make_done_cb.js');
 const PromisePoolConnection = require('./lib/promise/pool_connection.js');
 const inheritEvents = require('./lib/promise/inherit_events.js');
+const PromisePoolNamespace = require('./lib/promise/pool_cluster');
 
 function createConnectionPromise(opts) {
   const coreConnection = createConnection(opts);
@@ -109,7 +110,7 @@ class PromisePoolCluster extends EventEmitter {
   }
 
   of(pattern, selector) {
-    return new PromisePoolCluster(
+    return new PromisePoolNamespace(
       this.poolCluster.of(pattern, selector),
       this.Promise,
     );
