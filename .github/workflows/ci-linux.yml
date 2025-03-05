@@ -18,12 +18,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18.x, 20.x, 22.x, 23.x]
-        mysql-version: ['mysql:8.0.33']
+        node-version: [18, 20, 22, 23]
+        mysql-version: ['mysql:8.3']
         use-compression: [0, 1]
         use-tls: [0, 1]
         mysql_connection_url_key: ['']
+        # static-parser: [0, 1]  # Already tested in "ci-coverage"
         # TODO - add mariadb to the matrix. currently few tests are broken due to mariadb incompatibilities
+
     env:
       MYSQL_CONNECTION_URL: ${{ secrets[matrix.mysql_connection_url_key] }}
 
@@ -57,7 +59,7 @@ jobs:
 
       - name: Run tests
         run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run test
-        timeout-minutes: 5
+        timeout-minutes: 10
 
   tests-linux-bun:
     runs-on: ubuntu-latest
@@ -65,11 +67,15 @@ jobs:
       fail-fast: false
       matrix:
         bun-version: [latest, canary]
-        mysql-version: ['mysql:8.0.33']
+        mysql-version: ['mysql:8.3']
         use-compression: [0, 1]
         use-tls: [0, 1]
+        static-parser: [0, 1]
 
-    name: Bun ${{ matrix.bun-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
+    env:
+      STATIC_PARSER: ${{ matrix.static-parser }}
+
+    name: Bun ${{ matrix.bun-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}} Static Parser=${{matrix.static-parser}}
 
     steps:
       - uses: actions/checkout@v4
@@ -108,7 +114,7 @@ jobs:
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
           FILTER: test-select-1|test-select-ssl
         run: bun run test:bun
-        timeout-minutes: 1
+        timeout-minutes: 10
 
   tests-linux-deno-v1:
     runs-on: ubuntu-latest
@@ -116,8 +122,9 @@ jobs:
       fail-fast: false
       matrix:
         deno-version: [v1.x]
-        mysql-version: ['mysql:8.0.33']
+        mysql-version: ['mysql:8.3']
         use-compression: [0, 1]
+        static-parser: [0, 1]
         # TODO: investigate error when using SSL (1)
         #
         # errno: -4094
@@ -125,7 +132,10 @@ jobs:
         # syscall: "read"
         use-tls: [0]
 
-    name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
+    env:
+      STATIC_PARSER: ${{ matrix.static-parser }}
+
+    name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}} Static Parser=${{matrix.static-parser}}
 
     steps:
       - uses: actions/checkout@v4
@@ -162,7 +172,7 @@ jobs:
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
         run: deno task test:deno -- --denoCjs='.js,.cjs'
-        timeout-minutes: 5
+        timeout-minutes: 10
 
   tests-linux-deno-v2:
     runs-on: ubuntu-latest
@@ -170,8 +180,9 @@ jobs:
       fail-fast: false
       matrix:
         deno-version: [v2.x, canary]
-        mysql-version: ['mysql:8.0.33']
+        mysql-version: ['mysql:8.3']
         use-compression: [0, 1]
+        static-parser: [0, 1]
         # TODO: investigate error when using SSL (1)
         #
         # errno: -4094
@@ -179,7 +190,10 @@ jobs:
         # syscall: "read"
         use-tls: [0]
 
-    name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
+    env:
+      STATIC_PARSER: ${{ matrix.static-parser }}
+
+    name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}} Static Parser=${{matrix.static-parser}}
 
     steps:
       - uses: actions/checkout@v4
@@ -194,7 +208,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
@@ -216,4 +230,4 @@ jobs:
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
         run: deno task test:deno
-        timeout-minutes: 5
+        timeout-minutes: 10

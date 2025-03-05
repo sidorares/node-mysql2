@@ -4,6 +4,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const process = require('node:process');
 
+const disableEval = process.env.STATIC_PARSER === '1';
+exports.disableEval = disableEval;
+
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
   user: process.env.MYSQL_USER || 'root',
@@ -11,6 +14,7 @@ const config = {
   database: process.env.MYSQL_DATABASE || 'test',
   compress: process.env.MYSQL_USE_COMPRESSION,
   port: process.env.MYSQL_PORT || 3306,
+  disableEval,
 };
 
 if (process.env.MYSQL_USE_TLS === '1') {
@@ -109,6 +113,7 @@ exports.createConnection = function (args) {
     nestTables: args && args.nestTables,
     ssl: (args && args.ssl) ?? config.ssl,
     jsonStrings: args && args.jsonStrings,
+    disableEval,
   };
 
   const conn = driver.createConnection(params);
@@ -139,6 +144,7 @@ exports.getConfig = function (input) {
     maxIdle: args && args.maxIdle,
     idleTimeout: args && args.idleTimeout,
     jsonStrings: args && args.jsonStrings,
+    disableEval,
   };
   return params;
 };

@@ -44,7 +44,7 @@ connection.query(
   },
   (err, res) => {
     assert.ifError(err);
-    assert(Buffer.isBuffer(res[0].foo));
+    assert(Buffer.isBuffer(res[0].foo), 'Check for Buffer');
     assert.equal(res[0].foo.toString('utf8'), 'foobar');
   },
 );
