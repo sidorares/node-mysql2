@@ -1,5 +1,4 @@
-import { FC, JSX } from 'react';
-// eslint-disable-next-line import/no-unresolved
+import type { FC, JSX } from 'react';
 import Details from '@theme/Details';
 import { FileClock as HistoryIcon } from 'lucide-react';
 
