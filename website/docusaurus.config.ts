@@ -62,7 +62,7 @@ const config: Config = {
           label: 'MySQL2',
           position: 'left',
           className: 'navbar__brand navbar__manual--title text--truncate',
-          activeBaseRegex: `^/$`,
+          activeBaseRegex: '^/$',
         },
         {
           to: '/docs/documentation',

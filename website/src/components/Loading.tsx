@@ -1,4 +1,4 @@
 /**
  * Credits: https://cssloaders.github.io/
  */
-export const Loading = () => <span className='loader'></span>;
+export const Loading = () => <span className='loader' />;

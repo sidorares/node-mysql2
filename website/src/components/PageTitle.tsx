@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import Head from '@docusaurus/Head';
 
 export type PageTitleProps = {

@@ -15,7 +15,7 @@ const checkExtensions = async (
     const files = await listFiles(dir, { filter: /\./ });
 
     for (const file of files) {
-      if (!ignoreList.test(file) && !allowedExtensions.test(file)) {
+      if (!(ignoreList.test(file) || allowedExtensions.test(file))) {
         invalidFiles.push(file);
         message.push(`${EOL}${String(allowedExtensions)}`);
         message.push(`- ${file}`);

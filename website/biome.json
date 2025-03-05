@@ -1,0 +1,69 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "files": {
+    "include": ["**/**"],
+    "ignore": ["build", ".docusaurus", ".cache-loader"]
+  },
+  "organizeImports": {
+    "enabled": false
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "all": true,
+      "a11y": {
+        "all": true
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "off"
+      },
+      "correctness": {
+        "all": true,
+        "useImportExtensions": "error",
+        "noNodejsModules": "off",
+        "noUndeclaredDependencies": "off"
+      },
+      "nursery": {
+        "all": true,
+        "useImportRestrictions": "off",
+        "noProcessEnv": "off",
+        "noCommonJs": "off",
+        "noSecrets": "off",
+        "useExplicitType": "off"
+      },
+      "performance": {
+        "all": true,
+        "noAccumulatingSpread": "error",
+        "noBarrelFile": "error",
+        "noDelete": "error",
+        "noReExportAll": "error",
+        "useTopLevelRegex": "off"
+      },
+      "security": {
+        "all": true,
+        "noGlobalEval": "error"
+      },
+      "suspicious": {
+        "all": true,
+        "noAsyncPromiseExecutor": "error",
+        "useAwait": "error",
+        "useIsArray": "error",
+        "noEmptyBlockStatements": "off",
+        "noConsoleLog": "off",
+        "noMisplacedAssertion": "off",
+        "noConsole": "off",
+        "noReactSpecificProps": "off",
+        "noArrayIndexKey": "off"
+      },
+      "style": {
+        "all": true,
+        "noNonNullAssertion": "off",
+        "useNamingConvention": "off",
+        "useNodeAssertStrict": "off",
+        "noNamespaceImport": "off",
+        "useBlockStatements": "off",
+        "noDefaultExport": "off"
+      }
+    }
+  }
+}
