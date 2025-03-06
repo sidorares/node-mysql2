@@ -1,0 +1,79 @@
+# Using MySQL2 on Cloudflare Workers
+
+This document is a step-by-step tutorial on how to use `node-mysql2` on Cloudflare Workers.
+
+## Prerequisites
+
+Before you try the steps in this document, you need to prepare the following things:
+
+- A [Cloudflare Workers](https://dash.cloudflare.com/login) account.
+- [Wrangler](https://developers.cloudflare.com/workers/wrangler/) installed.
+
+If you haven't created a Cloudflare Worker project yet, please refer to [Get Started Guide](https://developers.cloudflare.com/workers/get-started/guide/) to create one.
+
+
+## Step 1: Configure `wrangler.jsonc` file
+
+Because of the differences between the Cloudflare Workers runtime and the Node.js runtime, you can't use MySQL2 directly on the worker, but you can enable compatibility mode through configuration:
+
+```json
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mysql2-cloudflare",
+  "main": "src/index.ts",
+  // highlight-start
+  "compatibility_date": "2025-02-24",
+  // highlight-end
+  "observability": {
+    "enabled": true
+  },
+  // highlight-start
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+  // highlight-end
+}
+```
+
+## Step 2: Disable code generation-based parser
+
+MySQL2 uses code generation based parser for performance by default, but this is restricted on Cloudflare Workers. You may encounter the errors like:
+
+```
+Code generation from strings disallowed for this context
+```
+
+To make it work, you can disable the code generation-based parser by pass the `disableEval=true` parameter when creating a connection. Here are an example:
+
+```ts
+import { createConnection } from 'mysql2/promise';
+
+export default {
+  async fetch(request, env, ctx): Promise<Response> {
+    const conn = await createConnection({
+      host: "<ENTER_HOST>",
+      port: 3306,
+      user: "<ENTER_USERNAME>",
+      password: "<ENTER_PASSWORD>",
+      // highlight-start
+      disableEval: true,
+      // highlight-end
+      database: "<ENTER_DB_NAME>"
+    })
+
+    const [results] = await conn.query("SHOW TABLES;");
+
+    return new Response(JSON.stringify(results));
+  },
+} satisfies ExportedHandler<Env>;
+```
+
+:::tip
+For some managed MySQL / MySQL-compatible cloud databases (e.g., TiDB Serverless, Planetscale), connections are usually required to use SSL. It is recommended to use the Cloudflare managed connection pool [Hyperdrive](https://developers.cloudflare.com/hyperdrive/) to connect.
+:::
+
+## Step 3: Test locally
+
+```
+wrangler dev
+```
