@@ -110,4 +110,40 @@ const { createPoolCluster } = require('../../../../promise.js');
 
     poolCluster.end();
   });
+
+  await test(async () => {
+    const poolCluster = createPoolCluster();
+    poolCluster.add('SLAVE', common.config);
+
+    try {
+      await poolCluster.getConnection('SLAVE1');
+      assert.fail('An error was expected');
+    } catch (error) {
+      assert.equal(
+        error.code,
+        'POOL_NOEXIST',
+        'should throw when PoolNamespace does not exist'
+      );
+    } finally {
+      poolCluster.end();
+    }
+  });
+
+  await test(async () => {
+    const poolCluster = createPoolCluster();
+    poolCluster.add('SLAVE1', common.config);
+
+    try {
+      const connection = await poolCluster.getConnection(/SLAVE[12]/);
+      assert.equal(
+        connection.connection._clusterId,
+        'SLAVE1',
+        'should match regex pattern'
+      );
+    } catch (error) {
+      assert.fail('should not throw');
+    } finally {
+      poolCluster.end();
+    }
+  });
 })();
