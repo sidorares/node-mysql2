@@ -11,7 +11,6 @@ Before you try the steps in this document, you need to prepare the following thi
 
 If you haven't created a Cloudflare Worker project yet, please refer to [Get Started Guide](https://developers.cloudflare.com/workers/get-started/guide/) to create one.
 
-
 ## Step 1: Configure `wrangler.jsonc` file
 
 Because of the differences between the Cloudflare Workers runtime and the Node.js runtime, you can't use MySQL2 directly on the worker, but you can enable compatibility mode through configuration:
@@ -28,9 +27,7 @@ Because of the differences between the Cloudflare Workers runtime and the Node.j
     "enabled": true
   },
   // highlight-start
-  "compatibility_flags": [
-    "nodejs_compat"
-  ]
+  "compatibility_flags": ["nodejs_compat"]
   // highlight-end
 }
 ```
@@ -51,17 +48,17 @@ import { createConnection } from 'mysql2/promise';
 export default {
   async fetch(request, env, ctx): Promise<Response> {
     const conn = await createConnection({
-      host: "<ENTER_HOST>",
+      host: '<ENTER_HOST>',
       port: 3306,
-      user: "<ENTER_USERNAME>",
-      password: "<ENTER_PASSWORD>",
+      user: '<ENTER_USERNAME>',
+      password: '<ENTER_PASSWORD>',
       // highlight-start
       disableEval: true,
       // highlight-end
-      database: "<ENTER_DB_NAME>"
-    })
+      database: '<ENTER_DB_NAME>',
+    });
 
-    const [results] = await conn.query("SHOW TABLES;");
+    const [results] = await conn.query('SHOW TABLES;');
 
     return new Response(JSON.stringify(results));
   },
