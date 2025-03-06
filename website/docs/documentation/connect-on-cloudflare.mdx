@@ -1,61 +1,69 @@
-# Using MySQL2 on Cloudflare Workers
+import { History } from '@site/src/components/History';
 
-This document is a step-by-step tutorial on how to use `node-mysql2` on Cloudflare Workers.
+# Cloudflare Workers
+
+<History
+  records={[
+    {
+      version: '3.13.0',
+      changes: [
+        <>
+          Support for <em>non-eval</em> parsers by using{' '}
+          <strong>disableEval</strong> option.
+        </>,
+      ],
+    },
+  ]}
+/>
 
 ## Prerequisites
 
-Before you try the steps in this document, you need to prepare the following things:
-
-- A [Cloudflare Workers](https://dash.cloudflare.com/login) account.
+- A [Cloudflare](https://dash.cloudflare.com/sign-up) account.
 - [Wrangler](https://developers.cloudflare.com/workers/wrangler/) installed.
+- **MySQL2** version `3.13.0` or higher.
 
-If you haven't created a Cloudflare Worker project yet, please refer to [Get Started Guide](https://developers.cloudflare.com/workers/get-started/guide/) to create one.
+To learn how to create a **Cloudflare Worker** project, please refer to [**Cloudflare Workers Documentation**](https://developers.cloudflare.com/workers/get-started/guide/).
 
-## Step 1: Configure `wrangler.jsonc` file
+## Setup
 
-Because of the differences between the Cloudflare Workers runtime and the Node.js runtime, you can't use MySQL2 directly on the worker, but you can enable compatibility mode through configuration:
+### Wrangler
+
+**MySQL2** relies on **Node.js** modules, such as `net`, `events`, `stream`, `tls`, etc. You can enable **Node.js** compatibility for **Cloudflare Workers** by using the `"nodejs_compat"` flag through the `wrangler.jsonc` file:
 
 ```json
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "mysql2-cloudflare",
-  "main": "src/index.ts",
-  // highlight-start
-  "compatibility_date": "2025-02-24",
-  // highlight-end
-  "observability": {
-    "enabled": true
-  },
-  // highlight-start
   "compatibility_flags": ["nodejs_compat"]
-  // highlight-end
 }
 ```
 
-## Step 2: Disable code generation-based parser
+:::important
+The minimum compatibility date is `2025-02-24`, for example:
 
-MySQL2 uses code generation based parser for performance by default, but this is restricted on Cloudflare Workers. You may encounter the errors like:
-
+```json
+{
+  "compatibility_date": "2025-02-24",
+  "compatibility_flags": ["nodejs_compat"]
+}
 ```
-Code generation from strings disallowed for this context
-```
 
-To make it work, you can disable the code generation-based parser by pass the `disableEval=true` parameter when creating a connection. Here are an example:
+:::
+
+### MySQL2 connection
+
+**MySQL2** uses a code generation-based parser for performance by default, but since **Cloudflare Workers** don't offer support for evaluations, you can disable it by using the `disableEval` option:
 
 ```ts
 import { createConnection } from 'mysql2/promise';
 
 export default {
-  async fetch(request, env, ctx): Promise<Response> {
+  async fetch(): Promise<Response> {
     const conn = await createConnection({
-      host: '<ENTER_HOST>',
-      port: 3306,
-      user: '<ENTER_USERNAME>',
-      password: '<ENTER_PASSWORD>',
+      host: 'localhost',
+      user: 'root',
+      database: 'test',
       // highlight-start
       disableEval: true,
       // highlight-end
-      database: '<ENTER_DB_NAME>',
     });
 
     const [results] = await conn.query('SHOW TABLES;');
@@ -66,11 +74,5 @@ export default {
 ```
 
 :::tip
-For some managed MySQL / MySQL-compatible cloud databases (e.g., TiDB Serverless, Planetscale), connections are usually required to use SSL. It is recommended to use the Cloudflare managed connection pool [Hyperdrive](https://developers.cloudflare.com/hyperdrive/) to connect.
+For required **SSL** connections, it is recommended to use the [**Cloudflare Hyperdrive**](https://developers.cloudflare.com/hyperdrive/) connection pool.
 :::
-
-## Step 3: Test locally
-
-```
-wrangler dev
-```
