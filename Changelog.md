@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.14.0](https://github.com/sidorares/node-mysql2/compare/v3.13.0...v3.14.0) (2025-03-19)
+
+
+### Features
+
+* add `RegExp` support to PoolCluster ([#3451](https://github.com/sidorares/node-mysql2/issues/3451)) ([2d5050d](https://github.com/sidorares/node-mysql2/commit/2d5050d59c28b269d1ef52b70a726777a34ecf1c))
+
 ## [3.13.0](https://github.com/sidorares/node-mysql2/compare/v3.12.0...v3.13.0) (2025-03-06)
 
 
