@@ -7,7 +7,7 @@ import path from 'node:path';
 import { assert } from 'poku';
 import {
   extractMethodContent,
-  MethodType,
+  type MethodType,
 } from '@site/helpers/extract-method-content';
 
 const resource = fs.readFileSync(

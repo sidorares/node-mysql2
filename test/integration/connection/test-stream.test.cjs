@@ -25,7 +25,7 @@ connection.query(
     if (err) {
       throw err;
     }
-  },
+  }
 );
 
 connection.execute(
@@ -35,7 +35,7 @@ connection.execute(
     if (err) {
       throw err;
     }
-  },
+  }
 );
 connection.execute(
   'INSERT INTO announcements(title, text) VALUES(?, ?)',
@@ -47,7 +47,7 @@ connection.execute(
     if (err) {
       throw err;
     }
-  },
+  }
 );
 connection.execute('SELECT * FROM announcements', async (err, _rows) => {
   rows = _rows;

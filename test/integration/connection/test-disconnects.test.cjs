@@ -70,10 +70,10 @@ const server = common.createServer(
             flags: 129,
             decimals: 0,
           },
-        ],
+        ]
       );
     });
-  },
+  }
 );
 
 process.on('exit', () => {

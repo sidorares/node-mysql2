@@ -1,5 +1,33 @@
 # Changelog
 
+## [3.14.1](https://github.com/sidorares/node-mysql2/compare/v3.14.0...v3.14.1) (2025-04-27)
+
+
+### Miscellaneous Chores
+
+* release 3.14.1 ([9d097f8](https://github.com/sidorares/node-mysql2/commit/9d097f8dc2105b549e052172bf32fcf360fba742))
+
+## [3.14.0](https://github.com/sidorares/node-mysql2/compare/v3.13.0...v3.14.0) (2025-03-19)
+
+
+### Features
+
+* add `RegExp` support to PoolCluster ([#3451](https://github.com/sidorares/node-mysql2/issues/3451)) ([2d5050d](https://github.com/sidorares/node-mysql2/commit/2d5050d59c28b269d1ef52b70a726777a34ecf1c))
+
+## [3.13.0](https://github.com/sidorares/node-mysql2/compare/v3.12.0...v3.13.0) (2025-03-06)
+
+
+### Features
+
+* **`disableEval`:** add static parsers ([#3365](https://github.com/sidorares/node-mysql2/issues/3365)) ([51da653](https://github.com/sidorares/node-mysql2/commit/51da653448855a57f87fa686a10fd8aa482da498))
+* support Cloudflare Workers ([#2289](https://github.com/sidorares/node-mysql2/issues/2289)) ([a79253d](https://github.com/sidorares/node-mysql2/commit/a79253d17e5308a71501bbe8ed4df12f5805f0fd))
+
+
+### Bug Fixes
+
+* `PromisePoolCluster.of` returns `PromisePoolCluster` instead of `PoolNamespace` ([#3261](https://github.com/sidorares/node-mysql2/issues/3261)) ([be22202](https://github.com/sidorares/node-mysql2/commit/be22202e87afce0558dd079c79e0e18f45cd73ad))
+* **query:** support `VECTOR` packets in static parser ([#3379](https://github.com/sidorares/node-mysql2/issues/3379)) ([603c246](https://github.com/sidorares/node-mysql2/commit/603c24630da0f999a01227d44cf2633d703e40ed))
+
 ## [3.12.0](https://github.com/sidorares/node-mysql2/compare/v3.11.5...v3.12.0) (2024-12-23)
 
 

@@ -1,7 +1,7 @@
 import { mysql, mysqlp } from './index.test.js';
 
 export const isResultSetHeader = (
-  data: unknown,
+  data: unknown
 ): data is mysql.ResultSetHeader | mysqlp.ResultSetHeader => {
   if (!data || typeof data !== 'object') return false;
 
@@ -18,7 +18,7 @@ export const isResultSetHeader = (
 };
 
 export const isOkPacket = (
-  data: unknown,
+  data: unknown
 ): data is mysql.OkPacket | mysqlp.OkPacket => {
   if (!data || typeof data !== 'object') return false;
 

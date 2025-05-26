@@ -68,7 +68,7 @@ import { access, sql } from '../promise/baseConnection.test.js';
       const fields: mysql.FieldPacket[] = _f;
 
       console.log(err, result, fields);
-    },
+    }
   );
 
   conn.execute<

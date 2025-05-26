@@ -156,11 +156,11 @@ declare class Query extends Sequence {
   on(event: 'error', listener: (err: QueryError) => any): this;
   on(
     event: 'fields',
-    listener: (fields: FieldPacket, index: number) => any,
+    listener: (fields: FieldPacket, index: number) => any
   ): this;
   on(
     event: 'result',
-    listener: (result: RowDataPacket | OkPacket, index: number) => any,
+    listener: (result: RowDataPacket | OkPacket, index: number) => any
   ): this;
   on(event: 'end', listener: () => any): this;
 }

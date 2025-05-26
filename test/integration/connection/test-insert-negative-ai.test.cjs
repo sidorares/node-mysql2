@@ -28,9 +28,9 @@ const testNegativeAI = function (err) {
           assert.ifError(err);
           selectResult = result_;
           connection.end();
-        },
+        }
       );
-    },
+    }
   );
 };
 
@@ -41,7 +41,7 @@ const prepareAndTest = function () {
       `\`title\` varchar(255),` +
       `PRIMARY KEY (\`id\`)` +
       `) ENGINE=InnoDB DEFAULT CHARSET=utf8`,
-    testNegativeAI,
+    testNegativeAI
   );
 };
 

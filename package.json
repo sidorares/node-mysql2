@@ -1,37 +1,24 @@
 {
   "name": "mysql2",
-  "version": "3.12.0",
+  "version": "3.14.1",
   "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
   "typings": "typings/mysql/index",
   "type": "commonjs",
   "scripts": {
-    "lint": "npm run lint:docs && npm run lint:code",
-    "lint:code": "eslint index.js promise.js index.d.ts promise.d.ts \"typings/**/*.ts\" \"lib/**/*.js\" \"test/**/*.{js,cjs,mjs,ts}\" \"benchmarks/**/*.js\"",
-    "lint:docs": "eslint Contributing.md README.md",
-    "lint:typings": "npx prettier --check ./typings",
-    "lint:tests": "npx prettier --check ./test",
-    "test": "poku -d test/esm test/unit test/integration",
-    "test:bun": "poku -d --bun test/esm test/unit test/integration",
-    "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku -d --deno --denoAllow=\"read,env,net,sys\" test/esm test/unit test/integration",
+    "lint": "eslint . && prettier --check .",
+    "lint:fix": "eslint . --fix && prettier --write .",
+    "test": "poku -d -r=verbose --sequential test/esm test/unit test/integration",
+    "test:bun": "bun poku -d --sequential test/esm test/unit test/integration",
+    "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku -d --sequential --denoAllow=\"read,env,net,sys\" test/esm test/unit test/integration",
     "test:tsc-build": "cd \"test/tsc-build\" && npx tsc -p \"tsconfig.json\"",
     "coverage-test": "c8 npm run test",
     "benchmark": "node ./benchmarks/benchmark.js",
-    "prettier": "prettier --single-quote --trailing-comma none --write \"{lib,test}/**/*.js\"",
-    "prettier:docs": "prettier --single-quote --trailing-comma none --write README.md",
-    "precommit": "lint-staged",
-    "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check",
     "wait-port": "wait-on"
-  },
-  "lint-staged": {
-    "*.js": [
-      "prettier --single-quote --trailing-comma none --write",
-      "git add"
-    ]
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sidorares/node-mysql2"
+    "url": "git+https://github.com/sidorares/node-mysql2.git"
   },
   "homepage": "https://sidorares.github.io/node-mysql2/docs",
   "keywords": [
@@ -70,22 +57,24 @@
     "sqlstring": "^2.3.2"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.21.0",
+    "@eslint/markdown": "^6.2.2",
     "@types/node": "^22.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
-    "@typescript-eslint/parser": "^5.42.1",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
     "assert-diff": "^3.0.2",
     "benchmark": "^2.1.4",
     "c8": "^10.1.1",
     "error-stack-parser": "^2.0.3",
-    "eslint": "^8.27.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-async-await": "0.0.0",
-    "eslint-plugin-markdown": "^5.0.0",
-    "lint-staged": "^15.0.1",
-    "poku": "^2.0.0",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-plugin-async-await": "^0.0.0",
+    "eslint-plugin-markdown": "^5.1.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "globals": "^16.0.0",
+    "poku": "^3.0.0",
     "portfinder": "^1.0.28",
     "prettier": "^3.0.0",
-    "progress": "^2.0.3",
     "typescript": "^5.0.2"
   }
 }

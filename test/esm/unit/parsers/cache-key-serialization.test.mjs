@@ -330,78 +330,78 @@ const result1 = _keyFromFields(
   test1.type,
   test1.fields,
   test1.options,
-  test1.config,
+  test1.config
 );
 const result2 = _keyFromFields(
   test2.type,
   test2.fields,
   test2.options,
-  test2.config,
+  test2.config
 );
 const result3 = _keyFromFields(
   test3.type,
   test3.fields,
   test3.options,
-  test3.config,
+  test3.config
 );
 const result4 = _keyFromFields(
   test4.type,
   test4.fields,
   test4.options,
-  test4.config,
+  test4.config
 );
 const result5 = _keyFromFields(
   test5.type,
   test5.fields,
   test5.options,
-  test5.config,
+  test5.config
 );
 const result6 = _keyFromFields(
   test6.type,
   test6.fields,
   test6.options,
-  test6.config,
+  test6.config
 );
 const result7 = _keyFromFields(
   test7.type,
   test7.fields,
   test7.options,
-  test7.config,
+  test7.config
 );
 const result8 = _keyFromFields(
   test8.type,
   test8.fields,
   test8.options,
-  test8.config,
+  test8.config
 );
 const result9 = _keyFromFields(
   test9.type,
   test9.fields,
   test9.options,
-  test9.config,
+  test9.config
 );
 
 assert.deepStrictEqual(
   result1,
-  '[null,"undefined",null,false,false,false,"undefined",null,false,null,[null,null,null,null,null,null,null]]',
+  '[null,"undefined",null,false,false,false,"undefined",null,false,null,[null,null,null,null,null,null,null]]'
 );
 assert(JSON.parse(result1));
 
 assert.deepStrictEqual(
   result2,
-  '[null,"undefined",null,false,false,false,"undefined","local",false,null,[null,null,null,null,null,null,null]]',
+  '[null,"undefined",null,false,false,false,"undefined","local",false,null,[null,null,null,null,null,null,null]]'
 );
 assert(JSON.parse(result2));
 
 assert.deepStrictEqual(
   result3,
-  '[null,"string","",false,false,false,"boolean","local",false,false,[null,null,null,null,null,null,null]]',
+  '[null,"string","",false,false,false,"boolean","local",false,false,[null,null,null,null,null,null,null]]'
 );
 assert(JSON.parse(result3));
 
 assert.deepStrictEqual(
   result4,
-  '["binary","boolean",false,false,false,false,"boolean","local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]',
+  '["binary","boolean",false,false,false,false,"boolean","local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
 );
 assert(JSON.parse(result4));
 
@@ -410,14 +410,14 @@ assert(JSON.parse(result5));
 
 assert.deepStrictEqual(
   result6,
-  '["binary","boolean",false,true,true,true,"boolean","\\"\\"`\'",true,"#",[":","©",null,"/",",","_","❌"]]',
+  '["binary","boolean",false,true,true,true,"boolean","\\"\\"`\'",true,"#",[":","©",null,"/",",","_","❌"]]'
 );
 // Ensuring that JSON is valid with invalid delimiters
 assert(JSON.parse(result6));
 
 assert.deepStrictEqual(
   result7,
-  '["binary","boolean",true,true,true,true,"boolean","local",true,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]',
+  '["binary","boolean",true,true,true,true,"boolean","local",true,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
 );
 assert(JSON.parse(result7));
 
@@ -426,7 +426,7 @@ assert(JSON.parse(result8));
 
 assert.deepStrictEqual(
   result9,
-  '["binary","boolean",false,false,false,true,"function","local",false,null,["id","3",null,"test","test","16899","63"]]',
+  '["binary","boolean",false,false,false,true,"function","local",false,null,["id","3",null,"test","test","16899","63"]]'
 );
 assert(JSON.parse(result9));
 assert(JSON.parse(result9)[5] === true);
@@ -455,8 +455,8 @@ assert(
       _keyFromFields(test8.type, test8.fields, test8.options, test8.config),
       _keyFromFields(test9.type, test9.fields, test9.options, test9.config),
       _keyFromFields(test9.type, test9.fields, test9.options, test9.config),
-    ]),
-  ).length === 7,
+    ])
+  ).length === 7
 );
 
 const stringify = JSON.stringify;
@@ -487,6 +487,6 @@ assert(
       _keyFromFields(test8.type, test8.fields, test8.options, test8.config),
       result9,
       _keyFromFields(test9.type, test9.fields, test9.options, test9.config),
-    ]),
-  ).length === 7,
+    ])
+  ).length === 7
 );

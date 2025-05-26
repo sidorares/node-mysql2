@@ -44,7 +44,7 @@ class TestAuthMultiFactor extends Command {
     const asr = Packets.AuthSwitchResponse.fromPacket(packet);
     assert.deepStrictEqual(
       asr.data.toString(),
-      this.args[this.authFactor].pluginName,
+      this.args[this.authFactor].pluginName
     );
     if (this.authFactor === 2) {
       // send OK_Packet after the 3rd authentication factor
@@ -83,7 +83,7 @@ const server = mysql.createServer((conn) => {
         pluginName: 'auth_test_plugin3',
         pluginData: Buffer.from('baz'),
       },
-    ]),
+    ])
   );
 });
 

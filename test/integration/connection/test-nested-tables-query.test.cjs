@@ -16,7 +16,7 @@ connection.query(
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 connection.query(
   [
@@ -25,7 +25,7 @@ connection.query(
     '`title` varchar(255),',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 
 connection.query(`INSERT INTO ${table} SET ?`, { title: 'test' });
@@ -119,39 +119,47 @@ connection.execute(options3, (err, _rows) => {
 });
 
 process.on('exit', () => {
-  assert.equal(rows1.length, 1);
-  assert.equal(rows1[0].nested_test.id, 1);
-  assert.equal(rows1[0].nested_test.title, 'test');
-  assert.equal(rows2.length, 1);
-  assert.equal(rows2[0].nested_test_id, 1);
-  assert.equal(rows2[0].nested_test_title, 'test');
+  assert.equal(rows1.length, 1, 'First row length');
+  assert.equal(rows1[0].nested_test.id, 1, 'First row nested id');
+  assert.equal(rows1[0].nested_test.title, 'test', 'First row nested title');
+  assert.equal(rows2.length, 1, 'Second row length');
+  assert.equal(rows2[0].nested_test_id, 1, 'Second row nested id');
+  assert.equal(rows2[0].nested_test_title, 'test', 'Second row nested title');
 
-  assert.equal(Array.isArray(rows3[0]), true);
-  assert.equal(rows3[0][0], 1);
-  assert.equal(rows3[0][1], 'test');
+  assert.equal(Array.isArray(rows3[0]), true, 'Third row type');
+  assert.equal(rows3[0][0], 1, 'Third row value 1');
+  assert.equal(rows3[0][1], 'test', 'Third row value 2');
 
-  assert.equal(rows4.length, 1);
-  assert.deepEqual(rows4[0], {
-    nested: {
-      title: 'test1',
+  assert.equal(rows4.length, 1, 'Fourth row length');
+  assert.deepEqual(
+    rows4[0],
+    {
+      nested: {
+        title: 'test1',
+      },
+      notNested: {
+        id: 1,
+        title: 'test',
+      },
     },
-    notNested: {
-      id: 1,
-      title: 'test',
+    'Fourth row value'
+  );
+  assert.equal(rows5.length, 1, 'Fifth row length');
+  assert.deepEqual(
+    rows5[0],
+    {
+      nested2: {
+        title: 'test1',
+      },
+      notNested: {
+        id: 1,
+        title: 'test',
+      },
     },
-  });
-  assert.equal(rows5.length, 1);
-  assert.deepEqual(rows5[0], {
-    nested2: {
-      title: 'test1',
-    },
-    notNested: {
-      id: 1,
-      title: 'test',
-    },
-  });
+    'Fifth row value'
+  );
 
-  assert.deepEqual(rows1, rows1e);
-  assert.deepEqual(rows2, rows2e);
-  assert.deepEqual(rows3, rows3e);
+  assert.deepEqual(rows1, rows1e, 'Compare rows1 with rows1e');
+  assert.deepEqual(rows2, rows2e, 'Compare rows2 with rows2e');
+  assert.deepEqual(rows3, rows3e, 'Compare rows3 with rows3e');
 });

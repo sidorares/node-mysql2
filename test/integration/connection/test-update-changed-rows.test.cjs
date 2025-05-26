@@ -29,7 +29,7 @@ connection.query(
     '`value` int(5) NOT NULL,',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 connection.query('insert into changed_rows(value) values(1)');
 connection.query('insert into changed_rows(value) values(1)');

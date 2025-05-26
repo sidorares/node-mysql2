@@ -17,7 +17,7 @@ connection.query(
     '`number` INT NULL,',
     'PRIMARY KEY (`id`)',
     ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n'),
+  ].join('\n')
 );
 
 connection.query(`INSERT INTO ${table} SET ?`, {

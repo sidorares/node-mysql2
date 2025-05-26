@@ -164,6 +164,49 @@ try {
   // highlight-start
   const connection = await mysql.createConnection({
     // ...
+    ssl: {},
+  });
+  // highlight-end
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  // ...
+  ssl: {},
+});
+
+connection.addListener('error', (err) => {
+  console.log(err);
+});
+```
+
+  </TabItem>
+</Tabs>
+
+<hr />
+
+## createConnection(config) — SSL Custom Certificate
+
+> **createConnection(config: [ConnectionOptions](#connectionoptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  // highlight-start
+  const connection = await mysql.createConnection({
+    // ...
     ssl: {
       // key: fs.readFileSync('./certs/client-key.pem'),
       // cert: fs.readFileSync('./certs/client-cert.pem')

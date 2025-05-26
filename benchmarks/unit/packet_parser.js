@@ -52,7 +52,7 @@ function benchmarkPackets() {
   return count;
 }*/
 
-module.exports = function(next) {
+module.exports = function (next) {
   /*
   const c = benchmarkPackets();
   */
@@ -61,12 +61,12 @@ module.exports = function(next) {
 
 module.exports.comment =
   'WIP - not implemented yet | packet_parser.execute() in chunks of length 1..packet_length x 156035 packets';
-module.exports.toSpeed = function(time, timeError) {
+module.exports.toSpeed = function (time, timeError) {
   console.log('packet_parser.execute() toSpeed()', time, timeError);
   const value = (1e9 * 5 * 156975) / time;
   return {
     value: value,
     error: value * (timeError / time),
-    units: 'packets/second'
+    units: 'packets/second',
   };
 };

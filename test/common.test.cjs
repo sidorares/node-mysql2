@@ -4,6 +4,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const process = require('node:process');
 
+const disableEval = process.env.STATIC_PARSER === '1';
+exports.disableEval = disableEval;
+
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
   user: process.env.MYSQL_USER || 'root',
@@ -11,6 +14,7 @@ const config = {
   database: process.env.MYSQL_DATABASE || 'test',
   compress: process.env.MYSQL_USE_COMPRESSION,
   port: process.env.MYSQL_PORT || 3306,
+  disableEval,
 };
 
 if (process.env.MYSQL_USE_TLS === '1') {
@@ -18,7 +22,7 @@ if (process.env.MYSQL_USE_TLS === '1') {
     rejectUnauthorized: false,
     ca: fs.readFileSync(
       path.join(__dirname, '../test/fixtures/ssl/certs/ca.pem'),
-      'utf-8',
+      'utf-8'
     ),
   };
 }
@@ -109,6 +113,7 @@ exports.createConnection = function (args) {
     nestTables: args && args.nestTables,
     ssl: (args && args.ssl) ?? config.ssl,
     jsonStrings: args && args.jsonStrings,
+    disableEval,
   };
 
   const conn = driver.createConnection(params);
@@ -139,6 +144,7 @@ exports.getConfig = function (input) {
     maxIdle: args && args.maxIdle,
     idleTimeout: args && args.idleTimeout,
     jsonStrings: args && args.jsonStrings,
+    disableEval,
   };
   return params;
 };
@@ -184,7 +190,7 @@ exports.createTemplate = function () {
   const jade = require('jade');
   const template = require('node:fs').readFileSync(
     `${__dirname}/template.jade`,
-    'ascii',
+    'ascii'
   );
   return jade.compile(template);
 };
