@@ -1,7 +1,7 @@
-import { Connection } from './Connection.js';
+import { Connection, BaseConnection } from './Connection.js';
 import { Pool as PromisePool } from '../../../promise.js';
 
-declare class PoolConnection extends Connection {
+declare class PoolConnection extends BaseConnection {
   connection: Connection;
   release(): void;
   promise(promiseImpl?: PromiseConstructor): PromisePool;
