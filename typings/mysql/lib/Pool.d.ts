@@ -63,6 +63,13 @@ declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
 
   promise(promiseImpl?: PromiseConstructor): PromisePool;
 
+  format(sql: string, values?: any | any[] | { [param: string]: any }): string;
+
+  escape(value: any): string;
+
+  escapeId(value: string | string[]): string;
+  escapeId(values: string[]): string;
+
   config: PoolOptions;
 }
 
