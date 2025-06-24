@@ -39,7 +39,7 @@
     "@types/node": "^24.0.3",
     "packages-update": "^2.0.0",
     "poku": "^3.0.2",
-    "prettier": "^3.5.3",
+    "prettier": "^3.6.0",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
