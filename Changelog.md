@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.14.2](https://github.com/sidorares/node-mysql2/compare/v3.14.1...v3.14.2) (2025-07-10)
+
+
+### Bug Fixes
+
+* pass columnType to readDateTimeString ([#3700](https://github.com/sidorares/node-mysql2/issues/3700)) ([1ee48cc](https://github.com/sidorares/node-mysql2/commit/1ee48cce69eb7d89c52ac2c0369d28b324bb7848))
+
 ## [3.14.1](https://github.com/sidorares/node-mysql2/compare/v3.14.0...v3.14.1) (2025-04-27)
 
 
