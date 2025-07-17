@@ -383,25 +383,25 @@ const result9 = _keyFromFields(
 
 assert.deepStrictEqual(
   result1,
-  '[null,"undefined",null,false,false,false,"undefined",null,false,null,[null,null,null,null,null,null,null]]'
+  '[null,"undefined",null,false,false,false,null,null,false,null,[null,null,null,null,null,null,null]]'
 );
 assert(JSON.parse(result1));
 
 assert.deepStrictEqual(
   result2,
-  '[null,"undefined",null,false,false,false,"undefined","local",false,null,[null,null,null,null,null,null,null]]'
+  '[null,"undefined",null,false,false,false,null,"local",false,null,[null,null,null,null,null,null,null]]'
 );
 assert(JSON.parse(result2));
 
 assert.deepStrictEqual(
   result3,
-  '[null,"string","",false,false,false,"boolean","local",false,false,[null,null,null,null,null,null,null]]'
+  '[null,"string","",false,false,false,true,"local",false,false,[null,null,null,null,null,null,null]]'
 );
 assert(JSON.parse(result3));
 
 assert.deepStrictEqual(
   result4,
-  '["binary","boolean",false,false,false,false,"boolean","local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
+  '["binary","boolean",false,false,false,false,true,"local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
 );
 assert(JSON.parse(result4));
 
@@ -410,14 +410,14 @@ assert(JSON.parse(result5));
 
 assert.deepStrictEqual(
   result6,
-  '["binary","boolean",false,true,true,true,"boolean","\\"\\"`\'",true,"#",[":","©",null,"/",",","_","❌"]]'
+  '["binary","boolean",false,true,true,true,true,"\\"\\"`\'",true,"#",[":","©",null,"/",",","_","❌"]]'
 );
 // Ensuring that JSON is valid with invalid delimiters
 assert(JSON.parse(result6));
 
 assert.deepStrictEqual(
   result7,
-  '["binary","boolean",true,true,true,true,"boolean","local",true,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
+  '["binary","boolean",true,true,true,true,true,"local",true,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
 );
 assert(JSON.parse(result7));
 
