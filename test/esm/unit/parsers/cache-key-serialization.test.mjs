@@ -326,6 +326,46 @@ const test9 = {
   },
 };
 
+// Similar to test4 but with typeCast: false
+const test10 = {
+  type: 'binary',
+  fields: [
+    {
+      name: 'id',
+      columnType: '3',
+      length: undefined,
+      schema: 'test',
+      table: 'test',
+      flags: '16899',
+      characterSet: '63',
+    },
+    {
+      name: 'value',
+      columnType: '246',
+      length: undefined,
+      schema: 'test',
+      table: 'test',
+      flags: '0',
+      characterSet: '63',
+    },
+  ],
+  options: {
+    nestTables: false,
+    rowsAsArray: false,
+    supportBigNumbers: false,
+    bigNumberStrings: false,
+    typeCast: false,
+    timezone: 'local',
+    decimalNumbers: false,
+    dateStrings: 'DATETIME',
+  },
+  config: {
+    supportBigNumbers: undefined,
+    bigNumberStrings: undefined,
+    timezone: undefined,
+  },
+};
+
 const result1 = _keyFromFields(
   test1.type,
   test1.fields,
@@ -380,6 +420,12 @@ const result9 = _keyFromFields(
   test9.options,
   test9.config
 );
+const result10 = _keyFromFields(
+  test10.type,
+  test10.fields,
+  test10.options,
+  test10.config
+);
 
 assert.deepStrictEqual(
   result1,
@@ -395,13 +441,13 @@ assert(JSON.parse(result2));
 
 assert.deepStrictEqual(
   result3,
-  '[null,"string","",false,false,false,"boolean","local",false,false,[null,null,null,null,null,null,null]]'
+  '[null,"string","",false,false,false,true,"local",false,false,[null,null,null,null,null,null,null]]'
 );
 assert(JSON.parse(result3));
 
 assert.deepStrictEqual(
   result4,
-  '["binary","boolean",false,false,false,false,"boolean","local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
+  '["binary","boolean",false,false,false,false,true,"local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
 );
 assert(JSON.parse(result4));
 
@@ -410,14 +456,14 @@ assert(JSON.parse(result5));
 
 assert.deepStrictEqual(
   result6,
-  '["binary","boolean",false,true,true,true,"boolean","\\"\\"`\'",true,"#",[":","©",null,"/",",","_","❌"]]'
+  '["binary","boolean",false,true,true,true,true,"\\"\\"`\'",true,"#",[":","©",null,"/",",","_","❌"]]'
 );
 // Ensuring that JSON is valid with invalid delimiters
 assert(JSON.parse(result6));
 
 assert.deepStrictEqual(
   result7,
-  '["binary","boolean",true,true,true,true,"boolean","local",true,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
+  '["binary","boolean",true,true,true,true,true,"local",true,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
 );
 assert(JSON.parse(result7));
 
@@ -433,7 +479,13 @@ assert(JSON.parse(result9)[5] === true);
 assert(JSON.parse(result9)[6] === 'function');
 assert(JSON.parse(result9)[9] === null);
 
-// Testing twice all existent tests needs to return 7 keys, since two of them expects to be the same
+assert.deepStrictEqual(
+  result10,
+  '["binary","boolean",false,false,false,false,false,"local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
+);
+assert(JSON.parse(result10));
+
+// Testing twice all existent tests needs to return 8 keys, since two of them expects to be the same
 assert(
   Array.from(
     new Set([
@@ -455,8 +507,10 @@ assert(
       _keyFromFields(test8.type, test8.fields, test8.options, test8.config),
       _keyFromFields(test9.type, test9.fields, test9.options, test9.config),
       _keyFromFields(test9.type, test9.fields, test9.options, test9.config),
+      _keyFromFields(test10.type, test10.fields, test10.options, test10.config),
+      _keyFromFields(test10.type, test10.fields, test10.options, test10.config),
     ])
-  ).length === 7
+  ).length === 8
 );
 
 const stringify = JSON.stringify;
@@ -465,7 +519,7 @@ const stringify = JSON.stringify;
 JSON.stringify = (value, replacer, space = 8) =>
   stringify(value, replacer, space);
 
-// Testing twice all existent tests needs to return 7 keys, since two of them expects to be the same
+// Testing twice all existent tests needs to return 8 keys, since two of them expects to be the same
 assert(
   Array.from(
     new Set([
@@ -487,6 +541,8 @@ assert(
       _keyFromFields(test8.type, test8.fields, test8.options, test8.config),
       result9,
       _keyFromFields(test9.type, test9.fields, test9.options, test9.config),
+      result10,
+      _keyFromFields(test10.type, test10.fields, test10.options, test10.config),
     ])
-  ).length === 7
+  ).length === 8
 );
