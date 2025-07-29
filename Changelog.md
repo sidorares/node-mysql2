@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.14.3](https://github.com/sidorares/node-mysql2/compare/v3.14.2...v3.14.3) (2025-07-29)
+
+
+### Bug Fixes
+
+* resolve parser cache collision with dual typeCast connections ([#3644](https://github.com/sidorares/node-mysql2/issues/3644)) ([ce2ad75](https://github.com/sidorares/node-mysql2/commit/ce2ad75a3223366a04f71008d6095111608a28c6))
+
 ## [3.14.2](https://github.com/sidorares/node-mysql2/compare/v3.14.1...v3.14.2) (2025-07-10)
 
 
