@@ -7,6 +7,11 @@ const Net = require('node:net');
 const driver = require('../../../index.js');
 const { setTimeout } = require('node:timers/promises');
 
+if (common.config.compress) {
+  console.log('skipping test with compression; load data infile backpressure is not working with compression');
+  process.exit(0);
+}
+
 class BigInput extends Readable {
   count = 0;
   MAX_EXPECTED_ROWS = 100_000;
@@ -20,7 +25,7 @@ class BigInput extends Readable {
 
     if (this.count < this.MAX_EXPECTED_ROWS) {
       this.count++;
-      const row = `${this.count}-${Math.random()}\n`;
+      const row = `${this.count}\n`;
       this.push(row);
     } else {
       this.push(null);
