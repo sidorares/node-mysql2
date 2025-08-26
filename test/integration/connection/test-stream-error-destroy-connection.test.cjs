@@ -35,7 +35,7 @@ async function run() {
   }
   setTimeout(() => {
     throw new Error('Connection remains open after stream error');
-  }, 5000).unref();
+  }, 1000).unref();
   connection.end();
 }
 
