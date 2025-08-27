@@ -3,8 +3,6 @@
 const { test } = require('poku');
 const common = require('../../common.test.cjs');
 
-// if (process.env.MYSQL_USE_TLS === '1') skip('Skipping for SSL=1');
-
 test('Ensure stream ends in case of error', async () => {
   const connection = common.createConnection();
 
