@@ -1,15 +1,15 @@
 'use strict';
 
-const { assert, test, log } = require('poku');
+const { assert, log, skip, sleep, test } = require('poku');
 const common = require('../../common.test.cjs');
 const { Readable, Duplex } = require('stream');
 const Net = require('node:net');
 const driver = require('../../../index.js');
-const { setTimeout } = require('node:timers/promises');
 
 if (common.config.compress) {
-  console.log('skipping test with compression; load data infile backpressure is not working with compression');
-  process.exit(0);
+  skip(
+    'skipping test with compression; load data infile backpressure is not working with compression'
+  );
 }
 
 class BigInput extends Readable {
@@ -77,33 +77,31 @@ test('load data infile backpressure on local stream', async () => {
     stream: interceptor,
   });
 
-  try {
-    const bigInput = new BigInput();
-    bigInput.onStart = () => (interceptor.simulateWriteBackpressure = true);
+  const bigInput = new BigInput();
+  bigInput.onStart = () => (interceptor.simulateWriteBackpressure = true);
 
-    connection.query(
-      {
-        sql: `
-        set global local_infile = 1;
-        create temporary table test_load_data_backpressure (id varchar(100));
-        load data local infile "_" replace into table test_load_data_backpressure;
-      `,
-        infileStreamFactory: () => bigInput,
-      },
-      (err, result) => {
-        if (err) throw err;
-        log('Load complete', result);
-      }
-    );
+  connection.query(
+    {
+      sql: `
+      set global local_infile = 1;
+      create temporary table test_load_data_backpressure (id varchar(100));
+      load data local infile "_" replace into table test_load_data_backpressure;
+    `,
+      infileStreamFactory: () => bigInput,
+    },
+    (err, result) => {
+      if (err) throw err;
+      log('Load complete', result);
+    }
+  );
 
-    await setTimeout(100); // allow time for backpressure to take effect
+  await sleep(100); // allow time for backpressure to take effect
 
-    assert.ok(
-      bigInput.count < bigInput.MAX_EXPECTED_ROWS,
-      `expected backpressure to stop infile stream at less than ${bigInput.MAX_EXPECTED_ROWS} rows (read ${bigInput.count} rows)`
-    );
-  } finally {
-    connection.close();
-    netStream.destroy();
-  }
+  connection.close();
+  netStream.destroy();
+
+  assert.ok(
+    bigInput.count < bigInput.MAX_EXPECTED_ROWS,
+    `expected backpressure to stop infile stream at less than ${bigInput.MAX_EXPECTED_ROWS} rows (read ${bigInput.count} rows)`
+  );
 });
