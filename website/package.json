@@ -25,11 +25,11 @@
     "@mdx-js/react": "^3.1.0",
     "clsx": "^2.1.1",
     "docusaurus-plugin-sass": "^0.2.6",
-    "lucide-react": "^0.541.0",
+    "lucide-react": "^0.542.0",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.1",
-    "sass": "^1.90.0"
+    "sass": "^1.91.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
