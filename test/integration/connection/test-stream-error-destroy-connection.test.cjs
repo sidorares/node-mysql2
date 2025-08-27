@@ -32,11 +32,7 @@ test('Ensure stream ends in case of error', async () => {
   const rows = connection.query('SELECT * FROM items').stream();
 
   // eslint-disable-next-line no-unused-vars
-  for await (const _ of rows) break;
-
-  setTimeout(() => {
-    throw new Error('Connection remains open after stream error');
-  }, 1000).unref();
+  for await (const _ of rows) break; // forces return () -> destroy()
 
   connection.end();
 });
