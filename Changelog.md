@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.14.3](https://github.com/sidorares/node-mysql2/compare/v3.14.2...v3.14.3) (2025-07-29)
+
+
+### Bug Fixes
+
+* resolve parser cache collision with dual typeCast connections ([#3644](https://github.com/sidorares/node-mysql2/issues/3644)) ([ce2ad75](https://github.com/sidorares/node-mysql2/commit/ce2ad75a3223366a04f71008d6095111608a28c6))
+
+## [3.14.2](https://github.com/sidorares/node-mysql2/compare/v3.14.1...v3.14.2) (2025-07-10)
+
+
+### Bug Fixes
+
+* pass columnType to readDateTimeString ([#3700](https://github.com/sidorares/node-mysql2/issues/3700)) ([1ee48cc](https://github.com/sidorares/node-mysql2/commit/1ee48cce69eb7d89c52ac2c0369d28b324bb7848))
+
+## [3.14.1](https://github.com/sidorares/node-mysql2/compare/v3.14.0...v3.14.1) (2025-04-27)
+
+
+### Miscellaneous Chores
+
+* release 3.14.1 ([9d097f8](https://github.com/sidorares/node-mysql2/commit/9d097f8dc2105b549e052172bf32fcf360fba742))
+
 ## [3.14.0](https://github.com/sidorares/node-mysql2/compare/v3.13.0...v3.14.0) (2025-03-19)
 
 

@@ -14,34 +14,34 @@
     "typecheck": "tsc",
     "lintcheck": "biome lint --error-on-warnings && prettier --check .",
     "lint": "biome lint --write . && prettier --write .",
-    "test:unit": "npx poku test/unit",
+    "test:unit": "poku test/unit",
     "test": "npm run typecheck && npm run lintcheck && npm run test:unit && npm run clear && npm run build",
     "update": "pu minor; npm i; npm run lint"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.7.0",
-    "@docusaurus/preset-classic": "^3.7.0",
-    "@easyops-cn/docusaurus-search-local": "^0.49.2",
+    "@docusaurus/core": "^3.8.1",
+    "@docusaurus/preset-classic": "^3.8.1",
+    "@easyops-cn/docusaurus-search-local": "^0.52.1",
     "@mdx-js/react": "^3.1.0",
     "clsx": "^2.1.1",
     "docusaurus-plugin-sass": "^0.2.6",
-    "lucide-react": "^0.503.0",
+    "lucide-react": "^0.542.0",
     "prism-react-renderer": "^2.4.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "sass": "^1.86.3"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.1",
+    "sass": "^1.91.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@docusaurus/module-type-aliases": "^3.7.0",
-    "@docusaurus/tsconfig": "^3.7.0",
-    "@docusaurus/types": "^3.7.0",
-    "@types/node": "^22.14.1",
+    "@docusaurus/module-type-aliases": "^3.8.1",
+    "@docusaurus/tsconfig": "^3.8.1",
+    "@docusaurus/types": "^3.8.1",
+    "@types/node": "^24.3.0",
     "packages-update": "^2.0.0",
     "poku": "^3.0.2",
-    "prettier": "^3.5.3",
-    "tsx": "^4.19.3",
-    "typescript": "^5.8.3"
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   },
   "browserslist": {
     "production": [
