@@ -145,6 +145,7 @@ exports.getConfig = function (input) {
     idleTimeout: args && args.idleTimeout,
     jsonStrings: args && args.jsonStrings,
     disableEval,
+    gracefulEnd: args && args.gracefulEnd,
   };
   return params;
 };

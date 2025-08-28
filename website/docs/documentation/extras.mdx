@@ -130,3 +130,15 @@ const pool = mysql.createPool({
 ```
 
 In addition to password `createConnection()`, `createPool()` and `changeUser()` accept `passwordSha1` option. This is useful when implementing proxies as plaintext password might be not available.
+
+## Graceful pool connection end
+
+```js
+
+const pool = mysql.createPool({
+  gracefulEnd: true
+});
+```
+
+By default, calling end on a pool connection will result in a warning being emitted and the connection being released back to the pool. This is for compatibility with mysqljs/mysql.
+By providing `gracefulEnd: true` when creating the pool, calling end on a pooled connection will actually close the connection instead of releasing it back to the pool.
