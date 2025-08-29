@@ -2,7 +2,7 @@
 
 const { assert, log, skip, sleep, test } = require('poku');
 const common = require('../../common.test.cjs');
-const { Readable, Duplex } = require('stream');
+const { Readable, Duplex } = require('node:stream');
 const Net = require('node:net');
 const driver = require('../../../index.js');
 
