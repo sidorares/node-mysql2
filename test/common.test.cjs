@@ -12,7 +12,7 @@ const config = {
   user: process.env.MYSQL_USER || 'root',
   password: (process.env.CI ? process.env.MYSQL_PASSWORD : '') || '',
   database: process.env.MYSQL_DATABASE || 'test',
-  compress: process.env.MYSQL_USE_COMPRESSION,
+  compress: process.env.MYSQL_USE_COMPRESSION === '1',
   port: process.env.MYSQL_PORT || 3306,
   disableEval,
 };
