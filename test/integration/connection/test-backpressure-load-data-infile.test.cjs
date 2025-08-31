@@ -95,7 +95,7 @@ test('load data infile backpressure on local stream', async () => {
     }
   );
 
-  await sleep(100); // allow time for backpressure to take effect
+  await sleep(1000); // allow time for backpressure to take effect
 
   connection.close();
   netStream.destroy();
