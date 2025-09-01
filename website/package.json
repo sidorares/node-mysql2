@@ -22,7 +22,7 @@
     "@docusaurus/core": "^3.8.1",
     "@docusaurus/preset-classic": "^3.8.1",
     "@easyops-cn/docusaurus-search-local": "^0.52.1",
-    "@mdx-js/react": "^3.1.0",
+    "@mdx-js/react": "^3.1.1",
     "clsx": "^2.1.1",
     "docusaurus-plugin-sass": "^0.2.6",
     "lucide-react": "^0.542.0",
