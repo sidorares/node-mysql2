@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.14.4](https://github.com/sidorares/node-mysql2/compare/v3.14.3...v3.14.4) (2025-09-01)
+
+
+### Bug Fixes
+
+* destroy connection when stream errors ([#3769](https://github.com/sidorares/node-mysql2/issues/3769)) ([cc34a83](https://github.com/sidorares/node-mysql2/commit/cc34a833af18cbf3447a33143ab9dd0db32eb5ef))
+* fix backpressure when using TLS ([#1752](https://github.com/sidorares/node-mysql2/issues/1752)) ([64ea4cd](https://github.com/sidorares/node-mysql2/commit/64ea4cdd38dd12fe6967bbcfb8b989188e482417))
+* **stream:** resume connection when stream errors or is destroyed ([#3775](https://github.com/sidorares/node-mysql2/issues/3775)) ([9642a1e](https://github.com/sidorares/node-mysql2/commit/9642a1e53469ec2c37f9e27850ae19a0da9871fd))
+
 ## [3.14.3](https://github.com/sidorares/node-mysql2/compare/v3.14.2...v3.14.3) (2025-07-29)
 
 
