@@ -335,6 +335,8 @@ export interface ConnectionOptions {
    * (Default: false)
    */
   jsonStrings?: boolean;
+
+  gracefulEnd?: boolean;
 }
 
 declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
