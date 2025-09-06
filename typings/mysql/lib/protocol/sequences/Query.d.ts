@@ -94,7 +94,7 @@ export interface StreamOptions {
   /**
    * The object mode of the stream (Default: true)
    */
-  objectMode?: any;
+  objectMode?: true;
 }
 
 export interface QueryError extends NodeJS.ErrnoException {
