@@ -92,9 +92,9 @@ export interface StreamOptions {
   highWaterMark?: number;
 
   /**
-   * The object mode of the stream (Default: true)
+   * The object mode of the stream is always set to `true`
    */
-  objectMode?: any;
+  objectMode?: true;
 }
 
 export interface QueryError extends NodeJS.ErrnoException {
