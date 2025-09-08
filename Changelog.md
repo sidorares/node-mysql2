@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.14.5](https://github.com/sidorares/node-mysql2/compare/v3.14.4...v3.14.5) (2025-09-08)
+
+
+### Bug Fixes
+
+* **types:** restrict StreamOptions.objectMode to true ([#3686](https://github.com/sidorares/node-mysql2/issues/3686)) ([#3784](https://github.com/sidorares/node-mysql2/issues/3784)) ([c091f1b](https://github.com/sidorares/node-mysql2/commit/c091f1ba7399eb1be57a8df61f5fd9b01e659be6))
+
 ## [3.14.4](https://github.com/sidorares/node-mysql2/compare/v3.14.3...v3.14.4) (2025-09-01)
 
 
