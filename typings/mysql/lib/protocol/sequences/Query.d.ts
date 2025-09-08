@@ -92,7 +92,7 @@ export interface StreamOptions {
   highWaterMark?: number;
 
   /**
-   * The object mode of the stream (Default: true)
+   * The object mode of the stream is always set to `true`
    */
   objectMode?: true;
 }
