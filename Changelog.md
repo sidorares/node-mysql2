@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.15.0](https://github.com/sidorares/node-mysql2/compare/v3.14.5...v3.15.0) (2025-09-16)
+
+
+### Features
+
+* gracefully end pool connections [#3148](https://github.com/sidorares/node-mysql2/issues/3148) ([#3776](https://github.com/sidorares/node-mysql2/issues/3776)) ([e72247f](https://github.com/sidorares/node-mysql2/commit/e72247f759b2648dce5c5b005c81536a5b639512))
+
 ## [3.14.5](https://github.com/sidorares/node-mysql2/compare/v3.14.4...v3.14.5) (2025-09-08)
 
 
