@@ -9,7 +9,6 @@ lib-cov
 .DS_Store
 .idea/
 .vscode/
-.npmrc
 coverage/
 mysqldata/
 
