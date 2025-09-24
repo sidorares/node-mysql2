@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.15.1](https://github.com/sidorares/node-mysql2/compare/v3.15.0...v3.15.1) (2025-09-24)
+
+
+### Bug Fixes
+
+* **typings:** missing callback to PoolCluster.end() ([#3819](https://github.com/sidorares/node-mysql2/issues/3819)) ([53a9bc2](https://github.com/sidorares/node-mysql2/commit/53a9bc24d236754e5fd99889f589b34966e2510d))
+
 ## [3.15.0](https://github.com/sidorares/node-mysql2/compare/v3.14.5...v3.15.0) (2025-09-16)
 
 
