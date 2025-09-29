@@ -19,28 +19,28 @@
     "update": "pu minor; npm i; npm run lint"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.8.1",
-    "@docusaurus/preset-classic": "^3.8.1",
+    "@docusaurus/core": "^3.9.1",
+    "@docusaurus/preset-classic": "^3.9.1",
     "@easyops-cn/docusaurus-search-local": "^0.52.1",
     "@mdx-js/react": "^3.1.1",
     "clsx": "^2.1.1",
     "docusaurus-plugin-sass": "^0.2.6",
     "lucide-react": "^0.544.0",
     "prism-react-renderer": "^2.4.1",
-    "react": "^19.1.0",
+    "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "sass": "^1.92.1"
+    "sass": "^1.93.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@docusaurus/module-type-aliases": "^3.8.1",
-    "@docusaurus/tsconfig": "^3.8.1",
-    "@docusaurus/types": "^3.8.1",
-    "@types/node": "^24.5.2",
+    "@docusaurus/module-type-aliases": "^3.9.1",
+    "@docusaurus/tsconfig": "^3.9.1",
+    "@docusaurus/types": "^3.9.1",
+    "@types/node": "^24.6.0",
     "packages-update": "^2.0.0",
     "poku": "^3.0.2",
     "prettier": "^3.6.2",
-    "tsx": "^4.20.5",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.2"
   },
   "browserslist": {
