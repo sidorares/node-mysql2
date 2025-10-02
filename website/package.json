@@ -28,7 +28,7 @@
     "lucide-react": "^0.544.0",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react-dom": "^19.2.0",
     "sass": "^1.93.2"
   },
   "devDependencies": {
