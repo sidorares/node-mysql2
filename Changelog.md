@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.15.2](https://github.com/sidorares/node-mysql2/compare/v3.15.1...v3.15.2) (2025-10-08)
+
+
+### Bug Fixes
+
+* fix sha256_password to work correctly over a TLS connection ([#3809](https://github.com/sidorares/node-mysql2/issues/3809)) ([fb9eae1](https://github.com/sidorares/node-mysql2/commit/fb9eae11f948a86151f64737fd74300437fd5bf3))
+
 ## [3.15.1](https://github.com/sidorares/node-mysql2/compare/v3.15.0...v3.15.1) (2025-09-24)
 
 
