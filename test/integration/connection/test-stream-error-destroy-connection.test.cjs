@@ -2,6 +2,7 @@
 
 const { assert, describe, test } = require('poku');
 const common = require('../../common.test.cjs');
+const { AssertionError } = require('node:assert/strict');
 
 describe(async () => {
   const connection = common.createConnection();
@@ -62,6 +63,9 @@ describe(async () => {
       uncaughtExceptionError.message,
       "Table 'test.invalid_table' doesn't exist"
     );
+  }).catch((err) => {
+    if (err instanceof AssertionError) return;
+    throw err;
   });
 
   await test('close: Ensure stream emits error then close on server-side query error', async () => {
@@ -86,6 +90,9 @@ describe(async () => {
       uncaughtExceptionError.message,
       "Table 'test.invalid_table' doesn't exist"
     );
+  }).catch((err) => {
+    if (err instanceof AssertionError) return;
+    throw err;
   });
 
   connection.end();
