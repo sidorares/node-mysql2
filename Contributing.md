@@ -92,7 +92,6 @@ Please ensure test cases to cover your features.
 Running tests requires MySQL server and an empty database. You can run `bash` command given below to create `test` database
 
 > [!NOTE]
-
 > The database name must be exactly "test".
 
 ```bash
