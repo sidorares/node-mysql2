@@ -1,12 +1,18 @@
 'use strict';
 
-const { assert, describe, test } = require('poku');
+const { assert, describe, beforeEach, afterEach, it } = require('poku');
 const common = require('../../common.test.cjs');
 
-describe(async () => {
-  const connection = common.createConnection();
+describe('test stream error destroy connection:', async () => {
+  let connection;
 
-  await test('Ensure stream ends in case of error', async () => {
+  beforeEach(() => (connection = common.createConnection()));
+
+  afterEach(async () => {
+    await connection.end();
+  });
+
+  await it('Ensure stream ends in case of error', async () => {
     connection.query(
       [
         'CREATE TEMPORARY TABLE `items` (',
@@ -40,7 +46,7 @@ describe(async () => {
     for await (const _ of rows) break; // forces return () -> destroy()
   });
 
-  await test('end: Ensure stream emits error then close on server-side query error', async () => {
+  await it('end: Ensure stream emits error then close on server-side query error', async () => {
     let uncaughtExceptionError;
 
     const stream = connection
@@ -64,7 +70,7 @@ describe(async () => {
     );
   });
 
-  await test('close: Ensure stream emits error then close on server-side query error', async () => {
+  await it('close: Ensure stream emits error then close on server-side query error', async () => {
     let uncaughtExceptionError;
 
     const stream = connection
@@ -87,6 +93,4 @@ describe(async () => {
       "Table 'test.invalid_table' doesn't exist"
     );
   });
-
-  connection.end();
 });

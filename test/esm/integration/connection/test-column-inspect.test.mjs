@@ -1,21 +1,23 @@
-import { test, assert, describe, beforeEach } from 'poku';
+import { assert, describe, afterEach, beforeEach, it } from 'poku';
 import util from 'node:util';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const common = require('../../../common.test.cjs');
 
-(async () => {
-  const connection = common.createConnection().promise();
+await describe('Custom inspect for column definition', async () => {
+  let connection;
 
-  describe('Custom inspect for column definition', common.describeOptions);
+  beforeEach(async () => {
+    connection = common.createConnection().promise();
+    await connection.query(`DROP TABLE IF EXISTS test_fields`);
+  });
 
-  beforeEach(
-    async () => await connection.query(`DROP TABLE IF EXISTS test_fields`),
-    { assert: false }
-  );
+  afterEach(async () => {
+    await connection.end();
+  });
 
-  await test(async () => {
+  await it('maps fields to schema-like description when depth > 1', async () => {
     const schema = `
         id INT NOT NULL AUTO_INCREMENT,
         weight INT(2) UNSIGNED ZEROFILL,
@@ -76,8 +78,8 @@ const common = require('../../../common.test.cjs');
     }
   });
 
-  common.version >= 16 &&
-    (await test(async () => {
+  if (common.version >= 16) {
+    await it('shows detailed description when depth < 1', async () => {
       await connection.query(`
         CREATE TEMPORARY TABLE test_fields2 (
             id INT,
@@ -108,7 +110,6 @@ const common = require('../../../common.test.cjs');
         }),
         'should show detailed description when depth is < 1'
       );
-    }));
-
-  await connection.end();
-})();
+    });
+  }
+});
