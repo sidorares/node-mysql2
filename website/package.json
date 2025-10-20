@@ -35,7 +35,7 @@
     "@biomejs/biome": "^1.9.4",
     "@docusaurus/module-type-aliases": "^3.9.1",
     "@docusaurus/tsconfig": "^3.9.1",
-    "@docusaurus/types": "^3.9.1",
+    "@docusaurus/types": "^3.9.2",
     "@types/node": "^24.8.1",
     "packages-update": "^2.0.0",
     "poku": "^3.0.2",
