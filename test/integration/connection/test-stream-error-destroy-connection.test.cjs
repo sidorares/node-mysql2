@@ -6,9 +6,7 @@ const common = require('../../common.test.cjs');
 describe('test stream error destroy connection:', async () => {
   let connection;
 
-  beforeEach(async () => {
-    connection = common.createConnection();
-  });
+  beforeEach(() => (connection = common.createConnection()));
 
   afterEach(async () => {
     await connection.end();
