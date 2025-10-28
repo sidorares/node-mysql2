@@ -1,0 +1,111 @@
+# Authentication Switch Request
+
+During the connection phase the server may ask the client to switch to a different auth method.
+If the `authPlugins` connection config option is set, it must be an object where each key
+is the name of a potential authentication plugin requested by the server, and the corresponding
+value must be a function that optionally receives the connection config options and returns
+another function, which in turn, optionally receives the switch request data.
+
+The plugin is loaded with a `({user,password,...})` signature, and each call has a `(pluginData)`
+signature. Each call should make the plugin return any additional authentication data (`Buffer`)
+that should be sent back to the server, either synchronously or asynchronously using a `Promise`,
+or should yield an error accordingly.
+
+Example: (imaginary `ssh-key-auth` plugin) pseudo code
+
+```js
+const conn = mysql.createConnection({
+  user: 'test_user',
+  password: 'test',
+  database: 'test_database',
+  authPlugins: {
+    'ssh-key-auth': function ({ password }) {
+      return function (pluginData) {
+        return getPrivate(key)
+          .then((key) => {
+            const response = encrypt(key, password, pluginData);
+            // continue handshake by sending response data
+            return response;
+          })
+          .catch((err) => {
+            // throw error to propagate error to connect/changeUser handlers
+          });
+      };
+    },
+  },
+});
+```
+
+There is also a deprecated API where if a `authSwitchHandler` connection config option is set
+it must be a function that receives switch request data and responds via a callback. In this case,
+the first invocation always has a `({pluginName, pluginData})` signature, following calls - `({pluginData})`.
+The client replies with an opaque blob matching the requested plugin via `callback(null, data: Buffer)`.
+
+```js
+const conn = mysql.createConnection({
+  user: 'test_user',
+  password: 'test',
+  database: 'test_database',
+  authSwitchHandler: function ({ pluginName, pluginData }, cb) {
+    if (pluginName === 'ssh-key-auth') {
+      getPrivateKey((key) => {
+        const response = encrypt(key, pluginData);
+        // continue handshake by sending response data
+        // respond with error to propagate error to connect/changeUser handlers
+        cb(null, response);
+      });
+    } else {
+      const err = new Error(
+        `Unknown AuthSwitchRequest plugin name ${pluginName}`
+      );
+      err.fatal = true;
+      cb(err);
+    }
+  },
+});
+```
+
+The initial handshake is always performed using `mysql_native_password` plugin. This will be possible to override in future versions.
+
+Note that if the `mysql_native_password` method is requested it will be handled internally according
+to [Authentication::Native41](https://dev.mysql.com/doc/internals/en/secure-password-authentication.html#packet-Authentication::Native41)
+and no `authPlugins` function or the `authSwitchHandler` will be invoked.
+
+These MAY be called multiple times if the plugin algorithm requires multiple roundtrips of data
+exchange between client and server.
+
+## Multi-factor authentication
+
+If the user requires multi-factor authentication in the server, the client will receive a `AuthNextFactor`
+request, which is similar in structure to the regular authentication switch request and contains the name
+and possible initial data for the additional authentication factor plugin (up to 3). Additional passwords
+can be provided using the connection config options - `password2` and `password3`. Again, for each
+authentication factor, multiple roundtrips of data exchange can be required by the plugin algoritm.
+
+```js
+const conn = mysql.createConnection({
+  user: 'test_user',
+  password: 'secret1',
+  password2: 'secret2',
+  password3: 'secret3',
+  database: 'test_database',
+  authPlugins: {
+    // password1 === password
+    'auth-plugin1': function ({ password1 }) {
+      return function (serverPluginData) {
+        return clientPluginData(password1, serverPluginData);
+      };
+    },
+    'auth-plugin2': function ({ password2 }) {
+      return function (serverPluginData) {
+        return clientPluginData(password2, serverPluginData);
+      };
+    },
+    'auth-plugin3': function ({ password3 }) {
+      return function (serverPluginData) {
+        return clientPluginData(password3, serverPluginData);
+      };
+    },
+  },
+});
+```

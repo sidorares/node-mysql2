@@ -1,0 +1,38 @@
+name: CI - TypeScript Build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+  workflow_dispatch:
+
+jobs:
+  tests-tsc-build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22]
+
+    name: Node.js ${{ matrix.node-version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Testing TypeScript build
+        run: npm run test:tsc-build

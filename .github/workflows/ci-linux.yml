@@ -3,7 +3,7 @@ name: CI - Linux
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [main]
 
   workflow_dispatch:
 
@@ -13,110 +13,221 @@ env:
   MYSQL_DATABASE: test
 
 jobs:
-  cleanup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Delete artifacts
-        uses: jimschubert/delete-artifacts-action@v1
-        with:
-          log_level: 'debug'
-          min_bytes: '0'
-          pattern: '\.xml'
-
   tests-linux:
-    needs: [ cleanup ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16.x]
-        mysql-version: ["mysql:8.0.18", "mysql:8.0.22", "mysql:5.7"]
-        use-compression: [0]
-        use-tls: [0]
+        node-version: [18, 20, 22, 24]
+        mysql-version: ['mysql:8.3']
+        use-compression: [0, 1]
+        use-tls: [0, 1]
+        mysql_connection_url_key: ['']
+        # static-parser: [0, 1]  # Already tested in "ci-coverage"
         # TODO - add mariadb to the matrix. currently few tests are broken due to mariadb incompatibilities
-        include:
-          - node-version: "16.x"
-            mysql-version: "mysql:8.0.18"
-            use-compression: 1
-            use-tls: 0
-          - node-version: "16.x"
-            mysql-version: "mysql:8.0.18"
-            use-compression: 0
-            use-tls: 1
-          - node-version: "16.x"
-            mysql-version: "mysql:8.0.18"
-            use-compression: 1
-            use-tls: 1
-          - node-version: "14.x"
-            mysql-version: "mysql:5.7"
-            use-compression: 0
-            use-tls: 0
-          - node-version: "12.x"
-            mysql-version: "mysql:5.7"
-            use-compression: 0
-            use-tls: 0
-          - filter: "5.1only"
-            node-version: "16.x"
-            mysql-version: "datagrip/mysql:5.1"
-            use-compression: 0
-            use-tls: 0
 
-    name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
+    env:
+      MYSQL_CONNECTION_URL: ${{ secrets[matrix.mysql_connection_url_key] }}
+
+    name: Node.js ${{ matrix.node-version }} - DB ${{ matrix.mysql-version }}${{ matrix.mysql_connection_url_key }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
       - name: Set up MySQL
-        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=${{ env.MYSQL_PASSWORD }} -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/examples/custom-conf:/etc/mysql/conf.d -v $PWD/examples/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
+        if: ${{ matrix.mysql-version }}
+        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/test/fixtures/custom-conf:/etc/mysql/conf.d -v $PWD/test/fixtures/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
+
       - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-
-          
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
       - name: Install npm dependencies
         run: npm ci
+
       - name: Wait mysql server is ready
+        if: ${{ matrix.mysql-version }}
         run: node tools/wait-up.js
 
       - name: Run tests
-        run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run coverage-test
+        run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run test
+        timeout-minutes: 10
 
-      - run: echo "coverage-artifact-name=`echo -n "${{github.run_id}}-${{ matrix.node-version }}-${{ matrix.mysql-version }}-${{matrix.use-tls}}-${{matrix.use-compression}}" | shasum | cut -d " " -f 1`"  >> $GITHUB_ENV   
-      - uses: actions/upload-artifact@v2
-        with:
-          name: coverage-${{env.coverage-artifact-name}}
-          path: coverage/cobertura-coverage.xml
-      
-  coverage:
-    needs: [ tests-linux ]
+  tests-linux-bun:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        bun-version: [latest, canary]
+        mysql-version: ['mysql:8.3']
+        use-compression: [0, 1]
+        use-tls: [0, 1]
+        static-parser: [0, 1]
+
+    env:
+      STATIC_PARSER: ${{ matrix.static-parser }}
+
+    name: Bun ${{ matrix.bun-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}} Static Parser=${{matrix.static-parser}}
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Restore coverage
-        uses: actions/download-artifact@v2
-        with:
-          path: coverage
+      - uses: actions/checkout@v4
+      - name: Set up MySQL
+        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/test/fixtures/custom-conf:/etc/mysql/conf.d -v $PWD/test/fixtures/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
 
-      - name: get list of coverage files
-        run: echo "coverage-files=`find coverage | grep xml | paste -s -d\; -`"  >> $GITHUB_ENV
-      
-      - name: ReportGenerator
-        uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
+      - name: Set up Bun ${{ matrix.bun-version }}
+        uses: oven-sh/setup-bun@v1
         with:
-          reports: "${{ env.coverage-files }}"
-          targetdir: '.'
-          reporttypes: 'Cobertura'
+          bun-version: ${{ matrix.bun-version }}
 
-      - name: Debug
-        run: cat Cobertura.xml
-
-      - name: Display coverage
-        uses: ewjoachim/coverage-comment-action@v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          COVERAGE_FILE: "Cobertura.xml"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          node-version: 20
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Wait mysql server is ready
+        run: node tools/wait-up.js
+
+      # todo: run full test suite once test createServer is implemented using Bun.listen
+      - name: run tests
+        env:
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_PORT: ${{ env.MYSQL_PORT }}
+          MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
+          MYSQL_USE_TLS: ${{ matrix.use-tls }}
+          FILTER: test-select-1|test-select-ssl
+        run: bun run test:bun
+        timeout-minutes: 10
+
+  tests-linux-deno-v1:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        deno-version: [v1.x]
+        mysql-version: ['mysql:8.3']
+        use-compression: [0, 1]
+        static-parser: [0, 1]
+        # TODO: investigate error when using SSL (1)
+        #
+        # errno: -4094
+        # code: "UNKNOWN"
+        # syscall: "read"
+        use-tls: [0]
+
+    env:
+      STATIC_PARSER: ${{ matrix.static-parser }}
+
+    name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}} Static Parser=${{matrix.static-parser}}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up MySQL
+        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/test/fixtures/custom-conf:/etc/mysql/conf.d -v $PWD/test/fixtures/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
+
+      - name: Set up Deno ${{ matrix.deno-version }}
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ matrix.deno-version }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Wait mysql server is ready
+        run: node tools/wait-up.js
+
+      - name: run tests
+        env:
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_PORT: ${{ env.MYSQL_PORT }}
+          MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
+          MYSQL_USE_TLS: ${{ matrix.use-tls }}
+        run: deno task test:deno -- --denoCjs='.js,.cjs'
+        timeout-minutes: 10
+
+  tests-linux-deno-v2:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        deno-version: [v2.x, canary]
+        mysql-version: ['mysql:8.3']
+        use-compression: [0, 1]
+        static-parser: [0, 1]
+        # TODO: investigate error when using SSL (1)
+        #
+        # errno: -4094
+        # code: "UNKNOWN"
+        # syscall: "read"
+        use-tls: [0]
+
+    env:
+      STATIC_PARSER: ${{ matrix.static-parser }}
+
+    name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}} Static Parser=${{matrix.static-parser}}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up MySQL
+        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/test/fixtures/custom-conf:/etc/mysql/conf.d -v $PWD/test/fixtures/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
+
+      - name: Set up Deno ${{ matrix.deno-version }}
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ matrix.deno-version }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Wait mysql server is ready
+        run: node tools/wait-up.js
+
+      - name: run tests
+        env:
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_PORT: ${{ env.MYSQL_PORT }}
+          MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
+          MYSQL_USE_TLS: ${{ matrix.use-tls }}
+        run: deno task test:deno
+        timeout-minutes: 10

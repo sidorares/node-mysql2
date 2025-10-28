@@ -15,12 +15,12 @@ http
       const sql = q.searchParams.get('q');
       const n = q.searchParams.get('n');
       let rowsTotal = [];
-      const doQueries = function(number) {
+      const doQueries = function (number) {
         if (number === 0) {
           const body = render({ records: rowsTotal });
           res.writeHead(200, {
             'Content-Length': body.length,
-            'Content-Type': 'text/html'
+            'Content-Type': 'text/html',
           });
           res.end(body);
         } else {

@@ -1,0 +1,48 @@
+[data-theme='dark'] {
+  section {
+    &.stability {
+      &[data-level='0'] {
+        --stability-background: #e70a4c;
+        --stability-border: #b43643;
+        --stability-title-background: #fff;
+        --stability-title-color: #e70a4c;
+        --stability-text: #ffe0e6;
+        --stability-description: #ffe0e6;
+        --stability-separator: #b43643;
+      }
+
+      &[data-level='1'],
+      &[data-level='1.0'],
+      &[data-level='1.1'],
+      &[data-level='1.2'] {
+        --stability-background: #e7840a;
+        --stability-border: #806700;
+        --stability-title-background: #fff;
+        --stability-title-color: #e7840a;
+        --stability-text: #fff7ee;
+        --stability-description: #fff7ee;
+        --stability-separator: #806700;
+      }
+
+      &[data-level='2'] {
+        --stability-background: #2d8210;
+        --stability-border: #2a5e03;
+        --stability-title-background: #fff;
+        --stability-title-color: #2d8210;
+        --stability-text: #e8ffe0;
+        --stability-description: #e8ffe0;
+        --stability-separator: #2a5e03;
+      }
+
+      &[data-level='3'] {
+        --stability-background: #0a8be7;
+        --stability-border: #2a6996;
+        --stability-title-background: #fff;
+        --stability-title-color: #0a8be7;
+        --stability-text: #e0f2ff;
+        --stability-description: #e0f2ff;
+        --stability-separator: #2a6996;
+      }
+    }
+  }
+}

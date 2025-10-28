@@ -1,34 +1,26 @@
 {
   "name": "mysql2",
-  "version": "2.3.3",
+  "version": "3.15.3",
   "description": "fast mysql driver. Implements core protocol, prepared statements, ssl and compression in native JS",
   "main": "index.js",
-  "directories": {
-    "example": "examples"
-  },
+  "typings": "typings/mysql/index",
+  "type": "commonjs",
   "scripts": {
-    "lint": "npm run lint:docs && npm run lint:code",
-    "lint:code": "eslint index.js promise.js \"lib/**/*.js\" \"test/**/*.js\" \"benchmarks/**/*.js\"",
-    "lint:docs": "eslint Contributing.md \"documentation/**/*.md\" \"examples/*.js\"",
-    "test": "node ./test/run.js",
-    "coverage-test": "c8 -r cobertura -r lcov -r text node ./test/run.js",
+    "lint": "eslint . && prettier --check .",
+    "lint:fix": "eslint . --fix && prettier --write .",
+    "test": "poku -d -r=verbose --sequential test/esm test/unit test/integration",
+    "test:bun": "bun poku -d --sequential test/esm test/unit test/integration",
+    "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku -d --sequential --denoAllow=\"read,env,net,sys\" test/esm test/unit test/integration",
+    "test:tsc-build": "cd \"test/tsc-build\" && npx tsc -p \"tsconfig.json\"",
+    "coverage-test": "c8 npm run test",
     "benchmark": "node ./benchmarks/benchmark.js",
-    "prettier": "prettier --single-quote --trailing-comma none --write \"{lib,examples,test}/**/*.js\"",
-    "prettier:docs": "prettier --single-quote --trailing-comma none --write README.md documentation/*",
-    "precommit": "lint-staged",
-    "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check",
     "wait-port": "wait-on"
-  },
-  "lint-staged": {
-    "*.js": [
-      "prettier --single-quote --trailing-comma none --write",
-      "git add"
-    ]
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sidorares/node-mysql2"
+    "url": "git+https://github.com/sidorares/node-mysql2.git"
   },
+  "homepage": "https://sidorares.github.io/node-mysql2/docs",
   "keywords": [
     "mysql",
     "client",
@@ -36,7 +28,7 @@
   ],
   "files": [
     "lib",
-    "typings",
+    "typings/mysql",
     "index.js",
     "index.d.ts",
     "promise.js",
@@ -44,43 +36,45 @@
   ],
   "exports": {
     ".": "./index.js",
+    "./package.json": "./package.json",
     "./promise": "./promise.js",
     "./promise.js": "./promise.js"
   },
   "engines": {
     "node": ">= 8.0"
   },
-  "author": "Andrey Sidorov <sidorares@yandex.ru>",
+  "author": "Andrey Sidorov <andrey.sidorov@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "denque": "^2.0.1",
+    "aws-ssl-profiles": "^1.1.1",
+    "denque": "^2.1.0",
     "generate-function": "^2.3.1",
-    "iconv-lite": "^0.6.3",
-    "long": "^4.0.0",
-    "lru-cache": "^6.0.0",
-    "named-placeholders": "^1.1.2",
+    "iconv-lite": "^0.7.0",
+    "long": "^5.2.1",
+    "lru.min": "^1.0.0",
+    "named-placeholders": "^1.1.3",
     "seq-queue": "^0.0.5",
     "sqlstring": "^2.3.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.21.0",
+    "@eslint/markdown": "^7.0.0",
+    "@types/node": "^24.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
     "assert-diff": "^3.0.2",
     "benchmark": "^2.1.4",
-    "c8": "^7.10.0",
+    "c8": "^10.1.1",
     "error-stack-parser": "^2.0.3",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-async-await": "0.0.0",
-    "eslint-plugin-markdown": "^2.2.1",
-    "husky": "^7.0.2",
-    "is-async-supported": "^1.2.0",
-    "lint-staged": "^11.2.0",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-plugin-async-await": "^0.0.0",
+    "eslint-plugin-markdown": "^5.1.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "globals": "^16.0.0",
+    "poku": "^3.0.0",
     "portfinder": "^1.0.28",
-    "prettier": "^2.4.1",
-    "progress": "^2.0.3",
-    "typescript": "^4.4.3",
-    "urun": "0.0.8",
-    "utest": "0.0.8"
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.2"
   }
 }

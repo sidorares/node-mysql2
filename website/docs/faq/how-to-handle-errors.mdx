@@ -1,0 +1,282 @@
+import { FAQ } from '@site/src/components/FAQ';
+import { Stability } from '@site/src/components/Stability';
+
+# How to handle errors?
+
+This section details error handling techniques in MySQL2. It covers essential error management strategies for methods such as `createConnection`, `createPool`, `createPoolCluster`, `execute` and `query`.
+
+## Using callbacks
+
+<FAQ title='createConnection'>
+
+<Stability
+  level={2}
+  message='This solution has been tested and confirmed as the correct answer.'
+/>
+
+Handling connection errors by adding an error event listener:
+
+```js
+const mysql = require('mysql2');
+
+connection = mysql.createConnection({
+  host: '',
+  user: '',
+  database: '',
+});
+
+// highlight-start
+connection.addListener('error', (err) => {
+  if (err instanceof Error) {
+    console.log(`createConnection error:`, err);
+  }
+});
+// highlight-end
+```
+
+</FAQ>
+
+<FAQ title='createPool'>
+
+<Stability level={2} message='This solution has been tested.' />
+
+Handling connection errors through callback's `err` parameter:
+
+```js
+const mysql = require('mysql2');
+
+const pool = mysql.createPool({
+  host: '',
+  user: '',
+  database: '',
+});
+
+pool.getConnection((err, connection) => {
+  // highlight-start
+  if (err instanceof Error) {
+    console.log('pool.getConnection error:', err);
+    return;
+  }
+  // highlight-end
+});
+```
+
+</FAQ>
+
+<FAQ title='createPoolCluster'>
+
+<Stability level={2} message='This solution has been tested.' />
+
+Handling connection errors through callback's `err` parameter:
+
+```js
+const mysql = require('mysql2');
+
+const poolCluster = mysql.createPoolCluster();
+
+poolCluster.add('NodeI', {
+  host: '',
+  user: '',
+  database: '',
+});
+
+poolCluster.getConnection('NodeI', (err, connection) => {
+  // highlight-start
+  if (err instanceof Error) {
+    console.log('poolCluster.getConnection error:', err);
+    return;
+  }
+  // highlight-end
+});
+```
+
+</FAQ>
+
+<FAQ title='execute'>
+
+<Stability level={2} message='This solution has been tested.' />
+
+Handling `execute` errors through callback's `err` parameter:
+
+```js
+connection.execute('SELEC 1 + 1', (err, rows) => {
+  // highlight-start
+  if (err instanceof Error) {
+    console.log('execute error:', err);
+    return;
+  }
+  // highlight-end
+
+  console.log(rows);
+});
+```
+
+- It will work for both **createConnection**, **createPool** and **createPoolCluster** connections.
+
+</FAQ>
+
+<FAQ title='query'>
+
+<Stability level={2} message='This solution has been tested.' />
+
+Handling `query` errors through callback's `err` parameter:
+
+```js
+connection.query('SELEC 1 + 1', (err, rows) => {
+  // highlight-start
+  if (err instanceof Error) {
+    console.log('query error:', err);
+    return;
+  }
+  // highlight-end
+
+  console.log(rows);
+});
+```
+
+- It will work for both **createConnection**, **createPool** and **createPoolCluster** connections.
+
+</FAQ>
+
+## Using promises
+
+<FAQ title='createConnection'>
+
+<Stability
+  level={2}
+  message='This solution has been tested and confirmed as the correct answer.'
+/>
+
+Handling connection errors through `try-catch` block:
+
+```js
+import mysql from 'mysql2/promise';
+
+try {
+  const connection = await mysql.createConnection({
+    host: '',
+    user: '',
+    database: '',
+  });
+  // highlight-start
+} catch (err) {
+  if (err instanceof Error) {
+    console.log(err);
+  }
+}
+// highlight-end
+```
+
+</FAQ>
+
+<FAQ title='createPool'>
+
+<Stability level={2} message='This solution has been tested.' />
+
+Handling connection errors through `try-catch` block:
+
+```js
+import mysql from 'mysql2/promise';
+
+const pool = mysql.createPool({
+  host: '',
+  user: '',
+  database: '',
+});
+
+try {
+  const connection = await pool.getConnection();
+  // highlight-start
+} catch (err) {
+  if (err instanceof Error) {
+    console.log(err);
+  }
+}
+// highlight-end
+```
+
+</FAQ>
+
+<FAQ title='createPoolCluster'>
+
+<Stability level={2} message='This solution has been tested.' />
+
+Handling connection errors through `try-catch` block:
+
+```js
+import mysql from 'mysql2/promise';
+
+const poolCluster = mysql.createPoolCluster();
+
+poolCluster.add('NodeI', {
+  host: '',
+  user: '',
+  database: '',
+});
+
+try {
+  await poolCluster.getConnection('NodeI');
+  // highlight-start
+} catch (err) {
+  if (err instanceof Error) {
+    console.log('createConnection error:', err);
+  }
+}
+// highlight-end
+```
+
+</FAQ>
+
+<FAQ title='execute'>
+
+<Stability level={2} message='This solution has been tested.' />
+
+Handling `execute` errors through `try-catch` block:
+
+```js
+try {
+  const [rows] = await connection.execute('SELEC 1 + 1');
+  console.log(rows);
+  // highlight-start
+} catch (err) {
+  if (err instanceof Error) {
+    console.log('execute error:', err);
+  }
+}
+// highlight-end
+```
+
+- It will work for both **createConnection**, **createPool** and **createPoolCluster** connections.
+
+</FAQ>
+
+<FAQ title='query'>
+
+<Stability level={2} message='This solution has been tested.' />
+
+Handling `query` errors through `try-catch` block:
+
+```js
+try {
+  const [rows] = await connection.query('SELEC 1 + 1');
+  console.log(rows);
+  // highlight-start
+} catch (err) {
+  if (err instanceof Error) {
+    console.log('query error:', err);
+  }
+}
+// highlight-end
+```
+
+- It will work for both **createConnection**, **createPool** and **createPoolCluster** connections.
+
+</FAQ>
+
+<hr />
+
+## Related Links
+
+- Discussions
+  - [#1998](https://github.com/sidorares/node-mysql2/discussions/1998)
+  - [#2282](https://github.com/sidorares/node-mysql2/discussions/2282)

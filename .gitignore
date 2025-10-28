@@ -9,7 +9,6 @@ lib-cov
 .DS_Store
 .idea/
 .vscode/
-.npmrc
 coverage/
 mysqldata/
 
@@ -20,3 +19,4 @@ logs
 node_modules
 npm-debug.log
 benchmarks/results.json
+!test/fixtures/data.csv

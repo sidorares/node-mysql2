@@ -1,0 +1,43 @@
+/**
+ * Credits: https://cssloaders.github.io/
+ */
+
+.loader {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  display: block;
+  margin: 2.375rem 1.1875rem;
+  position: relative;
+  color: var(--ifm-color-primary-lightest);
+  box-sizing: border-box;
+  animation: animloader 1s linear infinite alternate;
+  transform: scale(0.5);
+}
+
+@keyframes animloader {
+  0% {
+    box-shadow:
+      -2.375rem -0.35rem,
+      -0.875rem 0.35rem,
+      0.875rem -0.35rem;
+  }
+  33% {
+    box-shadow:
+      -2.375rem 0.35rem,
+      -0.875rem -0.35rem,
+      0.875rem 0.35rem;
+  }
+  66% {
+    box-shadow:
+      -2.375rem -0.35rem,
+      -0.875rem 0.35rem,
+      0.875rem -0.35rem;
+  }
+  100% {
+    box-shadow:
+      -2.375rem 0.35rem,
+      -0.875rem -0.35rem,
+      0.875rem 0.35rem;
+  }
+}

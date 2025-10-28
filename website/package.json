@@ -1,0 +1,61 @@
+{
+  "name": "website",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "typecheck": "tsc",
+    "lintcheck": "biome lint --error-on-warnings && prettier --check .",
+    "lint": "biome lint --write . && prettier --write .",
+    "test:unit": "poku test/unit",
+    "test": "npm run typecheck && npm run lintcheck && npm run test:unit && npm run clear && npm run build",
+    "update": "pu minor; npm i; npm run lint"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.9.1",
+    "@docusaurus/preset-classic": "^3.9.2",
+    "@easyops-cn/docusaurus-search-local": "^0.52.1",
+    "@mdx-js/react": "^3.1.1",
+    "clsx": "^2.1.1",
+    "docusaurus-plugin-sass": "^0.2.6",
+    "lucide-react": "^0.548.0",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.2.0",
+    "sass": "^1.93.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@docusaurus/module-type-aliases": "^3.9.1",
+    "@docusaurus/tsconfig": "^3.9.2",
+    "@docusaurus/types": "^3.9.1",
+    "@types/node": "^24.9.1",
+    "packages-update": "^2.0.0",
+    "poku": "^3.0.2",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0"
+  }
+}

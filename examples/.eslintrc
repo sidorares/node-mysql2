@@ -1,9 +1,0 @@
-{
-    "rules": {
-        "no-undef": "off",
-        "no-unused-vars": "off",
-        "no-console": "off",
-        "no-unused-labels": "off"
-    }
-  }
-  

@@ -1,0 +1,13 @@
+const makeSelector = {
+  RR() {
+    let index = 0;
+    return clusterIds => clusterIds[index++ % clusterIds.length];
+  },
+  RANDOM() {
+    return clusterIds =>
+      clusterIds[Math.floor(Math.random() * clusterIds.length)];
+  },
+  ORDER() {
+    return clusterIds => clusterIds[0];
+  }
+};

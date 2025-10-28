@@ -1,16 +1,10 @@
+// TODO (major version): remove workaround for `Field` compatibility.
+import { TypeCastField } from '../../../lib/parsers/index.js';
 
-declare interface Field {
-    constructor: {
-        name: 'Field'
-    };
-    db: string;
-    table: string;
-    name: string;
-    type: string;
-    length: number;
-    string: Function;
-    buffer: Function;
-    geometry: Function;
-}
+/**
+ * @deprecated
+ * `Field` is deprecated and might be removed in the future major release. Please use `TypeCastField` type instead.
+ */
+declare interface Field extends TypeCastField {}
 
-export = Field;
+export { Field };

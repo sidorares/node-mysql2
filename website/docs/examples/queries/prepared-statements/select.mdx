@@ -1,0 +1,206 @@
+---
+sidebar_position: 1
+tags: [Prepared Statements, Placeholders, Parameters, execute]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { FAQ } from '@site/src/components/FAQ';
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
+
+# SELECT
+
+## execute(sql, values)
+
+> **execute(sql: string, values: any[])**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+try {
+  const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
+  const values = ['Page', 45];
+
+  // highlight-next-line
+  const [rows, fields] = await connection.execute(sql, values);
+
+  console.log(rows);
+  console.log(fields);
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
+const values = ['Page', 45];
+
+connection.execute(sql, values, (err, rows, fields) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  console.log(rows);
+  console.log(fields);
+});
+```
+
+  </TabItem>
+</Tabs>
+
+- **rows** contains rows returned by server
+- **fields** contains extra meta data about rows, if available
+
+:::info
+The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
+<hr />
+
+## execute(options)
+
+> **execute(options: [QueryOptions](#queryoptions))**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+try {
+  const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
+  const values = ['Page', 45];
+
+  // highlight-start
+  const [rows, fields] = await connection.execute({
+    sql,
+    values,
+    // ... other options
+  });
+  // highlight-end
+
+  console.log(rows);
+  console.log(fields);
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
+const values = ['Page', 45];
+
+connection.execute(
+  {
+    sql,
+    values,
+    // ... other options
+  },
+  (err, rows, fields) => {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    console.log(rows);
+    console.log(fields);
+  }
+);
+```
+
+  </TabItem>
+</Tabs>
+
+- **rows** contains rows returned by server
+- **fields** contains extra meta data about rows, if available
+
+:::info
+The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
+<hr />
+
+## execute(options, values)
+
+> **execute(options: [QueryOptions](#queryoptions), values: any[])**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+try {
+  const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
+  const values = ['Page', 45];
+
+  // highlight-start
+  const [rows, fields] = await connection.execute(
+    {
+      sql,
+      // ... other options
+    },
+    values
+  );
+  // highlight-end
+
+  console.log(rows);
+  console.log(fields);
+} catch (err) {
+  console.log(err);
+}
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const sql = 'SELECT * FROM `users` WHERE `name` = ? AND `age` > ?';
+const values = ['Page', 45];
+
+connection.execute(
+  {
+    sql,
+    // ... other options
+  },
+  values,
+  (err, rows, fields) => {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    console.log(rows);
+    console.log(fields);
+  }
+);
+```
+
+  </TabItem>
+</Tabs>
+
+- **rows** contains rows returned by server
+- **fields** contains extra meta data about rows, if available
+
+:::info
+The connection used for the query (`execute`) can be obtained through the `createConnection`, `createPool` or `createPoolCluster` methods.
+:::
+
+<hr />
+
+## Glossary
+
+### QueryOptions
+
+<FAQ title={'QueryOptions Specification'}>
+  <ExternalCodeEmbed
+    language='ts'
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/protocol/sequences/Query.d.ts'
+    extractMethod='QueryOptions'
+    methodType='interface'
+  />
+</FAQ>

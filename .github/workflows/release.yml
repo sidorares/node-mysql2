@@ -1,0 +1,44 @@
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+name: release-please
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: node
+          package-name: mysql2
+          changelog-path: 'Changelog.md'
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      - uses: actions/setup-node@v4
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
+      - run: npm ci
+        if: ${{ steps.release.outputs.release_created }}
+
+      - run: npm publish --provenance
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
