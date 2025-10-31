@@ -1,5 +1,5 @@
 /**
- * @license lucide-react v0.548.0 - ISC
+ * @license lucide-react v0.552.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
