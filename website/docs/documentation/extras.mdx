@@ -127,15 +127,15 @@ const pool = mysql.createPool({
       proxy: {
         host: 'localhost',
         port: 1080,
-        type: 5
+        type: 5,
       },
       destination: {
         host: 'remote.host',
-        port: 3306
-      }
+        port: 3306,
+      },
     });
     return socket; // must be a Duplex stream
-  }
+  },
 });
 ```
 
