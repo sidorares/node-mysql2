@@ -100,25 +100,10 @@ test(async () => {
   const mySqlVersion = await common.getMysqlVersion(connection);
 
   const hasIncorrectPrepareParameter = (() => {
+    const incorrectVersions = ['8.1.0', '8.2.0', '8.3.0', '8.4.0'];
     const { major, minor, patch } = mySqlVersion;
-
-    if (major === 9) return false;
-    if (major === 8 && minor === 4 && patch === 1) return false;
-    if (major === 8 && minor === 0 && patch >= 38) return false;
-
-    if (major > 8) {
-      return true;
-    }
-
-    if (major === 8 && minor > 0) {
-      return true;
-    }
-
-    if (major === 8 && minor === 0 && patch >= 22) {
-      return true;
-    }
-
-    return false;
+    const verString = `${major}.${minor}.${patch}`;
+    return incorrectVersions.includes(verString);
   })();
 
   await test(
