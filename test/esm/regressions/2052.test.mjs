@@ -102,7 +102,7 @@ test(async () => {
   const hasIncorrectPrepareParameter = (() => {
     const { major, minor, patch } = mySqlVersion;
     // > 9 fixed
-    if (major > 9) return false;
+    if (major >= 9) return false;
 
     // 8.0 fixed, but only if 8.0.38+
     // NOTE: We assume < 8.0.38 might be buggy, even though some builds behave correctly (e.g., 8.0.1)
