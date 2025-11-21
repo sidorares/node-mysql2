@@ -24,7 +24,7 @@ jobs:
             'mysql:8.1',
             'mysql:8.2',
             # 'mysql:8.3', # Already tested in "ci-linux"
-            # 'mysql:8.4', # TODO: Tests never end
+            'mysql:8.4',
             # 'mysql:9.0', # Already tested in "ci-coverage"
             'mysql:9.1',
             'mysql:9.2',

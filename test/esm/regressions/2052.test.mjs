@@ -100,22 +100,10 @@ test(async () => {
   const mySqlVersion = await common.getMysqlVersion(connection);
 
   const hasIncorrectPrepareParameter = (() => {
+    const incorrectVersions = ['8.1.0', '8.2.0', '8.3.0', '8.4.0'];
     const { major, minor, patch } = mySqlVersion;
-    // > 9 fixed
-    if (major >= 9) return false;
-
-    // 8.0 fixed, but only if 8.0.38+
-    // NOTE: We assume < 8.0.38 might be buggy, even though some builds behave correctly (e.g., 8.0.1)
-    if (major === 8 && minor === 0) return patch < 38;
-
-    // 8.1, 8.2, 8.3 do not have the fix.
-    if (major === 8 && (minor === 1 || minor === 2 || minor === 3)) return true;
-
-    // 8.4 fixed, but only 8.4.1+ onward
-    if (major === 8 && minor === 4) return patch < 1;
-
-    // everything else (MySQL < 8) was always correct
-    return false;
+    const verString = `${major}.${minor}.${patch}`;
+    return incorrectVersions.includes(verString);
   })();
 
   await test(
