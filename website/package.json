@@ -27,7 +27,7 @@
     "docusaurus-plugin-sass": "^0.2.6",
     "lucide-react": "^0.555.0",
     "prism-react-renderer": "^2.4.1",
-    "react": "^19.1.1",
+    "react": "^19.2.1",
     "react-dom": "^19.2.0",
     "sass": "^1.94.2"
   },
