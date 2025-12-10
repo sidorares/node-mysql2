@@ -339,7 +339,9 @@ export interface ConnectionOptions {
   gracefulEnd?: boolean;
 }
 
-declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
+declare class BaseConnection extends QueryableBase(
+  ExecutableBase(EventEmitter),
+) {
   config: ConnectionOptions;
 
   threadId: number;
@@ -410,8 +412,6 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
 
   serverHandshake(args: any): any;
 
-  promise(promiseImpl?: PromiseConstructor): PromiseConnection;
-
   ping(callback?: (err: QueryError | null) => any): void;
 
   writeOk(args?: OkPacketParams): void;
@@ -427,4 +427,7 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
   sequenceId: number;
 }
 
-export { Connection };
+declare class Connection extends BaseConnection {
+  promise(promiseImpl?: PromiseConstructor): PromiseConnection;
+}
+export { Connection, BaseConnection };
