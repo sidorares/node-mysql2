@@ -134,12 +134,22 @@ assert.strictEqual(
 );
 
 // Cleanup
-[conn1, conn2, conn3, conn4, conn5, conn6, conn7, conn8, conn9, conn10, conn11].forEach(
-  (conn) => {
-    try {
-      conn.destroy();
-    } catch (e) {
-      // Ignore cleanup errors
-    }
+[
+  conn1,
+  conn2,
+  conn3,
+  conn4,
+  conn5,
+  conn6,
+  conn7,
+  conn8,
+  conn9,
+  conn10,
+  conn11,
+].forEach((conn) => {
+  try {
+    conn.destroy();
+  } catch (e) {
+    // Ignore cleanup errors
   }
-);
+});
