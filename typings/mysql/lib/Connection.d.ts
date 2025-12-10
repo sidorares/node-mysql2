@@ -340,11 +340,11 @@ export interface ConnectionOptions {
 }
 
 export type ConnectionState =
-  | "disconnected"
-  | "protocol_handshake"
-  | "connected"
-  | "authenticated"
-  | "error";
+  | 'disconnected'
+  | 'protocol_handshake'
+  | 'connected'
+  | 'authenticated'
+  | 'error';
 
 declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
   config: ConnectionOptions;
