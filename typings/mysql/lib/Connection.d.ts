@@ -339,12 +339,21 @@ export interface ConnectionOptions {
   gracefulEnd?: boolean;
 }
 
+export type ConnectionState =
+  | 'disconnected'
+  | 'protocol_handshake'
+  | 'connected'
+  | 'authenticated'
+  | 'error';
+
 declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
   config: ConnectionOptions;
 
   threadId: number;
 
   authorized: boolean;
+
+  readonly state: ConnectionState;
 
   static createQuery<
     T extends
