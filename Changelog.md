@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.16.0](https://github.com/sidorares/node-mysql2/compare/v3.15.3...v3.16.0) (2025-12-16)
+
+
+### Features
+
+* **BaseConnection:** add state getter to track connection lifecycle ([#3958](https://github.com/sidorares/node-mysql2/issues/3958)) ([a394487](https://github.com/sidorares/node-mysql2/commit/a3944878cc0f7e8e4476699f8390f7cad0963770))
+
 ## [3.15.3](https://github.com/sidorares/node-mysql2/compare/v3.15.2...v3.15.3) (2025-10-21)
 
 
