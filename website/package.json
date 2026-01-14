@@ -36,7 +36,7 @@
     "@docusaurus/module-type-aliases": "^3.9.1",
     "@docusaurus/tsconfig": "^3.9.2",
     "@docusaurus/types": "^3.9.1",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.0.8",
     "packages-update": "^2.0.0",
     "poku": "^3.0.2",
     "prettier": "^3.7.4",
