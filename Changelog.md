@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.16.1](https://github.com/sidorares/node-mysql2/compare/v3.16.0...v3.16.1) (2026-01-15)
+
+
+### Bug Fixes
+
+* **named-placeholders:** improve handling of mixed/nested quotes in query parsing ([#4011](https://github.com/sidorares/node-mysql2/issues/4011)) ([3e00cd7](https://github.com/sidorares/node-mysql2/commit/3e00cd75b86c9f927bcf766529bd842bb936abf0))
+
 ## [3.16.0](https://github.com/sidorares/node-mysql2/compare/v3.15.3...v3.16.0) (2025-12-16)
 
 
