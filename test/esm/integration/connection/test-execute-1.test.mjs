@@ -29,9 +29,10 @@ const common = require('../../../common.test.cjs');
       common.describeOptions
     );
 
-    const [_rows, _fields] = await connection.execute('SELECT 1+? as test', [
-      123,
-    ]);
+    const [_rows, _fields] = await connection.execute(
+      'SELECT 1+? as test',
+      [123]
+    );
 
     assert.deepEqual(
       _rows,

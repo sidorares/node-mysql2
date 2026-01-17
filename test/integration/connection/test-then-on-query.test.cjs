@@ -11,7 +11,7 @@ let error = true;
 const q = connection.query('SELECT 1');
 try {
   if (q.then) q.then();
-} catch (err) {
+} catch {
   error = false;
 }
 q.on('end', () => {

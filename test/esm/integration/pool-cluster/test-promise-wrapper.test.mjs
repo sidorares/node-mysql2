@@ -140,7 +140,7 @@ const { createPoolCluster } = require('../../../../promise.js');
         'SLAVE1',
         'should match regex pattern'
       );
-    } catch (error) {
+    } catch {
       assert.fail('should not throw');
     } finally {
       poolCluster.end();

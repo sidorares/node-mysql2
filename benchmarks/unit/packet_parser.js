@@ -3,7 +3,7 @@
 const p = Buffer.allocUnsafe(65535 * 10);
 let offset = 0;
 const plen = 17;
-// eslint-disable-next-line no-constant-condition
+
 while (true) {
   if (p.length - offset >= plen + 4) {
     p[offset] = plen;
