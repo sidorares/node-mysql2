@@ -18,11 +18,11 @@ services:
     container_name: node
     environment:
       MYSQL_HOST: mysql
-      CI: '1'
+      CI: 1
       # Debugging
-      MYSQL_USE_COMPRESSION: '0'
-      MYSQL_USE_TLS: '0'
-      STATIC_PARSER: '0'
+      MYSQL_USE_COMPRESSION: 0
+      MYSQL_USE_TLS: 0
+      STATIC_PARSER: 0
       FILTER: ''
     volumes:
       - ../:/usr/app:ro
@@ -37,11 +37,11 @@ services:
     container_name: deno
     environment:
       MYSQL_HOST: mysql
-      CI: '1'
+      CI: 1
       # Debugging
-      MYSQL_USE_COMPRESSION: '0'
-      MYSQL_USE_TLS: '0'
-      STATIC_PARSER: '0'
+      MYSQL_USE_COMPRESSION: 0
+      MYSQL_USE_TLS: 0
+      STATIC_PARSER: 0
     volumes:
       - ../:/usr/app:ro
     working_dir: /usr/app
@@ -55,11 +55,11 @@ services:
     container_name: bun
     environment:
       MYSQL_HOST: mysql
-      CI: '1'
+      CI: 1
       # Debugging
-      MYSQL_USE_COMPRESSION: '0'
-      MYSQL_USE_TLS: '0'
-      STATIC_PARSER: '0'
+      MYSQL_USE_COMPRESSION: 0
+      MYSQL_USE_TLS: 0
+      STATIC_PARSER: 0
       FILTER: 'test-select-1|test-select-ssl'
     volumes:
       - ../:/usr/app:ro
@@ -74,11 +74,11 @@ services:
     container_name: coverage
     environment:
       MYSQL_HOST: mysql
-      CI: '1'
+      CI: 1
       # Debugging
-      MYSQL_USE_COMPRESSION: '0'
-      MYSQL_USE_TLS: '0'
-      STATIC_PARSER: '0'
+      MYSQL_USE_COMPRESSION: 0
+      MYSQL_USE_TLS: 0
+      STATIC_PARSER: 0
       FILTER: ''
     volumes:
       - ../:/usr/app:ro
