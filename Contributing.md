@@ -145,10 +145,10 @@ You can easily run tests through **Node.js**, **Bun**, and **Deno** via **Docker
 npm run test:docker:node
 
 # Bun
-npm run test:docker:node
+npm run test:docker:bun
 
 # Deno
-npm run test:docker:bun
+npm run test:docker:deno
 
 # Coverage (Node.js)
 npm run test:docker:coverage
