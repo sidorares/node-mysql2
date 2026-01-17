@@ -155,7 +155,7 @@ npm run test:docker:coverage
 ```
 
 > [!TIP]
-> You can temporarily customize the [`docker-compose.yml`](./test/docker-compose.yml) file for improved debugging by enabling or disabling features, such as compression, TLS/SSL, static parser, and also filter tests:
+> You can temporarily customize the [`docker-compose.yml`](./test/docker-compose.yml) file for improved debugging by enabling (`1`) or disabling (`0`) features, such as compression, TLS/SSL, static parser, and also filter tests:
 >
 > ```yml
 > MYSQL_USE_COMPRESSION: 0
