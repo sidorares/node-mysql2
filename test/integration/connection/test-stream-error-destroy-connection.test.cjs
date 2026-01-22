@@ -3,6 +3,8 @@
 const { assert, describe, beforeEach, afterEach, it } = require('poku');
 const common = require('../../common.test.cjs');
 
+const { database: currentDatabase } = common.config;
+
 describe('test stream error destroy connection:', async () => {
   let connection;
 
@@ -66,7 +68,7 @@ describe('test stream error destroy connection:', async () => {
 
     assert.equal(
       uncaughtExceptionError.message,
-      "Table 'test.invalid_table' doesn't exist"
+      `Table '${currentDatabase}.invalid_table' doesn't exist`
     );
   });
 
@@ -90,7 +92,7 @@ describe('test stream error destroy connection:', async () => {
 
     assert.equal(
       uncaughtExceptionError.message,
-      "Table 'test.invalid_table' doesn't exist"
+      `Table '${currentDatabase}.invalid_table' doesn't exist`
     );
   });
 });
