@@ -4,6 +4,7 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const common = require('../../../common.test.cjs');
+const { database: currentDatabase } = common.config;
 
 await describe('Custom inspect for column definition', async () => {
   let connection;
@@ -95,7 +96,7 @@ await describe('Custom inspect for column definition', async () => {
         inspectResults,
         util.inspect({
           catalog: 'def',
-          schema: 'test',
+          schema: currentDatabase,
           name: 'decimal13_10',
           orgName: 'decimal13_10',
           table: 'test_fields2',
