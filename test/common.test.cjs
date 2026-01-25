@@ -120,7 +120,7 @@ exports.createConnection = function (args) {
     ssl: (args && args.ssl) ?? config.ssl,
     jsonStrings: args && args.jsonStrings,
     disableEval,
-    flags: args && args.flags
+    flags: args && args.flags,
   };
 
   const conn = driver.createConnection(params);
