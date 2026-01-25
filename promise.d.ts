@@ -10,7 +10,7 @@ import {
   PoolOptions,
   PoolClusterOptions,
   Pool as CorePool,
-  ConnectionState
+  ConnectionState,
 } from './index.js';
 import { ExecutableBase as ExecutableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/ExecutableBase.js';
 import { QueryableBase as QueryableBaseClass } from './typings/mysql/lib/protocol/sequences/promise/QueryableBase.js';
