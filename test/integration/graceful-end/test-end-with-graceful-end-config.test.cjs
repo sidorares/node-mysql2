@@ -15,13 +15,30 @@ const { assert } = require('poku');
 const pool = new createPool({ gracefulEnd: true });
 let warningEmitted = false;
 
-pool.getConnection((_err1, connection) => {
+pool.getConnection((err, connection) => {
+  if (err) {
+    throw err;
+  }
   connection.on('warn', () => {
     warningEmitted = true;
   });
 
   connection.end();
   pool.end();
+});
+
+const pool2 = new createPool({ gracefulEnd: true });
+pool2.getConnection((err, connection) => {
+  if (err) {
+    throw err;
+  }
+  connection.on('warn', () => {
+    warningEmitted = true;
+  });
+
+  connection.end(() => {
+    pool2.end();
+  });
 });
 
 process.on('exit', () => {
