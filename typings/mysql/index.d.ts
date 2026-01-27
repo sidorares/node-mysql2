@@ -39,6 +39,7 @@ export * from './lib/protocol/packets/index.js';
 export * from './lib/Auth.js';
 export * from './lib/constants/index.js';
 export * from './lib/parsers/index.js';
+export * from './lib/Connection.js';
 
 // Expose class interfaces
 export interface Connection extends BaseConnection {}

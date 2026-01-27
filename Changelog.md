@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.16.2](https://github.com/sidorares/node-mysql2/compare/v3.16.1...v3.16.2) (2026-01-26)
+
+
+### Bug Fixes
+
+* **types:** add missing `ConnectionState` type to Promise Connection interface ([#4034](https://github.com/sidorares/node-mysql2/issues/4034)) ([2927949](https://github.com/sidorares/node-mysql2/commit/2927949ded2b7e3b33cb6439bf0222d78016350c))
+
 ## [3.16.1](https://github.com/sidorares/node-mysql2/compare/v3.16.0...v3.16.1) (2026-01-15)
 
 
