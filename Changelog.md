@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.16.3](https://github.com/sidorares/node-mysql2/compare/v3.16.2...v3.16.3) (2026-02-03)
+
+
+### Bug Fixes
+
+* **constants:** remove unsupported CLIENT_DEPRECATE_EOF flag from constants ([#4033](https://github.com/sidorares/node-mysql2/issues/4033)) ([46c3f60](https://github.com/sidorares/node-mysql2/commit/46c3f6036c07aa02b71adfc97b803e1066a8758b))
+
 ## [3.16.2](https://github.com/sidorares/node-mysql2/compare/v3.16.1...v3.16.2) (2026-01-26)
 
 
