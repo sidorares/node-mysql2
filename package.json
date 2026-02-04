@@ -20,8 +20,7 @@
     "test:docker:coverage": "npm run test:docker:up -- coverage && npm run test:docker:down",
     "coverage-test": "c8 npm run test",
     "benchmark": "node ./benchmarks/benchmark.js",
-    "wait-port": "wait-on",
-    "temp": "poku test/unit/sqlstring.test.cjs test/esm/unit/protocol/SqlString.test.mjs test/esm/unit/parsers/stringify-objects-as-false.test.mjs test/esm/unit/parsers/stringify-objects-as-true.test.mjs"
+    "wait-port": "wait-on"
   },
   "repository": {
     "type": "git",
