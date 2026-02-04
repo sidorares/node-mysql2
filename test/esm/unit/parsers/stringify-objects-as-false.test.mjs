@@ -14,6 +14,8 @@ const connection = driver
 
 const format = (sql, values) => connection.connection.format(sql, values);
 
+await connection.end();
+
 describe('SELECT without values', () => {
   it('should return the query unchanged', () => {
     const query = format('SELECT * FROM users', []);
@@ -124,5 +126,3 @@ describe('SELECT and INSERT with Date parameter', () => {
     );
   });
 });
-
-await connection.end();
