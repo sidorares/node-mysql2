@@ -20,7 +20,8 @@
     "test:docker:coverage": "npm run test:docker:up -- coverage && npm run test:docker:down",
     "coverage-test": "c8 npm run test",
     "benchmark": "node ./benchmarks/benchmark.js",
-    "wait-port": "wait-on"
+    "wait-port": "wait-on",
+    "temp": "poku test/unit/sqlstring.test.cjs test/esm/unit/protocol/SqlString.test.mjs test/esm/unit/parsers/stringify-objects-as-false.test.mjs test/esm/unit/parsers/stringify-objects-as-true.test.mjs"
   },
   "repository": {
     "type": "git",
@@ -60,7 +61,7 @@
     "lru.min": "^1.1.3",
     "named-placeholders": "^1.1.6",
     "seq-queue": "^0.0.5",
-    "sqlstring": "^2.3.3"
+    "sql-escaper": "^0.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
