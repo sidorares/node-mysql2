@@ -2,7 +2,7 @@ import { assert, describe, it } from 'poku';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
-const { config } = require('../../../common.test.cjs');
+const { config, localDate } = require('../../../common.test.cjs');
 const driver = require('../../../../index.js');
 
 const connection = driver
@@ -87,12 +87,32 @@ describe('DELETE with object parameter', () => {
 });
 
 describe('SET with object parameter', () => {
-  it('should stringify object instead of expanding to key-value pairs', () => {
+  it('should stringify object instead of expanding for UPDATE SET clause', () => {
     const query = format('UPDATE users SET ?', [
       { name: 'foo', email: 'bar@test.com' },
     ]);
 
     assert.strictEqual(query, "UPDATE users SET '[object Object]'");
+  });
+
+  it('should stringify object instead of expanding for INSERT SET clause', () => {
+    const query = format('INSERT INTO users SET ?', [
+      { name: 'foo', email: 'bar@test.com' },
+    ]);
+
+    assert.strictEqual(query, "INSERT INTO users SET '[object Object]'");
+  });
+
+  it('should stringify object instead of expanding for ON DUPLICATE KEY UPDATE clause', () => {
+    const query = format(
+      'INSERT INTO users (name, email) VALUES (?, ?) ON DUPLICATE KEY UPDATE ?',
+      ['foo', 'bar@test.com', { name: 'foo', email: 'bar@test.com' }]
+    );
+
+    assert.strictEqual(
+      query,
+      "INSERT INTO users (name, email) VALUES ('foo', 'bar@test.com') ON DUPLICATE KEY UPDATE '[object Object]'"
+    );
   });
 });
 
@@ -103,7 +123,7 @@ describe('SELECT and INSERT with Date parameter', () => {
 
     assert.strictEqual(
       query,
-      "SELECT * FROM events WHERE created_at = '2026-01-01 10:30:00.000'"
+      `SELECT * FROM events WHERE created_at = '${localDate(date)}'`
     );
   });
 
@@ -116,7 +136,7 @@ describe('SELECT and INSERT with Date parameter', () => {
 
     assert.strictEqual(
       query,
-      "INSERT INTO logs (message, created_at) VALUES ('test', '2026-01-01 00:00:00.000')"
+      `INSERT INTO logs (message, created_at) VALUES ('test', '${localDate(date)}')`
     );
   });
 });

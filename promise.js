@@ -1,6 +1,6 @@
 'use strict';
 
-const SqlString = require('sqlstring');
+const SqlString = require('sql-escaper');
 const EventEmitter = require('events').EventEmitter;
 const parserCache = require('./lib/parsers/parser_cache.js');
 const PoolCluster = require('./lib/pool_cluster.js');
