@@ -187,8 +187,8 @@ test(() => {
 });
 
 test(() => {
-  const sql = SqlString.format('?', { hello: 'world' });
-  assert.equal(sql, "`hello` = 'world'", 'objects is converted to values');
+  const sql = SqlString.format('SET ?', { hello: 'world' });
+  assert.equal(sql, "SET `hello` = 'world'", 'objects is converted to values');
 });
 
 test(() => {

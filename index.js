@@ -1,6 +1,6 @@
 'use strict';
 
-const SqlString = require('sqlstring');
+const SqlString = require('sql-escaper');
 
 const ConnectionConfig = require('./lib/connection_config.js');
 const parserCache = require('./lib/parsers/parser_cache.js');
