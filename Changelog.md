@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.16.4](https://github.com/sidorares/node-mysql2/compare/v3.16.3...v3.16.4) (2026-02-10)
+
+
+### Bug Fixes
+
+* **security:** resolve a potential SQL injection bypass through objects ([#4054](https://github.com/sidorares/node-mysql2/issues/4054)) ([7f133cc](https://github.com/sidorares/node-mysql2/commit/7f133cc0a75f82e35a9dabc8102d1e7470df1117))
+
 ## [3.16.3](https://github.com/sidorares/node-mysql2/compare/v3.16.2...v3.16.3) (2026-02-03)
 
 
