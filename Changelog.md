@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.16.4](https://github.com/sidorares/node-mysql2/compare/v3.16.3...v3.16.4) (2026-02-10)
+## [3.17.0](https://github.com/sidorares/node-mysql2/compare/v3.16.3...v3.17.0) (2026-02-10)
 
 
 ### Bug Fixes
