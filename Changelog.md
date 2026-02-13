@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.1](https://github.com/sidorares/node-mysql2/compare/v3.17.0...v3.17.1) (2026-02-13)
+
+
+### Bug Fixes
+
+* expand object params after `ON DUPLICATE KEY UPDATE` preceded by `SET` ([#4076](https://github.com/sidorares/node-mysql2/issues/4076)) ([4d2b930](https://github.com/sidorares/node-mysql2/commit/4d2b9307507f2219492a253c10b5e36a1a4febde))
+
 ## [3.17.0](https://github.com/sidorares/node-mysql2/compare/v3.16.3...v3.17.0) (2026-02-10)
 
 
