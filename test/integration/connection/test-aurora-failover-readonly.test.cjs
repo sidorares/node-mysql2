@@ -19,6 +19,12 @@ if (typeof Deno !== 'undefined') process.exit(0);
 let connId = 0;
 let failoverTriggered = false;
 
+const readOnlyError = {
+  code: 1290,
+  message:
+    'The MySQL server is running with the --read-only option so it cannot execute this statement',
+};
+
 const server = mysql.createServer((conn) => {
   conn.on('error', () => {});
 
@@ -38,11 +44,15 @@ const server = mysql.createServer((conn) => {
     if (!failoverTriggered) {
       conn.writeOk();
     } else {
-      conn.writeError({
-        code: 1290,
-        message:
-          'The MySQL server is running with the --read-only option so it cannot execute this statement',
-      });
+      conn.writeError(readOnlyError);
+    }
+  });
+
+  conn.on('stmt_prepare', () => {
+    if (!failoverTriggered) {
+      conn.writeOk();
+    } else {
+      conn.writeError(readOnlyError);
     }
   });
 });
@@ -50,6 +60,9 @@ const server = mysql.createServer((conn) => {
 let writeError;
 let firstThreadId;
 let secondThreadId;
+let executeError;
+let executeFirstThreadId;
+let executeSecondThreadId;
 
 portfinder.getPort((err, port) => {
   server.listen(port);
@@ -83,8 +96,26 @@ portfinder.getPort((err, port) => {
           assert.ifError(err);
           secondThreadId = conn2.threadId;
           conn2.release();
-          pool.end(() => {
-            server.close();
+
+          // Now test pool.execute() — failover is still active, so the
+          // prepare will return error 1290 and pool should discard the conn
+          pool.getConnection((err, conn3) => {
+            assert.ifError(err);
+            executeFirstThreadId = conn3.threadId;
+            conn3.release();
+
+            pool.execute('INSERT INTO t VALUES (?)', [4], (err) => {
+              executeError = err;
+
+              pool.getConnection((err, conn4) => {
+                assert.ifError(err);
+                executeSecondThreadId = conn4.threadId;
+                conn4.release();
+                pool.end(() => {
+                  server.close();
+                });
+              });
+            });
           });
         });
       });
@@ -93,12 +124,21 @@ portfinder.getPort((err, port) => {
 });
 
 process.on('exit', () => {
-  assert.ok(writeError, 'Expected a write error after failover');
+  assert.ok(writeError, 'Expected a write error after failover (query)');
   assert.equal(writeError.errno, 1290);
   assert.equal(writeError.code, 'ER_OPTION_PREVENTS_STATEMENT');
   assert.notEqual(
     firstThreadId,
     secondThreadId,
-    'Pool should have discarded the read-only connection and created a new one'
+    'Pool should have discarded the read-only connection and created a new one (query)'
+  );
+
+  assert.ok(executeError, 'Expected a write error after failover (execute)');
+  assert.equal(executeError.errno, 1290);
+  assert.equal(executeError.code, 'ER_OPTION_PREVENTS_STATEMENT');
+  assert.notEqual(
+    executeFirstThreadId,
+    executeSecondThreadId,
+    'Pool should have discarded the read-only connection and created a new one (execute)'
   );
 });
