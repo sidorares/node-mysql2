@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.17.2](https://github.com/sidorares/node-mysql2/compare/v3.17.1...v3.17.2) (2026-02-16)
+
+
+### Bug Fixes
+
+* distinguish delimiters in queries from SQL comments ([#4084](https://github.com/sidorares/node-mysql2/issues/4084)) ([454ba10](https://github.com/sidorares/node-mysql2/commit/454ba10fa2c38f746a9d7cdc0fd86ee0ffb9d863))
+* **pool:** discard connection on error 1290 (Aurora read-only failure) ([#4075](https://github.com/sidorares/node-mysql2/issues/4075)) ([9188963](https://github.com/sidorares/node-mysql2/commit/91889638fcedb77457b17cf522a8ded843698802))
+* **pool:** handle all read-only errors during Aurora failover ([#4082](https://github.com/sidorares/node-mysql2/issues/4082)) ([ce98d8e](https://github.com/sidorares/node-mysql2/commit/ce98d8e8f20164ed0f78b58eb79ccedf44262d18))
+
 ## [3.17.1](https://github.com/sidorares/node-mysql2/compare/v3.17.0...v3.17.1) (2026-02-13)
 
 
