@@ -1,7 +1,7 @@
 'use strict';
 
 const mysql = require('../../../index.js');
-const { assert } = require('poku');
+const { describe, it, assert } = require('poku');
 const process = require('node:process');
 const portfinder = require('portfinder');
 const ClientFlags = require('../../../lib/constants/client.js');
@@ -10,135 +10,164 @@ const ClientFlags = require('../../../lib/constants/client.js');
 if (typeof Deno !== 'undefined') process.exit(0);
 
 // Simulate Aurora MySQL failover: a writable connection becomes read-only.
-// After failover, writes return error 1290 (ER_OPTION_PREVENTS_STATEMENT).
+// After failover, writes return one of these read-only errors:
+//   1290: ER_OPTION_PREVENTS_STATEMENT (server running with --read-only)
+//   1792: ER_CANT_EXECUTE_IN_READ_ONLY_TRANSACTION
+//   1836: ER_READ_ONLY_MODE
 //
-// This test verifies that when a pooled connection hits error 1290,
+// This test verifies that when a pooled connection hits any of these errors,
 // the pool discards that connection and creates a fresh one for the next
 // caller, rather than returning the stale read-only connection.
 
 let connId = 0;
-let failoverTriggered = false;
 
-const readOnlyError = {
-  code: 1290,
-  message:
-    'The MySQL server is running with the --read-only option so it cannot execute this statement',
-};
+const readOnlyErrors = [
+  {
+    code: 1290,
+    name: 'ER_OPTION_PREVENTS_STATEMENT',
+    message:
+      'The MySQL server is running with the --read-only option so it cannot execute this statement',
+  },
+  {
+    code: 1792,
+    name: 'ER_CANT_EXECUTE_IN_READ_ONLY_TRANSACTION',
+    message: 'Cannot execute statement in a READ ONLY transaction',
+  },
+  {
+    code: 1836,
+    name: 'ER_READ_ONLY_MODE',
+    message: 'Running in read-only mode',
+  },
+];
 
-const server = mysql.createServer((conn) => {
-  conn.on('error', () => {});
+// Helper to create a test scenario for a specific error code and method
+async function testReadOnlyError(errorConfig, method) {
+  return new Promise((resolve, reject) => {
+    let failoverTriggered = false;
 
-  let flags = 0xffffff;
-  flags = flags ^ (ClientFlags.COMPRESS | ClientFlags.SSL);
+    const server = mysql.createServer((conn) => {
+      conn.on('error', () => {});
 
-  conn.serverHandshake({
-    protocolVersion: 10,
-    serverVersion: 'node.js rocks',
-    connectionId: ++connId,
-    statusFlags: 2,
-    characterSet: 8,
-    capabilityFlags: flags,
-  });
+      let flags = 0xffffff;
+      flags = flags ^ (ClientFlags.COMPRESS | ClientFlags.SSL);
 
-  conn.on('query', () => {
-    if (!failoverTriggered) {
-      conn.writeOk();
-    } else {
-      conn.writeError(readOnlyError);
-    }
-  });
+      conn.serverHandshake({
+        protocolVersion: 10,
+        serverVersion: 'node.js rocks',
+        connectionId: ++connId,
+        statusFlags: 2,
+        characterSet: 8,
+        capabilityFlags: flags,
+      });
 
-  conn.on('stmt_prepare', () => {
-    if (!failoverTriggered) {
-      conn.writeOk();
-    } else {
-      conn.writeError(readOnlyError);
-    }
-  });
-});
+      conn.on('query', () => {
+        if (!failoverTriggered) {
+          conn.writeOk();
+        } else {
+          conn.writeError(errorConfig);
+        }
+      });
 
-let writeError;
-let firstThreadId;
-let secondThreadId;
-let executeError;
-let executeFirstThreadId;
-let executeSecondThreadId;
-
-portfinder.getPort((err, port) => {
-  server.listen(port);
-
-  const pool = mysql.createPool({
-    host: 'localhost',
-    port: port,
-    user: 'test',
-    database: 'test',
-    connectionLimit: 1,
-  });
-
-  // First query succeeds — connection is writable
-  pool.query('INSERT INTO t VALUES (1)', (err) => {
-    assert.ifError(err);
-
-    pool.getConnection((err, conn) => {
-      assert.ifError(err);
-      firstThreadId = conn.threadId;
-      conn.release();
-
-      // Trigger failover — all subsequent writes return 1290
-      failoverTriggered = true;
-
-      pool.query('INSERT INTO t VALUES (2)', (err) => {
-        writeError = err;
-
-        // After the read-only error, the pool should discard the bad
-        // connection and give us a new one
-        pool.getConnection((err, conn2) => {
-          assert.ifError(err);
-          secondThreadId = conn2.threadId;
-          conn2.release();
-
-          // Now test pool.execute() — failover is still active, so the
-          // prepare will return error 1290 and pool should discard the conn
-          pool.getConnection((err, conn3) => {
-            assert.ifError(err);
-            executeFirstThreadId = conn3.threadId;
-            conn3.release();
-
-            pool.execute('INSERT INTO t VALUES (?)', [4], (err) => {
-              executeError = err;
-
-              pool.getConnection((err, conn4) => {
-                assert.ifError(err);
-                executeSecondThreadId = conn4.threadId;
-                conn4.release();
-                pool.end(() => {
-                  server.close();
-                });
-              });
-            });
-          });
-        });
+      conn.on('stmt_prepare', () => {
+        if (!failoverTriggered) {
+          conn.writeOk();
+        } else {
+          conn.writeError(errorConfig);
+        }
       });
     });
+
+    portfinder.getPort(async (_err, port) => {
+      server.listen(port);
+
+      const pool = mysql
+        .createPool({
+          host: 'localhost',
+          port: port,
+          user: 'test',
+          database: 'test',
+          connectionLimit: 1,
+        })
+        .promise();
+
+      try {
+        // First query succeeds — connection is writable
+        await pool.query('INSERT INTO t VALUES (1)');
+
+        // Get initial connection threadId
+        const conn = await pool.getConnection();
+        const firstThreadId = conn.threadId;
+        conn.release();
+
+        // Trigger failover — all subsequent writes return read-only error
+        failoverTriggered = true;
+
+        // Execute test based on method type
+        let errorReceived;
+        try {
+          if (method === 'query') {
+            await pool.query('INSERT INTO t VALUES (2)');
+          } else {
+            await pool.execute('INSERT INTO t VALUES (?)', [2]);
+          }
+        } catch (err) {
+          errorReceived = err;
+        }
+
+        // After error, pool should have discarded connection and created new one
+        const conn2 = await pool.getConnection();
+        const secondThreadId = conn2.threadId;
+        conn2.release();
+
+        // Cleanup
+        await pool.end();
+
+        server.close(() => {
+          resolve({
+            errorReceived,
+            firstThreadId,
+            secondThreadId,
+          });
+        });
+      } catch (err) {
+        reject(err);
+      }
+    });
   });
-});
+}
 
-process.on('exit', () => {
-  assert.ok(writeError, 'Expected a write error after failover (query)');
-  assert.equal(writeError.errno, 1290);
-  assert.equal(writeError.code, 'ER_OPTION_PREVENTS_STATEMENT');
-  assert.notEqual(
-    firstThreadId,
-    secondThreadId,
-    'Pool should have discarded the read-only connection and created a new one (query)'
-  );
+describe('Aurora MySQL Failover - Read-Only Error Handling', async () => {
+  for (const errorConfig of readOnlyErrors) {
+    await it(`should discard connection on pool.query() when error ${errorConfig.code} occurs`, async () => {
+      const result = await testReadOnlyError(errorConfig, 'query');
 
-  assert.ok(executeError, 'Expected a write error after failover (execute)');
-  assert.equal(executeError.errno, 1290);
-  assert.equal(executeError.code, 'ER_OPTION_PREVENTS_STATEMENT');
-  assert.notEqual(
-    executeFirstThreadId,
-    executeSecondThreadId,
-    'Pool should have discarded the read-only connection and created a new one (execute)'
-  );
+      assert.ok(result.errorReceived, 'Should receive an error');
+      assert.equal(
+        result.errorReceived.errno,
+        errorConfig.code,
+        `Error code should be ${errorConfig.code}`
+      );
+      assert.notEqual(
+        result.firstThreadId,
+        result.secondThreadId,
+        'Pool should have created a new connection (different threadId)'
+      );
+    });
+
+    await it(`should discard connection on pool.execute() when error ${errorConfig.code} occurs`, async () => {
+      const result = await testReadOnlyError(errorConfig, 'execute');
+
+      assert.ok(result.errorReceived, 'Should receive an error');
+      assert.equal(
+        result.errorReceived.errno,
+        errorConfig.code,
+        `Error code should be ${errorConfig.code}`
+      );
+      assert.notEqual(
+        result.firstThreadId,
+        result.secondThreadId,
+        'Pool should have created a new connection (different threadId)'
+      );
+    });
+  }
 });
