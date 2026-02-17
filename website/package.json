@@ -21,25 +21,25 @@
   "dependencies": {
     "@docusaurus/core": "^3.9.1",
     "@docusaurus/preset-classic": "^3.9.2",
-    "@easyops-cn/docusaurus-search-local": "^0.52.2",
+    "@easyops-cn/docusaurus-search-local": "^0.55.0",
     "@mdx-js/react": "^3.1.1",
     "clsx": "^2.1.1",
     "docusaurus-plugin-sass": "^0.2.6",
-    "lucide-react": "^0.561.0",
+    "lucide-react": "^0.564.0",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.1.1",
-    "react-dom": "^19.2.3",
-    "sass": "^1.97.0"
+    "react-dom": "^19.2.4",
+    "sass": "^1.97.3"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@docusaurus/module-type-aliases": "^3.9.1",
     "@docusaurus/tsconfig": "^3.9.2",
     "@docusaurus/types": "^3.9.1",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.2.3",
     "packages-update": "^2.0.0",
     "poku": "^3.0.2",
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },

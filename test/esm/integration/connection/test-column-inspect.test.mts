@@ -1,15 +1,15 @@
 import { assert, describe, afterEach, beforeEach, it } from 'poku';
 import util from 'node:util';
-import { createRequire } from 'node:module';
+import type { Connection as PromiseConnection } from '../../../../promise.js';
+import { config, createConnection, version } from '../../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const common = require('../../../common.test.cjs');
+const { database: currentDatabase } = config;
 
 await describe('Custom inspect for column definition', async () => {
-  let connection;
+  let connection: PromiseConnection;
 
   beforeEach(async () => {
-    connection = common.createConnection().promise();
+    connection = createConnection().promise();
     await connection.query(`DROP TABLE IF EXISTS test_fields`);
   });
 
@@ -48,8 +48,8 @@ await describe('Custom inspect for column definition', async () => {
     );
 
     const [, columns] = await connection.query('select * from test_fields');
-    const inspectResults = util.inspect(columns);
-    const schemaArray = schema
+    const inspectResults: string = util.inspect(columns);
+    const schemaArray: string[] = schema
       .split('\n')
       .map((line) => line.trim())
       .filter((line) => line.length > 0)
@@ -59,7 +59,7 @@ await describe('Custom inspect for column definition', async () => {
         return [name, ...words.slice(1)].join(' ');
       });
 
-    const normalizedInspectResults = inspectResults
+    const normalizedInspectResults: string[] = inspectResults
       .split('\n')
       .slice(1, -2) // remove "[" and "]" lines and also last dummy field
       .map((line) => line.trim())
@@ -78,7 +78,7 @@ await describe('Custom inspect for column definition', async () => {
     }
   });
 
-  if (common.version >= 16) {
+  if (version >= 16) {
     await it('shows detailed description when depth < 1', async () => {
       await connection.query(`
         CREATE TEMPORARY TABLE test_fields2 (
@@ -95,7 +95,7 @@ await describe('Custom inspect for column definition', async () => {
         inspectResults,
         util.inspect({
           catalog: 'def',
-          schema: 'test',
+          schema: currentDatabase,
           name: 'decimal13_10',
           orgName: 'decimal13_10',
           table: 'test_fields2',

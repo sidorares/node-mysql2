@@ -5,7 +5,6 @@ const path = require('node:path');
 const process = require('node:process');
 
 const disableEval = process.env.STATIC_PARSER === '1';
-exports.disableEval = disableEval;
 
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
@@ -27,6 +26,8 @@ if (process.env.MYSQL_USE_TLS === '1') {
   };
 }
 
+exports.config = config;
+
 const encUser = encodeURIComponent(config.user ?? '');
 const encPass = encodeURIComponent(config.password ?? '');
 const host = config.host;
@@ -35,8 +36,7 @@ const db = config.database;
 
 const configURI = `mysql://${encUser}:${encPass}@${host}:${port}/${db}`;
 
-exports.SqlString = require('sqlstring');
-exports.config = config;
+exports.SqlString = require('sql-escaper');
 
 exports.waitDatabaseReady = function (callback) {
   const start = Date.now();
@@ -120,6 +120,7 @@ exports.createConnection = function (args) {
     ssl: (args && args.ssl) ?? config.ssl,
     jsonStrings: args && args.jsonStrings,
     disableEval,
+    flags: args && args.flags,
   };
 
   const conn = driver.createConnection(params);
@@ -261,4 +262,18 @@ exports.getMysqlVersion = async function (connection) {
     minor,
     patch,
   };
+};
+
+const pad = (number, length = 2) => String(number).padStart(length, '0');
+
+exports.localDate = (date) => {
+  const year = pad(date.getFullYear(), 4);
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hour = pad(date.getHours());
+  const minute = pad(date.getMinutes());
+  const second = pad(date.getSeconds());
+  const millisecond = pad(date.getMilliseconds(), 3);
+
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}.${millisecond}`;
 };

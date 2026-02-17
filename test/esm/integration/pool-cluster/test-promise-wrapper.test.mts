@@ -1,14 +1,12 @@
-import { test, assert, describe } from 'poku';
-import { createRequire } from 'node:module';
+import { it, assert, describe } from 'poku';
+import type { QueryError } from '../../../../index.js';
+import promiseDriver from '../../../../promise.js';
+import { config } from '../../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const common = require('../../../common.test.cjs');
-const { createPoolCluster } = require('../../../../promise.js');
+const { createPoolCluster } = promiseDriver;
 
-(async () => {
-  describe('Test pool cluster', common.describeOptions);
-
-  await test(async () => {
+await describe('Test pool cluster', async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
 
     poolCluster.once('warn', async function () {
@@ -23,10 +21,11 @@ const { createPoolCluster } = require('../../../../promise.js');
       });
     });
 
+    // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('warn', new Error());
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
 
     poolCluster.once('remove', async function () {
@@ -41,10 +40,11 @@ const { createPoolCluster } = require('../../../../promise.js');
       });
     });
 
+    // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('remove');
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
 
     poolCluster.once('offline', async function () {
@@ -59,10 +59,11 @@ const { createPoolCluster } = require('../../../../promise.js');
       });
     });
 
+    // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('offline');
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
 
     poolCluster.once('online', async function () {
@@ -77,17 +78,20 @@ const { createPoolCluster } = require('../../../../promise.js');
       });
     });
 
+    // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('online');
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
-    poolCluster.add('MASTER', common.config);
+    poolCluster.add('MASTER', config);
 
     const poolNamespace = poolCluster.of('MASTER');
 
     assert.equal(
+      // @ts-expect-error: TODO: implement typings
       poolNamespace.poolNamespace,
+      // @ts-expect-error: TODO: implement typings
       poolCluster.poolCluster.of('MASTER')
     );
 
@@ -111,16 +115,16 @@ const { createPoolCluster } = require('../../../../promise.js');
     poolCluster.end();
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
-    poolCluster.add('SLAVE', common.config);
+    poolCluster.add('SLAVE', config);
 
     try {
       await poolCluster.getConnection('SLAVE1');
       assert.fail('An error was expected');
-    } catch (error) {
+    } catch (error: unknown) {
       assert.equal(
-        error.code,
+        (error as QueryError).code,
         'POOL_NOEXIST',
         'should throw when PoolNamespace does not exist'
       );
@@ -129,21 +133,23 @@ const { createPoolCluster } = require('../../../../promise.js');
     }
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
-    poolCluster.add('SLAVE1', common.config);
+    poolCluster.add('SLAVE1', config);
 
     try {
+      // @ts-expect-error: TODO: implement typings
       const connection = await poolCluster.getConnection(/SLAVE[12]/);
       assert.equal(
+        // @ts-expect-error: TODO: implement typings
         connection.connection._clusterId,
         'SLAVE1',
         'should match regex pattern'
       );
-    } catch (error) {
+    } catch {
       assert.fail('should not throw');
     } finally {
       poolCluster.end();
     }
   });
-})();
+});
