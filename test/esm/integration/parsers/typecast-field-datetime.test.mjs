@@ -1,37 +1,35 @@
-import { describe, assert } from 'poku';
-import { createRequire } from 'node:module';
+import { describe, it, assert } from 'poku';
+import { createConnection } from '../../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const {
-  createConnection,
-  describeOptions,
-} = require('../../../common.test.cjs');
+await describe('typeCast field.datetime', async () => {
+  const conn = createConnection({
+    typeCast: (field) => field.string(),
+  }).promise();
 
-const conn = createConnection({
-  typeCast: (field) => field.string(),
-}).promise();
+  const query = {};
+  const execute = {};
 
-describe('typeCast field.datetime', describeOptions);
+  await conn.query('CREATE TEMPORARY TABLE `tmp_date` (`datetime` DATETIME)');
 
-const query = {};
-const execute = {};
+  await conn.query(
+    'INSERT INTO `tmp_date` (`datetime`) VALUES (CURRENT_DATE())'
+  );
 
-await conn.query('CREATE TEMPORARY TABLE `tmp_date` (`datetime` DATETIME)');
+  await it('execute results', async () => {
+    const [date] = await conn.execute('SELECT datetime from tmp_date');
 
-await conn.query('INSERT INTO `tmp_date` (`datetime`) VALUES (CURRENT_DATE())');
+    execute.date = date[0].datetime;
+  });
 
-{
-  const [date] = await conn.execute('SELECT datetime from tmp_date');
+  await it('query results', async () => {
+    const [date] = await conn.query('SELECT datetime from tmp_date');
 
-  execute.date = date[0].datetime;
-}
+    query.date = date[0].datetime;
+  });
 
-{
-  const [date] = await conn.query('SELECT datetime from tmp_date');
+  await conn.end();
 
-  query.date = date[0].datetime;
-}
-
-await conn.end();
-
-assert.equal(execute.date, query.date, 'DATETIME');
+  it(() => {
+    assert.equal(execute.date, query.date, 'DATETIME');
+  });
+});

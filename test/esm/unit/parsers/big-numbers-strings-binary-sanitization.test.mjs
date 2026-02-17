@@ -1,72 +1,41 @@
-import { describe, test, assert } from 'poku';
-import { createRequire } from 'node:module';
+import { describe, it, assert } from 'poku';
+import { createConnection } from '../../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const {
-  createConnection,
-  describeOptions,
-} = require('../../../common.test.cjs');
+await describe('Binary Parser: bigNumberStrings Sanitization', async () => {
+  const connection = createConnection().promise();
 
-const connection = createConnection().promise();
+  const sql = 'SELECT 9007199254740991+100 AS `total`';
 
-const sql = 'SELECT 9007199254740991+100 AS `total`';
-
-describe('Binary Parser: bigNumberStrings Sanitization', describeOptions);
-
-Promise.all([
-  test(async () => {
-    const [results] = await connection.execute({
-      sql,
-      supportBigNumbers: true,
-      bigNumberStrings: true,
-    });
-
-    assert.strictEqual(
-      typeof results[0].total,
+  const cases = [
+    [
+      { supportBigNumbers: true, bigNumberStrings: true },
       'string',
-      'Valid bigNumberStrings enabled'
-    );
-  }),
-  test(async () => {
-    const [results] = await connection.execute({
-      sql,
-      supportBigNumbers: false,
-      bigNumberStrings: false,
-    });
-
-    assert.strictEqual(
-      typeof results[0].total,
+      'Valid bigNumberStrings enabled',
+    ],
+    [
+      { supportBigNumbers: false, bigNumberStrings: false },
       'number',
-      'Valid bigNumberStrings disabled'
-    );
-  }),
-
-  test(async () => {
-    const [results] = await connection.execute({
-      sql,
-      supportBigNumbers: 'text',
-      bigNumberStrings: 'text',
-    });
-
-    assert.strictEqual(
-      typeof results[0].total,
+      'Valid bigNumberStrings disabled',
+    ],
+    [
+      { supportBigNumbers: 'text', bigNumberStrings: 'text' },
       'string',
-      'bigNumberStrings as a random string should be enabled'
-    );
-  }),
-  test(async () => {
-    const [results] = await connection.execute({
-      sql,
-      supportBigNumbers: '',
-      bigNumberStrings: '',
-    });
-
-    assert.strictEqual(
-      typeof results[0].total,
+      'bigNumberStrings as a random string should be enabled',
+    ],
+    [
+      { supportBigNumbers: '', bigNumberStrings: '' },
       'number',
-      'bigNumberStrings as an empty string should be disabled'
-    );
-  }),
-]).then(async () => {
+      'bigNumberStrings as an empty string should be disabled',
+    ],
+  ];
+
+  for (const [options, expectedType, label] of cases) {
+    await it(label, async () => {
+      const [results] = await connection.execute({ sql, ...options });
+
+      assert.strictEqual(typeof results[0].total, expectedType, label);
+    });
+  }
+
   await connection.end();
 });
