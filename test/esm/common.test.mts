@@ -5,6 +5,12 @@ import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 export * as SqlString from 'sql-escaper';
 import portfinder from 'portfinder';
+import type {
+  ConnectionOptions,
+  PoolOptions,
+  PoolClusterOptions,
+  Connection,
+} from '../../index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -56,7 +62,7 @@ const db: string = config.database;
 
 const configURI: string = `mysql://${encUser}:${encPass}@${host}:${port}/${db}`;
 
-export const createConnection = function (args?: any) {
+export const createConnection = function (args?: ConnectionOptions) {
   const driver = require('../../index.js');
   if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
     return driver.createConnection({
@@ -115,7 +121,7 @@ export const waitDatabaseReady = function (callback: () => void) {
       password: process.env.MYSQL_PASSWORD,
     });
 
-    conn.once('error', (err: any) => {
+    conn.once('error', (err: Error & { code?: string }) => {
       if (
         err.code !== 'PROTOCOL_CONNECTION_LOST' &&
         err.code !== 'ETIMEDOUT' &&
@@ -145,7 +151,7 @@ export const waitDatabaseReady = function (callback: () => void) {
   tryConnect();
 };
 
-export const getConfig = function (input?: any) {
+export const getConfig = function (input?: ConnectionOptions) {
   const args = input || {};
   const params = {
     host: args.host || config.host,
@@ -176,7 +182,7 @@ export const getConfig = function (input?: any) {
   return params;
 };
 
-export const createPool = function (args?: any) {
+export const createPool = function (args?: PoolOptions) {
   let driver = require('../../index.js');
 
   if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
@@ -197,10 +203,10 @@ export const createPool = function (args?: any) {
   return driver.createPool(getConfig(args));
 };
 
-export const createPoolCluster = function (args: any = {}) {
+export const createPoolCluster = function (args: PoolClusterOptions = {}) {
   const driver = require('../../index.js');
 
-  if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
+  if (!('port' in args) && process.env.MYSQL_CONNECTION_URL) {
     return driver.createPoolCluster({
       ...args,
       uri: process.env.MYSQL_CONNECTION_URL,
@@ -225,10 +231,10 @@ export const createTemplate = function () {
 
 export const createServer = function (
   onListening: () => void,
-  handler?: (conn: any) => void
+  handler?: (conn: Connection) => void
 ) {
   const server = require('../../index.js').createServer();
-  server.on('connection', (conn: any) => {
+  server.on('connection', (conn: Connection) => {
     conn.on('error', () => {
       // server side of the connection
       // ignore disconnects
@@ -261,8 +267,8 @@ export const useTestDb = function () {
 
 export const version: number = Number(process.version.match(/v(\d+)\./)?.[1]);
 
-export const getMysqlVersion = async function (connection: any) {
-  const conn = connection.promise ? connection.promise() : connection;
+export const getMysqlVersion = async function (connection: Connection) {
+  const conn = connection.promise();
 
   const [rows] = await conn.query('SELECT VERSION() AS `version`');
   const serverVersion: string = rows[0].version;

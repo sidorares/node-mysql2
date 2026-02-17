@@ -1,11 +1,12 @@
 import { assert, describe, afterEach, beforeEach, it } from 'poku';
 import util from 'node:util';
+import type { Connection as PromiseConnection } from '../../../../promise.js';
 import { config, createConnection, version } from '../../common.test.mjs';
 
 const { database: currentDatabase } = config;
 
 await describe('Custom inspect for column definition', async () => {
-  let connection: any;
+  let connection: PromiseConnection;
 
   beforeEach(async () => {
     connection = createConnection().promise();

@@ -1,4 +1,5 @@
 import { it, assert, describe } from 'poku';
+import type { QueryError } from '../../../../index.js';
 import promiseDriver from '../../../../promise.js';
 import { config } from '../../common.test.mjs';
 
@@ -121,9 +122,9 @@ await describe('Test pool cluster', async () => {
     try {
       await poolCluster.getConnection('SLAVE1');
       assert.fail('An error was expected');
-    } catch (error: any) {
+    } catch (error: unknown) {
       assert.equal(
-        error.code,
+        (error as QueryError).code,
         'POOL_NOEXIST',
         'should throw when PoolNamespace does not exist'
       );

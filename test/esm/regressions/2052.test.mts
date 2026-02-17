@@ -2,6 +2,7 @@ import { assert, describe, it } from 'poku';
 import { Buffer } from 'node:buffer';
 import packets from '../../../lib/packets/index.js';
 import PrepareCommand from '../../../lib/commands/prepare.js';
+import type { QueryError, PrepareStatementInfo } from '../../../index.js';
 import { createConnection, getMysqlVersion } from '../common.test.mjs';
 
 await describe(async () => {
@@ -33,12 +34,15 @@ await describe(async () => {
     await new Promise((resolve, reject) => {
       const prepareCommand = new PrepareCommand(
         { sql: 'select * from users order by ?' },
-        (err: any, result: any) => {
+        (err: QueryError | null, result: PrepareStatementInfo) => {
           try {
             assert.equal(err, null, 'expect no error');
 
+            // @ts-expect-error: TODO: implement typings
             assert.equal(result.parameters.length, 0, 'parameters');
+            // @ts-expect-error: TODO: implement typings
             assert.equal(result.columns.length, 51, 'columns');
+            // @ts-expect-error: TODO: implement typings
             assert.equal(result.id, 1, 'id');
 
             resolve(null);
@@ -102,7 +106,7 @@ await describe(async () => {
     new Promise((resolve, reject) => {
       connection.prepare(
         'select * from user order by ?',
-        async (err: any, stmt: any) => {
+        async (err: QueryError | null, stmt: PrepareStatementInfo) => {
           if (err) {
             connection.end();
             reject(err);
@@ -112,12 +116,14 @@ await describe(async () => {
 
           if (hasIncorrectPrepareParameter) {
             assert.equal(
+              // @ts-expect-error: TODO: implement typings
               stmt.parameters.length,
               0,
               'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
             );
           } else {
             assert.equal(
+              // @ts-expect-error: TODO: implement typings
               stmt.parameters.length,
               1,
               'parameters length needs to be 1'
@@ -134,7 +140,7 @@ await describe(async () => {
       new Promise((resolve, reject) => {
         connection.prepare(
           'select * from user where user.User like ? order by ?',
-          async (err: any, stmt: any) => {
+          async (err: QueryError | null, stmt: PrepareStatementInfo) => {
             if (err) {
               connection.end();
               reject(err);
@@ -144,12 +150,14 @@ await describe(async () => {
 
             if (hasIncorrectPrepareParameter) {
               assert.equal(
+                // @ts-expect-error: TODO: implement typings
                 stmt.parameters.length,
                 1,
                 'should report 1 actual parameters when 2 placeholders used in ORDER BY?'
               );
             } else {
               assert.equal(
+                // @ts-expect-error: TODO: implement typings
                 stmt.parameters.length,
                 2,
                 'parameters length needs to be 2'
@@ -162,7 +170,7 @@ await describe(async () => {
       })
   );
 
-  connection.end((err: any) => {
+  connection.end((err: QueryError | null) => {
     assert.ifError(err);
   });
 });

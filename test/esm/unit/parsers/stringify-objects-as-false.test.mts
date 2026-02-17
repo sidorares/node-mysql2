@@ -1,3 +1,4 @@
+import type { format as Format } from 'sql-escaper';
 import { assert, describe, it } from 'poku';
 import driver from '../../../../index.js';
 import { config, localDate } from '../../common.test.mjs';
@@ -10,7 +11,7 @@ await describe('stringifyObjects: false', async () => {
     })
     .promise();
 
-  const format = (sql: string, values: any[]): string =>
+  const format: typeof Format = (sql, values): string =>
     // @ts-expect-error: TODO: implement typings
     connection.connection.format(sql, values);
 

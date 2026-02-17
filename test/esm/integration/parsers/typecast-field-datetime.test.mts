@@ -1,13 +1,14 @@
 import { describe, it, assert } from 'poku';
+import type { TypeCastField } from '../../../../index.js';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('typeCast field.datetime', async () => {
   const conn = createConnection({
-    typeCast: (field: any) => field.string(),
+    typeCast: (field: TypeCastField) => field.string(),
   }).promise();
 
-  const query: Record<string, any> = {};
-  const execute: Record<string, any> = {};
+  const query: Record<string, unknown> = {};
+  const execute: Record<string, unknown> = {};
 
   await conn.query('CREATE TEMPORARY TABLE `tmp_date` (`datetime` DATETIME)');
 
