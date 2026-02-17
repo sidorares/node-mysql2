@@ -7,8 +7,10 @@ await describe('typeCast field.datetime', async () => {
     typeCast: (field: TypeCastField) => field.string(),
   }).promise();
 
-  const query: Record<string, unknown> = {};
-  const execute: Record<string, unknown> = {};
+  const query = {} as {
+    date: string | null;
+  };
+  const execute = {} as typeof query;
 
   await conn.query('CREATE TEMPORARY TABLE `tmp_date` (`datetime` DATETIME)');
 

@@ -28,7 +28,7 @@ await describe('Query: Results Creation', async () => {
       'Ensure clean properties in results items'
     );
 
-    privateObjectProps.forEach((prop: string) => {
+    privateObjectProps.forEach((prop) => {
       assert(prop in results[0], `Ensure ${prop} exists`);
     });
 

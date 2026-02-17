@@ -5,7 +5,7 @@ import { privateObjectProps } from '../../../../lib/helpers.js';
 describe('Text Parser: Block Native Object Props', () => {
   const blockedFields: { name: string; table: string }[][] = Array.from(
     privateObjectProps
-  ).map((prop: string) => [{ name: prop, table: '' }]);
+  ).map((prop) => [{ name: prop, table: '' }]);
 
   it(() => {
     blockedFields.forEach((fields) => {

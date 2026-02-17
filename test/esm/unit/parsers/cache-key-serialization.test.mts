@@ -1,4 +1,5 @@
 import { describe, it, assert } from 'poku';
+import type { TypeCastField, TypeCastNext } from '../../../../index.js';
 import { _keyFromFields } from '../../../../lib/parsers/parser_cache.js';
 
 describe('Cache Key Serialization', () => {
@@ -310,7 +311,7 @@ describe('Cache Key Serialization', () => {
       // Expected: true
       bigNumberStrings: (_: any, next: any) => next(),
       // Expected: "function"
-      typeCast: (_: any, next: any) => next(),
+      typeCast: (_: TypeCastField, next: TypeCastNext) => next(),
       timezone: 'local',
       decimalNumbers: false,
       // Expected: null

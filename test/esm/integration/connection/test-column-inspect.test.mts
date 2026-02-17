@@ -51,9 +51,9 @@ await describe('Custom inspect for column definition', async () => {
     const inspectResults: string = util.inspect(columns);
     const schemaArray: string[] = schema
       .split('\n')
-      .map((line: string) => line.trim())
-      .filter((line: string) => line.length > 0)
-      .map((line: string) => {
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
+      .map((line) => {
         const words = line.split(' ');
         const name = `\`${words[0]}\``;
         return [name, ...words.slice(1)].join(' ');
@@ -62,9 +62,9 @@ await describe('Custom inspect for column definition', async () => {
     const normalizedInspectResults: string[] = inspectResults
       .split('\n')
       .slice(1, -2) // remove "[" and "]" lines and also last dummy field
-      .map((line: string) => line.trim())
+      .map((line) => line.trim())
       // remove primary key - it's not in the schema explicitly but worth having in inspect
-      .map((line: string) => line.split('PRIMARY KEY ').join(''));
+      .map((line) => line.split('PRIMARY KEY ').join(''));
 
     for (let l = 0; l < normalizedInspectResults.length; l++) {
       const inspectLine = normalizedInspectResults[l];
