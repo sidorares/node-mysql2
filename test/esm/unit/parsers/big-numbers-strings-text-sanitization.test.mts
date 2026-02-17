@@ -6,7 +6,7 @@ await describe('Text Parser: bigNumberStrings Sanitization', async () => {
 
   const sql = 'SELECT 9007199254740991+100 AS `total`';
 
-  const cases = [
+  const cases: [Record<string, any>, string, string][] = [
     [
       { supportBigNumbers: true, bigNumberStrings: true },
       'string',

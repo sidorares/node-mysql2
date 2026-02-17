@@ -181,7 +181,7 @@ describe('SqlString.escape tests', () => {
   it(() => {
     const expected = '2012-05-07 11:42:03.002';
     const date = new Date(2012, 4, 7, 11, 42, 3, 2);
-    const string = SqlString.escape(date);
+    const string: string = SqlString.escape(date);
     assert.strictEqual(
       string,
       `'${expected}'`,
@@ -191,7 +191,7 @@ describe('SqlString.escape tests', () => {
 
   it(() => {
     const buffer = Buffer.from([0, 1, 254, 255]);
-    const string = SqlString.escape(buffer);
+    const string: string = SqlString.escape(buffer);
     assert.strictEqual(string, "X'0001feff'", 'buffers are converted to hex');
   });
 
@@ -210,7 +210,7 @@ describe('SqlString.escape tests', () => {
 
 describe('SqlString.format tests', () => {
   it(() => {
-    const sql = SqlString.format('? and ?', ['a', 'b']);
+    const sql: string = SqlString.format('? and ?', ['a', 'b']);
     assert.equal(
       sql,
       "'a' and 'b'",
@@ -219,17 +219,17 @@ describe('SqlString.format tests', () => {
   });
 
   it(() => {
-    const sql = SqlString.format('? and ?', ['a']);
+    const sql: string = SqlString.format('? and ?', ['a']);
     assert.equal(sql, "'a' and ?", 'extra question marks are left untouched');
   });
 
   it(() => {
-    const sql = SqlString.format('? and ?', ['a', 'b', 'c']);
+    const sql: string = SqlString.format('? and ?', ['a', 'b', 'c']);
     assert.equal(sql, "'a' and 'b'", 'extra arguments are not used');
   });
 
   it(() => {
-    const sql = SqlString.format('? and ?', ['hello?', 'b']);
+    const sql: string = SqlString.format('? and ?', ['hello?', 'b']);
     assert.equal(
       sql,
       "'hello?' and 'b'",
@@ -238,12 +238,12 @@ describe('SqlString.format tests', () => {
   });
 
   it(() => {
-    const sql = SqlString.format('?', undefined);
+    const sql: string = SqlString.format('?', undefined);
     assert.equal(sql, '?', 'undefined is ignored');
   });
 
   it(() => {
-    const sql = SqlString.format('SET ?', { hello: 'world' });
+    const sql: string = SqlString.format('SET ?', { hello: 'world' });
     assert.equal(
       sql,
       "SET `hello` = 'world'",
@@ -252,14 +252,14 @@ describe('SqlString.format tests', () => {
   });
 
   it(() => {
-    const sql = SqlString.format('?', { hello: 'world' }, true);
+    const sql: string = SqlString.format('?', { hello: 'world' }, true);
     assert.equal(
       sql,
       "'[object Object]'",
       'objects is not converted to values when flag is true'
     );
 
-    const sql2 = SqlString.format(
+    const sql2: string = SqlString.format(
       '?',
       {
         toString: function () {

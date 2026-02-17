@@ -83,6 +83,33 @@ export default [
       ],
     },
   },
+  ...compat.extends('plugin:@typescript-eslint/recommended').map((config) => ({
+    ...config,
+    files: ['**/*.mts'],
+  })),
+  {
+    files: ['**/*.mts'],
+    plugins: {
+      '@typescript-eslint': typescriptEslint,
+    },
+    languageOptions: {
+      parser: tsParser,
+    },
+    rules: {
+      '@typescript-eslint/no-empty-interface': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      strict: 'off',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'ImportDeclaration[source.value=/^\\./][source.value!=/\\.(mjs)$/]',
+          message: 'Local imports must have the explicit .mjs extension',
+        },
+      ],
+    },
+  },
   {
     files: ['**/*.md'],
     processor: 'markdown/markdown',
@@ -111,14 +138,14 @@ export default [
     },
   },
   {
-    files: ['**/**/*.test.ts'],
+    files: ['**/**/*.test.ts', '**/**/*.test.mts'],
     rules: {
       '@typescript-eslint/no-unused-expressions': 'off',
       'arrow-parens': ['error', 'always'],
     },
   },
   {
-    files: ['**/*.mjs'],
+    files: ['**/*.mjs', '**/*.mts'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

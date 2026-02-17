@@ -5,7 +5,7 @@ await describe('Text Parser: supportBigNumbers Sanitization', async () => {
   const connection = createConnection().promise();
 
   const sql = 'SELECT 9007199254740991+100 AS `total`';
-  const cases = [
+  const cases: [boolean | string, string, string][] = [
     [true, 'string', 'Valid supportBigNumbers enabled'],
     [false, 'number', 'Valid supportBigNumbers disabled'],
     [

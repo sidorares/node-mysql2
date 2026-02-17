@@ -116,27 +116,6 @@ jobs:
         run: bun run test:bun
         timeout-minutes: 10
 
-  tests-linux-deno-v1:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        deno-version: [v1.x]
-        mysql-version: ['mysql:8.3']
-        use-compression: [0, 1]
-        static-parser: [0, 1]
-        # TODO: investigate error when using SSL (1)
-        #
-        # errno: -4094
-        # code: "UNKNOWN"
-        # syscall: "read"
-        use-tls: [0]
-
-    env:
-      STATIC_PARSER: ${{ matrix.static-parser }}
-
-    name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}} Static Parser=${{matrix.static-parser}}
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up MySQL

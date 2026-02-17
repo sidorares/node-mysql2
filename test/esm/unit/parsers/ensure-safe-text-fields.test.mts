@@ -1,17 +1,18 @@
 import { describe, it, assert } from 'poku';
-import { getBinaryParser, privateObjectProps } from '../../common.test.mjs';
+import TextRowParser from '../../../../lib/parsers/text_parser.js';
+import { privateObjectProps } from '../../../../lib/helpers.js';
 
-describe('Binary Parser: Block Native Object Props', () => {
-  const blockedFields = Array.from(privateObjectProps).map((prop) => [
+describe('Text Parser: Block Native Object Props', () => {
+  const blockedFields = Array.from(privateObjectProps).map((prop: string) => [
     { name: prop, table: '' },
   ]);
 
   it(() => {
-    blockedFields.forEach((fields) => {
+    blockedFields.forEach((fields: any) => {
       try {
-        getBinaryParser(fields, {}, {});
+        TextRowParser(fields, {}, {});
         assert.fail('An error was expected');
-      } catch (error) {
+      } catch (error: any) {
         assert.strictEqual(
           error.message,
           `The field name (${fields[0].name}) can't be the same as an object's private property.`,
@@ -23,14 +24,14 @@ describe('Binary Parser: Block Native Object Props', () => {
 
   it(() => {
     blockedFields
-      .map((fields) =>
-        fields.map((field) => ({ ...field, name: field.name.slice(1) }))
+      .map((fields: any) =>
+        fields.map((field: any) => ({ ...field, name: field.name.slice(1) }))
       )
-      .forEach((fields) => {
+      .forEach((fields: any) => {
         try {
-          getBinaryParser(fields, { nestTables: '_' }, {});
+          TextRowParser(fields, { nestTables: '_' }, {});
           assert.fail('An error was expected');
-        } catch (error) {
+        } catch (error: any) {
           assert.strictEqual(
             error.message,
             `The field name (_${fields[0].name}) can't be the same as an object's private property.`,
@@ -42,14 +43,14 @@ describe('Binary Parser: Block Native Object Props', () => {
 
   it(() => {
     blockedFields
-      .map((fields) =>
-        fields.map((field) => ({ ...field, name: '', table: field.name }))
+      .map((fields: any) =>
+        fields.map((field: any) => ({ ...field, name: '', table: field.name }))
       )
-      .forEach((fields) => {
+      .forEach((fields: any) => {
         try {
-          getBinaryParser(fields, { nestTables: true }, {});
+          TextRowParser(fields, { nestTables: true }, {});
           assert.fail('An error was expected');
-        } catch (error) {
+        } catch (error: any) {
           assert.strictEqual(
             error.message,
             `The field name (${fields[0].table}) can't be the same as an object's private property.`,

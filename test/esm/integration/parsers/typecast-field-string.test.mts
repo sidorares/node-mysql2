@@ -3,11 +3,11 @@ import { createConnection } from '../../common.test.mjs';
 
 await describe('typeCast field.string', async () => {
   const conn = createConnection({
-    typeCast: (field) => field.string(),
+    typeCast: (field: any) => field.string(),
   }).promise();
 
-  const query = {};
-  const execute = {};
+  const query: Record<string, any> = {};
+  const execute: Record<string, any> = {};
 
   await conn.query(
     'CREATE TEMPORARY TABLE `tmp_tiny` (`signed` TINYINT, `unsigned` TINYINT UNSIGNED)'

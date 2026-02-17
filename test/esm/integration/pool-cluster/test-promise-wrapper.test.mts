@@ -1,5 +1,6 @@
 import { it, assert, describe } from 'poku';
-import { config, promiseDriver } from '../../common.test.mjs';
+import promiseDriver from '../../../../promise.js';
+import { config } from '../../common.test.mjs';
 
 const { createPoolCluster } = promiseDriver;
 
@@ -19,6 +20,7 @@ await describe('Test pool cluster', async () => {
       });
     });
 
+    // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('warn', new Error());
   });
 
@@ -37,6 +39,7 @@ await describe('Test pool cluster', async () => {
       });
     });
 
+    // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('remove');
   });
 
@@ -55,6 +58,7 @@ await describe('Test pool cluster', async () => {
       });
     });
 
+    // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('offline');
   });
 
@@ -73,6 +77,7 @@ await describe('Test pool cluster', async () => {
       });
     });
 
+    // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('online');
   });
 
@@ -83,7 +88,9 @@ await describe('Test pool cluster', async () => {
     const poolNamespace = poolCluster.of('MASTER');
 
     assert.equal(
+      // @ts-expect-error: TODO: implement typings
       poolNamespace.poolNamespace,
+      // @ts-expect-error: TODO: implement typings
       poolCluster.poolCluster.of('MASTER')
     );
 
@@ -114,7 +121,7 @@ await describe('Test pool cluster', async () => {
     try {
       await poolCluster.getConnection('SLAVE1');
       assert.fail('An error was expected');
-    } catch (error) {
+    } catch (error: any) {
       assert.equal(
         error.code,
         'POOL_NOEXIST',
@@ -130,8 +137,10 @@ await describe('Test pool cluster', async () => {
     poolCluster.add('SLAVE1', config);
 
     try {
+      // @ts-expect-error: TODO: implement typings
       const connection = await poolCluster.getConnection(/SLAVE[12]/);
       assert.equal(
+        // @ts-expect-error: TODO: implement typings
         connection.connection._clusterId,
         'SLAVE1',
         'should match regex pattern'

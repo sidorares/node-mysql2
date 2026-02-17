@@ -5,7 +5,7 @@ import { config, createConnection, version } from '../../common.test.mjs';
 const { database: currentDatabase } = config;
 
 await describe('Custom inspect for column definition', async () => {
-  let connection;
+  let connection: any;
 
   beforeEach(async () => {
     connection = createConnection().promise();
@@ -47,23 +47,23 @@ await describe('Custom inspect for column definition', async () => {
     );
 
     const [, columns] = await connection.query('select * from test_fields');
-    const inspectResults = util.inspect(columns);
-    const schemaArray = schema
+    const inspectResults: string = util.inspect(columns);
+    const schemaArray: string[] = schema
       .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0)
-      .map((line) => {
+      .map((line: string) => line.trim())
+      .filter((line: string) => line.length > 0)
+      .map((line: string) => {
         const words = line.split(' ');
         const name = `\`${words[0]}\``;
         return [name, ...words.slice(1)].join(' ');
       });
 
-    const normalizedInspectResults = inspectResults
+    const normalizedInspectResults: string[] = inspectResults
       .split('\n')
       .slice(1, -2) // remove "[" and "]" lines and also last dummy field
-      .map((line) => line.trim())
+      .map((line: string) => line.trim())
       // remove primary key - it's not in the schema explicitly but worth having in inspect
-      .map((line) => line.split('PRIMARY KEY ').join(''));
+      .map((line: string) => line.split('PRIMARY KEY ').join(''));
 
     for (let l = 0; l < normalizedInspectResults.length; l++) {
       const inspectLine = normalizedInspectResults[l];

@@ -1,5 +1,5 @@
 import { describe, it, assert } from 'poku';
-import { _keyFromFields } from '../../common.test.mjs';
+import { _keyFromFields } from '../../../../lib/parsers/parser_cache.js';
 
 describe('Cache Key Serialization', () => {
   // Invalid
@@ -274,7 +274,7 @@ describe('Cache Key Serialization', () => {
       nestTables: true,
       rowsAsArray: 2,
       supportBigNumbers: 'yes',
-      bigNumberStrings: [],
+      bigNumberStrings: [] as any[],
       typeCast: true,
       timezone: 'local',
       decimalNumbers: {
@@ -308,13 +308,13 @@ describe('Cache Key Serialization', () => {
       rowsAsArray: false,
       supportBigNumbers: false,
       // Expected: true
-      bigNumberStrings: (_, next) => next(),
+      bigNumberStrings: (_: any, next: any) => next(),
       // Expected: "function"
-      typeCast: (_, next) => next(),
+      typeCast: (_: any, next: any) => next(),
       timezone: 'local',
       decimalNumbers: false,
       // Expected: null
-      dateStrings: (_, next) => next(),
+      dateStrings: (_: any, next: any) => next(),
     },
     config: {
       supportBigNumbers: undefined,
@@ -363,7 +363,8 @@ describe('Cache Key Serialization', () => {
     },
   };
 
-  const keyFrom = (t) => _keyFromFields(t.type, t.fields, t.options, t.config);
+  const keyFrom = (t: any): string =>
+    _keyFromFields(t.type, t.fields, t.options, t.config);
 
   it(() => {
     const result1 = keyFrom(test1);
@@ -489,7 +490,7 @@ describe('Cache Key Serialization', () => {
     const stringify = JSON.stringify;
 
     // Overwriting the native `JSON.stringify`
-    JSON.stringify = (value, replacer, space = 8) =>
+    JSON.stringify = (value: any, replacer?: any, space: any = 8) =>
       stringify(value, replacer, space);
 
     const result1 = keyFrom(test1);

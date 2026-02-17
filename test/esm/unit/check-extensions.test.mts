@@ -2,13 +2,13 @@ import { EOL } from 'node:os';
 import { listFiles, it, assert, describe } from 'poku';
 
 await describe('Check for invalid file types found in restricted directories', async () => {
-  const invalidFiles = [];
-  const message = [];
+  const invalidFiles: string[] = [];
+  const message: string[] = [];
 
   const checkExtensions = async (
-    dirs,
-    allowedExtensions,
-    ignoreList = /\.DS_Store/
+    dirs: string[],
+    allowedExtensions: RegExp,
+    ignoreList: RegExp = /\.DS_Store|\.json/
   ) => {
     for (const dir of dirs) {
       const files = await listFiles(dir, { filter: /\./ });
@@ -24,7 +24,7 @@ await describe('Check for invalid file types found in restricted directories', a
   };
 
   await checkExtensions(['test/unit', 'test/integration'], /\.test\.cjs$/);
-  await checkExtensions(['test/esm'], /\.test\.mjs$/);
+  await checkExtensions(['test/esm'], /\.test\.mts$/);
   await checkExtensions(['test/tsc-build'], /(\.test\.ts|tsconfig\.json)$/);
 
   it(() => {
