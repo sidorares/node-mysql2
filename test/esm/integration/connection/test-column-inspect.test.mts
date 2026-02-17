@@ -1,11 +1,12 @@
 import { assert, describe, afterEach, beforeEach, it } from 'poku';
 import util from 'node:util';
+import type { Connection as PromiseConnection } from '../../../../promise.js';
 import { config, createConnection, version } from '../../common.test.mjs';
 
 const { database: currentDatabase } = config;
 
 await describe('Custom inspect for column definition', async () => {
-  let connection;
+  let connection: PromiseConnection;
 
   beforeEach(async () => {
     connection = createConnection().promise();
@@ -47,8 +48,8 @@ await describe('Custom inspect for column definition', async () => {
     );
 
     const [, columns] = await connection.query('select * from test_fields');
-    const inspectResults = util.inspect(columns);
-    const schemaArray = schema
+    const inspectResults: string = util.inspect(columns);
+    const schemaArray: string[] = schema
       .split('\n')
       .map((line) => line.trim())
       .filter((line) => line.length > 0)
@@ -58,7 +59,7 @@ await describe('Custom inspect for column definition', async () => {
         return [name, ...words.slice(1)].join(' ');
       });
 
-    const normalizedInspectResults = inspectResults
+    const normalizedInspectResults: string[] = inspectResults
       .split('\n')
       .slice(1, -2) // remove "[" and "]" lines and also last dummy field
       .map((line) => line.trim())

@@ -1,3 +1,10 @@
+import type { Connection as PromiseConnection } from '../../promise.js';
+import type {
+  ConnectionOptions,
+  PoolOptions,
+  PoolClusterOptions,
+  Connection,
+} from '../../index.js';
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -5,31 +12,34 @@ import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 export * as SqlString from 'sql-escaper';
 import portfinder from 'portfinder';
+import ClientFlags from '../../lib/constants/client.js';
+import * as driver from '../../index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const require = createRequire(import.meta.url);
 
-const ClientFlags = require('../../lib/constants/client.js');
+const disableEval: boolean = process.env.STATIC_PARSER === '1';
 
-export const driver = require('../../index.js');
-export const promiseDriver = require('../../promise.js');
-export const packets = require('../../lib/packets/index.js');
-export const PrepareCommand = require('../../lib/commands/prepare.js');
-export const getBinaryParser = require('../../lib/parsers/binary_parser.js');
-export const TextRowParser = require('../../lib/parsers/text_parser.js');
-export const { _keyFromFields } = require('../../lib/parsers/parser_cache.js');
-export const { privateObjectProps } = require('../../lib/helpers.js');
-
-export const disableEval = process.env.STATIC_PARSER === '1';
-
-const config = {
+const config: {
+  host: string;
+  user: string;
+  password: string;
+  database: string;
+  compress: boolean;
+  port: number;
+  disableEval: boolean;
+  ssl?: {
+    rejectUnauthorized: boolean;
+    ca: string;
+  };
+} = {
   host: process.env.MYSQL_HOST || 'localhost',
   user: process.env.MYSQL_USER || 'root',
   password: (process.env.CI ? process.env.MYSQL_PASSWORD : '') || '',
   database: process.env.MYSQL_DATABASE || 'test',
   compress: process.env.MYSQL_USE_COMPRESSION === '1',
-  port: process.env.MYSQL_PORT || 3306,
+  port: Number(process.env.MYSQL_PORT) || 3306,
   disableEval,
 };
 
@@ -45,16 +55,15 @@ if (process.env.MYSQL_USE_TLS === '1') {
 
 export { config };
 
-const encUser = encodeURIComponent(config.user ?? '');
-const encPass = encodeURIComponent(config.password ?? '');
-const host = config.host;
-const port = config.port;
-const db = config.database;
+const encUser: string = encodeURIComponent(config.user ?? '');
+const encPass: string = encodeURIComponent(config.password ?? '');
+const host: string = config.host;
+const port: number = config.port;
+const db: string = config.database;
 
-const configURI = `mysql://${encUser}:${encPass}@${host}:${port}/${db}`;
+const configURI: string = `mysql://${encUser}:${encPass}@${host}:${port}/${db}`;
 
-export const createConnection = function (args) {
-  const driver = require('../../index.js');
+export const createConnection = function (args?: ConnectionOptions) {
   if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
     return driver.createConnection({
       ...args,
@@ -97,9 +106,9 @@ export const createConnection = function (args) {
   return conn;
 };
 
-export const waitDatabaseReady = function (callback) {
-  const start = Date.now();
-  const timeout = 300000; // 5 minutes in milliseconds
+export const waitDatabaseReady = function (callback: () => void) {
+  const start: number = Date.now();
+  const timeout: number = 300000; // 5 minutes in milliseconds
 
   const tryConnect = function () {
     if (Date.now() - start > timeout) {
@@ -112,7 +121,7 @@ export const waitDatabaseReady = function (callback) {
       password: process.env.MYSQL_PASSWORD,
     });
 
-    conn.once('error', (err) => {
+    conn.once('error', (err: Error & { code?: string }) => {
       if (
         err.code !== 'PROTOCOL_CONNECTION_LOST' &&
         err.code !== 'ETIMEDOUT' &&
@@ -123,7 +132,7 @@ export const waitDatabaseReady = function (callback) {
       }
 
       try {
-        conn.close();
+        conn.end();
       } catch (err) {
         console.log(err);
       }
@@ -134,7 +143,7 @@ export const waitDatabaseReady = function (callback) {
 
     conn.once('connect', () => {
       console.log(`ready after ${Date.now() - start}ms!`);
-      conn.close();
+      conn.end();
       callback();
     });
   };
@@ -142,7 +151,7 @@ export const waitDatabaseReady = function (callback) {
   tryConnect();
 };
 
-export const getConfig = function (input) {
+export const getConfig = function (input?: ConnectionOptions) {
   const args = input || {};
   const params = {
     host: args.host || config.host,
@@ -173,9 +182,7 @@ export const getConfig = function (input) {
   return params;
 };
 
-export const createPool = function (args) {
-  let driver = require('../../index.js');
-
+export const createPool = function (args?: PoolOptions) {
   if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
     return driver.createPool({
       ...args,
@@ -188,18 +195,18 @@ export const createPool = function (args) {
   }
 
   if (process.env.BENCHMARK_MYSQL1) {
-    driver = require('mysql');
+    const mysql1 = require('mysql');
+    return mysql1.createPool(getConfig(args));
   }
 
   return driver.createPool(getConfig(args));
 };
 
-export const createPoolCluster = function (args = {}) {
-  const driver = require('../../index.js');
-
-  if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
+export const createPoolCluster = function (args: PoolClusterOptions = {}) {
+  if (!('port' in args) && process.env.MYSQL_CONNECTION_URL) {
     return driver.createPoolCluster({
       ...args,
+      // @ts-expect-error: TODO: implement typings
       uri: process.env.MYSQL_CONNECTION_URL,
     });
   }
@@ -208,8 +215,6 @@ export const createPoolCluster = function (args = {}) {
 };
 
 export const createConnectionWithURI = function () {
-  const driver = require('../../index.js');
-
   return driver.createConnection({ uri: configURI });
 };
 
@@ -220,15 +225,20 @@ export const createTemplate = function () {
   return jade.compile(template);
 };
 
-export const createServer = function (onListening, handler) {
-  const server = require('../../index.js').createServer();
-  server.on('connection', (conn) => {
+export const createServer = function (
+  onListening: () => void,
+  handler?: (conn: Connection) => void
+) {
+  // @ts-expect-error: TODO: implement typings
+  const server = driver.createServer();
+  server.on('connection', (conn: Connection) => {
     conn.on('error', () => {
       // server side of the connection
       // ignore disconnects
     });
+
     // remove ssl bit from the flags
-    let flags = 0xffffff;
+    let flags: number = 0xffffff;
     flags = flags ^ (ClientFlags.COMPRESS | ClientFlags.SSL);
 
     conn.serverHandshake({
@@ -239,13 +249,17 @@ export const createServer = function (onListening, handler) {
       characterSet: 8,
       capabilityFlags: flags,
     });
+
     if (handler) {
       handler(conn);
     }
   });
-  portfinder.getPort((err, port) => {
+
+  portfinder.getPort((_: Error | null, port: number) => {
+    // @ts-expect-error: TODO: implement typings
     server.listen(port, onListening);
   });
+
   return server;
 };
 
@@ -253,13 +267,14 @@ export const useTestDb = function () {
   // no-op in my setup, need it for compatibility with node-mysql tests
 };
 
-export const version = Number(process.version.match(/v(\d+)\./)?.[1]);
+export const version: number = Number(process.version.match(/v(\d+)\./)?.[1]);
 
-export const getMysqlVersion = async function (connection) {
-  const conn = connection.promise ? connection.promise() : connection;
-
+export const getMysqlVersion = async function (
+  connection: Connection | PromiseConnection
+) {
+  const conn = 'promise' in connection ? connection.promise() : connection;
   const [rows] = await conn.query('SELECT VERSION() AS `version`');
-  const serverVersion = rows[0].version;
+  const serverVersion: string = rows[0].version;
 
   const [major, minor, patch] = serverVersion
     .split('.')
@@ -272,16 +287,17 @@ export const getMysqlVersion = async function (connection) {
   };
 };
 
-const pad = (number, length = 2) => String(number).padStart(length, '0');
+const pad = (number: number, length: number = 2): string =>
+  String(number).padStart(length, '0');
 
-export const localDate = (date) => {
-  const year = pad(date.getFullYear(), 4);
-  const month = pad(date.getMonth() + 1);
-  const day = pad(date.getDate());
-  const hour = pad(date.getHours());
-  const minute = pad(date.getMinutes());
-  const second = pad(date.getSeconds());
-  const millisecond = pad(date.getMilliseconds(), 3);
+export const localDate = (date: Date): string => {
+  const year: string = pad(date.getFullYear(), 4);
+  const month: string = pad(date.getMonth() + 1);
+  const day: string = pad(date.getDate());
+  const hour: string = pad(date.getHours());
+  const minute: string = pad(date.getMinutes());
+  const second: string = pad(date.getSeconds());
+  const millisecond: string = pad(date.getMilliseconds(), 3);
 
   return `${year}-${month}-${day} ${hour}:${minute}:${second}.${millisecond}`;
 };

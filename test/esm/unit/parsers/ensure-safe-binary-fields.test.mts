@@ -1,19 +1,20 @@
 import { describe, it, assert } from 'poku';
-import { TextRowParser, privateObjectProps } from '../../common.test.mjs';
+import getBinaryParser from '../../../../lib/parsers/binary_parser.js';
+import { privateObjectProps } from '../../../../lib/helpers.js';
 
-describe('Text Parser: Block Native Object Props', () => {
-  const blockedFields = Array.from(privateObjectProps).map((prop) => [
-    { name: prop, table: '' },
-  ]);
+describe('Binary Parser: Block Native Object Props', () => {
+  const blockedFields: { name: string; table: string }[][] = Array.from(
+    privateObjectProps
+  ).map((prop) => [{ name: prop, table: '' }]);
 
   it(() => {
     blockedFields.forEach((fields) => {
       try {
-        TextRowParser(fields, {}, {});
+        getBinaryParser(fields, {}, {});
         assert.fail('An error was expected');
-      } catch (error) {
+      } catch (error: unknown) {
         assert.strictEqual(
-          error.message,
+          (error as Error).message,
           `The field name (${fields[0].name}) can't be the same as an object's private property.`,
           `Ensure safe ${fields[0].name}`
         );
@@ -28,11 +29,11 @@ describe('Text Parser: Block Native Object Props', () => {
       )
       .forEach((fields) => {
         try {
-          TextRowParser(fields, { nestTables: '_' }, {});
+          getBinaryParser(fields, { nestTables: '_' }, {});
           assert.fail('An error was expected');
-        } catch (error) {
+        } catch (error: unknown) {
           assert.strictEqual(
-            error.message,
+            (error as Error).message,
             `The field name (_${fields[0].name}) can't be the same as an object's private property.`,
             `Ensure safe _${fields[0].name} for nestTables as string`
           );
@@ -47,11 +48,11 @@ describe('Text Parser: Block Native Object Props', () => {
       )
       .forEach((fields) => {
         try {
-          TextRowParser(fields, { nestTables: true }, {});
+          getBinaryParser(fields, { nestTables: true }, {});
           assert.fail('An error was expected');
-        } catch (error) {
+        } catch (error: unknown) {
           assert.strictEqual(
-            error.message,
+            (error as Error).message,
             `The field name (${fields[0].table}) can't be the same as an object's private property.`,
             `Ensure safe ${fields[0].table} for nestTables as true`
           );

@@ -2,15 +2,16 @@ import { it, assert, describe } from 'poku';
 import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 const sql = `SELECT TO_VECTOR("[1.05, -17.8, 32, 123.456]") as test`;
-const expectedArray = [1.05, -17.8, 32, 123.456];
-const epsilon = 1e-6;
+const expectedArray: number[] = [1.05, -17.8, 32, 123.456];
+const epsilon: number = 1e-6;
 
-const compareFloat = (a, b) => Math.abs((a - b) / a) < epsilon;
-const compareFLoatsArray = (a, b) => a.every((v, i) => compareFloat(v, b[i]));
+const compareFloat = (a: number, b: number): boolean =>
+  Math.abs((a - b) / a) < epsilon;
+const compareFLoatsArray = (a: number[], b: number[]): boolean =>
+  a.every((v, i) => compareFloat(v, b[i]));
 
 await describe(async () => {
   const connection = createConnection().promise();
-
   const mySqlVersion = await getMysqlVersion(connection);
 
   if (mySqlVersion.major < 9) {

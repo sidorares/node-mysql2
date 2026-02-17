@@ -12,7 +12,7 @@ await describe('Execute: Results Creation', async () => {
     ];
     const emptyObject = {};
     const proto = Object.getPrototypeOf(emptyObject);
-    const privateObjectProps = Object.getOwnPropertyNames(proto);
+    const privateObjectProps: string[] = Object.getOwnPropertyNames(proto);
 
     const [results] = await connection.execute('SELECT 1+1 AS `test`');
 

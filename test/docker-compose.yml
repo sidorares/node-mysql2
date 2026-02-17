@@ -26,8 +26,9 @@ services:
       FILTER: ''
     volumes:
       - ../:/usr/app:ro
+      - /usr/app/node_modules
     working_dir: /usr/app
-    command: npm test
+    command: sh -c "npm ci && npm test"
     depends_on:
       mysql:
         condition: service_healthy
@@ -83,8 +84,9 @@ services:
     volumes:
       - ../:/usr/app:ro
       - ../coverage:/usr/app/coverage:rw
+      - /usr/app/node_modules
     working_dir: /usr/app
-    command: npm run coverage-test
+    command: sh -c "npm ci && npm run test:coverage"
     depends_on:
       mysql:
         condition: service_healthy

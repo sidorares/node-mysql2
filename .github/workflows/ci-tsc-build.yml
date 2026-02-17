@@ -35,4 +35,4 @@ jobs:
         run: npm ci
 
       - name: Testing TypeScript build
-        run: npm run test:tsc-build
+        run: npm run typecheck

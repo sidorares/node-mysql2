@@ -5,7 +5,6 @@ const path = require('node:path');
 const process = require('node:process');
 
 const disableEval = process.env.STATIC_PARSER === '1';
-exports.disableEval = disableEval;
 
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
@@ -27,6 +26,8 @@ if (process.env.MYSQL_USE_TLS === '1') {
   };
 }
 
+exports.config = config;
+
 const encUser = encodeURIComponent(config.user ?? '');
 const encPass = encodeURIComponent(config.password ?? '');
 const host = config.host;
@@ -36,7 +37,6 @@ const db = config.database;
 const configURI = `mysql://${encUser}:${encPass}@${host}:${port}/${db}`;
 
 exports.SqlString = require('sql-escaper');
-exports.config = config;
 
 exports.waitDatabaseReady = function (callback) {
   const start = Date.now();

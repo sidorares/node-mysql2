@@ -133,7 +133,7 @@ FILTER='timeout' npm test
 For testing **coverage**:
 
 ```bash
-npm run coverage-test
+npm run test:coverage
 ```
 
 #### Docker

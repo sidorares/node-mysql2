@@ -11,14 +11,14 @@
     "test": "poku -d -r=verbose --sequential test/esm test/unit test/integration",
     "test:bun": "bun poku -d --sequential test/esm test/unit test/integration",
     "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku -d --sequential --denoAllow=\"read,env,net,sys\" test/esm test/unit test/integration",
-    "test:tsc-build": "cd \"test/tsc-build\" && npx tsc -p \"tsconfig.json\"",
     "test:docker:up": "docker compose -f test/docker-compose.yml up --abort-on-container-exit --remove-orphans",
     "test:docker:down": "docker compose -f test/docker-compose.yml down",
     "test:docker:node": "npm run test:docker:up -- node && npm run test:docker:down",
     "test:docker:bun": "npm run test:docker:up -- bun && npm run test:docker:down",
     "test:docker:deno": "npm run test:docker:up -- deno && npm run test:docker:down",
     "test:docker:coverage": "npm run test:docker:up -- coverage && npm run test:docker:down",
-    "coverage-test": "c8 npm run test",
+    "test:coverage": "c8 npm test",
+    "typecheck": "cd \"test/tsc-build\" && tsc -p \"tsconfig.json\" && cd ../esm && tsc -p \"tsconfig.json\" --noEmit",
     "benchmark": "node ./benchmarks/benchmark.js",
     "wait-port": "wait-on"
   },
@@ -81,6 +81,7 @@
     "poku": "^3.0.2",
     "portfinder": "^1.0.38",
     "prettier": "^3.8.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }

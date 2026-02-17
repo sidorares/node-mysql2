@@ -1,3 +1,4 @@
+import type { RowDataPacket } from '../../../../promise.js';
 import { it, assert, describe } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
@@ -50,7 +51,9 @@ await describe(async () => {
       'проводить собрания, митинги и демонстрации, шествия и пикетирование',
     ]);
 
-    const [_rows] = await connection.execute('SELECT * FROM announcements');
+    const [_rows] = await connection.execute<RowDataPacket[]>(
+      'SELECT * FROM announcements'
+    );
 
     assert.equal(_rows.length, 2, 'rows length needs to be 2');
     assert.equal(

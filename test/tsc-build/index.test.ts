@@ -1,7 +1,7 @@
 /**
  * This tests doesn't execute the scripts or connect in any database.
  * It only compiles all typings in the project and ensures that the compilation will be successful.
- * To test it, run: npm run test:tsc-build
+ * To test it, run: npm run typecheck
  *
  * The purpose of this test is to prevent changes that break the typings in new PRs
  *
