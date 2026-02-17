@@ -81,6 +81,7 @@
     "poku": "^3.0.2",
     "portfinder": "^1.0.38",
     "prettier": "^3.8.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }
