@@ -1,8 +1,11 @@
 import { assert, describe, it } from 'poku';
 import { Buffer } from 'node:buffer';
-import { createConnection, getMysqlVersion } from '../common.test.mjs';
-import packets from '../../../lib/packets/index.js';
-import PrepareCommand from '../../../lib/commands/prepare.js';
+import {
+  createConnection,
+  getMysqlVersion,
+  packets,
+  PrepareCommand,
+} from '../common.test.mjs';
 
 await describe(async () => {
   await it('Unit Test - Prepare result with number of parameters incorrectly reported by the server', async () => {

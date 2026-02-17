@@ -1,6 +1,5 @@
 import { describe, it, assert } from 'poku';
-import getBinaryParser from '../../../../lib/parsers/binary_parser.js';
-import { privateObjectProps } from '../../../../lib/helpers.js';
+import { getBinaryParser, privateObjectProps } from '../../common.test.mjs';
 
 describe('Binary Parser: Block Native Object Props', () => {
   const blockedFields = Array.from(privateObjectProps).map((prop) => [

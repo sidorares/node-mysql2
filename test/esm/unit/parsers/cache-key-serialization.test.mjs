@@ -1,5 +1,5 @@
 import { describe, it, assert } from 'poku';
-import { _keyFromFields } from '../../../../lib/parsers/parser_cache.js';
+import { _keyFromFields } from '../../common.test.mjs';
 
 describe('Cache Key Serialization', () => {
   // Invalid

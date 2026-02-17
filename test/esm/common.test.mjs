@@ -4,12 +4,22 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 export * as SqlString from 'sql-escaper';
-import ClientFlags from '../../lib/constants/client.js';
 import portfinder from 'portfinder';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const require = createRequire(import.meta.url);
+
+const ClientFlags = require('../../lib/constants/client.js');
+
+export const driver = require('../../index.js');
+export const promiseDriver = require('../../promise.js');
+export const packets = require('../../lib/packets/index.js');
+export const PrepareCommand = require('../../lib/commands/prepare.js');
+export const getBinaryParser = require('../../lib/parsers/binary_parser.js');
+export const TextRowParser = require('../../lib/parsers/text_parser.js');
+export const { _keyFromFields } = require('../../lib/parsers/parser_cache.js');
+export const { privateObjectProps } = require('../../lib/helpers.js');
 
 const disableEval = process.env.STATIC_PARSER === '1';
 

@@ -1,6 +1,5 @@
 import { assert, describe, it } from 'poku';
-import { config, localDate } from '../../common.test.mjs';
-import driver from '../../../../index.js';
+import { config, localDate, driver } from '../../common.test.mjs';
 
 await describe('stringifyObjects: true', async () => {
   const connection = driver

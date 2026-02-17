@@ -1,6 +1,7 @@
 import { it, assert, describe } from 'poku';
-import { config } from '../../common.test.mjs';
-import { createPoolCluster } from '../../../../promise.js';
+import { config, promiseDriver } from '../../common.test.mjs';
+
+const { createPoolCluster } = promiseDriver;
 
 await describe('Test pool cluster', async () => {
   await it(async () => {

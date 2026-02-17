@@ -1,5 +1,5 @@
 import { assert, it, describe } from 'poku';
-import mysql from '../../../index.js';
+import { driver as mysql } from '../common.test.mjs';
 
 const poolConfig = {}; // config: { connectionConfig: {} };
 
