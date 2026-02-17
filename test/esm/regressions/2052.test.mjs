@@ -1,19 +1,14 @@
-import { assert, describe, test } from 'poku';
-import { createRequire } from 'node:module';
+import { assert, describe, it } from 'poku';
 import { Buffer } from 'node:buffer';
+import {
+  createConnection,
+  getMysqlVersion,
+  packets,
+  PrepareCommand,
+} from '../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const common = require('../../common.test.cjs');
-const packets = require('../../../lib/packets/index.js');
-const PrepareCommand = require('../../../lib/commands/prepare.js');
-
-test(async () => {
-  await test(async () => {
-    describe(
-      'Unit Test - Prepare result with number of parameters incorrectly reported by the server',
-      common.describeOptions
-    );
-
+await describe(async () => {
+  await it('Unit Test - Prepare result with number of parameters incorrectly reported by the server', async () => {
     const connection = {
       sequenceId: 1,
       constructor: {
@@ -93,11 +88,11 @@ test(async () => {
     });
   });
 
-  const connection = common.createConnection({
+  const connection = createConnection({
     database: 'mysql',
   });
 
-  const mySqlVersion = await common.getMysqlVersion(connection);
+  const mySqlVersion = await getMysqlVersion(connection);
 
   const hasIncorrectPrepareParameter = (() => {
     const incorrectVersions = ['8.1.0', '8.2.0', '8.3.0', '8.4.0'];
@@ -106,46 +101,36 @@ test(async () => {
     return incorrectVersions.includes(verString);
   })();
 
-  await test(
-    async () =>
-      new Promise((resolve, reject) => {
-        describe(
-          `E2E Prepare result with number of parameters incorrectly reported by the server`,
-          common.describeOptions
-        );
+  await it('E2E Prepare result with number of parameters incorrectly reported by the server', async () =>
+    new Promise((resolve, reject) => {
+      connection.prepare('select * from user order by ?', async (err, stmt) => {
+        if (err) {
+          connection.end();
+          reject(err);
 
-        connection.prepare(
-          'select * from user order by ?',
-          async (err, stmt) => {
-            if (err) {
-              connection.end();
-              reject(err);
+          return;
+        }
 
-              return;
-            }
+        if (hasIncorrectPrepareParameter) {
+          assert.equal(
+            stmt.parameters.length,
+            0,
+            'parameters length needs to be 0',
+            'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
+          );
+        } else {
+          assert.equal(
+            stmt.parameters.length,
+            1,
+            'parameters length needs to be 1'
+          );
+        }
 
-            if (hasIncorrectPrepareParameter) {
-              assert.equal(
-                stmt.parameters.length,
-                0,
-                'parameters length needs to be 0',
-                'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
-              );
-            } else {
-              assert.equal(
-                stmt.parameters.length,
-                1,
-                'parameters length needs to be 1'
-              );
-            }
+        resolve(null);
+      });
+    }));
 
-            resolve(null);
-          }
-        );
-      })
-  );
-
-  await test(
+  await it(
     async () =>
       new Promise((resolve, reject) => {
         connection.prepare(

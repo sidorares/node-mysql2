@@ -1,20 +1,12 @@
-import { test, describe, assert } from 'poku';
-import { createRequire } from 'node:module';
+import { it, describe, assert } from 'poku';
+import { createConnection } from '../../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const {
-  createConnection,
-  describeOptions,
-} = require('../../../common.test.cjs');
+await describe('JSON String', async () => {
+  const connection = createConnection({
+    jsonStrings: true,
+  }).promise();
 
-describe('JSON String', describeOptions);
-
-const connection = createConnection({
-  jsonStrings: true,
-}).promise();
-
-Promise.all([
-  test(async () => {
+  await it(async () => {
     const [result] = await connection.query(
       `SELECT CAST('{"test": true}' AS JSON) AS json_result`
     );
@@ -24,8 +16,9 @@ Promise.all([
       '{"test": true}',
       'Ensure JSON return as string (query)'
     );
-  }),
-  test(async () => {
+  });
+
+  await it(async () => {
     const [result] = await connection.execute(
       `SELECT CAST('{"test": true}' AS JSON) AS json_result`
     );
@@ -35,7 +28,7 @@ Promise.all([
       '{"test": true}',
       'Ensure JSON return as string (execute)'
     );
-  }),
-]).then(async () => {
+  });
+
   await connection.end();
 });

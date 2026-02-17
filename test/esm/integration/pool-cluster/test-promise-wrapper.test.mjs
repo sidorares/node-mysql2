@@ -1,14 +1,10 @@
-import { test, assert, describe } from 'poku';
-import { createRequire } from 'node:module';
+import { it, assert, describe } from 'poku';
+import { config, promiseDriver } from '../../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const common = require('../../../common.test.cjs');
-const { createPoolCluster } = require('../../../../promise.js');
+const { createPoolCluster } = promiseDriver;
 
-(async () => {
-  describe('Test pool cluster', common.describeOptions);
-
-  await test(async () => {
+await describe('Test pool cluster', async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
 
     poolCluster.once('warn', async function () {
@@ -26,7 +22,7 @@ const { createPoolCluster } = require('../../../../promise.js');
     poolCluster.poolCluster.emit('warn', new Error());
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
 
     poolCluster.once('remove', async function () {
@@ -44,7 +40,7 @@ const { createPoolCluster } = require('../../../../promise.js');
     poolCluster.poolCluster.emit('remove');
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
 
     poolCluster.once('offline', async function () {
@@ -62,7 +58,7 @@ const { createPoolCluster } = require('../../../../promise.js');
     poolCluster.poolCluster.emit('offline');
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
 
     poolCluster.once('online', async function () {
@@ -80,9 +76,9 @@ const { createPoolCluster } = require('../../../../promise.js');
     poolCluster.poolCluster.emit('online');
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
-    poolCluster.add('MASTER', common.config);
+    poolCluster.add('MASTER', config);
 
     const poolNamespace = poolCluster.of('MASTER');
 
@@ -111,9 +107,9 @@ const { createPoolCluster } = require('../../../../promise.js');
     poolCluster.end();
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
-    poolCluster.add('SLAVE', common.config);
+    poolCluster.add('SLAVE', config);
 
     try {
       await poolCluster.getConnection('SLAVE1');
@@ -129,9 +125,9 @@ const { createPoolCluster } = require('../../../../promise.js');
     }
   });
 
-  await test(async () => {
+  await it(async () => {
     const poolCluster = createPoolCluster();
-    poolCluster.add('SLAVE1', common.config);
+    poolCluster.add('SLAVE1', config);
 
     try {
       const connection = await poolCluster.getConnection(/SLAVE[12]/);
@@ -146,4 +142,4 @@ const { createPoolCluster } = require('../../../../promise.js');
       poolCluster.end();
     }
   });
-})();
+});

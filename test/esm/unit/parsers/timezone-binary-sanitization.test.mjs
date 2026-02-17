@@ -1,20 +1,13 @@
 import process from 'node:process';
-import { describe, test, assert } from 'poku';
-import { createRequire } from 'node:module';
+import { describe, it, assert } from 'poku';
+import { createConnection } from '../../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const {
-  createConnection,
-  describeOptions,
-} = require('../../../common.test.cjs');
+await describe('Binary Parser: timezone Sanitization', async () => {
+  const connection = createConnection().promise();
 
-const connection = createConnection().promise();
-
-describe('Binary Parser: timezone Sanitization', describeOptions);
-
-Promise.all([
-  test(async () => {
+  await it(async () => {
     process.env.TEST_ENV_VALUE = 'secure';
+
     await connection.execute({
       sql: 'SELECT NOW()',
       timezone: `'); process.env.TEST_ENV_VALUE = "not so much"; //`,
@@ -25,7 +18,7 @@ Promise.all([
       'secure',
       'Timezone sanitization failed - code injection possible'
     );
-  }),
-]).then(async () => {
+  });
+
   await connection.end();
 });

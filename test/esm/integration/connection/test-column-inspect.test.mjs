@@ -1,16 +1,14 @@
 import { assert, describe, afterEach, beforeEach, it } from 'poku';
 import util from 'node:util';
-import { createRequire } from 'node:module';
+import { config, createConnection, version } from '../../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const common = require('../../../common.test.cjs');
-const { database: currentDatabase } = common.config;
+const { database: currentDatabase } = config;
 
 await describe('Custom inspect for column definition', async () => {
   let connection;
 
   beforeEach(async () => {
-    connection = common.createConnection().promise();
+    connection = createConnection().promise();
     await connection.query(`DROP TABLE IF EXISTS test_fields`);
   });
 
@@ -79,7 +77,7 @@ await describe('Custom inspect for column definition', async () => {
     }
   });
 
-  if (common.version >= 16) {
+  if (version >= 16) {
     await it('shows detailed description when depth < 1', async () => {
       await connection.query(`
         CREATE TEMPORARY TABLE test_fields2 (

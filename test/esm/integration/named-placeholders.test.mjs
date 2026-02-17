@@ -1,127 +1,133 @@
 // TODO: `namedPlaceholders` can't be disabled at query level
-import { assert, test, describe } from 'poku';
-import { createRequire } from 'node:module';
+import { assert, it, describe } from 'poku';
+import { createConnection, createPool } from '../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const {
-  createConnection,
-  describeOptions,
-  createPool,
-} = require('../../common.test.cjs');
+await describe('Test namedPlaceholder as command parameter in connection', async () => {
+  const query =
+    'SELECT result FROM (SELECT 1 as result) temp WHERE temp.result=:named';
+  const values = { named: 1 };
 
-const query =
-  'SELECT result FROM (SELECT 1 as result) temp WHERE temp.result=:named';
-const values = { named: 1 };
+  // await it(async () => {
+  //   const c = createConnection({ namedPlaceholders: true }).promise();
 
-describe(
-  'Test namedPlaceholder as command parameter in connection',
-  describeOptions
-);
+  //   try {
+  //     await c.query({ sql: query, namedPlaceholders: false }, values);
+  //     assert.fail('Enabled in connection config, disabled in query command');
+  //   } catch (err) {
+  //     assert(
+  //       err?.sqlMessage.match(/right syntax to use near ':named'/),
+  //       'Enabled in connection config, disabled in query command',
+  //     );
+  //   } finally {
+  //     await c.end();
+  //   }
+  // });
 
-// test(() => {
-//   const c = createConnection({ namedPlaceholders: true });
+  await it(async () => {
+    const c = createConnection({ namedPlaceholders: false }).promise();
 
-//   c.query({ sql: query, namedPlaceholders: false }, values, (err) => {
-//     c.end();
+    const [rows] = await c.query(
+      { sql: query, namedPlaceholders: true },
+      values
+    );
+    await c.end();
 
-//     assert(
-//       err || err?.sqlMessage.match(/right syntax to use near ':named'/),
-//       'Enabled in connection config, disabled in query command',
-//     );
-//   });
-// });
-
-test(() => {
-  const c = createConnection({ namedPlaceholders: false });
-
-  c.query({ sql: query, namedPlaceholders: true }, values, (err, rows) => {
-    c.end();
-
-    assert.ifError(err);
     assert.equal(
       rows[0].result,
       1,
       'Disabled in connection config, enabled in query command'
     );
   });
-});
 
-// test(() => {
-//   const c = createConnection({ namedPlaceholders: true });
+  // await it(async () => {
+  //   const c = createConnection({ namedPlaceholders: true }).promise();
 
-//   c.execute({ sql: query, namedPlaceholders: false }, values, (err) => {
-//     c.end();
+  //   try {
+  //     await c.execute({ sql: query, namedPlaceholders: false }, values);
+  //     assert.fail('Enabled in connection config, disabled in execute command');
+  //   } catch (err) {
+  //     assert(
+  //       err?.sqlMessage.match(/right syntax to use near ':named'/),
+  //       'Enabled in connection config, disabled in execute command',
+  //     );
+  //   } finally {
+  //     await c.end();
+  //   }
+  // });
 
-//     assert(
-//       err || err?.sqlMessage.match(/right syntax to use near ':named'/),
-//       'Enabled in connection config, disabled in execute command',
-//     );
-//   });
-// });
+  await it(async () => {
+    const c = createConnection({ namedPlaceholders: false }).promise();
 
-test(() => {
-  const c = createConnection({ namedPlaceholders: false });
+    const [rows] = await c.execute(
+      { sql: query, namedPlaceholders: true },
+      values
+    );
+    await c.end();
 
-  c.execute({ sql: query, namedPlaceholders: true }, values, (err, rows) => {
-    c.end();
-
-    assert.ifError(err);
     assert.equal(
       rows[0].result,
       1,
       'Disabled in connection config, enabled in execute command'
     );
   });
-});
 
-// test(() => {
-//   const c = createPool({ namedPlaceholders: true });
+  // await it(async () => {
+  //   const c = createPool({ namedPlaceholders: true }).promise();
 
-//   c.query({ sql: query, namedPlaceholders: false }, values, (err) => {
-//     c.end();
+  //   try {
+  //     await c.query({ sql: query, namedPlaceholders: false }, values);
+  //     assert.fail('Enabled in pool config, disabled in query command');
+  //   } catch (err) {
+  //     assert(
+  //       err?.sqlMessage.match(/right syntax to use near ':named'/),
+  //       'Enabled in pool config, disabled in query command',
+  //     );
+  //   } finally {
+  //     await c.end();
+  //   }
+  // });
 
-//     assert(
-//       err || err?.sqlMessage.match(/right syntax to use near ':named'/),
-//       'Enabled in pool config, disabled in query command',
-//     );
-//   });
-// });
+  await it(async () => {
+    const c = createPool({ namedPlaceholders: false }).promise();
 
-test(() => {
-  const c = createPool({ namedPlaceholders: false });
+    const [rows] = await c.query(
+      { sql: query, namedPlaceholders: true },
+      values
+    );
+    await c.end();
 
-  c.query({ sql: query, namedPlaceholders: true }, values, (err, rows) => {
-    c.end();
-
-    assert.ifError(err);
     assert.equal(
       rows[0].result,
       1,
       'Disabled in pool config, enabled in query command'
     );
   });
-});
 
-// test(() => {
-//   const c = createPool({ namedPlaceholders: true });
+  // await it(async () => {
+  //   const c = createPool({ namedPlaceholders: true }).promise();
 
-//   c.execute({ sql: query, namedPlaceholders: false }, values, (err) => {
-//     c.end();
+  //   try {
+  //     await c.execute({ sql: query, namedPlaceholders: false }, values);
+  //     assert.fail('Enabled in pool config, disabled in execute command');
+  //   } catch (err) {
+  //     assert(
+  //       err?.sqlMessage.match(/right syntax to use near ':named'/),
+  //       'Enabled in pool config, disabled in execute command',
+  //     );
+  //   } finally {
+  //     await c.end();
+  //   }
+  // });
 
-//     assert(
-//       err || err?.sqlMessage.match(/right syntax to use near ':named'/),
-//       'Enabled in pool config, disabled in execute command',
-//     );
-//   });
-// });
+  await it(async () => {
+    const c = createPool({ namedPlaceholders: false }).promise();
 
-test(() => {
-  const c = createPool({ namedPlaceholders: false });
+    const [rows] = await c.execute(
+      { sql: query, namedPlaceholders: true },
+      values
+    );
+    await c.end();
 
-  c.execute({ sql: query, namedPlaceholders: true }, values, (err, rows) => {
-    c.end();
-
-    assert.ifError(err);
     assert.equal(
       rows[0].result,
       1,
