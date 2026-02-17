@@ -1,3 +1,10 @@
+import type { Connection as PromiseConnection } from '../../promise.js';
+import type {
+  ConnectionOptions,
+  PoolOptions,
+  PoolClusterOptions,
+  Connection,
+} from '../../index.js';
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -5,18 +12,12 @@ import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 export * as SqlString from 'sql-escaper';
 import portfinder from 'portfinder';
-import type {
-  ConnectionOptions,
-  PoolOptions,
-  PoolClusterOptions,
-  Connection,
-} from '../../index.js';
+import ClientFlags from '../../lib/constants/client.js';
+import * as driver from '../../index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const require = createRequire(import.meta.url);
-
-const ClientFlags = require('../../lib/constants/client.js');
 
 const disableEval: boolean = process.env.STATIC_PARSER === '1';
 
@@ -63,7 +64,6 @@ const db: string = config.database;
 const configURI: string = `mysql://${encUser}:${encPass}@${host}:${port}/${db}`;
 
 export const createConnection = function (args?: ConnectionOptions) {
-  const driver = require('../../index.js');
   if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
     return driver.createConnection({
       ...args,
@@ -132,7 +132,7 @@ export const waitDatabaseReady = function (callback: () => void) {
       }
 
       try {
-        conn.close();
+        conn.end();
       } catch (err) {
         console.log(err);
       }
@@ -143,7 +143,7 @@ export const waitDatabaseReady = function (callback: () => void) {
 
     conn.once('connect', () => {
       console.log(`ready after ${Date.now() - start}ms!`);
-      conn.close();
+      conn.end();
       callback();
     });
   };
@@ -183,8 +183,6 @@ export const getConfig = function (input?: ConnectionOptions) {
 };
 
 export const createPool = function (args?: PoolOptions) {
-  let driver = require('../../index.js');
-
   if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
     return driver.createPool({
       ...args,
@@ -197,18 +195,18 @@ export const createPool = function (args?: PoolOptions) {
   }
 
   if (process.env.BENCHMARK_MYSQL1) {
-    driver = require('mysql');
+    const mysql1 = require('mysql');
+    return mysql1.createPool(getConfig(args));
   }
 
   return driver.createPool(getConfig(args));
 };
 
 export const createPoolCluster = function (args: PoolClusterOptions = {}) {
-  const driver = require('../../index.js');
-
   if (!('port' in args) && process.env.MYSQL_CONNECTION_URL) {
     return driver.createPoolCluster({
       ...args,
+      // @ts-expect-error: TODO: implement typings
       uri: process.env.MYSQL_CONNECTION_URL,
     });
   }
@@ -217,8 +215,6 @@ export const createPoolCluster = function (args: PoolClusterOptions = {}) {
 };
 
 export const createConnectionWithURI = function () {
-  const driver = require('../../index.js');
-
   return driver.createConnection({ uri: configURI });
 };
 
@@ -233,12 +229,14 @@ export const createServer = function (
   onListening: () => void,
   handler?: (conn: Connection) => void
 ) {
-  const server = require('../../index.js').createServer();
+  // @ts-expect-error: TODO: implement typings
+  const server = driver.createServer();
   server.on('connection', (conn: Connection) => {
     conn.on('error', () => {
       // server side of the connection
       // ignore disconnects
     });
+
     // remove ssl bit from the flags
     let flags: number = 0xffffff;
     flags = flags ^ (ClientFlags.COMPRESS | ClientFlags.SSL);
@@ -251,13 +249,17 @@ export const createServer = function (
       characterSet: 8,
       capabilityFlags: flags,
     });
+
     if (handler) {
       handler(conn);
     }
   });
+
   portfinder.getPort((_: Error | null, port: number) => {
+    // @ts-expect-error: TODO: implement typings
     server.listen(port, onListening);
   });
+
   return server;
 };
 
@@ -267,15 +269,16 @@ export const useTestDb = function () {
 
 export const version: number = Number(process.version.match(/v(\d+)\./)?.[1]);
 
-export const getMysqlVersion = async function (connection: Connection) {
-  const conn = connection.promise();
-
+export const getMysqlVersion = async function (
+  connection: Connection | PromiseConnection
+) {
+  const conn = 'promise' in connection ? connection.promise() : connection;
   const [rows] = await conn.query('SELECT VERSION() AS `version`');
   const serverVersion: string = rows[0].version;
 
   const [major, minor, patch] = serverVersion
     .split('.')
-    .map((x: string) => parseInt(x, 10));
+    .map((x) => parseInt(x, 10));
 
   return {
     major,

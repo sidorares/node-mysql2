@@ -12,7 +12,6 @@ const compareFLoatsArray = (a: number[], b: number[]): boolean =>
 
 await describe(async () => {
   const connection = createConnection().promise();
-
   const mySqlVersion = await getMysqlVersion(connection);
 
   if (mySqlVersion.major < 9) {

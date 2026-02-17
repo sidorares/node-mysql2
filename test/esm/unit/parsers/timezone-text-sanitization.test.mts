@@ -8,6 +8,7 @@ await describe('Text Parser: timezone Sanitization', async () => {
   await it(async () => {
     process.env.TEST_ENV_VALUE = 'secure';
 
+    // @ts-expect-error: TODO: implement typings
     await connection.query({
       sql: 'SELECT NOW()',
       timezone: `'); process.env.TEST_ENV_VALUE = "not so much"; //`,
