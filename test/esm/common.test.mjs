@@ -21,7 +21,7 @@ export const TextRowParser = require('../../lib/parsers/text_parser.js');
 export const { _keyFromFields } = require('../../lib/parsers/parser_cache.js');
 export const { privateObjectProps } = require('../../lib/helpers.js');
 
-const disableEval = process.env.STATIC_PARSER === '1';
+export const disableEval = process.env.STATIC_PARSER === '1';
 
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
