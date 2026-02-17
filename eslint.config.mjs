@@ -104,8 +104,8 @@ export default [
         'error',
         {
           selector:
-            'ImportDeclaration[source.value=/^\\./][source.value!=/\\.(mjs)$/]',
-          message: 'Local imports must have the explicit .mjs extension',
+            'ImportDeclaration[source.value=/^\\./][source.value!=/\\.(m?js)$/]',
+          message: 'Local imports must have the explicit .mjs or .js extension',
         },
       ],
     },

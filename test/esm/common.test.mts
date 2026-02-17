@@ -12,7 +12,6 @@ export const require = createRequire(import.meta.url);
 
 const ClientFlags = require('../../lib/constants/client.js');
 
-
 const disableEval: boolean = process.env.STATIC_PARSER === '1';
 
 const config: {
