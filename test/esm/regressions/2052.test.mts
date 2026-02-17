@@ -1,19 +1,12 @@
-import { assert, describe, test } from 'poku';
-import { createRequire } from 'node:module';
+import { assert, describe, it } from 'poku';
 import { Buffer } from 'node:buffer';
+import packets from '../../../lib/packets/index.js';
+import PrepareCommand from '../../../lib/commands/prepare.js';
+import type { QueryError, PrepareStatementInfo } from '../../../index.js';
+import { createConnection, getMysqlVersion } from '../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const common = require('../../common.test.cjs');
-const packets = require('../../../lib/packets/index.js');
-const PrepareCommand = require('../../../lib/commands/prepare.js');
-
-test(async () => {
-  await test(async () => {
-    describe(
-      'Unit Test - Prepare result with number of parameters incorrectly reported by the server',
-      common.describeOptions
-    );
-
+await describe(async () => {
+  await it('Unit Test - Prepare result with number of parameters incorrectly reported by the server', async () => {
     const connection = {
       sequenceId: 1,
       constructor: {
@@ -27,7 +20,7 @@ test(async () => {
       config: {
         charsetNumber: 33,
       },
-      writePacket: (packet) => {
+      writePacket: (packet: any) => {
         // client -> server COM_PREPARE
         packet.writeHeader(1);
         assert.equal(
@@ -41,12 +34,15 @@ test(async () => {
     await new Promise((resolve, reject) => {
       const prepareCommand = new PrepareCommand(
         { sql: 'select * from users order by ?' },
-        (err, result) => {
+        (err: QueryError | null, result: PrepareStatementInfo) => {
           try {
             assert.equal(err, null, 'expect no error');
 
+            // @ts-expect-error: TODO: implement typings
             assert.equal(result.parameters.length, 0, 'parameters');
+            // @ts-expect-error: TODO: implement typings
             assert.equal(result.columns.length, 51, 'columns');
+            // @ts-expect-error: TODO: implement typings
             assert.equal(result.id, 1, 'id');
 
             resolve(null);
@@ -93,11 +89,11 @@ test(async () => {
     });
   });
 
-  const connection = common.createConnection({
+  const connection = createConnection({
     database: 'mysql',
   });
 
-  const mySqlVersion = await common.getMysqlVersion(connection);
+  const mySqlVersion = await getMysqlVersion(connection);
 
   const hasIncorrectPrepareParameter = (() => {
     const incorrectVersions = ['8.1.0', '8.2.0', '8.3.0', '8.4.0'];
@@ -106,51 +102,45 @@ test(async () => {
     return incorrectVersions.includes(verString);
   })();
 
-  await test(
-    async () =>
-      new Promise((resolve, reject) => {
-        describe(
-          `E2E Prepare result with number of parameters incorrectly reported by the server`,
-          common.describeOptions
-        );
+  await it('E2E Prepare result with number of parameters incorrectly reported by the server', async () =>
+    new Promise((resolve, reject) => {
+      connection.prepare(
+        'select * from user order by ?',
+        async (err: QueryError | null, stmt: PrepareStatementInfo) => {
+          if (err) {
+            connection.end();
+            reject(err);
 
-        connection.prepare(
-          'select * from user order by ?',
-          async (err, stmt) => {
-            if (err) {
-              connection.end();
-              reject(err);
-
-              return;
-            }
-
-            if (hasIncorrectPrepareParameter) {
-              assert.equal(
-                stmt.parameters.length,
-                0,
-                'parameters length needs to be 0',
-                'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
-              );
-            } else {
-              assert.equal(
-                stmt.parameters.length,
-                1,
-                'parameters length needs to be 1'
-              );
-            }
-
-            resolve(null);
+            return;
           }
-        );
-      })
-  );
 
-  await test(
+          if (hasIncorrectPrepareParameter) {
+            assert.equal(
+              // @ts-expect-error: TODO: implement typings
+              stmt.parameters.length,
+              0,
+              'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
+            );
+          } else {
+            assert.equal(
+              // @ts-expect-error: TODO: implement typings
+              stmt.parameters.length,
+              1,
+              'parameters length needs to be 1'
+            );
+          }
+
+          resolve(null);
+        }
+      );
+    }));
+
+  await it(
     async () =>
       new Promise((resolve, reject) => {
         connection.prepare(
           'select * from user where user.User like ? order by ?',
-          async (err, stmt) => {
+          async (err: QueryError | null, stmt: PrepareStatementInfo) => {
             if (err) {
               connection.end();
               reject(err);
@@ -160,13 +150,14 @@ test(async () => {
 
             if (hasIncorrectPrepareParameter) {
               assert.equal(
+                // @ts-expect-error: TODO: implement typings
                 stmt.parameters.length,
                 1,
-                'parameters length needs to be 1',
                 'should report 1 actual parameters when 2 placeholders used in ORDER BY?'
               );
             } else {
               assert.equal(
+                // @ts-expect-error: TODO: implement typings
                 stmt.parameters.length,
                 2,
                 'parameters length needs to be 2'
@@ -179,7 +170,7 @@ test(async () => {
       })
   );
 
-  connection.end((err) => {
+  connection.end((err: QueryError | null) => {
     assert.ifError(err);
   });
 });

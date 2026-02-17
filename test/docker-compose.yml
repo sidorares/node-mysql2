@@ -1,0 +1,92 @@
+name: mysql2
+services:
+  mysql:
+    image: mysql:lts
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: 'test'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    healthcheck:
+      test: ['CMD', 'mysql', '-h', 'localhost', '-u', 'root', '-e', 'SELECT 1']
+      interval: 1s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  node:
+    image: node:lts-alpine
+    container_name: node
+    environment:
+      MYSQL_HOST: mysql
+      CI: 1
+      # Debugging
+      MYSQL_USE_COMPRESSION: 0
+      MYSQL_USE_TLS: 0
+      STATIC_PARSER: 0
+      FILTER: ''
+    volumes:
+      - ../:/usr/app:ro
+      - /usr/app/node_modules
+    working_dir: /usr/app
+    command: sh -c "npm ci && npm test"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  deno:
+    image: denoland/deno:alpine
+    container_name: deno
+    environment:
+      MYSQL_HOST: mysql
+      CI: 1
+      # Debugging
+      MYSQL_USE_COMPRESSION: 0
+      MYSQL_USE_TLS: 0
+      STATIC_PARSER: 0
+    volumes:
+      - ../:/usr/app:ro
+    working_dir: /usr/app
+    command: deno task test:deno
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  bun:
+    image: oven/bun:alpine
+    container_name: bun
+    environment:
+      MYSQL_HOST: mysql
+      CI: 1
+      # Debugging
+      MYSQL_USE_COMPRESSION: 0
+      MYSQL_USE_TLS: 0
+      STATIC_PARSER: 0
+      FILTER: 'test-select-1|test-select-ssl'
+    volumes:
+      - ../:/usr/app:ro
+    working_dir: /usr/app
+    command: bun run test:bun
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  coverage:
+    image: node:lts-alpine
+    container_name: coverage
+    environment:
+      MYSQL_HOST: mysql
+      CI: 1
+      # Debugging
+      MYSQL_USE_COMPRESSION: 0
+      MYSQL_USE_TLS: 0
+      STATIC_PARSER: 0
+      FILTER: ''
+    volumes:
+      - ../:/usr/app:ro
+      - ../coverage:/usr/app/coverage:rw
+      - /usr/app/node_modules
+    working_dir: /usr/app
+    command: sh -c "npm ci && npm run test:coverage"
+    depends_on:
+      mysql:
+        condition: service_healthy

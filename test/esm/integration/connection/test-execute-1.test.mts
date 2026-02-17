@@ -1,18 +1,11 @@
-import { test, assert, describe } from 'poku';
-import { createRequire } from 'node:module';
+import type { RowDataPacket } from '../../../../promise.js';
+import { it, assert, describe } from 'poku';
+import { createConnection } from '../../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const common = require('../../../common.test.cjs');
+await describe(async () => {
+  const connection = createConnection().promise();
 
-(async () => {
-  const connection = common.createConnection().promise();
-
-  await test(async () => {
-    describe(
-      'Simple execute should return expected values',
-      common.describeOptions
-    );
-
+  await it('Simple execute should return expected values', async () => {
     const [_rows, _fields] = await connection.execute('SELECT 1 as test');
 
     assert.deepEqual(
@@ -23,15 +16,11 @@ const common = require('../../../common.test.cjs');
     assert.equal(_fields[0].name, 'test', 'should field name test');
   });
 
-  await test(async () => {
-    describe(
-      'Simple execute with parameters should return expected values',
-      common.describeOptions
+  await it('Simple execute with parameters should return expected values', async () => {
+    const [_rows, _fields] = await connection.execute(
+      'SELECT 1+? as test',
+      [123]
     );
-
-    const [_rows, _fields] = await connection.execute('SELECT 1+? as test', [
-      123,
-    ]);
 
     assert.deepEqual(
       _rows,
@@ -41,12 +30,7 @@ const common = require('../../../common.test.cjs');
     assert.equal(_fields[0].name, 'test', 'should field name test');
   });
 
-  await test(async () => {
-    describe(
-      'should execute simple INSERT + SELECT statements',
-      common.describeOptions
-    );
-
+  await it('should execute simple INSERT + SELECT statements', async () => {
     await connection.query(
       [
         'CREATE TEMPORARY TABLE `announcements` (',
@@ -67,7 +51,9 @@ const common = require('../../../common.test.cjs');
       'проводить собрания, митинги и демонстрации, шествия и пикетирование',
     ]);
 
-    const [_rows] = await connection.execute('SELECT * FROM announcements');
+    const [_rows] = await connection.execute<RowDataPacket[]>(
+      'SELECT * FROM announcements'
+    );
 
     assert.equal(_rows.length, 2, 'rows length needs to be 2');
     assert.equal(
@@ -89,4 +75,4 @@ const common = require('../../../common.test.cjs');
   });
 
   await connection.end();
-})();
+});

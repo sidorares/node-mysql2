@@ -1,18 +1,10 @@
-import { test, describe, assert } from 'poku';
-import { createRequire } from 'node:module';
+import { it, describe, assert } from 'poku';
+import { createConnection } from '../../common.test.mjs';
 
-const require = createRequire(import.meta.url);
-const {
-  createConnection,
-  describeOptions,
-} = require('../../../common.test.cjs');
+await describe('Query: Results Creation', async () => {
+  const connection = createConnection().promise();
 
-const connection = createConnection().promise();
-
-describe('Query: Results Creation', describeOptions);
-
-Promise.all([
-  test(async () => {
+  await it(async () => {
     const expected = [
       {
         test: 2,
@@ -20,7 +12,7 @@ Promise.all([
     ];
     const emptyObject = {};
     const proto = Object.getPrototypeOf(emptyObject);
-    const privateObjectProps = Object.getOwnPropertyNames(proto);
+    const privateObjectProps: string[] = Object.getOwnPropertyNames(proto);
 
     const [results] = await connection.query('SELECT 1+1 AS `test`');
 
@@ -46,8 +38,9 @@ Promise.all([
       true,
       'Ensure that the end-user is able to use custom props'
     );
-  }),
-  test(async () => {
+  });
+
+  await it(async () => {
     const [result] = await connection.query('SET @1 = 1;');
 
     assert.strictEqual(
@@ -55,7 +48,7 @@ Promise.all([
       'ResultSetHeader',
       'Ensure constructor name in result object'
     );
-  }),
-]).then(async () => {
+  });
+
   await connection.end();
 });
