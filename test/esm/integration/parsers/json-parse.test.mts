@@ -1,11 +1,14 @@
-import { it, describe, assert } from 'poku';
+import type { RowDataPacket } from '../../../../index.js';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
+
+type JsonRow = RowDataPacket & { json_result: { test: boolean } };
 
 await describe('JSON Parser', async () => {
   const connection = createConnection().promise();
 
   await it(async () => {
-    const [result] = await connection.query(
+    const [result] = await connection.query<JsonRow[]>(
       `SELECT CAST('{"test": true}' AS JSON) AS json_result`
     );
 
@@ -17,7 +20,7 @@ await describe('JSON Parser', async () => {
   });
 
   await it(async () => {
-    const [result] = await connection.execute(
+    const [result] = await connection.execute<JsonRow[]>(
       `SELECT CAST('{"test": true}' AS JSON) AS json_result`
     );
 

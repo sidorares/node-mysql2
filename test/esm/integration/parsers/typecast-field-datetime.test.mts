@@ -1,6 +1,8 @@
-import { describe, it, assert } from 'poku';
-import type { TypeCastField } from '../../../../index.js';
+import type { RowDataPacket, TypeCastField } from '../../../../index.js';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
+
+type DateRow = RowDataPacket & { datetime: string | null };
 
 await describe('typeCast field.datetime', async () => {
   const conn = createConnection({
@@ -19,13 +21,15 @@ await describe('typeCast field.datetime', async () => {
   );
 
   await it('execute results', async () => {
-    const [date] = await conn.execute('SELECT datetime from tmp_date');
+    const [date] = await conn.execute<DateRow[]>(
+      'SELECT datetime from tmp_date'
+    );
 
     execute.date = date[0].datetime;
   });
 
   await it('query results', async () => {
-    const [date] = await conn.query('SELECT datetime from tmp_date');
+    const [date] = await conn.query<DateRow[]>('SELECT datetime from tmp_date');
 
     query.date = date[0].datetime;
   });

@@ -1,6 +1,10 @@
 // TODO: `namedPlaceholders` can't be disabled at query level
-import { assert, it, describe } from 'poku';
+import type { RowDataPacket } from '../../../index.js';
+import type { Pool as PromisePool } from '../../../promise.js';
+import { assert, describe, it } from 'poku';
 import { createConnection, createPool } from '../common.test.mjs';
+
+type ResultRow = RowDataPacket & { result: number };
 
 await describe('Test namedPlaceholder as command parameter in connection', async () => {
   const query =
@@ -26,7 +30,7 @@ await describe('Test namedPlaceholder as command parameter in connection', async
   await it(async () => {
     const c = createConnection({ namedPlaceholders: false }).promise();
 
-    const [rows] = await c.query(
+    const [rows] = await c.query<ResultRow[]>(
       { sql: query, namedPlaceholders: true },
       values
     );
@@ -58,7 +62,7 @@ await describe('Test namedPlaceholder as command parameter in connection', async
   await it(async () => {
     const c = createConnection({ namedPlaceholders: false }).promise();
 
-    const [rows] = await c.execute(
+    const [rows] = await c.execute<ResultRow[]>(
       { sql: query, namedPlaceholders: true },
       values
     );
@@ -88,9 +92,9 @@ await describe('Test namedPlaceholder as command parameter in connection', async
   // });
 
   await it(async () => {
-    const c = createPool({ namedPlaceholders: false }).promise();
+    const c: PromisePool = createPool({ namedPlaceholders: false }).promise();
 
-    const [rows] = await c.query(
+    const [rows] = await c.query<ResultRow[]>(
       { sql: query, namedPlaceholders: true },
       values
     );
@@ -120,9 +124,9 @@ await describe('Test namedPlaceholder as command parameter in connection', async
   // });
 
   await it(async () => {
-    const c = createPool({ namedPlaceholders: false }).promise();
+    const c: PromisePool = createPool({ namedPlaceholders: false }).promise();
 
-    const [rows] = await c.execute(
+    const [rows] = await c.execute<ResultRow[]>(
       { sql: query, namedPlaceholders: true },
       values
     );

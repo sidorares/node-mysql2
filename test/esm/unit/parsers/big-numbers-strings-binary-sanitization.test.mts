@@ -1,5 +1,8 @@
-import { describe, it, assert } from 'poku';
+import type { RowDataPacket } from '../../../../index.js';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
+
+type TotalRow = RowDataPacket & { total: number | string };
 
 await describe('Binary Parser: bigNumberStrings Sanitization', async () => {
   const connection = createConnection().promise();
@@ -33,7 +36,10 @@ await describe('Binary Parser: bigNumberStrings Sanitization', async () => {
 
   for (const [options, expectedType, label] of cases) {
     await it(label, async () => {
-      const [results] = await connection.execute({ sql, ...options });
+      const [results] = await connection.execute<TotalRow[]>({
+        sql,
+        ...options,
+      });
 
       assert.strictEqual(typeof results[0].total, expectedType, label);
     });

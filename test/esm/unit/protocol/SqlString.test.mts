@@ -1,5 +1,5 @@
-import { assert, it, describe } from 'poku';
 import { Buffer } from 'node:buffer';
+import { assert, describe, it } from 'poku';
 import { SqlString } from '../../common.test.mjs';
 
 describe('SqlString.escapeId tests', () => {

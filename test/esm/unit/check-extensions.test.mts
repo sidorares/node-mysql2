@@ -1,5 +1,5 @@
 import { EOL } from 'node:os';
-import { listFiles, it, assert, describe } from 'poku';
+import { assert, describe, it, listFiles } from 'poku';
 
 await describe('Check for invalid file types found in restricted directories', async () => {
   const invalidFiles: string[] = [];
