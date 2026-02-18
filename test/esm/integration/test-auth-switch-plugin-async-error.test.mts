@@ -59,7 +59,24 @@ await describe('Auth Switch Plugin Async Error', async () => {
     let serverError: NodeJS.ErrnoException | undefined;
 
     await new Promise<void>((resolve) => {
-      const checkDone = () => {
+      // eslint-disable-next-line prefer-const
+      let checkDone: () => void;
+
+      const server = mysql.createServer((conn) => {
+        conn.on('error', (err: NodeJS.ErrnoException) => {
+          serverError = err;
+          checkDone();
+        });
+        // @ts-expect-error: TODO: implement typings
+        conn.addCommand(
+          new TestAuthSwitchPluginError({
+            pluginName: 'auth_test_plugin',
+            pluginData: Buffer.allocUnsafe(0),
+          })
+        );
+      });
+
+      checkDone = () => {
         if (!clientError || !serverError) return;
 
         // The server must close the connection (RST or FIN)
@@ -75,20 +92,6 @@ await describe('Auth Switch Plugin Async Error', async () => {
 
         server.close(() => resolve());
       };
-
-      const server = mysql.createServer((conn) => {
-        conn.on('error', (err: NodeJS.ErrnoException) => {
-          serverError = err;
-          checkDone();
-        });
-        // @ts-expect-error: TODO: implement typings
-        conn.addCommand(
-          new TestAuthSwitchPluginError({
-            pluginName: 'auth_test_plugin',
-            pluginData: Buffer.allocUnsafe(0),
-          })
-        );
-      });
 
       // @ts-expect-error: TODO: implement typings
       server.listen(0, () => {
