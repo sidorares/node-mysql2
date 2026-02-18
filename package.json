@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --fix && prettier --write .",
     "test": "poku -d -r=verbose test/esm",
     "test:bun": "bun poku -d test/esm",
-    "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku -d --denoAllow=\"read,env,net,sys\" test/esm",
+    "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku@canary -d --denoAllow=\"read,env,net,sys\" test/esm",
     "test:docker:up": "docker compose -f test/docker-compose.yml up --abort-on-container-exit --remove-orphans",
     "test:docker:down": "docker compose -f test/docker-compose.yml down",
     "test:docker:node": "npm run test:docker:up -- node && npm run test:docker:down",
