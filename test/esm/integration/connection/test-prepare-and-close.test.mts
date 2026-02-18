@@ -1,3 +1,4 @@
+import type { RowDataPacket } from '../../../../index.js';
 import process from 'node:process';
 import { describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
@@ -6,9 +7,17 @@ await describe('Prepare and Close', async () => {
   await it('should prepare and close statements repeatedly', async () => {
     const connection = createConnection();
 
+    const [savedRows] = await connection
+      .promise()
+      .query<
+        RowDataPacket[]
+      >('SELECT @@GLOBAL.max_prepared_stmt_count as backup');
+    const originalMaxPrepared = savedRows[0].backup;
+
     await new Promise<void>((resolve, reject) => {
       const max = 500;
       const start = process.hrtime();
+
       function prepare(i: number) {
         connection.prepare(`select 1+${i}`, (err, stmt) => {
           if (err) return reject(err);
@@ -16,11 +25,20 @@ await describe('Prepare and Close', async () => {
           if (i > max) {
             const end = process.hrtime(start);
             const ns = end[0] * 1e9 + end[1];
+
             console.log(`${(max * 1e9) / ns} prepares/sec`);
-            connection.end();
-            resolve();
+
+            connection.query(
+              `SET GLOBAL max_prepared_stmt_count=${originalMaxPrepared}`,
+              () => {
+                connection.end();
+                resolve();
+              }
+            );
+
             return;
           }
+
           setTimeout(() => {
             prepare(i + 1);
           }, 2);

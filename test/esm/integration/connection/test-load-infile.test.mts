@@ -16,8 +16,13 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 
 await describe('Load Infile', async () => {
   const connection = createConnection();
-
   const table = 'load_data_test';
+
+  const [savedLocalInfile] = await connection
+    .promise()
+    .query<RowDataPacket[]>('SELECT @@GLOBAL.local_infile as backup');
+  const originalLocalInfile = savedLocalInfile[0].backup;
+
   connection.query('SET GLOBAL local_infile = true', assert.ifError);
   connection.query(
     [
@@ -107,8 +112,14 @@ await describe('Load Infile', async () => {
 
           assert.equal(streamResult.affectedRows, 2);
 
-          connection.end();
-          resolve();
+          connection.query(
+            'SET GLOBAL local_infile = ?',
+            [originalLocalInfile],
+            () => {
+              connection.end();
+              resolve();
+            }
+          );
         }
       );
     });

@@ -8,6 +8,13 @@ await describe('Execute Null Bitmap', async () => {
   const connection = createConnection();
 
   await it('should handle growing parameter lists', async () => {
+    const [savedRows] = await connection
+      .promise()
+      .query<
+        RowDataPacket[]
+      >('SELECT @@GLOBAL.max_prepared_stmt_count as backup');
+    const originalMaxPrepared = savedRows[0].backup;
+
     await new Promise<void>((resolve, reject) => {
       const params = [1, 2];
       let query = 'select ? + ?';
@@ -24,8 +31,13 @@ await describe('Execute Null Bitmap', async () => {
             params.push(params.length);
             dotest();
           } else {
-            connection.end();
-            resolve();
+            connection.query(
+              `SET GLOBAL max_prepared_stmt_count=${originalMaxPrepared}`,
+              () => {
+                connection.end();
+                resolve();
+              }
+            );
           }
         });
       }
