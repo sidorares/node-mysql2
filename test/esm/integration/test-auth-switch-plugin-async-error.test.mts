@@ -53,19 +53,33 @@ class TestAuthSwitchPluginError extends Command {
 
 await describe('Auth Switch Plugin Async Error', async () => {
   await it('should handle auth plugin async error', async () => {
-    let error: { code?: string; message?: string; fatal?: boolean } | undefined;
+    let clientError:
+      | { code?: string; message?: string; fatal?: boolean }
+      | undefined;
+    let serverError: NodeJS.ErrnoException | undefined;
 
     await new Promise<void>((resolve) => {
+      const checkDone = () => {
+        if (!clientError || !serverError) return;
+
+        // The server must close the connection (RST or FIN)
+        assert.ok(
+          serverError.code === 'PROTOCOL_CONNECTION_LOST' ||
+            serverError.code === 'ECONNRESET'
+        );
+
+        // The plugin reports a fatal error
+        assert.equal(clientError.code, 'AUTH_SWITCH_PLUGIN_ERROR');
+        assert.equal(clientError.message, 'boom');
+        assert.equal(clientError.fatal, true);
+
+        server.close(() => resolve());
+      };
+
       const server = mysql.createServer((conn) => {
         conn.on('error', (err: NodeJS.ErrnoException) => {
-          // The server must close the connection
-          assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
-
-          // The plugin reports a fatal error
-          assert.equal(error?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
-          assert.equal(error?.message, 'boom');
-          assert.equal(error?.fatal, true);
-          resolve();
+          serverError = err;
+          checkDone();
         });
         // @ts-expect-error: TODO: implement typings
         conn.addCommand(
@@ -92,15 +106,13 @@ await describe('Auth Switch Plugin Async Error', async () => {
         });
 
         conn.on('error', (err) => {
-          error = err as {
+          clientError = err as {
             code?: string;
             message?: string;
             fatal?: boolean;
           };
-
-          conn.end();
-          // @ts-expect-error: TODO: implement typings
-          server.close();
+          conn.destroy();
+          checkDone();
         });
       });
     });
