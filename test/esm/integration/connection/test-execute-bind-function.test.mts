@@ -1,29 +1,30 @@
-import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
-const connection = createConnection();
+describe('Execute Bind Function', () => {
+  const connection = createConnection();
 
-let error: Error | null = null;
+  let error: Error | null = null;
 
-try {
-  connection.execute('SELECT ? AS result', [function () {}], () => {});
-} catch (err) {
-  if (err instanceof Error) {
-    error = err;
-  } else {
-    throw err;
+  try {
+    connection.execute('SELECT ? AS result', [function () {}], () => {});
+  } catch (err) {
+    if (err instanceof Error) {
+      error = err;
+    } else {
+      throw err;
+    }
+    connection.end();
   }
-  connection.end();
-}
 
-process.on('exit', () => {
-  assert(error instanceof Error, 'Expected TypeError to be thrown');
-  if (!error) {
-    return;
-  }
-  assert.equal(error.name, 'TypeError');
-  if (!error.message.match(/function/)) {
-    assert.fail("Expected error.message to contain 'function'");
-  }
+  it('should throw TypeError for function parameter', () => {
+    assert(error instanceof Error, 'Expected TypeError to be thrown');
+    if (!error) {
+      return;
+    }
+    assert.equal(error.name, 'TypeError');
+    if (!error.message.match(/function/)) {
+      assert.fail("Expected error.message to contain 'function'");
+    }
+  });
 });

@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createPoolCluster, getConfig } from '../../common.test.mjs';
 
 // TODO: config poolCluster to work with MYSQL_CONNECTION_URL run
@@ -8,41 +8,47 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   process.exit(0);
 }
 
-const cluster = createPoolCluster();
+await describe('pool cluster connection ORDER', async () => {
+  await it('should get connections in ORDER', async () => {
+    const cluster = createPoolCluster();
 
-const order: string[] = [];
+    const order: string[] = [];
 
-const poolConfig = getConfig();
-cluster.add('SLAVE1', poolConfig);
-cluster.add('SLAVE2', poolConfig);
+    const poolConfig = getConfig();
+    cluster.add('SLAVE1', poolConfig);
+    cluster.add('SLAVE2', poolConfig);
 
-const done = function () {
-  assert.deepEqual(order, ['SLAVE1', 'SLAVE1', 'SLAVE1', 'SLAVE1', 'SLAVE1']);
-  cluster.end();
-  console.log('done');
-};
+    const pool = cluster.of('SLAVE*', 'ORDER');
 
-const pool = cluster.of('SLAVE*', 'ORDER');
+    await new Promise<void>((resolve, reject) => {
+      let count = 0;
 
-console.log('test pool cluster connection ORDER');
+      function getConnection(i: number) {
+        pool.getConnection((err, conn) => {
+          if (err) return reject(err);
+          // @ts-expect-error: internal access
+          order[i] = conn._clusterId;
+          conn.release();
 
-let count = 0;
+          count += 1;
 
-function getConnection(i: number) {
-  pool.getConnection((err, conn) => {
-    assert.ifError(err);
-    // @ts-expect-error: internal access
-    order[i] = conn._clusterId;
-    conn.release();
+          if (count <= 4) {
+            getConnection(count);
+          } else {
+            assert.deepEqual(order, [
+              'SLAVE1',
+              'SLAVE1',
+              'SLAVE1',
+              'SLAVE1',
+              'SLAVE1',
+            ]);
+            cluster.end();
+            resolve();
+          }
+        });
+      }
 
-    count += 1;
-
-    if (count <= 4) {
-      getConnection(count);
-    } else {
-      done();
-    }
+      getConnection(0);
+    });
   });
-}
-
-getConnection(0);
+});

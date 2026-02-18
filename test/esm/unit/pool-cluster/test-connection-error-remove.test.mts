@@ -1,5 +1,5 @@
 import process, { exit } from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
@@ -18,71 +18,72 @@ if (process.platform === 'win32') {
   exit(0);
 }
 
-const cluster = createPoolCluster({
-  removeNodeErrorCount: 1,
-});
+await describe('pool cluster error remove', async () => {
+  await it('should remove node on connection error', async () => {
+    const cluster = createPoolCluster({
+      removeNodeErrorCount: 1,
+    });
 
-let connCount = 0;
-
-// @ts-expect-error: TODO: implement typings
-const server1 = mysql.createServer();
-// @ts-expect-error: TODO: implement typings
-const server2 = mysql.createServer();
-
-console.log('test pool cluster error remove');
-
-portfinder.getPort((_err, port) => {
-  cluster.add('SLAVE1', { port: port + 0 });
-  cluster.add('SLAVE2', { port: port + 1 });
-
-  // @ts-expect-error: TODO: implement typings
-  server1.listen(port + 0, (err) => {
-    assert.ifError(err);
+    let connCount = 0;
 
     // @ts-expect-error: TODO: implement typings
-    server2.listen(port + 1, (err) => {
-      assert.ifError(err);
+    const server1 = mysql.createServer();
+    // @ts-expect-error: TODO: implement typings
+    const server2 = mysql.createServer();
 
-      const pool = cluster.of('*', 'ORDER');
-      let removedNodeId: string | number;
+    await new Promise<void>((resolve, reject) => {
+      portfinder.getPort((_err, port) => {
+        cluster.add('SLAVE1', { port: port + 0 });
+        cluster.add('SLAVE2', { port: port + 1 });
 
-      cluster.on('remove', (nodeId) => {
-        removedNodeId = nodeId;
-      });
+        // @ts-expect-error: TODO: implement typings
+        server1.listen(port + 0, (err) => {
+          if (err) return reject(err);
 
-      pool.getConnection((err, connection) => {
-        assert.ifError(err);
+          // @ts-expect-error: TODO: implement typings
+          server2.listen(port + 1, (err) => {
+            if (err) return reject(err);
 
-        assert.equal(connCount, 2);
-        // @ts-expect-error: internal access
-        assert.equal(connection._clusterId, 'SLAVE2');
-        assert.equal(removedNodeId, 'SLAVE1');
-        // @ts-expect-error: internal access
-        assert.deepEqual(cluster._serviceableNodeIds, ['SLAVE2']);
-        console.log('done');
+            const pool = cluster.of('*', 'ORDER');
+            let removedNodeId: string | number;
 
-        connection.release();
+            cluster.on('remove', (nodeId) => {
+              removedNodeId = nodeId;
+            });
 
-        cluster.end((err) => {
-          assert.ifError(err);
-          // throw error if no exit()
-          exit();
-          // server1.close();
-          // server2.close();
+            pool.getConnection((err, connection) => {
+              if (err) return reject(err);
+
+              assert.equal(connCount, 2);
+              // @ts-expect-error: internal access
+              assert.equal(connection._clusterId, 'SLAVE2');
+              assert.equal(removedNodeId, 'SLAVE1');
+              // @ts-expect-error: internal access
+              assert.deepEqual(cluster._serviceableNodeIds, ['SLAVE2']);
+
+              connection.release();
+
+              cluster.end((err) => {
+                if (err) return reject(err);
+                resolve();
+                exit();
+              });
+            });
+          });
+        });
+
+        server1.on('connection', (conn) => {
+          connCount += 1;
+          conn.close();
+        });
+
+        server2.on('connection', (conn) => {
+          connCount += 1;
+          conn.serverHandshake({
+            serverVersion: 'node.js rocks',
+          });
         });
       });
-    });
-  });
-
-  server1.on('connection', (conn) => {
-    connCount += 1;
-    conn.close();
-  });
-
-  server2.on('connection', (conn) => {
-    connCount += 1;
-    conn.serverHandshake({
-      serverVersion: 'node.js rocks',
     });
   });
 });

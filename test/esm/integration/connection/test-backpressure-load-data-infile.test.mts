@@ -32,7 +32,7 @@ class BigInput extends Readable {
   }
 }
 
-test('load data infile backpressure on local stream', async () => {
+await test('load data infile backpressure on local stream', async () => {
   const netStream = Net.connect(config.port, config.host);
   netStream.setNoDelay(true);
   await new Promise<void>((resolve, reject) =>

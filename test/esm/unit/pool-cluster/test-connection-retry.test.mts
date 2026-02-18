@@ -1,5 +1,5 @@
 import process, { exit } from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
@@ -18,54 +18,59 @@ if (process.platform === 'win32') {
   exit(0);
 }
 
-const cluster = createPoolCluster({
-  canRetry: true,
-  removeNodeErrorCount: 5,
-});
+await describe('pool cluster retry', async () => {
+  await it('should retry connection on failure', async () => {
+    const cluster = createPoolCluster({
+      canRetry: true,
+      removeNodeErrorCount: 5,
+    });
 
-let connCount = 0;
+    let connCount = 0;
 
-// @ts-expect-error: TODO: implement typings
-const server = mysql.createServer();
+    // @ts-expect-error: TODO: implement typings
+    const server = mysql.createServer();
 
-console.log('test pool cluster retry');
+    await new Promise<void>((resolve, reject) => {
+      portfinder.getPort((_err, port) => {
+        cluster.add('MASTER', { port });
 
-portfinder.getPort((_err, port) => {
-  cluster.add('MASTER', { port });
-
-  // @ts-expect-error: TODO: implement typings
-  server.listen(port + 0, (err) => {
-    assert.ifError(err);
-
-    cluster.getConnection('MASTER', (err, connection) => {
-      assert.ifError(err);
-      assert.equal(connCount, 2);
-      // @ts-expect-error: internal access
-      assert.equal(connection._clusterId, 'MASTER');
-
-      connection.release();
-
-      cluster.end((err) => {
-        assert.ifError(err);
         // @ts-expect-error: TODO: implement typings
-        server.close();
+        server.listen(port + 0, (err) => {
+          if (err) return reject(err);
+
+          cluster.getConnection('MASTER', (err, connection) => {
+            if (err) return reject(err);
+            assert.equal(connCount, 2);
+            // @ts-expect-error: internal access
+            assert.equal(connection._clusterId, 'MASTER');
+
+            connection.release();
+
+            cluster.end((err) => {
+              if (err) return reject(err);
+              // @ts-expect-error: TODO: implement typings
+              server.close();
+              resolve();
+            });
+          });
+        });
+
+        server.on('connection', (conn) => {
+          connCount += 1;
+
+          if (connCount < 2) {
+            conn.close();
+          } else {
+            conn.serverHandshake({
+              serverVersion: 'node.js rocks',
+            });
+            conn.on('error', () => {
+              // server side of the connection
+              // ignore disconnects
+            });
+          }
+        });
       });
     });
-  });
-
-  server.on('connection', (conn) => {
-    connCount += 1;
-
-    if (connCount < 2) {
-      conn.close();
-    } else {
-      conn.serverHandshake({
-        serverVersion: 'node.js rocks',
-      });
-      conn.on('error', () => {
-        // server side of the connection
-        // ignore disconnects
-      });
-    }
   });
 });

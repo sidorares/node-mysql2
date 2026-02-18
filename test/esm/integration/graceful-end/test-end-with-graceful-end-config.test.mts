@@ -1,5 +1,5 @@
 import type { PoolConnection } from '../../../../index.js';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createPool } from '../../common.test.mjs';
 
 /**
@@ -8,22 +8,22 @@ import { createPool } from '../../common.test.mjs';
  * @see https://github.com/sidorares/node-mysql2/issues/3148
  */
 
-/**
- * By providing gracefulEnd when creating the pool, the end method of a pooled connection
- * will actually close the connection instead of releasing it back to the pool.
- */
-const pool = createPool({ gracefulEnd: true });
-let warningEmitted = false;
+await describe('Pool end with gracefulEnd config', async () => {
+  await it('should not emit deprecation warning when gracefulEnd is true', async () => {
+    const pool = createPool({ gracefulEnd: true });
+    let warningEmitted = false;
 
-pool.getConnection((_err1: Error | null, connection: PoolConnection) => {
-  connection.on('warn', () => {
-    warningEmitted = true;
+    await new Promise<void>((resolve) => {
+      pool.getConnection((_err1: Error | null, connection: PoolConnection) => {
+        connection.on('warn', () => {
+          warningEmitted = true;
+        });
+
+        connection.end();
+        pool.end(() => resolve());
+      });
+    });
+
+    assert(!warningEmitted, 'Warning should not be emitted');
   });
-
-  connection.end();
-  pool.end();
-});
-
-process.on('exit', () => {
-  assert(!warningEmitted, 'Warning should not be emitted');
 });

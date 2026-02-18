@@ -7,6 +7,7 @@ import type { FieldPacket, RowDataPacket } from '../../../../index.js';
 import process from 'node:process';
 // @ts-expect-error: no typings available
 import assert from 'assert-diff';
+import { describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 // different error codes for PS, disabling for now
@@ -15,27 +16,9 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   process.exit(0);
 }
 
-const connection = createConnection();
-
 // https://github.com/sidorares/node-mysql2/issues/130
 // https://github.com/sidorares/node-mysql2/issues/37
 // binary protocol examples where `prepare` returns no column definitions but execute() does return fields/rows
-
-let rows: RowDataPacket[];
-let fields: FieldPacket[];
-
-connection.execute<RowDataPacket[]>(
-  'explain SELECT 1',
-  (err, _rows, _fields) => {
-    if (err) {
-      throw err;
-    }
-
-    rows = _rows;
-    fields = _fields;
-    connection.end();
-  }
-);
 
 const expectedRows = [
   {
@@ -213,18 +196,34 @@ const expectedFields = [
   },
 ];
 
-process.on('exit', () => {
-  assert.deepEqual(rows, expectedRows);
-  fields.forEach((f, index) => {
-    // @ts-expect-error: TODO: implement typings
-    const fi = f.inspect();
-    // "columnLength" is non-deterministic
-    delete fi.columnLength;
+await describe('Execute No Column Definition', async () => {
+  const connection = createConnection();
 
-    assert.deepEqual(
-      Object.keys(fi).sort(),
-      Object.keys(expectedFields[index]).sort()
-    );
-    assert.deepEqual(expectedFields[index], fi);
+  await it('should handle explain with no column definitions', async () => {
+    await new Promise<void>((resolve, reject) => {
+      connection.execute<RowDataPacket[]>(
+        'explain SELECT 1',
+        (err, rows, fields) => {
+          if (err) return reject(err);
+
+          assert.deepEqual(rows, expectedRows);
+          fields.forEach((f: FieldPacket, index: number) => {
+            // @ts-expect-error: TODO: implement typings
+            const fi = f.inspect();
+            // "columnLength" is non-deterministic
+            delete fi.columnLength;
+
+            assert.deepEqual(
+              Object.keys(fi).sort(),
+              Object.keys(expectedFields[index]).sort()
+            );
+            assert.deepEqual(expectedFields[index], fi);
+          });
+
+          connection.end();
+          resolve();
+        }
+      );
+    });
   });
 });

@@ -1,47 +1,39 @@
 import type { RowDataPacket } from '../../../../index.js';
-import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type TestRow = RowDataPacket & { test: number };
 
-const connection = createConnection();
+await describe('Execute Cached', async () => {
+  const connection = createConnection();
 
-let rows: TestRow[] | undefined = undefined;
-let rows1: TestRow[] | undefined = undefined;
-let rows2: TestRow[] | undefined = undefined;
+  const q = 'select 1 + ? as test';
+  const key = `undefined/undefined/undefined${q}`;
 
-const q = 'select 1 + ? as test';
-const key = `undefined/undefined/undefined${q}`;
+  await it('should cache prepared statements', async () => {
+    await new Promise<void>((resolve, reject) => {
+      connection.execute<TestRow[]>(q, [123], (err, _rows) => {
+        if (err) return reject(err);
+        connection.execute<TestRow[]>(q, [124], (err, _rows1) => {
+          if (err) return reject(err);
+          connection.execute<TestRow[]>(q, [125], (err, _rows2) => {
+            if (err) return reject(err);
+            // @ts-expect-error: internal access
+            assert(connection._statements.size === 1);
+            // @ts-expect-error: internal access
+            assert(connection._statements.get(key).query === q);
+            // @ts-expect-error: internal access
+            assert(connection._statements.get(key).parameters.length === 1);
 
-connection.execute<TestRow[]>(q, [123], (err, _rows) => {
-  if (err) {
-    throw err;
-  }
-  rows = _rows;
-  connection.execute<TestRow[]>(q, [124], (err, _rows) => {
-    if (err) {
-      throw err;
-    }
-    rows1 = _rows;
-    connection.execute<TestRow[]>(q, [125], (err, _rows) => {
-      if (err) {
-        throw err;
-      }
-      rows2 = _rows;
-      // @ts-expect-error: internal access
-      assert(connection._statements.size === 1);
-      // @ts-expect-error: internal access
-      assert(connection._statements.get(key).query === q);
-      // @ts-expect-error: internal access
-      assert(connection._statements.get(key).parameters.length === 1);
-      connection.end();
+            assert.deepEqual(_rows, [{ test: 124 }]);
+            assert.deepEqual(_rows1, [{ test: 125 }]);
+            assert.deepEqual(_rows2, [{ test: 126 }]);
+
+            connection.end();
+            resolve();
+          });
+        });
+      });
     });
   });
-});
-
-process.on('exit', () => {
-  assert.deepEqual(rows, [{ test: 124 }]);
-  assert.deepEqual(rows1, [{ test: 125 }]);
-  assert.deepEqual(rows2, [{ test: 126 }]);
 });

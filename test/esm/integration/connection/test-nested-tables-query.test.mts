@@ -1,172 +1,161 @@
 import type { RowDataPacket } from '../../../../index.js';
-import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection, useTestDb } from '../../common.test.mjs';
 
-const connection = createConnection();
+await describe('Nested Tables Query', async () => {
+  const connection = createConnection();
 
-useTestDb();
+  useTestDb();
 
-const table = 'nested_test';
-connection.query(
-  [
-    `CREATE TEMPORARY TABLE \`${table}\` (`,
-    '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
-    '`title` varchar(255),',
-    'PRIMARY KEY (`id`)',
-    ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n')
-);
-connection.query(
-  [
-    `CREATE TEMPORARY TABLE \`${table}1\` (`,
-    '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
-    '`title` varchar(255),',
-    'PRIMARY KEY (`id`)',
-    ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n')
-);
-
-connection.query(`INSERT INTO ${table} SET ?`, { title: 'test' });
-connection.query(`INSERT INTO ${table}1 SET ?`, { title: 'test1' });
-
-const options1 = {
-  nestTables: true,
-  sql: `SELECT * FROM ${table}`,
-};
-const options2 = {
-  nestTables: '_',
-  sql: `SELECT * FROM ${table}`,
-};
-const options3 = {
-  rowsAsArray: true,
-  sql: `SELECT * FROM ${table}`,
-};
-const options4 = {
-  nestTables: true,
-  sql: `SELECT notNested.id, notNested.title, nested.title FROM ${table} notNested LEFT JOIN ${table}1 nested ON notNested.id = nested.id`,
-};
-const options5 = {
-  nestTables: true,
-  sql: `SELECT notNested.id, notNested.title, nested2.title FROM ${table} notNested LEFT JOIN ${table}1 nested2 ON notNested.id = nested2.id`,
-};
-
-let rows1: RowDataPacket[],
-  rows2: RowDataPacket[],
-  rows3: RowDataPacket[],
-  rows4: RowDataPacket[],
-  rows5: RowDataPacket[],
-  rows1e: RowDataPacket[],
-  rows2e: RowDataPacket[],
-  rows3e: RowDataPacket[];
-
-connection.query<RowDataPacket[]>(options1, (err, _rows) => {
-  if (err) {
-    throw err;
-  }
-
-  rows1 = _rows;
-});
-
-connection.query<RowDataPacket[]>(options2, (err, _rows) => {
-  if (err) {
-    throw err;
-  }
-
-  rows2 = _rows;
-});
-
-connection.query<RowDataPacket[]>(options3, (err, _rows) => {
-  if (err) {
-    throw err;
-  }
-
-  rows3 = _rows;
-});
-
-connection.query<RowDataPacket[]>(options4, (err, _rows) => {
-  if (err) {
-    throw err;
-  }
-
-  rows4 = _rows;
-});
-
-connection.query<RowDataPacket[]>(options5, (err, _rows) => {
-  if (err) {
-    throw err;
-  }
-
-  rows5 = _rows;
-});
-
-connection.execute<RowDataPacket[]>(options1, (err, _rows) => {
-  if (err) {
-    throw err;
-  }
-
-  rows1e = _rows;
-});
-
-connection.execute<RowDataPacket[]>(options2, (err, _rows) => {
-  if (err) {
-    throw err;
-  }
-
-  rows2e = _rows;
-});
-
-connection.execute<RowDataPacket[]>(options3, (err, _rows) => {
-  if (err) {
-    throw err;
-  }
-
-  rows3e = _rows;
-  connection.end();
-});
-
-process.on('exit', () => {
-  assert.equal(rows1.length, 1, 'First row length');
-  assert.equal(rows1[0].nested_test.id, 1, 'First row nested id');
-  assert.equal(rows1[0].nested_test.title, 'test', 'First row nested title');
-  assert.equal(rows2.length, 1, 'Second row length');
-  assert.equal(rows2[0].nested_test_id, 1, 'Second row nested id');
-  assert.equal(rows2[0].nested_test_title, 'test', 'Second row nested title');
-
-  assert.equal(Array.isArray(rows3[0]), true, 'Third row type');
-  assert.equal(rows3[0][0], 1, 'Third row value 1');
-  assert.equal(rows3[0][1], 'test', 'Third row value 2');
-
-  assert.equal(rows4.length, 1, 'Fourth row length');
-  assert.deepEqual(
-    rows4[0],
-    {
-      nested: {
-        title: 'test1',
-      },
-      notNested: {
-        id: 1,
-        title: 'test',
-      },
-    },
-    'Fourth row value'
+  const table = 'nested_test';
+  connection.query(
+    [
+      `CREATE TEMPORARY TABLE \`${table}\` (`,
+      '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
+      '`title` varchar(255),',
+      'PRIMARY KEY (`id`)',
+      ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
+    ].join('\n')
   );
-  assert.equal(rows5.length, 1, 'Fifth row length');
-  assert.deepEqual(
-    rows5[0],
-    {
-      nested2: {
-        title: 'test1',
-      },
-      notNested: {
-        id: 1,
-        title: 'test',
-      },
-    },
-    'Fifth row value'
+  connection.query(
+    [
+      `CREATE TEMPORARY TABLE \`${table}1\` (`,
+      '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
+      '`title` varchar(255),',
+      'PRIMARY KEY (`id`)',
+      ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
+    ].join('\n')
   );
 
-  assert.deepEqual(rows1, rows1e, 'Compare rows1 with rows1e');
-  assert.deepEqual(rows2, rows2e, 'Compare rows2 with rows2e');
-  assert.deepEqual(rows3, rows3e, 'Compare rows3 with rows3e');
+  connection.query(`INSERT INTO ${table} SET ?`, { title: 'test' });
+  connection.query(`INSERT INTO ${table}1 SET ?`, { title: 'test1' });
+
+  const options1 = {
+    nestTables: true,
+    sql: `SELECT * FROM ${table}`,
+  };
+  const options2 = {
+    nestTables: '_',
+    sql: `SELECT * FROM ${table}`,
+  };
+  const options3 = {
+    rowsAsArray: true,
+    sql: `SELECT * FROM ${table}`,
+  };
+  const options4 = {
+    nestTables: true,
+    sql: `SELECT notNested.id, notNested.title, nested.title FROM ${table} notNested LEFT JOIN ${table}1 nested ON notNested.id = nested.id`,
+  };
+  const options5 = {
+    nestTables: true,
+    sql: `SELECT notNested.id, notNested.title, nested2.title FROM ${table} notNested LEFT JOIN ${table}1 nested2 ON notNested.id = nested2.id`,
+  };
+
+  await it('should handle nested tables and row formats', async () => {
+    await new Promise<void>((resolve, reject) => {
+      let rows1: RowDataPacket[];
+      let rows2: RowDataPacket[];
+      let rows3: RowDataPacket[];
+      let rows4: RowDataPacket[];
+      let rows5: RowDataPacket[];
+      let rows1e: RowDataPacket[];
+      let rows2e: RowDataPacket[];
+      let rows3e: RowDataPacket[];
+
+      connection.query<RowDataPacket[]>(options1, (err, _rows) => {
+        if (err) return reject(err);
+        rows1 = _rows;
+      });
+
+      connection.query<RowDataPacket[]>(options2, (err, _rows) => {
+        if (err) return reject(err);
+        rows2 = _rows;
+      });
+
+      connection.query<RowDataPacket[]>(options3, (err, _rows) => {
+        if (err) return reject(err);
+        rows3 = _rows;
+      });
+
+      connection.query<RowDataPacket[]>(options4, (err, _rows) => {
+        if (err) return reject(err);
+        rows4 = _rows;
+      });
+
+      connection.query<RowDataPacket[]>(options5, (err, _rows) => {
+        if (err) return reject(err);
+        rows5 = _rows;
+      });
+
+      connection.execute<RowDataPacket[]>(options1, (err, _rows) => {
+        if (err) return reject(err);
+        rows1e = _rows;
+      });
+
+      connection.execute<RowDataPacket[]>(options2, (err, _rows) => {
+        if (err) return reject(err);
+        rows2e = _rows;
+      });
+
+      connection.execute<RowDataPacket[]>(options3, (err, _rows) => {
+        if (err) return reject(err);
+        rows3e = _rows;
+
+        assert.equal(rows1.length, 1, 'First row length');
+        assert.equal(rows1[0].nested_test.id, 1, 'First row nested id');
+        assert.equal(
+          rows1[0].nested_test.title,
+          'test',
+          'First row nested title'
+        );
+        assert.equal(rows2.length, 1, 'Second row length');
+        assert.equal(rows2[0].nested_test_id, 1, 'Second row nested id');
+        assert.equal(
+          rows2[0].nested_test_title,
+          'test',
+          'Second row nested title'
+        );
+
+        assert.equal(Array.isArray(rows3[0]), true, 'Third row type');
+        assert.equal(rows3[0][0], 1, 'Third row value 1');
+        assert.equal(rows3[0][1], 'test', 'Third row value 2');
+
+        assert.equal(rows4.length, 1, 'Fourth row length');
+        assert.deepEqual(
+          rows4[0],
+          {
+            nested: {
+              title: 'test1',
+            },
+            notNested: {
+              id: 1,
+              title: 'test',
+            },
+          },
+          'Fourth row value'
+        );
+        assert.equal(rows5.length, 1, 'Fifth row length');
+        assert.deepEqual(
+          rows5[0],
+          {
+            nested2: {
+              title: 'test1',
+            },
+            notNested: {
+              id: 1,
+              title: 'test',
+            },
+          },
+          'Fifth row value'
+        );
+
+        assert.deepEqual(rows1, rows1e, 'Compare rows1 with rows1e');
+        assert.deepEqual(rows2, rows2e, 'Compare rows2 with rows2e');
+        assert.deepEqual(rows3, rows3e, 'Compare rows3 with rows3e');
+
+        connection.end();
+        resolve();
+      });
+    });
+  });
 });
