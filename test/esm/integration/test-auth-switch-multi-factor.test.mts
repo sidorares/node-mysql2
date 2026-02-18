@@ -4,7 +4,6 @@ import type { Connection } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../index.js';
 import Command from '../../../lib/commands/command.js';
 import Packets from '../../../lib/packets/index.js';
@@ -109,8 +108,11 @@ await describe('Auth Switch Multi Factor', async () => {
     const completed: string[] = [];
 
     await new Promise<void>((resolve) => {
-      portfinder.getPort((_err: Error | null, port: number) => {
-        server.listen(port);
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
+
         const conn = mysql.createConnection({
           port: port,
           password: 'secret1',

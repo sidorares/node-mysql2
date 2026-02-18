@@ -1,7 +1,6 @@
 import type { Connection } from '../../../../index.js';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 
 // The process is not terminated in Deno
@@ -12,10 +11,12 @@ await describe('Connect Connection Closed Error', async () => {
 
   await it('should return error when server closes connection', async () => {
     await new Promise<void>((resolve) => {
-      portfinder.getPort((_err, port) => {
-        // @ts-expect-error: TODO: implement typings
-        const server = mysql.createServer();
-        server.listen(port);
+      // @ts-expect-error: TODO: implement typings
+      const server = mysql.createServer();
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
         server.on('connection', (conn: Connection) => {
           // @ts-expect-error: TODO: implement typings
           conn.close();

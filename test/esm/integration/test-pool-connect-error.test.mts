@@ -1,6 +1,5 @@
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../index.js';
 
 // The process is not terminated in Deno
@@ -28,8 +27,10 @@ await describe('Pool Connect Error', async () => {
         err2: NodeJS.ErrnoException | undefined;
       let done = false;
 
-      portfinder.getPort((_err, port) => {
-        server.listen(port);
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
 
         const checkDone = () => {
           if (done || err1 === undefined || err2 === undefined) return;

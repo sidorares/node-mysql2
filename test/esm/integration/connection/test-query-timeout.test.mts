@@ -1,7 +1,6 @@
 import assert from 'node:assert';
 import process from 'node:process';
 import { describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import { createConnection } from '../../common.test.mjs';
 
@@ -110,19 +109,21 @@ await describe('Query Timeout', async () => {
    */
   await it('should return connect timeout error instead of query timeout error', async () => {
     await new Promise<void>((resolve, reject) => {
-      portfinder.getPort((_err, port) => {
-        // @ts-expect-error: TODO: implement typings
-        const server = mysql.createServer();
-        server.on('connection', (conn) => {
-          conn.on('error', (err: NodeJS.ErrnoException) => {
-            assert.equal(
-              err.message,
-              'Connection lost: The server closed the connection.'
-            );
-            assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
-          });
+      // @ts-expect-error: TODO: implement typings
+      const server = mysql.createServer();
+      server.on('connection', (conn) => {
+        conn.on('error', (err: NodeJS.ErrnoException) => {
+          assert.equal(
+            err.message,
+            'Connection lost: The server closed the connection.'
+          );
+          assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
         });
-        server.listen(port);
+      });
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
 
         const connectionTimeout = mysql.createConnection({
           host: 'localhost',

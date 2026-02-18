@@ -4,7 +4,6 @@ import type { Connection } from '../../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import Command from '../../../../lib/commands/command.js';
 import Packets from '../../../../lib/packets/index.js';
@@ -117,8 +116,10 @@ await describe('Change User Multi Factor', async () => {
 
   await it('should handle multi-factor authentication during change user', async () => {
     await new Promise<void>((resolve) => {
-      portfinder.getPort((_: Error | null, port: number) => {
-        server.listen(port);
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
         const conn = mysql.createConnection({
           port: port,
           authPlugins: {

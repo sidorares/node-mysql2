@@ -1,6 +1,5 @@
 import process, { exit } from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -31,44 +30,42 @@ await describe('pool cluster retry', async () => {
     const server = mysql.createServer();
 
     await new Promise<void>((resolve, reject) => {
-      portfinder.getPort((_err, port) => {
+      server.on('connection', (conn) => {
+        connCount += 1;
+
+        if (connCount < 2) {
+          conn.close();
+        } else {
+          conn.serverHandshake({
+            serverVersion: 'node.js rocks',
+          });
+          conn.on('error', () => {
+            // server side of the connection
+            // ignore disconnects
+          });
+        }
+      });
+
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
         cluster.add('MASTER', { port });
 
-        // @ts-expect-error: TODO: implement typings
-        server.listen(port + 0, (err) => {
+        cluster.getConnection('MASTER', (err, connection) => {
           if (err) return reject(err);
+          assert.equal(connCount, 2);
+          // @ts-expect-error: internal access
+          assert.equal(connection._clusterId, 'MASTER');
 
-          cluster.getConnection('MASTER', (err, connection) => {
+          connection.release();
+
+          cluster.end((err) => {
             if (err) return reject(err);
-            assert.equal(connCount, 2);
-            // @ts-expect-error: internal access
-            assert.equal(connection._clusterId, 'MASTER');
-
-            connection.release();
-
-            cluster.end((err) => {
-              if (err) return reject(err);
-              // @ts-expect-error: TODO: implement typings
-              server.close();
-              resolve();
-            });
+            // @ts-expect-error: TODO: implement typings
+            server.close();
+            resolve();
           });
-        });
-
-        server.on('connection', (conn) => {
-          connCount += 1;
-
-          if (connCount < 2) {
-            conn.close();
-          } else {
-            conn.serverHandshake({
-              serverVersion: 'node.js rocks',
-            });
-            conn.on('error', () => {
-              // server side of the connection
-              // ignore disconnects
-            });
-          }
         });
       });
     });

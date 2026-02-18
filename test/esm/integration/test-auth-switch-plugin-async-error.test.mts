@@ -4,7 +4,6 @@ import type { AuthPlugin } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../index.js';
 import Command from '../../../lib/commands/command.js';
 import Packets from '../../../lib/packets/index.js';
@@ -57,28 +56,31 @@ await describe('Auth Switch Plugin Async Error', async () => {
     let error: { code?: string; message?: string; fatal?: boolean } | undefined;
 
     await new Promise<void>((resolve) => {
-      portfinder.getPort((_err, port) => {
-        const server = mysql.createServer((conn) => {
-          conn.on('error', (err: NodeJS.ErrnoException) => {
-            // The server must close the connection
-            assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+      const server = mysql.createServer((conn) => {
+        conn.on('error', (err: NodeJS.ErrnoException) => {
+          // The server must close the connection
+          assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
 
-            // The plugin reports a fatal error
-            assert.equal(error?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
-            assert.equal(error?.message, 'boom');
-            assert.equal(error?.fatal, true);
-            resolve();
-          });
-          // @ts-expect-error: TODO: implement typings
-          conn.addCommand(
-            new TestAuthSwitchPluginError({
-              pluginName: 'auth_test_plugin',
-              pluginData: Buffer.allocUnsafe(0),
-            })
-          );
+          // The plugin reports a fatal error
+          assert.equal(error?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
+          assert.equal(error?.message, 'boom');
+          assert.equal(error?.fatal, true);
+          resolve();
         });
+        // @ts-expect-error: TODO: implement typings
+        conn.addCommand(
+          new TestAuthSwitchPluginError({
+            pluginName: 'auth_test_plugin',
+            pluginData: Buffer.allocUnsafe(0),
+          })
+        );
+      });
 
-        server.listen(port);
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
+
         const conn = mysql.createConnection({
           port: port,
           authPlugins: {

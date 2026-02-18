@@ -1,6 +1,5 @@
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -33,60 +32,58 @@ await describe('pool cluster restore', async () => {
     const server = mysql.createServer();
 
     await new Promise<void>((resolve, reject) => {
-      portfinder.getPort((_err, port) => {
+      server.on('connection', (conn) => {
+        connCount += 1;
+
+        if (offline) {
+          conn.close();
+        } else {
+          conn.serverHandshake({
+            serverVersion: 'node.js rocks',
+          });
+          conn.on('error', () => {
+            // server side of the connection
+            // ignore disconnects
+          });
+        }
+      });
+
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
         cluster.add('MASTER', { port });
 
-        // @ts-expect-error: TODO: implement typings
-        server.listen(port + 0, (err) => {
-          if (err) return reject(err);
+        cluster.getConnection('MASTER', (err) => {
+          assert.ok(err);
+          assert.equal(err?.code, 'PROTOCOL_CONNECTION_LOST');
+          // @ts-expect-error: TODO: implement typings
+          assert.equal(err?.fatal, true);
+          assert.equal(connCount, 2);
 
           cluster.getConnection('MASTER', (err) => {
             assert.ok(err);
-            assert.equal(err?.code, 'PROTOCOL_CONNECTION_LOST');
-            // @ts-expect-error: TODO: implement typings
-            assert.equal(err?.fatal, true);
-            assert.equal(connCount, 2);
+            assert.equal(err?.code, 'POOL_NONEONLINE');
 
-            cluster.getConnection('MASTER', (err) => {
-              assert.ok(err);
-              assert.equal(err?.code, 'POOL_NONEONLINE');
+            // @ts-expect-error: internal access
+            cluster._nodes.MASTER.errorCount = 3;
 
-              // @ts-expect-error: internal access
-              cluster._nodes.MASTER.errorCount = 3;
-
-              offline = false;
-            });
-
-            setTimeout(() => {
-              cluster.getConnection('MASTER', (err, conn) => {
-                if (err) return reject(err);
-                conn.release();
-
-                cluster.end((err) => {
-                  if (err) return reject(err);
-                  // @ts-expect-error: TODO: implement typings
-                  server.close();
-                  resolve();
-                });
-              });
-            }, 200);
+            offline = false;
           });
-        });
 
-        server.on('connection', (conn) => {
-          connCount += 1;
+          setTimeout(() => {
+            cluster.getConnection('MASTER', (err, conn) => {
+              if (err) return reject(err);
+              conn.release();
 
-          if (offline) {
-            conn.close();
-          } else {
-            conn.serverHandshake({
-              serverVersion: 'node.js rocks',
+              cluster.end((err) => {
+                if (err) return reject(err);
+                // @ts-expect-error: TODO: implement typings
+                server.close();
+                resolve();
+              });
             });
-            conn.on('error', () => {
-              // server side of the connection
-              // ignore disconnects
-            });
-          }
+          }, 200);
         });
       });
     });

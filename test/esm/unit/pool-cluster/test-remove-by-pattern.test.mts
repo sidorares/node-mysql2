@@ -1,6 +1,5 @@
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -25,48 +24,46 @@ await describe('pool cluster remove by pattern', async () => {
     const server = mysql.createServer();
 
     await new Promise<void>((resolve, reject) => {
-      portfinder.getPort((_err, port) => {
+      server.on('connection', (conn) => {
+        conn.serverHandshake({
+          serverVersion: 'node.js rocks',
+        });
+        conn.on('error', () => {
+          // server side of the connection
+          // ignore disconnects
+        });
+      });
+
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
         cluster.add('SLAVE1', { port });
         cluster.add('SLAVE2', { port });
 
-        // @ts-expect-error: TODO: implement typings
-        server.listen(port + 0, (err) => {
+        const pool = cluster.of('SLAVE*', 'ORDER');
+
+        pool.getConnection((err, conn) => {
           if (err) return reject(err);
+          // @ts-expect-error: internal access
+          assert.strictEqual(conn._clusterId, 'SLAVE1');
 
-          const pool = cluster.of('SLAVE*', 'ORDER');
+          conn.release();
+          cluster.remove('SLAVE*');
 
-          pool.getConnection((err, conn) => {
-            if (err) return reject(err);
-            // @ts-expect-error: internal access
-            assert.strictEqual(conn._clusterId, 'SLAVE1');
+          pool.getConnection((err) => {
+            assert.ok(err);
+            assert.equal(err?.code, 'POOL_NOEXIST');
 
-            conn.release();
             cluster.remove('SLAVE*');
+            cluster.remove('SLAVE2');
 
-            pool.getConnection((err) => {
-              assert.ok(err);
-              assert.equal(err?.code, 'POOL_NOEXIST');
-
-              cluster.remove('SLAVE*');
-              cluster.remove('SLAVE2');
-
-              cluster.end((err) => {
-                if (err) return reject(err);
-                // @ts-expect-error: TODO: implement typings
-                server.close();
-                resolve();
-              });
+            cluster.end((err) => {
+              if (err) return reject(err);
+              // @ts-expect-error: TODO: implement typings
+              server.close();
+              resolve();
             });
-          });
-        });
-
-        server.on('connection', (conn) => {
-          conn.serverHandshake({
-            serverVersion: 'node.js rocks',
-          });
-          conn.on('error', () => {
-            // server side of the connection
-            // ignore disconnects
           });
         });
       });
