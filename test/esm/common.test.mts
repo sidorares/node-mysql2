@@ -1,19 +1,23 @@
-import type { Connection as PromiseConnection } from '../../promise.js';
 import type {
-  ConnectionOptions,
-  PoolOptions,
-  PoolClusterOptions,
   Connection,
+  ConnectionOptions,
+  PoolClusterOptions,
+  PoolOptions,
 } from '../../index.js';
-import { createRequire } from 'node:module';
+import type {
+  Connection as PromiseConnection,
+  RowDataPacket,
+} from '../../promise.js';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-export * as SqlString from 'sql-escaper';
 import portfinder from 'portfinder';
+import driver from '../../index.js';
 import ClientFlags from '../../lib/constants/client.js';
-import * as driver from '../../index.js';
+
+export * as SqlString from 'sql-escaper';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -182,7 +186,9 @@ export const getConfig = function (input?: ConnectionOptions) {
   return params;
 };
 
-export const createPool = function (args?: PoolOptions) {
+export const createPool = function (
+  args?: PoolOptions
+): ReturnType<typeof driver.createPool> {
   if (!args?.port && process.env.MYSQL_CONNECTION_URL) {
     return driver.createPool({
       ...args,
@@ -202,7 +208,9 @@ export const createPool = function (args?: PoolOptions) {
   return driver.createPool(getConfig(args));
 };
 
-export const createPoolCluster = function (args: PoolClusterOptions = {}) {
+export const createPoolCluster = function (
+  args: PoolClusterOptions = {}
+): ReturnType<typeof driver.createPoolCluster> {
   if (!('port' in args) && process.env.MYSQL_CONNECTION_URL) {
     return driver.createPoolCluster({
       ...args,
@@ -214,7 +222,9 @@ export const createPoolCluster = function (args: PoolClusterOptions = {}) {
   return driver.createPoolCluster(args);
 };
 
-export const createConnectionWithURI = function () {
+export const createConnectionWithURI = function (): ReturnType<
+  typeof driver.createConnection
+> {
   return driver.createConnection({ uri: configURI });
 };
 
@@ -273,7 +283,9 @@ export const getMysqlVersion = async function (
   connection: Connection | PromiseConnection
 ) {
   const conn = 'promise' in connection ? connection.promise() : connection;
-  const [rows] = await conn.query('SELECT VERSION() AS `version`');
+  const [rows] = await conn.query<(RowDataPacket & { version: string })[]>(
+    'SELECT VERSION() AS `version`'
+  );
   const serverVersion: string = rows[0].version;
 
   const [major, minor, patch] = serverVersion

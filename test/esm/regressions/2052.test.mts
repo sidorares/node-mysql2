@@ -1,8 +1,8 @@
-import { assert, describe, it } from 'poku';
+import type { PrepareStatementInfo, QueryError } from '../../../index.js';
 import { Buffer } from 'node:buffer';
-import packets from '../../../lib/packets/index.js';
+import { assert, describe, it } from 'poku';
 import PrepareCommand from '../../../lib/commands/prepare.js';
-import type { QueryError, PrepareStatementInfo } from '../../../index.js';
+import packets from '../../../lib/packets/index.js';
 import { createConnection, getMysqlVersion } from '../common.test.mjs';
 
 await describe(async () => {
@@ -20,7 +20,7 @@ await describe(async () => {
       config: {
         charsetNumber: 33,
       },
-      writePacket: (packet: any) => {
+      writePacket: (packet: InstanceType<typeof packets.Packet>) => {
         // client -> server COM_PREPARE
         packet.writeHeader(1);
         assert.equal(

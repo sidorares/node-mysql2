@@ -1,5 +1,8 @@
-import { describe, it, assert } from 'poku';
+import type { RowDataPacket } from '../../../../index.js';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
+
+type TotalRow = RowDataPacket & { total: number | string };
 
 await describe('Text Parser: supportBigNumbers Sanitization', async () => {
   const connection = createConnection().promise();
@@ -25,7 +28,7 @@ await describe('Text Parser: supportBigNumbers Sanitization', async () => {
   for (const [supportBigNumbers, expectedType, label] of cases) {
     await it(label, async () => {
       // @ts-expect-error: TODO: implement typings
-      const [results] = await connection.query({
+      const [results] = await connection.query<TotalRow[]>({
         sql,
         supportBigNumbers,
       });

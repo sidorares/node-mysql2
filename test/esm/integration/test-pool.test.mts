@@ -1,4 +1,4 @@
-import { assert, it, describe } from 'poku';
+import { assert, describe, it } from 'poku';
 import mysql from '../../../index.js';
 
 const poolConfig = {}; // config: { connectionConfig: {} };

@@ -97,15 +97,15 @@ export default [
     },
     rules: {
       '@typescript-eslint/no-empty-interface': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
       strict: 'off',
       'no-restricted-syntax': [
         'error',
         {
           selector:
-            'ImportDeclaration[source.value=/^\\./][source.value!=/\\.(m?js)$/]',
-          message: 'Local imports must have the explicit .mjs or .js extension',
+            'ImportDeclaration[source.value=/^\\./][source.value!=/\\.(m?js|json)$/]',
+          message:
+            'Local imports must have the explicit .mjs, .js, or .json extension',
         },
       ],
     },
@@ -142,6 +142,13 @@ export default [
     rules: {
       '@typescript-eslint/no-unused-expressions': 'off',
       'arrow-parens': ['error', 'always'],
+    },
+  },
+  {
+    files: ['test/esm/**/*.mts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
     },
   },
   {

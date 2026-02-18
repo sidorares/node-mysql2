@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../../promise.js';
-import { it, assert, describe } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe(async () => {

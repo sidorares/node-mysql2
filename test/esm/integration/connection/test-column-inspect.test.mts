@@ -1,6 +1,6 @@
-import { assert, describe, afterEach, beforeEach, it } from 'poku';
-import util from 'node:util';
 import type { Connection as PromiseConnection } from '../../../../promise.js';
+import util from 'node:util';
+import { afterEach, assert, beforeEach, describe, it } from 'poku';
 import { config, createConnection, version } from '../../common.test.mjs';
 
 const { database: currentDatabase } = config;
