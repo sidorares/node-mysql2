@@ -1,6 +1,6 @@
-import type { RowDataPacket } from '../../../../index.js';
+import type { RowDataPacket } from '../../../index.js';
 import { assert, describe, it } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection } from '../common.test.mjs';
 
 type TestRow = RowDataPacket & { t: number };
 

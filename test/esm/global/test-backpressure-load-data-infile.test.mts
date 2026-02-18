@@ -2,12 +2,12 @@ import type {
   QueryError,
   ResultSetHeader,
   RowDataPacket,
-} from '../../../../index.js';
+} from '../../../index.js';
 import Net from 'node:net';
 import { Duplex, Readable } from 'node:stream';
 import { assert, log, skip, sleep, test } from 'poku';
-import driver from '../../../../index.js';
-import { config } from '../../common.test.mjs';
+import driver from '../../../index.js';
+import { config } from '../common.test.mjs';
 
 if (config.compress) {
   skip(

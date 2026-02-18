@@ -2,12 +2,12 @@ import type {
   QueryError,
   ResultSetHeader,
   RowDataPacket,
-} from '../../../../index.js';
+} from '../../../index.js';
 import fs from 'node:fs';
 import process from 'node:process';
 import { PassThrough } from 'node:stream';
 import { assert, describe, it } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection } from '../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
