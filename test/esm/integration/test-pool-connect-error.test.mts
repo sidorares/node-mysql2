@@ -5,6 +5,11 @@ import mysql from '../../../index.js';
 // The process is not terminated in Deno
 if (typeof Deno !== 'undefined') process.exit(0);
 
+process.on('uncaughtException', (err: NodeJS.ErrnoException) => {
+  if (err.code === 'PROTOCOL_CONNECTION_LOST') return;
+  throw err;
+});
+
 await describe('Pool Connect Error', async () => {
   await it('should emit error code 1040 for connection and pool', async () => {
     await new Promise<void>((resolve) => {
