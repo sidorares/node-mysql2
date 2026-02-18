@@ -177,10 +177,9 @@ await describe('Auth Switch Multi Factor', async () => {
             'auth_test_plugin3',
           ]);
 
-          conn.end();
-          // @ts-expect-error: TODO: implement typings
-          server.close();
-          resolve();
+          conn.end(() => {
+            server.close(() => resolve());
+          });
         });
       });
     });

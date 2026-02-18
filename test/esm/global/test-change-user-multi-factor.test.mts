@@ -1,12 +1,12 @@
 // Copyright (c) 2021, Oracle and/or its affiliates.
 
-import type { Connection } from '../../../../index.js';
+import type { Connection } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import mysql from '../../../../index.js';
-import Command from '../../../../lib/commands/command.js';
-import Packets from '../../../../lib/packets/index.js';
+import mysql from '../../../index.js';
+import Command from '../../../lib/commands/command.js';
+import Packets from '../../../lib/packets/index.js';
 
 type AuthFactorConfig = {
   pluginName: string;
