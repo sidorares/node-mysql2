@@ -18,85 +18,103 @@ if (process.platform === 'win32') {
 if (typeof Deno !== 'undefined') process.exit(0);
 
 await describe('pool cluster restore events', async () => {
-  await it('should emit offline and online events', async () => {
-    const cluster = createPoolCluster({
-      canRetry: true,
-      removeNodeErrorCount: 2,
-      restoreNodeTimeout: 100,
-    });
+  const cluster = createPoolCluster({
+    canRetry: true,
+    removeNodeErrorCount: 2,
+    restoreNodeTimeout: 100,
+  });
 
-    let connCount = 0;
-    let offline = true;
-    let offlineEvents = 0;
-    let onlineEvents = 0;
+  let connCount = 0;
+  let offline = true;
 
+  // @ts-expect-error: TODO: implement typings
+  const server = mysql.createServer();
+
+  server.on('connection', (conn) => {
+    connCount += 1;
+
+    if (offline) {
+      conn.close();
+    } else {
+      conn.serverHandshake({
+        serverVersion: 'node.js rocks',
+      });
+      conn.on('error', () => {
+        // server side of the connection
+        // ignore disconnects
+      });
+    }
+  });
+
+  const port = await new Promise<number>((resolve) => {
     // @ts-expect-error: TODO: implement typings
-    const server = mysql.createServer();
-
-    await new Promise<void>((resolve, reject) => {
-      server.on('connection', (conn) => {
-        connCount += 1;
-
-        if (offline) {
-          conn.close();
-        } else {
-          conn.serverHandshake({
-            serverVersion: 'node.js rocks',
-          });
-          conn.on('error', () => {
-            // server side of the connection
-            // ignore disconnects
-          });
-        }
-      });
-
-      // @ts-expect-error: TODO: implement typings
-      server.listen(0, () => {
-        // @ts-expect-error: internal access
-        const port = server._server.address().port;
-        cluster.add('MASTER', { port });
-
-        cluster.on('offline', (id) => {
-          assert.equal(++offlineEvents, 1);
-          assert.equal(id, 'MASTER');
-          assert.equal(connCount, 2);
-
-          cluster.getConnection('MASTER', (err) => {
-            assert.ok(err);
-            assert.equal(err?.code, 'POOL_NONEONLINE');
-
-            offline = false;
-          });
-
-          setTimeout(() => {
-            cluster.getConnection('MASTER', (err, conn) => {
-              if (err) return reject(err);
-              conn.release();
-            });
-          }, 200);
-        });
-
-        cluster.on('online', (id) => {
-          assert.equal(++onlineEvents, 1);
-          assert.equal(id, 'MASTER');
-          assert.equal(connCount, 3);
-
-          cluster.end((err) => {
-            if (err) return reject(err);
-            // @ts-expect-error: TODO: implement typings
-            server.close();
-            resolve();
-          });
-        });
-
-        cluster.getConnection('MASTER', (err) => {
-          assert.ok(err);
-          assert.equal(err?.code, 'PROTOCOL_CONNECTION_LOST');
-          // @ts-expect-error: TODO: implement typings
-          assert.equal(err?.fatal, true);
-          assert.equal(connCount, 2);
-        });
-      });
+    server.listen(0, () => {
+      // @ts-expect-error: internal access
+      resolve(server._server.address().port as number);
     });
   });
+
+  cluster.add('MASTER', { port });
+
+  await it('should emit offline and online events', async () => {
+    const offlinePromise = new Promise<string>((resolve) => {
+      cluster.on('offline', (id: string) => resolve(id));
+    });
+
+    const onlinePromise = new Promise<{ id: string; connCount: number }>(
+      (resolve) => {
+        cluster.on('online', (id: string) => resolve({ id, connCount }));
+      }
+    );
+
+    type MysqlError = Error & { code?: string; fatal?: boolean };
+
+    // First attempt - triggers 2 failures and node removal
+    const err1 = await new Promise<MysqlError | null>((resolve) => {
+      cluster.getConnection('MASTER', (err) => resolve(err));
+    });
+
+    assert.ok(err1);
+    assert.equal(err1?.code, 'PROTOCOL_CONNECTION_LOST');
+    assert.equal(err1?.fatal, true);
+    assert.equal(connCount, 2);
+
+    // Verify offline event fired
+    const offlineId = await offlinePromise;
+    assert.equal(offlineId, 'MASTER');
+
+    // Second attempt - node is offline
+    const err2 = await new Promise<MysqlError | null>((resolve) => {
+      cluster.getConnection('MASTER', (err) => resolve(err));
+    });
+
+    assert.ok(err2);
+    assert.equal(err2?.code, 'POOL_NONEONLINE');
+
+    // Bring server back online
+    offline = false;
+
+    // Wait for restore timeout
+    await new Promise<void>((resolve) => setTimeout(resolve, 200));
+
+    // Third attempt - should succeed and trigger online event
+    await new Promise<void>((resolve, reject) => {
+      cluster.getConnection('MASTER', (err, conn) => {
+        if (err) return reject(err);
+        conn.release();
+        resolve();
+      });
+    });
+
+    // Verify online event fired
+    const onlineResult = await onlinePromise;
+    assert.equal(onlineResult.id, 'MASTER');
+    assert.equal(onlineResult.connCount, 3);
+  });
+
+  await new Promise<void>((resolve, reject) => {
+    cluster.end((err) => (err ? reject(err) : resolve()));
+  });
+  // @ts-expect-error: TODO: implement typings
+  server.close();
 });

@@ -22,40 +22,39 @@ await describe('Invalid Date Result', async () => {
   const strictModes = ['NO_ZERO_DATE', 'NO_ZERO_IN_DATE'];
 
   await it('should handle invalid date values', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const modeRows = await new Promise<SqlModeRow[]>((resolve, reject) => {
       connection.query<SqlModeRow[]>(
         'SELECT variable_value as value FROM performance_schema.session_variables where variable_name = ?',
         ['sql_mode'],
-        (err, _rows) => {
-          if (err) return reject(err);
-
-          const deprecatedSqlMode = _rows[0].value
-            .split(',')
-            .filter((mode) => strictModes.indexOf(mode) === -1)
-            .join(',');
-
-          connection.query(`SET sql_mode=?`, [deprecatedSqlMode], (err) => {
-            if (err) return reject(err);
-
-            connection.execute<TimestampRow[]>(
-              'SELECT TIMESTAMP(0000-00-00) t',
-              [],
-              (err, rows) => {
-                if (err) return reject(err);
-
-                assert.deepEqual(
-                  Object.prototype.toString.call(rows?.[0].t),
-                  '[object Date]'
-                );
-                assert.deepEqual(isInvalidTime(rows?.[0].t), true);
-
-                connection.end();
-                resolve();
-              }
-            );
-          });
-        }
+        (err, _rows) => (err ? reject(err) : resolve(_rows))
       );
     });
+
+    const deprecatedSqlMode = modeRows[0].value
+      .split(',')
+      .filter((mode) => strictModes.indexOf(mode) === -1)
+      .join(',');
+
+    await new Promise<void>((resolve, reject) => {
+      connection.query(`SET sql_mode=?`, [deprecatedSqlMode], (err) =>
+        err ? reject(err) : resolve()
+      );
+    });
+
+    const rows = await new Promise<TimestampRow[]>((resolve, reject) => {
+      connection.execute<TimestampRow[]>(
+        'SELECT TIMESTAMP(0000-00-00) t',
+        [],
+        (err, _rows) => (err ? reject(err) : resolve(_rows))
+      );
+    });
+
+    assert.deepEqual(
+      Object.prototype.toString.call(rows?.[0].t),
+      '[object Date]'
+    );
+    assert.deepEqual(isInvalidTime(rows?.[0].t), true);
   });
+
+  connection.end();
 });

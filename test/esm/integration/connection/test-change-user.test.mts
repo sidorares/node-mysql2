@@ -28,71 +28,54 @@ await describe('Change User', async () => {
   await it('should switch users and verify current_user()', async () => {
     await new Promise<void>((resolve, reject) => {
       connection.changeUser(
+        { user: 'changeuser1', password: 'changeuser1pass' },
+        (err) => (err ? reject(err) : resolve())
+      );
+    });
+
+    const rows1 = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.query<RowDataPacket[]>('select current_user()', (err, rows) =>
+        err ? reject(err) : resolve(rows)
+      );
+    });
+    assert.deepEqual(onlyUsername(rows1[0]['current_user()']), 'changeuser1');
+
+    await new Promise<void>((resolve, reject) => {
+      connection.changeUser(
+        { user: 'changeuser2', password: 'changeuser2pass' },
+        (err) => (err ? reject(err) : resolve())
+      );
+    });
+
+    const rows2 = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.query<RowDataPacket[]>('select current_user()', (err, rows) =>
+        err ? reject(err) : resolve(rows)
+      );
+    });
+    assert.deepEqual(onlyUsername(rows2[0]['current_user()']), 'changeuser2');
+
+    await new Promise<void>((resolve, reject) => {
+      connection.changeUser(
         {
           user: 'changeuser1',
           password: 'changeuser1pass',
+          // @ts-expect-error: TODO: implement typings
+          passwordSha1: Buffer.from(
+            'f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd',
+            'hex'
+          ), // sha1(changeuser1pass)
         },
-        (err) => {
-          if (err) return reject(err);
-          connection.query<RowDataPacket[]>(
-            'select current_user()',
-            (err, rows) => {
-              if (err) return reject(err);
-              assert.deepEqual(
-                onlyUsername(rows[0]['current_user()']),
-                'changeuser1'
-              );
-
-              connection.changeUser(
-                {
-                  user: 'changeuser2',
-                  password: 'changeuser2pass',
-                },
-                (err) => {
-                  if (err) return reject(err);
-
-                  connection.query<RowDataPacket[]>(
-                    'select current_user()',
-                    (err, rows) => {
-                      if (err) return reject(err);
-                      assert.deepEqual(
-                        onlyUsername(rows[0]['current_user()']),
-                        'changeuser2'
-                      );
-
-                      connection.changeUser(
-                        {
-                          user: 'changeuser1',
-                          password: 'changeuser1pass',
-                          // @ts-expect-error: TODO: implement typings
-                          passwordSha1: Buffer.from(
-                            'f961d39c82138dcec42b8d0dcb3e40a14fb7e8cd',
-                            'hex'
-                          ), // sha1(changeuser1pass)
-                        },
-                        () => {
-                          connection.query<RowDataPacket[]>(
-                            'select current_user()',
-                            (err, rows) => {
-                              if (err) return reject(err);
-                              assert.deepEqual(
-                                onlyUsername(rows[0]['current_user()']),
-                                'changeuser1'
-                              );
-                              connection.end();
-                              resolve();
-                            }
-                          );
-                        }
-                      );
-                    }
-                  );
-                }
-              );
-            }
-          );
-        }
+        (err) => (err ? reject(err) : resolve())
       );
     });
+
+    const rows3 = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.query<RowDataPacket[]>('select current_user()', (err, rows) =>
+        err ? reject(err) : resolve(rows)
+      );
+    });
+    assert.deepEqual(onlyUsername(rows3[0]['current_user()']), 'changeuser1');
   });
+
+  connection.end();
 });

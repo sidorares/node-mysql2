@@ -25,35 +25,31 @@ await describe('Typecast Global Option', async () => {
 
   // query option override global typeCast
   await it('should override global typeCast with query option', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const res = await new Promise<RowDataPacket[]>((resolve, reject) => {
       connection.query<RowDataPacket[]>(
         {
           sql: 'select "FOOBAR" as foo',
           typeCast: typeCastWrapper('toLowerCase'),
         },
-        (err, res) => {
-          if (err) return reject(err);
-          assert.equal(res[0].foo, 'foobar');
-          resolve();
-        }
+        (err, _res) => (err ? reject(err) : resolve(_res))
       );
     });
+
+    assert.equal(res[0].foo, 'foobar');
   });
 
   // global typecast works
   await it('should apply global typeCast', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const res = await new Promise<RowDataPacket[]>((resolve, reject) => {
       connection.query<RowDataPacket[]>(
         {
           sql: 'select "foobar" as foo',
         },
-        (err, res) => {
-          if (err) return reject(err);
-          assert.equal(res[0].foo, 'FOOBAR');
-          resolve();
-        }
+        (err, _res) => (err ? reject(err) : resolve(_res))
       );
     });
+
+    assert.equal(res[0].foo, 'FOOBAR');
   });
 
   connection.end();

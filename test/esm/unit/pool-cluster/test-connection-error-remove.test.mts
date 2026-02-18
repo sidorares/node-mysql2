@@ -18,69 +18,77 @@ if (process.platform === 'win32') {
 }
 
 await describe('pool cluster error remove', async () => {
-  await it('should remove node on connection error', async () => {
-    const cluster = createPoolCluster({
-      removeNodeErrorCount: 1,
-    });
+  const cluster = createPoolCluster({
+    removeNodeErrorCount: 1,
+  });
 
-    let connCount = 0;
+  let connCount = 0;
 
-    // @ts-expect-error: TODO: implement typings
-    const server1 = mysql.createServer();
-    // @ts-expect-error: TODO: implement typings
-    const server2 = mysql.createServer();
+  // @ts-expect-error: TODO: implement typings
+  const server1 = mysql.createServer();
+  // @ts-expect-error: TODO: implement typings
+  const server2 = mysql.createServer();
 
-    await new Promise<void>((resolve, reject) => {
-      server1.on('connection', (conn) => {
-        connCount += 1;
-        conn.close();
-      });
+  server1.on('connection', (conn) => {
+    connCount += 1;
+    conn.close();
+  });
 
-      server2.on('connection', (conn) => {
-        connCount += 1;
-        conn.serverHandshake({
-          serverVersion: 'node.js rocks',
-        });
-      });
-
-      // @ts-expect-error: TODO: implement typings
-      server1.listen(0, () => {
-        // @ts-expect-error: TODO: implement typings
-        server2.listen(0, () => {
-          // @ts-expect-error: internal access
-          const port1 = server1._server.address().port;
-          // @ts-expect-error: internal access
-          const port2 = server2._server.address().port;
-          cluster.add('SLAVE1', { port: port1 });
-          cluster.add('SLAVE2', { port: port2 });
-
-          const pool = cluster.of('*', 'ORDER');
-          let removedNodeId: string | number;
-
-          cluster.on('remove', (nodeId) => {
-            removedNodeId = nodeId;
-          });
-
-          pool.getConnection((err, connection) => {
-            if (err) return reject(err);
-
-            assert.equal(connCount, 2);
-            // @ts-expect-error: internal access
-            assert.equal(connection._clusterId, 'SLAVE2');
-            assert.equal(removedNodeId, 'SLAVE1');
-            // @ts-expect-error: internal access
-            assert.deepEqual(cluster._serviceableNodeIds, ['SLAVE2']);
-
-            connection.release();
-
-            cluster.end((err) => {
-              if (err) return reject(err);
-              resolve();
-              exit();
-            });
-          });
-        });
-      });
+  server2.on('connection', (conn) => {
+    connCount += 1;
+    conn.serverHandshake({
+      serverVersion: 'node.js rocks',
     });
   });
+
+  const port1 = await new Promise<number>((resolve) => {
+    // @ts-expect-error: TODO: implement typings
+    server1.listen(0, () => {
+      // @ts-expect-error: internal access
+      resolve(server1._server.address().port as number);
+    });
+  });
+
+  const port2 = await new Promise<number>((resolve) => {
+    // @ts-expect-error: TODO: implement typings
+    server2.listen(0, () => {
+      // @ts-expect-error: internal access
+      resolve(server2._server.address().port as number);
+    });
+  });
+
+  cluster.add('SLAVE1', { port: port1 });
+  cluster.add('SLAVE2', { port: port2 });
+
+  const pool = cluster.of('*', 'ORDER');
+  let removedNodeId: string | number;
+
+  cluster.on('remove', (nodeId) => {
+    removedNodeId = nodeId;
+  });
+
+  await it('should remove node on connection error', async () => {
+    const result = await new Promise<{ clusterId: string }>(
+      (resolve, reject) => {
+        pool.getConnection((err, connection) => {
+          if (err) return reject(err);
+          // @ts-expect-error: internal access
+          const clusterId = connection._clusterId as string;
+          connection.release();
+          resolve({ clusterId });
+        });
+      }
+    );
+
+    assert.equal(connCount, 2);
+    assert.equal(result.clusterId, 'SLAVE2');
+    assert.equal(removedNodeId, 'SLAVE1');
+    // @ts-expect-error: internal access
+    assert.deepEqual(cluster._serviceableNodeIds, ['SLAVE2']);
+  });
+
+  await new Promise<void>((resolve, reject) => {
+    cluster.end((err) => (err ? reject(err) : resolve()));
+  });
+  exit();
 });

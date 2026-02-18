@@ -21,61 +21,63 @@ await describe('Insert BigInt Big Number Strings', async () => {
   );
 
   await it('should handle bigint with big number strings', async () => {
-    await new Promise<void>((resolve, reject) => {
-      connection.query("INSERT INTO bigs SET title='test', id=123");
+    connection.query("INSERT INTO bigs SET title='test', id=123");
+
+    const result1 = await new Promise<ResultSetHeader>((resolve, reject) => {
       connection.query<ResultSetHeader>(
         "INSERT INTO bigs SET title='test1'",
-        (err, result) => {
-          if (err) return reject(err);
-          assert.strictEqual(result.insertId, 124);
-          // > 24 bits
-          connection.query("INSERT INTO bigs SET title='test', id=123456789");
-          connection.query<ResultSetHeader>(
-            "INSERT INTO bigs SET title='test2'",
-            (_err, result) => {
-              if (_err) return reject(_err);
-              assert.strictEqual(result.insertId, 123456790);
-              // big int
-              connection.query(
-                "INSERT INTO bigs SET title='test', id=9007199254740992"
-              );
-              connection.query<ResultSetHeader>(
-                "INSERT INTO bigs SET title='test3'",
-                (_err, result) => {
-                  if (_err) return reject(_err);
-                  assert.strictEqual(result.insertId, '9007199254740993');
-                  connection.query(
-                    "INSERT INTO bigs SET title='test', id=90071992547409924"
-                  );
-                  connection.query<ResultSetHeader>(
-                    "INSERT INTO bigs SET title='test4'",
-                    (_err, result) => {
-                      if (_err) return reject(_err);
-                      assert.strictEqual(result.insertId, '90071992547409925');
-                      connection.query<BigRow[]>(
-                        'select * from bigs',
-                        (_err, result) => {
-                          if (_err) return reject(_err);
-                          assert.strictEqual(result[0].id, '123');
-                          assert.strictEqual(result[1].id, '124');
-                          assert.strictEqual(result[2].id, '123456789');
-                          assert.strictEqual(result[3].id, '123456790');
-                          assert.strictEqual(result[4].id, '9007199254740992');
-                          assert.strictEqual(result[5].id, '9007199254740993');
-                          assert.strictEqual(result[6].id, '90071992547409924');
-                          assert.strictEqual(result[7].id, '90071992547409925');
-                          connection.end();
-                          resolve();
-                        }
-                      );
-                    }
-                  );
-                }
-              );
-            }
-          );
-        }
+        (err, result) => (err ? reject(err) : resolve(result))
       );
     });
+    assert.strictEqual(result1.insertId, 124);
+
+    // > 24 bits
+    connection.query("INSERT INTO bigs SET title='test', id=123456789");
+
+    const result2 = await new Promise<ResultSetHeader>((resolve, reject) => {
+      connection.query<ResultSetHeader>(
+        "INSERT INTO bigs SET title='test2'",
+        (err, result) => (err ? reject(err) : resolve(result))
+      );
+    });
+    assert.strictEqual(result2.insertId, 123456790);
+
+    // big int
+    connection.query("INSERT INTO bigs SET title='test', id=9007199254740992");
+
+    const result3 = await new Promise<ResultSetHeader>((resolve, reject) => {
+      connection.query<ResultSetHeader>(
+        "INSERT INTO bigs SET title='test3'",
+        (err, result) => (err ? reject(err) : resolve(result))
+      );
+    });
+    assert.strictEqual(result3.insertId, '9007199254740993');
+
+    connection.query("INSERT INTO bigs SET title='test', id=90071992547409924");
+
+    const result4 = await new Promise<ResultSetHeader>((resolve, reject) => {
+      connection.query<ResultSetHeader>(
+        "INSERT INTO bigs SET title='test4'",
+        (err, result) => (err ? reject(err) : resolve(result))
+      );
+    });
+    assert.strictEqual(result4.insertId, '90071992547409925');
+
+    const selectResult = await new Promise<BigRow[]>((resolve, reject) => {
+      connection.query<BigRow[]>('select * from bigs', (err, result) =>
+        err ? reject(err) : resolve(result)
+      );
+    });
+
+    assert.strictEqual(selectResult[0].id, '123');
+    assert.strictEqual(selectResult[1].id, '124');
+    assert.strictEqual(selectResult[2].id, '123456789');
+    assert.strictEqual(selectResult[3].id, '123456790');
+    assert.strictEqual(selectResult[4].id, '9007199254740992');
+    assert.strictEqual(selectResult[5].id, '9007199254740993');
+    assert.strictEqual(selectResult[6].id, '90071992547409924');
+    assert.strictEqual(selectResult[7].id, '90071992547409925');
   });
+
+  connection.end();
 });

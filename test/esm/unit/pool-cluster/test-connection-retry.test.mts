@@ -18,56 +18,62 @@ if (process.platform === 'win32') {
 }
 
 await describe('pool cluster retry', async () => {
-  await it('should retry connection on failure', async () => {
-    const cluster = createPoolCluster({
-      canRetry: true,
-      removeNodeErrorCount: 5,
-    });
+  const cluster = createPoolCluster({
+    canRetry: true,
+    removeNodeErrorCount: 5,
+  });
 
-    let connCount = 0;
+  let connCount = 0;
 
+  // @ts-expect-error: TODO: implement typings
+  const server = mysql.createServer();
+
+  server.on('connection', (conn) => {
+    connCount += 1;
+
+    if (connCount < 2) {
+      conn.close();
+    } else {
+      conn.serverHandshake({
+        serverVersion: 'node.js rocks',
+      });
+      conn.on('error', () => {
+        // server side of the connection
+        // ignore disconnects
+      });
+    }
+  });
+
+  const port = await new Promise<number>((resolve) => {
     // @ts-expect-error: TODO: implement typings
-    const server = mysql.createServer();
-
-    await new Promise<void>((resolve, reject) => {
-      server.on('connection', (conn) => {
-        connCount += 1;
-
-        if (connCount < 2) {
-          conn.close();
-        } else {
-          conn.serverHandshake({
-            serverVersion: 'node.js rocks',
-          });
-          conn.on('error', () => {
-            // server side of the connection
-            // ignore disconnects
-          });
-        }
-      });
-
-      // @ts-expect-error: TODO: implement typings
-      server.listen(0, () => {
-        // @ts-expect-error: internal access
-        const port = server._server.address().port;
-        cluster.add('MASTER', { port });
-
-        cluster.getConnection('MASTER', (err, connection) => {
-          if (err) return reject(err);
-          assert.equal(connCount, 2);
-          // @ts-expect-error: internal access
-          assert.equal(connection._clusterId, 'MASTER');
-
-          connection.release();
-
-          cluster.end((err) => {
-            if (err) return reject(err);
-            // @ts-expect-error: TODO: implement typings
-            server.close();
-            resolve();
-          });
-        });
-      });
+    server.listen(0, () => {
+      // @ts-expect-error: internal access
+      resolve(server._server.address().port as number);
     });
   });
+
+  cluster.add('MASTER', { port });
+
+  await it('should retry connection on failure', async () => {
+    const result = await new Promise<{ clusterId: string }>(
+      (resolve, reject) => {
+        cluster.getConnection('MASTER', (err, connection) => {
+          if (err) return reject(err);
+          // @ts-expect-error: internal access
+          const clusterId = connection._clusterId as string;
+          connection.release();
+          resolve({ clusterId });
+        });
+      }
+    );
+
+    assert.equal(connCount, 2);
+    assert.equal(result.clusterId, 'MASTER');
+  });
+
+  await new Promise<void>((resolve, reject) => {
+    cluster.end((err) => (err ? reject(err) : resolve()));
+  });
+  // @ts-expect-error: TODO: implement typings
+  server.close();
 });

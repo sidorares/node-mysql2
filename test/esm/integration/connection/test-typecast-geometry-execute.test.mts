@@ -12,45 +12,47 @@ await describe('Typecast Geometry Execute', async () => {
 
   await it('should typecast geometry fields with execute', async () => {
     await new Promise<void>((resolve, reject) => {
-      connection.execute('select 1', () => {
-        // mysql8 renamed some standard functions
-        // see https://dev.mysql.com/doc/refman/8.0/en/gis-wkb-functions.html
-        const stPrefix = mySQLVersion.major >= 8 ? 'ST_' : '';
-
-        connection.execute<GeometryRow[]>(
-          {
-            sql: `select ${stPrefix}GeomFromText('POINT(11 0)') as foo`,
-            typeCast: function (field, next) {
-              if (field.type === 'GEOMETRY') {
-                return field.geometry();
-              }
-              return next();
-            },
-          },
-          (err, res) => {
-            if (err) return reject(err);
-            assert.deepEqual(res[0].foo, { x: 11, y: 0 });
-          }
-        );
-
-        connection.execute<BufferRow[]>(
-          {
-            sql: `select ${stPrefix}GeomFromText('POINT(11 0)') as foo`,
-            typeCast: function (field, next) {
-              if (field.type === 'GEOMETRY') {
-                return field.buffer();
-              }
-              return next();
-            },
-          },
-          (err, res) => {
-            if (err) return reject(err);
-            assert.equal(Buffer.isBuffer(res[0].foo), true);
-            connection.end();
-            resolve();
-          }
-        );
-      });
+      connection.execute('select 1', (err) => (err ? reject(err) : resolve()));
     });
+
+    // mysql8 renamed some standard functions
+    // see https://dev.mysql.com/doc/refman/8.0/en/gis-wkb-functions.html
+    const stPrefix = mySQLVersion.major >= 8 ? 'ST_' : '';
+
+    const geometryRes = await new Promise<GeometryRow[]>((resolve, reject) => {
+      connection.execute<GeometryRow[]>(
+        {
+          sql: `select ${stPrefix}GeomFromText('POINT(11 0)') as foo`,
+          typeCast: function (field, next) {
+            if (field.type === 'GEOMETRY') {
+              return field.geometry();
+            }
+            return next();
+          },
+        },
+        (err, res) => (err ? reject(err) : resolve(res))
+      );
+    });
+
+    assert.deepEqual(geometryRes[0].foo, { x: 11, y: 0 });
+
+    const bufferRes = await new Promise<BufferRow[]>((resolve, reject) => {
+      connection.execute<BufferRow[]>(
+        {
+          sql: `select ${stPrefix}GeomFromText('POINT(11 0)') as foo`,
+          typeCast: function (field, next) {
+            if (field.type === 'GEOMETRY') {
+              return field.buffer();
+            }
+            return next();
+          },
+        },
+        (err, res) => (err ? reject(err) : resolve(res))
+      );
+    });
+
+    assert.equal(Buffer.isBuffer(bufferRes[0].foo), true);
   });
+
+  connection.end();
 });

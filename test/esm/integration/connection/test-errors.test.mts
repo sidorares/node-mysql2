@@ -9,25 +9,34 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 }
 
 await describe('Errors', async () => {
+  const connection = createConnection();
+
   await it('should handle error events correctly', async () => {
-    const connection = createConnection();
+    const result = await new Promise<{
+      executeErr: { errno?: number; code?: string; sql?: string } | null;
+      queryErr: { errno?: number; code?: string; sql?: string } | null;
+      onExecuteErrorEvent: boolean | undefined;
+      onQueryErrorEvent: boolean | undefined;
+      onExecuteErrorEvent1: boolean | undefined;
+      onQueryErrorEvent1: boolean | undefined;
+    }>((resolve) => {
+      let executeErr: { errno?: number; code?: string; sql?: string } | null =
+        null;
+      let queryErr: { errno?: number; code?: string; sql?: string } | null =
+        null;
+      let onExecuteErrorEvent: boolean | undefined;
+      let onQueryErrorEvent: boolean | undefined;
+      let onExecuteErrorEvent1: boolean | undefined;
 
-    let onExecuteResultError: boolean | undefined;
-    let onQueryResultError: boolean | undefined;
-    let onExecuteErrorEvent: boolean | undefined;
-    let onQueryErrorEvent: boolean | undefined;
-    let onExecuteErrorEvent1: boolean | undefined;
-    let onQueryErrorEvent1: boolean | undefined;
-
-    await new Promise<void>((resolve) => {
       connection
         .execute('error in execute', [], (err) => {
-          assert.equal(err?.errno, 1064);
-          assert.equal(err?.code, 'ER_PARSE_ERROR');
-          // @ts-expect-error: TODO: implement typings
-          assert.equal(err?.sql, 'error in execute');
           if (err) {
-            onExecuteResultError = true;
+            executeErr = {
+              errno: err.errno,
+              code: err.code,
+              // @ts-expect-error: TODO: implement typings
+              sql: err.sql as string,
+            };
           }
         })
         .on('error', () => {
@@ -35,12 +44,13 @@ await describe('Errors', async () => {
         });
       connection
         .query('error in query', [], (err) => {
-          assert.equal(err?.errno, 1064);
-          assert.equal(err?.code, 'ER_PARSE_ERROR');
-          // @ts-expect-error: TODO: implement typings
-          assert.equal(err?.sql, 'error in query');
           if (err) {
-            onQueryResultError = true;
+            queryErr = {
+              errno: err.errno,
+              code: err.code,
+              // @ts-expect-error: TODO: implement typings
+              sql: err.sql as string,
+            };
           }
         })
         .on('error', () => {
@@ -50,17 +60,28 @@ await describe('Errors', async () => {
         onExecuteErrorEvent1 = true;
       });
       connection.query('error in query 1').on('error', () => {
-        onQueryErrorEvent1 = true;
-        connection.end();
-        resolve();
+        resolve({
+          executeErr,
+          queryErr,
+          onExecuteErrorEvent,
+          onQueryErrorEvent,
+          onExecuteErrorEvent1,
+          onQueryErrorEvent1: true,
+        });
       });
     });
 
-    assert.equal(onExecuteResultError, true);
-    assert.equal(onQueryResultError, true);
-    assert.equal(onExecuteErrorEvent, undefined);
-    assert.equal(onQueryErrorEvent, undefined);
-    assert.equal(onExecuteErrorEvent1, true);
-    assert.equal(onQueryErrorEvent1, true);
+    assert.equal(result.executeErr?.errno, 1064);
+    assert.equal(result.executeErr?.code, 'ER_PARSE_ERROR');
+    assert.equal(result.executeErr?.sql, 'error in execute');
+    assert.equal(result.queryErr?.errno, 1064);
+    assert.equal(result.queryErr?.code, 'ER_PARSE_ERROR');
+    assert.equal(result.queryErr?.sql, 'error in query');
+    assert.equal(result.onExecuteErrorEvent, undefined);
+    assert.equal(result.onQueryErrorEvent, undefined);
+    assert.equal(result.onExecuteErrorEvent1, true);
+    assert.equal(result.onQueryErrorEvent1, true);
   });
+
+  connection.end();
 });

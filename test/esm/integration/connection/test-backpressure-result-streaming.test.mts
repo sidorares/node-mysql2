@@ -46,15 +46,17 @@ await test('result event backpressure with pause/resume', async () => {
   // if backpressure is not working, the bytes received will grow during this time, even though connection is paused
   await sleep(500);
 
-  assert.equal(resultRowsCount, 2, 'stop receiving result rows when paused');
+  try {
+    assert.equal(resultRowsCount, 2, 'stop receiving result rows when paused');
 
-  // if backpressure is working, there should be less than 300 KB received;
-  // experimentally it appears to be around 100 KB but may vary if buffer sizes change
-  assert.ok(
-    originalSocket.bytesRead < 300000,
-    `Received ${originalSocket.bytesRead} bytes on paused connection`
-  );
-
-  // @ts-expect-error: TODO: implement typings
-  connection.close();
+    // if backpressure is working, there should be less than 300 KB received;
+    // experimentally it appears to be around 100 KB but may vary if buffer sizes change
+    assert.ok(
+      originalSocket.bytesRead < 300000,
+      `Received ${originalSocket.bytesRead} bytes on paused connection`
+    );
+  } finally {
+    // @ts-expect-error: TODO: implement typings
+    connection.close();
+  }
 });

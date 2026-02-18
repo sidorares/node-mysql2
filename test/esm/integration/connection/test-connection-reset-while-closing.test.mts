@@ -22,15 +22,17 @@ await describe('Connection Reset While Closing', async () => {
       assert.notEqual(err.code, 'ECONNRESET');
     });
 
-    await new Promise<void>((resolve) => {
-      connection.query<RowDataPacket[]>(`select 1 as "1"`, (_err, rows) => {
-        assert.equal(rows[0]['1'], 1);
-        // @ts-expect-error: TODO: implement typings
-        connection.close();
-        // @ts-expect-error: TODO: implement typings
-        connection.stream.emit('error', error);
-        resolve();
+    const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.query<RowDataPacket[]>(`select 1 as "1"`, (err, _rows) => {
+        if (err) return reject(err);
+        resolve(_rows);
       });
     });
+
+    assert.equal(rows[0]['1'], 1);
+    // @ts-expect-error: TODO: implement typings
+    connection.close();
+    // @ts-expect-error: TODO: implement typings
+    connection.stream.emit('error', error);
   });
 });

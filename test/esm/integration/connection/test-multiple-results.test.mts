@@ -130,126 +130,141 @@ await describe('Multiple Results', async () => {
   // TODO: multiple results from single query
 
   await it('should handle multiple result sets', async () => {
-    await new Promise<void>((resolve) => {
+    await new Promise<void>((resolve, reject) => {
       function do_test(testIndex: number) {
         const entry = tests[testIndex];
         const sql = entry[0];
         const expectation = entry[1];
         mysql.query(sql, (err, _rows, _columns) => {
-          if (err) {
-            console.log(err);
-            process.exit(-1);
-          }
+          try {
+            if (err) throw err;
 
-          const rows = _rows;
-          let _numResults = 0;
-          if (
-            hasConstructorName(rows) &&
-            rows.constructor.name === 'ResultSetHeader'
-          ) {
-            _numResults = 1;
-          } else if (Array.isArray(rows) && rows.length === 0) {
-            // empty select
-            _numResults = 1;
-          } else if (Array.isArray(rows) && rows.length > 0) {
-            _numResults = 1;
-            const first = rows[0];
+            const rows = _rows;
+            let _numResults = 0;
             if (
-              Array.isArray(first) ||
-              (hasConstructorName(first) &&
-                first.constructor.name === 'ResultSetHeader')
+              hasConstructorName(rows) &&
+              rows.constructor.name === 'ResultSetHeader'
             ) {
-              _numResults = rows.length;
-            }
-          }
-
-          const arrOrColumn = function (c: unknown): unknown {
-            if (Array.isArray(c)) {
-              return c.map(arrOrColumn);
-            }
-
-            if (typeof c === 'undefined') {
-              return void 0;
-            }
-
-            // @ts-expect-error: internal access
-            const column = c.inspect() as Record<string, unknown>;
-            // "columnLength" is non-deterministic and the display width for integer
-            // data types was deprecated on MySQL 8.0.17.
-            // https://dev.mysql.com/doc/refman/8.0/en/numeric-type-syntax.html
-            delete column.columnLength;
-
-            return column;
-          };
-
-          assert.deepEqual(expectation, [
-            _rows,
-            arrOrColumn(_columns),
-            _numResults,
-          ]);
-
-          const q = mysql.query(sql);
-          let resIndex = 0;
-          let rowIndex = 0;
-
-          let fieldIndex = -1;
-
-          const multiRows: unknown[] = Array.isArray(_rows) ? _rows : [_rows];
-
-          function checkRow(row: {
-            constructor: { name: string };
-            [key: string]: unknown;
-          }) {
-            const index = fieldIndex;
-            if (_numResults === 1) {
-              assert.equal(fieldIndex, 0);
-              if (row.constructor.name === 'ResultSetHeader') {
-                assert.deepEqual(_rows, row);
-              } else {
-                assert.deepEqual(multiRows[rowIndex], row);
+              _numResults = 1;
+            } else if (Array.isArray(rows) && rows.length === 0) {
+              // empty select
+              _numResults = 1;
+            } else if (Array.isArray(rows) && rows.length > 0) {
+              _numResults = 1;
+              const first = rows[0];
+              if (
+                Array.isArray(first) ||
+                (hasConstructorName(first) &&
+                  first.constructor.name === 'ResultSetHeader')
+              ) {
+                _numResults = rows.length;
               }
-            } else {
-              if (resIndex !== index) {
-                rowIndex = 0;
-                resIndex = index;
+            }
+
+            const arrOrColumn = function (c: unknown): unknown {
+              if (Array.isArray(c)) {
+                return c.map(arrOrColumn);
               }
-              if (row.constructor.name === 'ResultSetHeader') {
-                assert.deepEqual(multiRows[index], row);
+
+              if (typeof c === 'undefined') {
+                return void 0;
+              }
+
+              // @ts-expect-error: internal access
+              const column = c.inspect() as Record<string, unknown>;
+              // "columnLength" is non-deterministic and the display width for integer
+              // data types was deprecated on MySQL 8.0.17.
+              // https://dev.mysql.com/doc/refman/8.0/en/numeric-type-syntax.html
+              delete column.columnLength;
+
+              return column;
+            };
+
+            assert.deepEqual(expectation, [
+              _rows,
+              arrOrColumn(_columns),
+              _numResults,
+            ]);
+
+            const q = mysql.query(sql);
+            let resIndex = 0;
+            let rowIndex = 0;
+
+            let fieldIndex = -1;
+
+            const multiRows: unknown[] = Array.isArray(_rows) ? _rows : [_rows];
+
+            function checkRow(row: {
+              constructor: { name: string };
+              [key: string]: unknown;
+            }) {
+              const index = fieldIndex;
+              if (_numResults === 1) {
+                assert.equal(fieldIndex, 0);
+                if (row.constructor.name === 'ResultSetHeader') {
+                  assert.deepEqual(_rows, row);
+                } else {
+                  assert.deepEqual(multiRows[rowIndex], row);
+                }
               } else {
-                const resultRows = multiRows[index];
-                if (Array.isArray(resultRows)) {
-                  assert.deepEqual(resultRows[rowIndex], row);
+                if (resIndex !== index) {
+                  rowIndex = 0;
+                  resIndex = index;
+                }
+                if (row.constructor.name === 'ResultSetHeader') {
+                  assert.deepEqual(multiRows[index], row);
+                } else {
+                  const resultRows = multiRows[index];
+                  if (Array.isArray(resultRows)) {
+                    assert.deepEqual(resultRows[rowIndex], row);
+                  }
                 }
               }
+              rowIndex++;
             }
-            rowIndex++;
-          }
 
-          function checkFields(fields: unknown) {
-            fieldIndex++;
-            if (_numResults === 1) {
-              assert.equal(fieldIndex, 0);
-              assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
-            } else {
-              assert.deepEqual(
-                arrOrColumn(_columns[fieldIndex]),
-                arrOrColumn(fields)
-              );
+            function checkFields(fields: unknown) {
+              fieldIndex++;
+              if (_numResults === 1) {
+                assert.equal(fieldIndex, 0);
+                assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
+              } else {
+                assert.deepEqual(
+                  arrOrColumn(_columns[fieldIndex]),
+                  arrOrColumn(fields)
+                );
+              }
             }
+            q.on('result', (row) => {
+              try {
+                // @ts-expect-error: TODO: implement typings: Include `ResultSetHeader` Query.d.ts
+                checkRow(row);
+              } catch (e) {
+                reject(e);
+              }
+            });
+            q.on('fields', (fields) => {
+              try {
+                checkFields(fields);
+              } catch (e) {
+                reject(e);
+              }
+            });
+            q.on('end', () => {
+              if (testIndex + 1 < tests.length) {
+                do_test(testIndex + 1);
+              } else {
+                resolve();
+              }
+            });
+          } catch (e) {
+            reject(e);
           }
-          q.on('result', checkRow);
-          q.on('fields', checkFields);
-          q.on('end', () => {
-            if (testIndex + 1 < tests.length) {
-              do_test(testIndex + 1);
-            } else {
-              mysql.end();
-              resolve();
-            }
-          });
         });
       }
       do_test(0);
     });
   });
+
+  mysql.end();
 });

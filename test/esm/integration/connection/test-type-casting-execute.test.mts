@@ -43,98 +43,91 @@ await describe('Type Casting (execute)', async () => {
 
   await it('should correctly cast types', async () => {
     await new Promise<void>((resolve, reject) => {
-      connection.execute('select 1', async (waitConnectErr) => {
-        if (waitConnectErr) return reject(waitConnectErr);
+      connection.execute('select 1', (err) => (err ? reject(err) : resolve()));
+    });
 
-        const tests = (await typeCastingTests(connection)) as TypeCastTest[];
+    const tests = (await typeCastingTests(connection)) as TypeCastTest[];
 
-        const table = 'type_casting';
+    const table = 'type_casting';
 
-        const schema: string[] = [];
-        const inserts: string[] = [];
+    const schema: string[] = [];
+    const inserts: string[] = [];
 
-        tests.forEach((test, index) => {
-          const escaped = test.insertRaw || connection.escape(test.insert);
+    tests.forEach((test, index) => {
+      const escaped = test.insertRaw || connection.escape(test.insert);
 
-          test.columnName = `${test.type}_${index}`;
+      test.columnName = `${test.type}_${index}`;
 
-          schema.push(`\`${test.columnName}\` ${test.type},`);
-          inserts.push(`\`${test.columnName}\` = ${escaped}`);
-        });
+      schema.push(`\`${test.columnName}\` ${test.type},`);
+      inserts.push(`\`${test.columnName}\` = ${escaped}`);
+    });
 
-        const createTable = [
-          `CREATE TEMPORARY TABLE \`${table}\` (`,
-          '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
-        ]
-          .concat(schema)
-          .concat([
-            'PRIMARY KEY (`id`)',
-            ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-          ])
-          .join('\n');
+    const createTable = [
+      `CREATE TEMPORARY TABLE \`${table}\` (`,
+      '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
+    ]
+      .concat(schema)
+      .concat(['PRIMARY KEY (`id`)', ') ENGINE=InnoDB DEFAULT CHARSET=utf8'])
+      .join('\n');
 
-        connection.execute(createTable);
+    connection.execute(createTable);
 
-        connection.execute(`INSERT INTO ${table} SET ${inserts.join(',\n')}`);
+    connection.execute(`INSERT INTO ${table} SET ${inserts.join(',\n')}`);
 
+    const [rows, fields] = await new Promise<[RowDataPacket[], FieldPacket[]]>(
+      (resolve, reject) => {
         connection.execute<RowDataPacket[]>(
           `SELECT * FROM ${table}`,
-          (err, rows, fields) => {
-            if (err) return reject(err);
-
-            const row = rows[0];
-            // build a fieldName: fieldType lookup table
-            const fieldData = (fields as FieldPacket[]).reduce(
-              (a: Record<string, number | undefined>, v) => {
-                a[v['name']] = v['type'];
-                return a;
-              },
-              {}
-            );
-
-            tests.forEach((test) => {
-              // check that the column type matches the type name stored in driver.Types
-              const columnType = fieldData[test.columnName ?? ''];
-              const columnTypeName = getTypeNameByCode(columnType);
-              assert.equal(
-                test.columnType === columnTypeName,
-                true,
-                test.columnName
-              );
-              let expected: unknown = test.expect || test.insert;
-              let got: unknown = row?.[test.columnName ?? ''];
-              let message: string;
-
-              if (expected instanceof Date) {
-                assert.equal(got instanceof Date, true, test.type);
-
-                expected = String(expected);
-                got = String(got);
-              } else if (Buffer.isBuffer(expected)) {
-                assert.equal(Buffer.isBuffer(got), true, test.type);
-
-                expected = String(Array.prototype.slice.call(expected));
-                got = String(Array.prototype.slice.call(got));
-              }
-
-              if (test.deep) {
-                message = `got: "${JSON.stringify(got)}" expected: "${JSON.stringify(
-                  expected
-                )}" test: ${test.type}`;
-                assert.deepEqual(expected, got, message);
-              } else {
-                message = `got: "${got}" (${typeof got}) expected: "${expected}" (${typeof expected}) test: ${
-                  test.type
-                }`;
-                assert.strictEqual(expected, got, message);
-              }
-            });
-
-            connection.end();
-            resolve();
-          }
+          (err, _rows, _fields) =>
+            err ? reject(err) : resolve([_rows, _fields as FieldPacket[]])
         );
-      });
+      }
+    );
+
+    const row = rows[0];
+    // build a fieldName: fieldType lookup table
+    const fieldData = fields.reduce<Record<string, number | undefined>>(
+      (a, v) => {
+        a[v['name']] = v['type'];
+        return a;
+      },
+      {}
+    );
+
+    tests.forEach((test) => {
+      // check that the column type matches the type name stored in driver.Types
+      const columnType = fieldData[test.columnName ?? ''];
+      const columnTypeName = getTypeNameByCode(columnType);
+      assert.equal(test.columnType === columnTypeName, true, test.columnName);
+      let expected: unknown = test.expect || test.insert;
+      let got: unknown = row?.[test.columnName ?? ''];
+      let message: string;
+
+      if (expected instanceof Date) {
+        assert.equal(got instanceof Date, true, test.type);
+
+        expected = String(expected);
+        got = String(got);
+      } else if (Buffer.isBuffer(expected)) {
+        assert.equal(Buffer.isBuffer(got), true, test.type);
+
+        expected = String(Array.prototype.slice.call(expected));
+        got = String(Array.prototype.slice.call(got));
+      }
+
+      if (test.deep) {
+        message = `got: "${JSON.stringify(got)}" expected: "${JSON.stringify(
+          expected
+        )}" test: ${test.type}`;
+        assert.deepEqual(expected, got, message);
+      } else {
+        message = `got: "${got}" (${typeof got}) expected: "${expected}" (${typeof expected}) test: ${
+          test.type
+        }`;
+        assert.strictEqual(expected, got, message);
+      }
     });
   });
+
+  connection.end();
 });

@@ -36,7 +36,7 @@ await describe('Typecast Execute', async () => {
   );
 
   await it('should typecast uppercase', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const res = await new Promise<FooRow[]>((resolve, reject) => {
       connection.execute<FooRow[]>(
         {
           sql: 'select "foo uppercase" as foo',
@@ -48,34 +48,30 @@ await describe('Typecast Execute', async () => {
             return next();
           },
         },
-        (err, res) => {
-          if (err) return reject(err);
-          assert.equal(res[0].foo, 'FOO UPPERCASE');
-          resolve();
-        }
+        (err, _res) => (err ? reject(err) : resolve(_res))
       );
     });
+
+    assert.equal(res[0].foo, 'FOO UPPERCASE');
   });
 
   await it('should return buffer when typeCast is false', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const res = await new Promise<FooBufferRow[]>((resolve, reject) => {
       connection.execute<FooBufferRow[]>(
         {
           sql: 'select "foobar" as foo',
           typeCast: false,
         },
-        (err, res) => {
-          if (err) return reject(err);
-          assert(Buffer.isBuffer(res[0].foo));
-          assert.equal(res[0].foo.toString('utf8'), 'foobar');
-          resolve();
-        }
+        (err, _res) => (err ? reject(err) : resolve(_res))
       );
     });
+
+    assert(Buffer.isBuffer(res[0].foo));
+    assert.equal(res[0].foo.toString('utf8'), 'foobar');
   });
 
   await it('should handle null and pass-through with next()', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const rows = await new Promise<TestValueRow[]>((resolve, reject) => {
       connection.execute<TestValueRow[]>(
         {
           sql: 'SELECT NULL as test, 6 as value;',
@@ -83,18 +79,16 @@ await describe('Typecast Execute', async () => {
             return next();
           },
         },
-        (err, _rows) => {
-          if (err) return reject(err);
-          assert.equal(_rows[0].test, null);
-          assert.equal(_rows[0].value, 6);
-          resolve();
-        }
+        (err, _rows) => (err ? reject(err) : resolve(_rows))
       );
     });
+
+    assert.equal(rows[0].test, null);
+    assert.equal(rows[0].value, 6);
   });
 
   await it('should typecast JSON with execute', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const rows = await new Promise<JsonTestRow[]>((resolve, reject) => {
       connection.execute<JsonTestRow[]>(
         {
           sql: 'SELECT * from json_test',
@@ -102,41 +96,37 @@ await describe('Typecast Execute', async () => {
             return next();
           },
         },
-        (err, _rows) => {
-          if (err) return reject(err);
-          assert.equal(_rows[0].json_test.test, 42);
-          resolve();
-        }
+        (err, _rows) => (err ? reject(err) : resolve(_rows))
       );
     });
+
+    assert.equal(rows[0].json_test.test, 42);
   });
 
   // read geo fields
   await it('should read geometry fields', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const res = await new Promise<GeomTestRow[]>((resolve, reject) => {
       connection.execute<GeomTestRow[]>(
         {
           sql: 'select * from geom_test',
         },
-        (err, res) => {
-          if (err) return reject(err);
-          assert.deepEqual({ x: 1, y: 1 }, res[0].p);
-          assert.deepEqual(
-            [
-              { x: -71.160281, y: 42.258729 },
-              { x: -71.160837, y: 42.259113 },
-              { x: -71.161144, y: 42.25932 },
-            ],
-            res[0].g
-          );
-          resolve();
-        }
+        (err, _res) => (err ? reject(err) : resolve(_res))
       );
     });
+
+    assert.deepEqual({ x: 1, y: 1 }, res[0].p);
+    assert.deepEqual(
+      [
+        { x: -71.160281, y: 42.258729 },
+        { x: -71.160837, y: 42.259113 },
+        { x: -71.161144, y: 42.25932 },
+      ],
+      res[0].g
+    );
   });
 
   await it('should typecast geometry fields with custom typeCast', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const res = await new Promise<GeomTestRow[]>((resolve, reject) => {
       connection.execute<GeomTestRow[]>(
         {
           sql: 'select * from geom_test',
@@ -168,21 +158,19 @@ await describe('Typecast Execute', async () => {
             assert.fail('should not reach here');
           },
         },
-        (err, res) => {
-          if (err) return reject(err);
-          assert.deepEqual({ x: 2, y: 2 }, res[0].p);
-          assert.deepEqual(
-            [
-              { x: -70, y: 40 },
-              { x: -60, y: 50 },
-              { x: -50, y: 60 },
-            ],
-            res[0].g
-          );
-          resolve();
-        }
+        (err, _res) => (err ? reject(err) : resolve(_res))
       );
     });
+
+    assert.deepEqual({ x: 2, y: 2 }, res[0].p);
+    assert.deepEqual(
+      [
+        { x: -70, y: 40 },
+        { x: -60, y: 50 },
+        { x: -50, y: 60 },
+      ],
+      res[0].g
+    );
   });
 
   connection.end();
