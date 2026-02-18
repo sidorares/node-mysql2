@@ -6,15 +6,19 @@ const poolConfig = {}; // config: { connectionConfig: {} };
 const pool = mysql.createPool(poolConfig);
 
 describe('Pool methods tests', () => {
-  // @ts-expect-error: TODO: implement typings
-  assert.equal(pool.escape(123), '123', 'escape method works correctly');
-
-  assert.equal(
+  it(() => {
     // @ts-expect-error: TODO: implement typings
-    pool.escapeId('table name'),
-    '`table name`',
-    'escapeId method works correctly'
-  );
+    assert.equal(pool.escape(123), '123', 'escape method works correctly');
+  });
+
+  it(() => {
+    assert.equal(
+      // @ts-expect-error: TODO: implement typings
+      pool.escapeId('table name'),
+      '`table name`',
+      'escapeId method works correctly'
+    );
+  });
 
   it(() => {
     const params = ['table name', 'thing'];
@@ -30,17 +34,21 @@ describe('Pool methods tests', () => {
 const poolDotPromise = pool.promise();
 
 describe('Pool.promise() methods tests', () => {
-  assert.equal(
-    poolDotPromise.escape(123),
-    '123',
-    'promise escape method works correctly'
-  );
+  it(() => {
+    assert.equal(
+      poolDotPromise.escape(123),
+      '123',
+      'promise escape method works correctly'
+    );
+  });
 
-  assert.equal(
-    poolDotPromise.escapeId('table name'),
-    '`table name`',
-    'promise escapeId method works correctly'
-  );
+  it(() => {
+    assert.equal(
+      poolDotPromise.escapeId('table name'),
+      '`table name`',
+      'promise escapeId method works correctly'
+    );
+  });
 
   it(() => {
     const params = ['table name', 'thing'];
@@ -56,17 +64,21 @@ describe('Pool.promise() methods tests', () => {
 const promisePool = mysql.createPoolPromise(poolConfig);
 
 describe('PromisePool methods tests', () => {
-  assert.equal(
-    promisePool.escape(123),
-    '123',
-    'PromisePool escape method works correctly'
-  );
+  it(() => {
+    assert.equal(
+      promisePool.escape(123),
+      '123',
+      'PromisePool escape method works correctly'
+    );
+  });
 
-  assert.equal(
-    promisePool.escapeId('table name'),
-    '`table name`',
-    'PromisePool escapeId method works correctly'
-  );
+  it(() => {
+    assert.equal(
+      promisePool.escapeId('table name'),
+      '`table name`',
+      'PromisePool escapeId method works correctly'
+    );
+  });
 
   it(() => {
     const params = ['table name', 'thing'];

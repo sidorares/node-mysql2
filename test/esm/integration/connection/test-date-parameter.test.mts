@@ -1,25 +1,28 @@
 import type { RowDataPacket } from '../../../../index.js';
-import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
-const connection = createConnection({ timezone: 'Z' });
+await describe('Date Parameter', async () => {
+  const connection = createConnection({ timezone: 'Z' });
 
-let rows: RowDataPacket[] | undefined = undefined;
+  await it('should handle date parameter in execute', async () => {
+    let rows: RowDataPacket[] | undefined;
 
-connection.query("set time_zone = '+00:00'");
-connection.execute<RowDataPacket[]>(
-  'SELECT UNIX_TIMESTAMP(?) t',
-  [new Date('1990-01-01 UTC')],
-  (err, _rows) => {
-    if (err) {
-      throw err;
-    }
-    rows = _rows;
-    connection.end();
-  }
-);
+    connection.query("set time_zone = '+00:00'");
 
-process.on('exit', () => {
-  assert.deepEqual(rows, [{ t: 631152000 }]);
+    await new Promise<void>((resolve, reject) => {
+      connection.execute<RowDataPacket[]>(
+        'SELECT UNIX_TIMESTAMP(?) t',
+        [new Date('1990-01-01 UTC')],
+        (err, _rows) => {
+          if (err) return reject(err);
+          rows = _rows;
+          connection.end();
+          resolve();
+        }
+      );
+    });
+
+    assert.deepEqual(rows, [{ t: 631152000 }]);
+  });
 });

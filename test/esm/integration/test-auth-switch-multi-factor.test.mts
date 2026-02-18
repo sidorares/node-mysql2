@@ -3,7 +3,7 @@
 import type { Connection } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import portfinder from 'portfinder';
 import mysql from '../../../index.js';
 import Command from '../../../lib/commands/command.js';
@@ -77,93 +77,110 @@ class TestAuthMultiFactor extends Command {
   }
 }
 
-const server = mysql.createServer((conn: Connection) => {
-  // @ts-expect-error: TODO: implement typings
-  conn.serverConfig = {};
-  // @ts-expect-error: TODO: implement typings
-  conn.serverConfig.encoding = 'cesu8';
-  // @ts-expect-error: TODO: implement typings
-  conn.addCommand(
-    new TestAuthMultiFactor([
-      {
-        // already covered by test-auth-switch
-        pluginName: 'auth_test_plugin1',
-        pluginData: Buffer.from('foo'),
-      },
-      {
-        // 2nd factor auth plugin
-        pluginName: 'auth_test_plugin2',
-        pluginData: Buffer.from('bar'),
-      },
-      {
-        // 3rd factor auth plugin
-        pluginName: 'auth_test_plugin3',
-        pluginData: Buffer.from('baz'),
-      },
-    ])
-  );
-});
+await describe('Auth Switch Multi Factor', async () => {
+  await it('should handle multi-factor authentication', async () => {
+    const server = mysql.createServer((conn: Connection) => {
+      // @ts-expect-error: TODO: implement typings
+      conn.serverConfig = {};
+      // @ts-expect-error: TODO: implement typings
+      conn.serverConfig.encoding = 'cesu8';
+      // @ts-expect-error: TODO: implement typings
+      conn.addCommand(
+        new TestAuthMultiFactor([
+          {
+            // already covered by test-auth-switch
+            pluginName: 'auth_test_plugin1',
+            pluginData: Buffer.from('foo'),
+          },
+          {
+            // 2nd factor auth plugin
+            pluginName: 'auth_test_plugin2',
+            pluginData: Buffer.from('bar'),
+          },
+          {
+            // 3rd factor auth plugin
+            pluginName: 'auth_test_plugin3',
+            pluginData: Buffer.from('baz'),
+          },
+        ])
+      );
+    });
 
-const completed: string[] = [];
+    const completed: string[] = [];
 
-portfinder.getPort((_err: Error | null, port: number) => {
-  server.listen(port);
-  const conn = mysql.createConnection({
-    port: port,
-    password: 'secret1',
-    password2: 'secret2',
-    password3: 'secret3',
-    authPlugins: {
-      auth_test_plugin1() {
-        return () => {
-          const pluginName = 'auth_test_plugin1';
-          completed.push(pluginName);
+    await new Promise<void>((resolve) => {
+      portfinder.getPort((_err: Error | null, port: number) => {
+        server.listen(port);
+        const conn = mysql.createConnection({
+          port: port,
+          password: 'secret1',
+          password2: 'secret2',
+          password3: 'secret3',
+          authPlugins: {
+            auth_test_plugin1() {
+              return () => {
+                const pluginName = 'auth_test_plugin1';
+                completed.push(pluginName);
 
-          return Buffer.from(pluginName);
-        };
-      },
-      auth_test_plugin2(options: { connection: Connection; command: string }) {
-        return () => {
-          if (
-            options.connection.config.password !==
-            options.connection.config.password2
-          ) {
-            return assert.fail('Incorrect authentication factor password.');
-          }
+                return Buffer.from(pluginName);
+              };
+            },
+            auth_test_plugin2(options: {
+              connection: Connection;
+              command: string;
+            }) {
+              return () => {
+                if (
+                  options.connection.config.password !==
+                  options.connection.config.password2
+                ) {
+                  return assert.fail(
+                    'Incorrect authentication factor password.'
+                  );
+                }
 
-          const pluginName = 'auth_test_plugin2';
-          completed.push(pluginName);
+                const pluginName = 'auth_test_plugin2';
+                completed.push(pluginName);
 
-          return Buffer.from(pluginName);
-        };
-      },
-      auth_test_plugin3(options: { connection: Connection; command: string }) {
-        return () => {
-          if (
-            options.connection.config.password !==
-            options.connection.config.password3
-          ) {
-            return assert.fail('Incorrect authentication factor password.');
-          }
+                return Buffer.from(pluginName);
+              };
+            },
+            auth_test_plugin3(options: {
+              connection: Connection;
+              command: string;
+            }) {
+              return () => {
+                if (
+                  options.connection.config.password !==
+                  options.connection.config.password3
+                ) {
+                  return assert.fail(
+                    'Incorrect authentication factor password.'
+                  );
+                }
 
-          const pluginName = 'auth_test_plugin3';
-          completed.push(pluginName);
+                const pluginName = 'auth_test_plugin3';
+                completed.push(pluginName);
 
-          return Buffer.from(pluginName);
-        };
-      },
-    },
-  });
+                return Buffer.from(pluginName);
+              };
+            },
+          },
+        });
 
-  conn.on('connect', () => {
-    assert.deepStrictEqual(completed, [
-      'auth_test_plugin1',
-      'auth_test_plugin2',
-      'auth_test_plugin3',
-    ]);
+        conn.on('connect', () => {
+          assert.deepStrictEqual(completed, [
+            'auth_test_plugin1',
+            'auth_test_plugin2',
+            'auth_test_plugin3',
+          ]);
 
-    conn.end();
-    // @ts-expect-error: TODO: implement typings
-    server.close();
+          conn.end();
+          // @ts-expect-error: TODO: implement typings
+          server.close();
+          resolve();
+        });
+      });
+    });
   });
 });

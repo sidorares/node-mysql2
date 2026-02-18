@@ -3,7 +3,7 @@
 import type { Connection } from '../../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import Command from '../../../../lib/commands/command.js';
@@ -88,74 +88,85 @@ class TestChangeUserMultiFactor extends Command {
   }
 }
 
-const server = mysql.createServer((conn: Connection) => {
-  // @ts-expect-error: TODO: implement typings
-  conn.serverConfig = {};
-  // @ts-expect-error: TODO: implement typings
-  conn.serverConfig.encoding = 'cesu8';
-  // @ts-expect-error: TODO: implement typings
-  conn.addCommand(
-    new TestChangeUserMultiFactor([
-      {
-        // already covered by test-auth-switch
-        pluginName: 'auth_test_plugin1',
-        pluginData: Buffer.from('foo'),
-      },
-      {
-        // 2nd factor auth plugin
-        pluginName: 'auth_test_plugin2',
-        pluginData: Buffer.from('bar'),
-      },
-    ])
-  );
-});
-
-const completed: string[] = [];
-const password1 = 'secret1';
-const password2 = 'secret2';
-
-portfinder.getPort((_: Error | null, port: number) => {
-  server.listen(port);
-  const conn = mysql.createConnection({
-    port: port,
-    authPlugins: {
-      auth_test_plugin1(options: AuthPluginMetadata) {
-        return () => {
-          if (options.connection.config.password !== password1) {
-            return assert.fail('Incorrect authentication factor password.');
-          }
-
-          const pluginName = 'auth_test_plugin1';
-          completed.push(pluginName);
-
-          return Buffer.from(pluginName);
-        };
-      },
-      auth_test_plugin2(options: AuthPluginMetadata) {
-        return () => {
-          if (options.connection.config.password !== password2) {
-            return assert.fail('Incorrect authentication factor password.');
-          }
-
-          const pluginName = 'auth_test_plugin2';
-          completed.push(pluginName);
-
-          return Buffer.from(pluginName);
-        };
-      },
-    },
+await describe('Change User Multi Factor', async () => {
+  const server = mysql.createServer((conn: Connection) => {
+    // @ts-expect-error: TODO: implement typings
+    conn.serverConfig = {};
+    // @ts-expect-error: TODO: implement typings
+    conn.serverConfig.encoding = 'cesu8';
+    // @ts-expect-error: TODO: implement typings
+    conn.addCommand(
+      new TestChangeUserMultiFactor([
+        {
+          // already covered by test-auth-switch
+          pluginName: 'auth_test_plugin1',
+          pluginData: Buffer.from('foo'),
+        },
+        {
+          // 2nd factor auth plugin
+          pluginName: 'auth_test_plugin2',
+          pluginData: Buffer.from('bar'),
+        },
+      ])
+    );
   });
 
-  conn.on('connect', () => {
-    conn.changeUser({ password1, password2 }, () => {
-      assert.deepStrictEqual(completed, [
-        'auth_test_plugin1',
-        'auth_test_plugin2',
-      ]);
+  const completed: string[] = [];
+  const password1 = 'secret1';
+  const password2 = 'secret2';
 
-      conn.end();
-      // @ts-expect-error: TODO: implement typings
-      server.close();
+  await it('should handle multi-factor authentication during change user', async () => {
+    await new Promise<void>((resolve) => {
+      portfinder.getPort((_: Error | null, port: number) => {
+        server.listen(port);
+        const conn = mysql.createConnection({
+          port: port,
+          authPlugins: {
+            auth_test_plugin1(options: AuthPluginMetadata) {
+              return () => {
+                if (options.connection.config.password !== password1) {
+                  return assert.fail(
+                    'Incorrect authentication factor password.'
+                  );
+                }
+
+                const pluginName = 'auth_test_plugin1';
+                completed.push(pluginName);
+
+                return Buffer.from(pluginName);
+              };
+            },
+            auth_test_plugin2(options: AuthPluginMetadata) {
+              return () => {
+                if (options.connection.config.password !== password2) {
+                  return assert.fail(
+                    'Incorrect authentication factor password.'
+                  );
+                }
+
+                const pluginName = 'auth_test_plugin2';
+                completed.push(pluginName);
+
+                return Buffer.from(pluginName);
+              };
+            },
+          },
+        });
+
+        conn.on('connect', () => {
+          conn.changeUser({ password1, password2 }, () => {
+            assert.deepStrictEqual(completed, [
+              'auth_test_plugin1',
+              'auth_test_plugin2',
+            ]);
+
+            conn.end();
+            // @ts-expect-error: TODO: implement typings
+            server.close();
+            resolve();
+          });
+        });
+      });
     });
   });
 });

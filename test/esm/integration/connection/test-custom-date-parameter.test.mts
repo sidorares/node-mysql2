@@ -1,36 +1,39 @@
 import type { RowDataPacket } from '../../../../index.js';
-import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
-const connection = createConnection({ timezone: 'Z' });
+await describe('Custom Date Parameter', async () => {
+  const connection = createConnection({ timezone: 'Z' });
 
-let rows: RowDataPacket[] | undefined = undefined;
-
-// @ts-expect-error: intentionally replacing global Date for testing
-// eslint-disable-next-line no-global-assign
-Date = (function () {
-  const NativeDate = Date;
-  function CustomDate(str: string) {
-    return new NativeDate(str);
-  }
-  CustomDate.now = Date.now;
-  return CustomDate;
-})();
-
-connection.query("set time_zone = '+00:00'");
-connection.execute<RowDataPacket[]>(
-  'SELECT UNIX_TIMESTAMP(?) t',
-  [new Date('1990-08-08 UTC')],
-  (err, _rows) => {
-    if (err) {
-      throw err;
+  // @ts-expect-error: intentionally replacing global Date for testing
+  // eslint-disable-next-line no-global-assign
+  Date = (function () {
+    const NativeDate = Date;
+    function CustomDate(str: string) {
+      return new NativeDate(str);
     }
-    rows = _rows;
-    connection.end();
-  }
-);
+    CustomDate.now = Date.now;
+    return CustomDate;
+  })();
 
-process.on('exit', () => {
-  assert.equal(rows?.[0].t, 650073600);
+  await it('should handle custom Date constructor', async () => {
+    let rows: RowDataPacket[] | undefined;
+
+    connection.query("set time_zone = '+00:00'");
+
+    await new Promise<void>((resolve, reject) => {
+      connection.execute<RowDataPacket[]>(
+        'SELECT UNIX_TIMESTAMP(?) t',
+        [new Date('1990-08-08 UTC')],
+        (err, _rows) => {
+          if (err) return reject(err);
+          rows = _rows;
+          connection.end();
+          resolve();
+        }
+      );
+    });
+
+    assert.equal(rows?.[0].t, 650073600);
+  });
 });

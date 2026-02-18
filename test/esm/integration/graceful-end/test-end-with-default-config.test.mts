@@ -1,5 +1,5 @@
 import type { PoolConnection } from '../../../../index.js';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createPool } from '../../common.test.mjs';
 
 /**
@@ -8,27 +8,27 @@ import { createPool } from '../../common.test.mjs';
  * @see https://github.com/sidorares/node-mysql2/issues/3148
  */
 
-/**
- * By default, the end method of a pooled connection will just release it back to the pool.
- * This is compatibility behavior with mysqljs/mysql.
- */
-const pool = createPool();
-let warningEmitted = false;
+await describe('Pool end with default config', async () => {
+  await it('should emit deprecation warning when calling conn.end()', async () => {
+    const pool = createPool();
+    let warningEmitted = false;
 
-pool.getConnection((_err1: Error | null, connection: PoolConnection) => {
-  connection.on('warn', (warning: Error) => {
-    warningEmitted = true;
-    assert(
-      warning.message.startsWith(
-        'Calling conn.end() to release a pooled connection is deprecated'
-      )
-    );
+    await new Promise<void>((resolve) => {
+      pool.getConnection((_err1: Error | null, connection: PoolConnection) => {
+        connection.on('warn', (warning: Error) => {
+          warningEmitted = true;
+          assert(
+            warning.message.startsWith(
+              'Calling conn.end() to release a pooled connection is deprecated'
+            )
+          );
+        });
+
+        connection.end();
+        pool.end(() => resolve());
+      });
+    });
+
+    assert(warningEmitted, 'Warning should be emitted');
   });
-
-  connection.end();
-  pool.end();
-});
-
-process.on('exit', () => {
-  assert(warningEmitted, 'Warning should be emitted');
 });

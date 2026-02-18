@@ -1,7 +1,7 @@
 import type { Connection } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import portfinder from 'portfinder';
 import mysql from '../../../index.js';
 import Command from '../../../lib/commands/command.js';
@@ -94,57 +94,64 @@ class TestAuthSwitchHandshake extends Command {
   }
 }
 
-const server = mysql.createServer((conn: Connection) => {
-  // @ts-expect-error: TODO: implement typings
-  conn.serverConfig = {};
-  // @ts-expect-error: TODO: implement typings
-  conn.serverConfig.encoding = 'cesu8';
-  // @ts-expect-error: TODO: implement typings
-  conn.addCommand(
-    new TestAuthSwitchHandshake({
-      pluginName: 'auth_test_plugin',
-      pluginData: Buffer.from('f{tU-{K@BhfHt/-4^Z,'),
-    })
-  );
-});
-
-portfinder.getPort((_err: Error | null, port: number) => {
-  const makeSwitchHandler = function () {
-    let count = 0;
-    return function (
-      data: { pluginName: string; pluginData: Buffer },
-      cb: (err: null, response: string) => void
-    ) {
-      if (count === 0) {
-        assert.equal(data.pluginName, 'auth_test_plugin');
-      } else {
-        assert.equal(data.pluginData.toString(), `hahaha ${count}`);
-      }
-
-      count++;
-      cb(null, `some data back${count}`);
-    };
-  };
-
-  server.listen(port);
-  const conn = mysql.createConnection({
-    user: 'test_user',
-    password: 'test',
-    database: 'test_database',
-    port: port,
-    authSwitchHandler: makeSwitchHandler(),
-    connectAttributes: connectAttributes,
-  });
-
-  conn.on(
-    'connect',
-    (data: { serverVersion: string; connectionId: number }) => {
-      assert.equal(data.serverVersion, 'node.js rocks');
-      assert.equal(data.connectionId, 1234);
-
-      conn.end();
+await describe('Auth Switch', async () => {
+  await it('should handle auth switch handshake', async () => {
+    const server = mysql.createServer((conn: Connection) => {
       // @ts-expect-error: TODO: implement typings
-      server.close();
-    }
-  );
+      conn.serverConfig = {};
+      // @ts-expect-error: TODO: implement typings
+      conn.serverConfig.encoding = 'cesu8';
+      // @ts-expect-error: TODO: implement typings
+      conn.addCommand(
+        new TestAuthSwitchHandshake({
+          pluginName: 'auth_test_plugin',
+          pluginData: Buffer.from('f{tU-{K@BhfHt/-4^Z,'),
+        })
+      );
+    });
+
+    await new Promise<void>((resolve) => {
+      portfinder.getPort((_err: Error | null, port: number) => {
+        const makeSwitchHandler = function () {
+          let count = 0;
+          return function (
+            data: { pluginName: string; pluginData: Buffer },
+            cb: (err: null, response: string) => void
+          ) {
+            if (count === 0) {
+              assert.equal(data.pluginName, 'auth_test_plugin');
+            } else {
+              assert.equal(data.pluginData.toString(), `hahaha ${count}`);
+            }
+
+            count++;
+            cb(null, `some data back${count}`);
+          };
+        };
+
+        server.listen(port);
+        const conn = mysql.createConnection({
+          user: 'test_user',
+          password: 'test',
+          database: 'test_database',
+          port: port,
+          authSwitchHandler: makeSwitchHandler(),
+          connectAttributes: connectAttributes,
+        });
+
+        conn.on(
+          'connect',
+          (data: { serverVersion: string; connectionId: number }) => {
+            assert.equal(data.serverVersion, 'node.js rocks');
+            assert.equal(data.connectionId, 1234);
+
+            conn.end();
+            // @ts-expect-error: TODO: implement typings
+            server.close();
+            resolve();
+          }
+        );
+      });
+    });
+  });
 });

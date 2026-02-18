@@ -5,9 +5,9 @@ import { config } from '../../common.test.mjs';
 
 type TestRow = RowDataPacket & { a: number };
 
-const { createPoolCluster } = promiseDriver;
-
 await describe('Test pool cluster', async () => {
+  const { createPoolCluster } = promiseDriver;
+
   await it(async () => {
     const poolCluster = createPoolCluster();
 

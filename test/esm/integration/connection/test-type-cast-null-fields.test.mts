@@ -1,6 +1,5 @@
 import type { RowDataPacket } from '../../../../index.js';
-import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection, useTestDb } from '../../common.test.mjs';
 
 type InsertTestRow = RowDataPacket & {
@@ -9,41 +8,42 @@ type InsertTestRow = RowDataPacket & {
   number: number | null;
 };
 
-const connection = createConnection();
+await describe('Type Cast Null Fields', async () => {
+  const connection = createConnection();
 
-useTestDb();
+  useTestDb();
 
-const table = 'insert_test';
-connection.query(
-  [
-    `CREATE TEMPORARY TABLE \`${table}\` (`,
-    '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
-    '`date` DATETIME NULL,',
-    '`number` INT NULL,',
-    'PRIMARY KEY (`id`)',
-    ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n')
-);
+  const table = 'insert_test';
+  connection.query(
+    [
+      `CREATE TEMPORARY TABLE \`${table}\` (`,
+      '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
+      '`date` DATETIME NULL,',
+      '`number` INT NULL,',
+      'PRIMARY KEY (`id`)',
+      ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
+    ].join('\n')
+  );
 
-connection.query(`INSERT INTO ${table} SET ?`, {
-  date: null,
-  number: null,
-});
+  connection.query(`INSERT INTO ${table} SET ?`, {
+    date: null,
+    number: null,
+  });
 
-let results: InsertTestRow[];
-connection.query<InsertTestRow[]>(
-  `SELECT * FROM ${table}`,
-  (_err, _results) => {
-    if (_err) {
-      throw _err;
-    }
+  await it('should return null for null fields', async () => {
+    await new Promise<void>((resolve, reject) => {
+      connection.query<InsertTestRow[]>(
+        `SELECT * FROM ${table}`,
+        (_err, _results) => {
+          if (_err) return reject(_err);
 
-    results = _results;
-    connection.end();
-  }
-);
+          assert.strictEqual(_results[0].date, null);
+          assert.strictEqual(_results[0].number, null);
 
-process.on('exit', () => {
-  assert.strictEqual(results[0].date, null);
-  assert.strictEqual(results[0].number, null);
+          connection.end();
+          resolve();
+        }
+      );
+    });
+  });
 });

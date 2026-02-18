@@ -2,7 +2,7 @@ import type { RowDataPacket } from '../../../../index.js';
 import { assert, skip, sleep, test } from 'poku';
 import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
-test('result event backpressure with pause/resume', async () => {
+await test('result event backpressure with pause/resume', async () => {
   const connection = createConnection({
     multipleStatements: true,
   });

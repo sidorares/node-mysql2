@@ -1,8 +1,8 @@
 // Copyright (c) 2021, Oracle and/or its affiliates.
 
-import assert from 'node:assert';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
+import { assert, describe, it } from 'poku';
 import portfinder from 'portfinder';
 import mysql from '../../../index.js';
 import Command from '../../../lib/commands/command.js';
@@ -56,40 +56,43 @@ class TestUnknownHandshakePacket extends Command {
   }
 }
 
-const server = mysql.createServer((conn) => {
-  // @ts-expect-error: TODO: implement typings
-  conn.addCommand(new TestUnknownHandshakePacket(Buffer.alloc(0)));
-});
+await describe('Handshake Unknown Packet Error', async () => {
+  await it('should handle unknown handshake packet error', async () => {
+    let error: { code?: string; message?: string; fatal?: boolean };
 
-let error: { code?: string; message?: string; fatal?: boolean };
-let uncaughtExceptions = 0;
+    await new Promise<void>((resolve) => {
+      portfinder.getPort((_err, port) => {
+        const server = mysql.createServer((conn) => {
+          conn.on('error', (err: Error & { code?: string }) => {
+            // The server must close the connection
+            assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
 
-portfinder.getPort((_err, port) => {
-  server.listen(port);
-  const conn = mysql.createConnection({
-    port: port,
+            // The plugin reports a fatal error
+            assert.equal(error.code, 'HANDSHAKE_UNKNOWN_ERROR');
+            assert.equal(
+              error.message,
+              'Unexpected packet during handshake phase'
+            );
+            assert.equal(error.fatal, true);
+            resolve();
+          });
+          // @ts-expect-error: TODO: implement typings
+          conn.addCommand(new TestUnknownHandshakePacket(Buffer.alloc(0)));
+        });
+
+        server.listen(port);
+        const conn = mysql.createConnection({
+          port: port,
+        });
+
+        conn.on('error', (err) => {
+          error = err;
+
+          conn.end();
+          // @ts-expect-error: TODO: implement typings
+          server.close();
+        });
+      });
+    });
   });
-
-  conn.on('error', (err) => {
-    error = err;
-
-    conn.end();
-    // @ts-expect-error: TODO: implement typings
-    server.close();
-  });
-});
-
-process.on('uncaughtException', (err: Error & { code?: string }) => {
-  // The plugin reports a fatal error
-  assert.equal(error.code, 'HANDSHAKE_UNKNOWN_ERROR');
-  assert.equal(error.message, 'Unexpected packet during handshake phase');
-  assert.equal(error.fatal, true);
-  // The server must close the connection
-  assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
-
-  uncaughtExceptions += 1;
-});
-
-process.on('exit', () => {
-  assert.equal(uncaughtExceptions, 1);
 });

@@ -1,6 +1,6 @@
 import type { ResultSetHeader } from '../../../../index.js';
 import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type CharsetStateChangeResult = ResultSetHeader & {
@@ -24,26 +24,35 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   process.exit(0);
 }
 
-const connection = createConnection();
+await describe('Track State Change', async () => {
+  const connection = createConnection();
 
-let result1: CharsetStateChangeResult, result2: SchemaStateChangeResult;
+  await it('should track state changes for charset and schema', async () => {
+    let result1!: CharsetStateChangeResult;
+    let result2!: SchemaStateChangeResult;
 
-connection.query<CharsetStateChangeResult>('SET NAMES koi8r', (err, _ok) => {
-  assert.ifError(err);
-  result1 = _ok;
-});
+    await new Promise<void>((resolve, reject) => {
+      connection.query<CharsetStateChangeResult>(
+        'SET NAMES koi8r',
+        (err, _ok) => {
+          if (err) return reject(err);
+          result1 = _ok;
+        }
+      );
 
-connection.query<SchemaStateChangeResult>('USE mysql', (err, _ok) => {
-  assert.ifError(err);
-  result2 = _ok;
-  connection.end();
-});
+      connection.query<SchemaStateChangeResult>('USE mysql', (err, _ok) => {
+        if (err) return reject(err);
+        result2 = _ok;
+        connection.end();
+        resolve();
+      });
+    });
 
-process.on('exit', () => {
-  assert.deepEqual(result1.stateChanges.systemVariables, {
-    character_set_connection: 'koi8r',
-    character_set_client: 'koi8r',
-    character_set_results: 'koi8r',
+    assert.deepEqual(result1.stateChanges.systemVariables, {
+      character_set_connection: 'koi8r',
+      character_set_client: 'koi8r',
+      character_set_results: 'koi8r',
+    });
+    assert.deepEqual(result2.stateChanges.schema, 'mysql');
   });
-  assert.deepEqual(result2.stateChanges.schema, 'mysql');
 });

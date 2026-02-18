@@ -1,6 +1,6 @@
 import type { ResultSetHeader } from '../../../../index.js';
 import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 // "changedRows" is not part of the mysql protocol and extracted from "info string" response
@@ -15,52 +15,54 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
  *
  * issue#288: https://github.com/sidorares/node-mysql2/issues/288
  */
-const connection = createConnection();
+await describe('Update Changed Rows', async () => {
+  const connection = createConnection();
 
-let result1: ResultSetHeader;
-let result2: ResultSetHeader;
+  connection.query(
+    [
+      'CREATE TEMPORARY TABLE `changed_rows` (',
+      '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
+      '`value` int(5) NOT NULL,',
+      'PRIMARY KEY (`id`)',
+      ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
+    ].join('\n')
+  );
+  connection.query('insert into changed_rows(value) values(1)');
+  connection.query('insert into changed_rows(value) values(1)');
+  connection.query('insert into changed_rows(value) values(2)');
+  connection.query('insert into changed_rows(value) values(3)');
 
-connection.query(
-  [
-    'CREATE TEMPORARY TABLE `changed_rows` (',
-    '`id` int(11) unsigned NOT NULL AUTO_INCREMENT,',
-    '`value` int(5) NOT NULL,',
-    'PRIMARY KEY (`id`)',
-    ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
-  ].join('\n')
-);
-connection.query('insert into changed_rows(value) values(1)');
-connection.query('insert into changed_rows(value) values(1)');
-connection.query('insert into changed_rows(value) values(2)');
-connection.query('insert into changed_rows(value) values(3)');
+  await it('should track changed rows correctly', async () => {
+    await new Promise<void>((resolve, reject) => {
+      let result1: ResultSetHeader;
+      let result2: ResultSetHeader;
 
-connection.execute<ResultSetHeader>(
-  'update changed_rows set value=1',
-  [],
-  (err, _result) => {
-    if (err) {
-      throw err;
-    }
+      connection.execute<ResultSetHeader>(
+        'update changed_rows set value=1',
+        [],
+        (err, _result) => {
+          if (err) return reject(err);
 
-    result1 = _result;
-    connection.execute<ResultSetHeader>(
-      'update changed_rows set value=1',
-      [],
-      (err, _result) => {
-        if (err) {
-          throw err;
+          result1 = _result;
+          connection.execute<ResultSetHeader>(
+            'update changed_rows set value=1',
+            [],
+            (err, _result) => {
+              if (err) return reject(err);
+
+              result2 = _result;
+
+              assert.equal(result1.affectedRows, 4);
+              assert.equal(result1.changedRows, 2);
+              assert.equal(result2.affectedRows, 4);
+              assert.equal(result2.changedRows, 0);
+
+              connection.end();
+              resolve();
+            }
+          );
         }
-
-        result2 = _result;
-        connection.end();
-      }
-    );
-  }
-);
-
-process.on('exit', () => {
-  assert.equal(result1.affectedRows, 4);
-  assert.equal(result1.changedRows, 2);
-  assert.equal(result2.affectedRows, 4);
-  assert.equal(result2.changedRows, 0);
+      );
+    });
+  });
 });

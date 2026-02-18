@@ -1,43 +1,44 @@
 import type { QueryError, RowDataPacket } from '../../../../index.js';
 import { Buffer } from 'node:buffer';
-import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type BufRow = RowDataPacket & { buf: string };
 
-const connection = createConnection();
+await describe('Buffer Params', async () => {
+  const connection = createConnection();
 
-let rows: BufRow[] | undefined = undefined;
-let rows1: BufRow[] | undefined = undefined;
+  await it('should handle buffer parameters in execute and query', async () => {
+    let rows: BufRow[] | undefined;
+    let rows1: BufRow[] | undefined;
 
-const buf = Buffer.from([
-  0x80, 0x90, 1, 2, 3, 4, 5, 6, 7, 8, 9, 100, 100, 255, 255,
-]);
-connection.execute<BufRow[]>(
-  'SELECT HEX(?) as buf',
-  [buf],
-  (err: QueryError | null, _rows) => {
-    if (err) {
-      throw err;
-    }
-    rows = _rows;
-  }
-);
+    const buf = Buffer.from([
+      0x80, 0x90, 1, 2, 3, 4, 5, 6, 7, 8, 9, 100, 100, 255, 255,
+    ]);
 
-connection.query<BufRow[]>(
-  'SELECT HEX(?) as buf',
-  [buf],
-  (err: QueryError | null, _rows) => {
-    if (err) {
-      throw err;
-    }
-    rows1 = _rows;
-    connection.end();
-  }
-);
+    await new Promise<void>((resolve, reject) => {
+      connection.execute<BufRow[]>(
+        'SELECT HEX(?) as buf',
+        [buf],
+        (err: QueryError | null, _rows) => {
+          if (err) return reject(err);
+          rows = _rows;
+        }
+      );
 
-process.on('exit', () => {
-  assert.deepEqual(rows, [{ buf: buf.toString('hex').toUpperCase() }]);
-  assert.deepEqual(rows1, [{ buf: buf.toString('hex').toUpperCase() }]);
+      connection.query<BufRow[]>(
+        'SELECT HEX(?) as buf',
+        [buf],
+        (err: QueryError | null, _rows) => {
+          if (err) return reject(err);
+          rows1 = _rows;
+          connection.end();
+          resolve();
+        }
+      );
+    });
+
+    assert.deepEqual(rows, [{ buf: buf.toString('hex').toUpperCase() }]);
+    assert.deepEqual(rows1, [{ buf: buf.toString('hex').toUpperCase() }]);
+  });
 });

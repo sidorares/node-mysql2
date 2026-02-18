@@ -1,6 +1,6 @@
 import type { FieldPacket, RowDataPacket } from '../../../../index.js';
 import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnectionWithURI } from '../../common.test.mjs';
 
 if (process.env.MYSQL_CONNECTION_URL) {
@@ -10,21 +10,24 @@ if (process.env.MYSQL_CONNECTION_URL) {
   process.exit(0);
 }
 
-const connection = createConnectionWithURI();
+await describe('Connect With URI', async () => {
+  const connection = createConnectionWithURI();
 
-let rows: RowDataPacket[] | undefined = undefined;
-let fields: FieldPacket[] | undefined = undefined;
-connection.query<RowDataPacket[]>('SELECT 1', (err, _rows, _fields) => {
-  if (err) {
-    throw err;
-  }
+  await it('should connect and query using URI', async () => {
+    let rows: RowDataPacket[] | undefined;
+    let fields: FieldPacket[] | undefined;
 
-  rows = _rows;
-  fields = _fields;
-  connection.end();
-});
+    await new Promise<void>((resolve, reject) => {
+      connection.query<RowDataPacket[]>('SELECT 1', (err, _rows, _fields) => {
+        if (err) return reject(err);
+        rows = _rows;
+        fields = _fields;
+        connection.end();
+        resolve();
+      });
+    });
 
-process.on('exit', () => {
-  assert.deepEqual(rows, [{ 1: 1 }]);
-  assert.equal(fields?.[0].name, '1');
+    assert.deepEqual(rows, [{ 1: 1 }]);
+    assert.equal(fields?.[0].name, '1');
+  });
 });

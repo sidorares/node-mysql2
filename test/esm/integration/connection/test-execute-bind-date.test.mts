@@ -1,24 +1,25 @@
 import type { RowDataPacket } from '../../../../index.js';
-import process from 'node:process';
-import { assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
-const connection = createConnection();
-const date = new Date(2018, 2, 10, 15, 12, 34, 1234);
+await describe('Execute Bind Date', async () => {
+  const connection = createConnection();
+  const date = new Date(2018, 2, 10, 15, 12, 34, 1234);
 
-let rows: RowDataPacket[];
-connection.execute<RowDataPacket[]>(
-  'SELECT CAST(? AS DATETIME(6)) AS result',
-  [date],
-  (err, _rows) => {
-    if (err) {
-      throw err;
-    }
-    rows = _rows;
-    connection.end();
-  }
-);
+  await it('should bind date values correctly', async () => {
+    const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.execute<RowDataPacket[]>(
+        'SELECT CAST(? AS DATETIME(6)) AS result',
+        [date],
+        (err, _rows) => {
+          if (err) return reject(err);
+          resolve(_rows);
+        }
+      );
+    });
 
-process.on('exit', () => {
-  assert.deepEqual(rows, [{ result: date }]);
+    assert.deepEqual(rows, [{ result: date }]);
+  });
+
+  connection.end();
 });
