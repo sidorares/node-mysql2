@@ -32,13 +32,7 @@ await describe('Pool Connect Error', async () => {
         // @ts-expect-error: internal access
         const port = server._server.address().port;
 
-        const checkDone = () => {
-          if (done || err1 === undefined || err2 === undefined) return;
-          done = true;
-          assert.equal(err1?.errno, 1040);
-          assert.equal(err2?.errno, 1040);
-          server.close(() => resolve());
-        };
+        let poolEnded = false;
 
         const conn = mysql.createConnection({
           user: 'test_user',
@@ -46,6 +40,17 @@ await describe('Pool Connect Error', async () => {
           database: 'test_database',
           port: port,
         });
+
+        const checkDone = () => {
+          if (done || err1 === undefined || err2 === undefined || !poolEnded)
+            return;
+          done = true;
+          assert.equal(err1?.errno, 1040);
+          assert.equal(err2?.errno, 1040);
+          conn.destroy();
+          server.close(() => resolve());
+        };
+
         conn.on('error', (err) => {
           err1 = err;
           checkDone();
@@ -60,8 +65,10 @@ await describe('Pool Connect Error', async () => {
 
         pool.query('test sql', (err) => {
           err2 = err ?? undefined;
-          pool.end();
-          checkDone();
+          pool.end(() => {
+            poolEnded = true;
+            checkDone();
+          });
         });
       });
     });
