@@ -147,10 +147,9 @@ await describe('Auth Switch', async () => {
             assert.equal(data.serverVersion, 'node.js rocks');
             assert.equal(data.connectionId, 1234);
 
-            conn.end();
-            // @ts-expect-error: TODO: implement typings
-            server.close();
-            resolve();
+            conn.end(() => {
+              server.close(() => resolve());
+            });
           }
         );
       });
