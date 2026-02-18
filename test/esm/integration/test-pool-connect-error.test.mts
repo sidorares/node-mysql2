@@ -6,7 +6,7 @@ import mysql from '../../../index.js';
 if (typeof Deno !== 'undefined') process.exit(0);
 
 process.on('uncaughtException', (err: NodeJS.ErrnoException) => {
-  if (err.code === 'PROTOCOL_CONNECTION_LOST') return;
+  if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE') return;
   throw err;
 });
 
