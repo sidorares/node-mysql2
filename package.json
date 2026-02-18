@@ -8,9 +8,9 @@
   "scripts": {
     "lint": "eslint . && prettier --check .",
     "lint:fix": "eslint . --fix && prettier --write .",
-    "test": "poku -d -r=verbose --sequential test/esm",
-    "test:bun": "bun poku -d --sequential test/esm",
-    "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku -d --sequential --denoAllow=\"read,env,net,sys\" test/esm",
+    "test": "poku -d -r=verbose test/esm",
+    "test:bun": "bun poku -d test/esm",
+    "test:deno": "deno run --allow-read --allow-env --allow-run npm:poku -d --denoAllow=\"read,env,net,sys\" test/esm",
     "test:docker:up": "docker compose -f test/docker-compose.yml up --abort-on-container-exit --remove-orphans",
     "test:docker:down": "docker compose -f test/docker-compose.yml down",
     "test:docker:node": "npm run test:docker:up -- node && npm run test:docker:down",
