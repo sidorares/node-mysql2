@@ -10,7 +10,6 @@ await describe('Custom inspect for column definition', async () => {
 
   beforeEach(async () => {
     connection = createConnection().promise();
-    await connection.query(`DROP TABLE IF EXISTS test_fields`);
   });
 
   afterEach(async () => {

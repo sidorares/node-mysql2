@@ -117,10 +117,12 @@ await describe('Binary Multiple Results', async () => {
     ], //  select 3 rows + insert
   ];
 
+  const spName = `_as_sp_call_${process.pid}`;
+
   function procedurise(sql: string) {
     return [
-      'DROP PROCEDURE IF EXISTS _as_sp_call;',
-      'CREATE PROCEDURE _as_sp_call()',
+      `DROP PROCEDURE IF EXISTS ${spName};`,
+      `CREATE PROCEDURE ${spName}()`,
       'BEGIN',
       `${sql};`,
       'END',
@@ -147,7 +149,7 @@ await describe('Binary Multiple Results', async () => {
         mysql.query(sp, (err) => {
           if (err) return reject(err);
 
-          sql = 'CALL _as_sp_call()'; // this call is allowed with prepared statements, and result contain multiple statements
+          sql = `CALL ${spName}()`; // this call is allowed with prepared statements, and result contain multiple statements
           let _numResults = 0;
           const textCmd = mysql.query(sql, (err, _rows, _columns) => {
             if (err) return reject(err);
