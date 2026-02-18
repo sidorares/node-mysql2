@@ -161,10 +161,9 @@ await describe('Change User Multi Factor', async () => {
               'auth_test_plugin2',
             ]);
 
-            conn.end();
-            // @ts-expect-error: TODO: implement typings
-            server.close();
-            resolve();
+            conn.end(() => {
+              server.close(() => resolve());
+            });
           });
         });
       });
