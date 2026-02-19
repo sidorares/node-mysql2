@@ -1,21 +1,11 @@
-import { assert, describe, afterEach, beforeEach, it } from 'poku';
 import util from 'node:util';
-import type { Connection as PromiseConnection } from '../../../../promise.js';
+import { assert, describe, it } from 'poku';
 import { config, createConnection, version } from '../../common.test.mjs';
 
 const { database: currentDatabase } = config;
 
 await describe('Custom inspect for column definition', async () => {
-  let connection: PromiseConnection;
-
-  beforeEach(async () => {
-    connection = createConnection().promise();
-    await connection.query(`DROP TABLE IF EXISTS test_fields`);
-  });
-
-  afterEach(async () => {
-    await connection.end();
-  });
+  const connection = createConnection().promise();
 
   await it('maps fields to schema-like description when depth > 1', async () => {
     const schema = `
@@ -112,4 +102,6 @@ await describe('Custom inspect for column definition', async () => {
       );
     });
   }
+
+  await connection.end();
 });

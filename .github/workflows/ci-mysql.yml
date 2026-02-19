@@ -72,3 +72,4 @@ jobs:
 
       - name: Run tests
         run: FILTER=${{matrix.filter}} npm run test
+        timeout-minutes: 10

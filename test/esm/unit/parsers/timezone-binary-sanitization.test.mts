@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { describe, it, assert } from 'poku';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Binary Parser: timezone Sanitization', async () => {

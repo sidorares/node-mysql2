@@ -1,6 +1,45 @@
-import { describe, it, assert } from 'poku';
 import type { TypeCastField, TypeCastNext } from '../../../../index.js';
+import { assert, describe, it } from 'poku';
 import { _keyFromFields } from '../../../../lib/parsers/parser_cache.js';
+
+interface CacheKeyTestData {
+  type: string | undefined;
+  fields: {
+    name: string | undefined;
+    columnType: string | undefined;
+    length: undefined;
+    schema: string | undefined;
+    table: string | undefined;
+    flags: string | undefined;
+    characterSet: string | undefined;
+  }[];
+  options: {
+    nestTables: boolean | string | undefined;
+    rowsAsArray: boolean | number | undefined;
+    supportBigNumbers: boolean | string | undefined;
+    bigNumberStrings:
+      | boolean
+      | unknown[]
+      | ((_: unknown, next: () => void) => void)
+      | undefined;
+    typeCast:
+      | boolean
+      | ((field: TypeCastField, next: TypeCastNext) => void)
+      | undefined;
+    timezone: string | undefined;
+    decimalNumbers: boolean | { a: null } | undefined;
+    dateStrings:
+      | boolean
+      | string
+      | ((_: unknown, next: () => void) => void)
+      | undefined;
+  };
+  config: {
+    supportBigNumbers: boolean | undefined;
+    bigNumberStrings: boolean | undefined;
+    timezone: boolean | string | undefined;
+  };
+}
 
 describe('Cache Key Serialization', () => {
   // Invalid
@@ -275,7 +314,7 @@ describe('Cache Key Serialization', () => {
       nestTables: true,
       rowsAsArray: 2,
       supportBigNumbers: 'yes',
-      bigNumberStrings: [] as any[],
+      bigNumberStrings: [] as unknown[],
       typeCast: true,
       timezone: 'local',
       decimalNumbers: {
@@ -309,13 +348,13 @@ describe('Cache Key Serialization', () => {
       rowsAsArray: false,
       supportBigNumbers: false,
       // Expected: true
-      bigNumberStrings: (_: any, next: any) => next(),
+      bigNumberStrings: (_: unknown, next: () => void) => next(),
       // Expected: "function"
       typeCast: (_: TypeCastField, next: TypeCastNext) => next(),
       timezone: 'local',
       decimalNumbers: false,
       // Expected: null
-      dateStrings: (_: any, next: any) => next(),
+      dateStrings: (_: unknown, next: () => void) => next(),
     },
     config: {
       supportBigNumbers: undefined,
@@ -364,7 +403,7 @@ describe('Cache Key Serialization', () => {
     },
   };
 
-  const keyFrom = (t: any): string =>
+  const keyFrom = (t: CacheKeyTestData): string =>
     _keyFromFields(t.type, t.fields, t.options, t.config);
 
   it(() => {
@@ -491,8 +530,12 @@ describe('Cache Key Serialization', () => {
     const stringify = JSON.stringify;
 
     // Overwriting the native `JSON.stringify`
-    JSON.stringify = (value: any, replacer?: any, space: any = 8) =>
-      stringify(value, replacer, space);
+    // @ts-expect-error: overwriting JSON.stringify for testing
+    JSON.stringify = (
+      value: unknown,
+      replacer?: Parameters<typeof JSON.stringify>[1],
+      space: string | number = 8
+    ) => stringify(value, replacer, space);
 
     const result1 = keyFrom(test1);
 

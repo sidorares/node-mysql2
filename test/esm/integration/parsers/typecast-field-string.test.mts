@@ -1,6 +1,15 @@
-import { describe, it, assert } from 'poku';
-import type { TypeCastField } from '../../../../index.js';
+import type { RowDataPacket, TypeCastField } from '../../../../index.js';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
+
+type DateRow = RowDataPacket & { date: string | null };
+type TimeRow = RowDataPacket & { time: string | null };
+type DatetimeRow = RowDataPacket & { datetime: string | null };
+type TimestampRow = RowDataPacket & { timestamp: string | null };
+type TinyRow = RowDataPacket & {
+  signed: string | null;
+  unsigned: string | null;
+};
 
 await describe('typeCast field.string', async () => {
   const conn = createConnection({
@@ -29,17 +38,19 @@ await describe('typeCast field.string', async () => {
   );
 
   await it('query results', async () => {
-    const [date] = await conn.query(
+    const [date] = await conn.query<DateRow[]>(
       'SELECT STR_TO_DATE("2022-06-28", "%Y-%m-%d") AS `date`'
     );
-    const [time] = await conn.query(
+    const [time] = await conn.query<TimeRow[]>(
       'SELECT STR_TO_DATE("12:34:56", "%H:%i:%s") AS `time`'
     );
-    const [datetime] = await conn.query(
+    const [datetime] = await conn.query<DatetimeRow[]>(
       'SELECT STR_TO_DATE("2022-06-28 12:34:56", "%Y-%m-%d %H:%i:%s") AS `datetime`'
     );
-    const [timestamp] = await conn.query('SELECT `timestamp` FROM `tmp_date`');
-    const [tiny] = await conn.query(
+    const [timestamp] = await conn.query<TimestampRow[]>(
+      'SELECT `timestamp` FROM `tmp_date`'
+    );
+    const [tiny] = await conn.query<TinyRow[]>(
       'SELECT `signed`, `unsigned` FROM `tmp_tiny`'
     );
 
@@ -51,19 +62,19 @@ await describe('typeCast field.string', async () => {
   });
 
   await it('execute results', async () => {
-    const [date] = await conn.execute(
+    const [date] = await conn.execute<DateRow[]>(
       'SELECT STR_TO_DATE("2022-06-28", "%Y-%m-%d") AS `date`'
     );
-    const [time] = await conn.execute(
+    const [time] = await conn.execute<TimeRow[]>(
       'SELECT STR_TO_DATE("12:34:56", "%H:%i:%s") AS `time`'
     );
-    const [datetime] = await conn.execute(
+    const [datetime] = await conn.execute<DatetimeRow[]>(
       'SELECT STR_TO_DATE("2022-06-28 12:34:56", "%Y-%m-%d %H:%i:%s") AS `datetime`'
     );
-    const [timestamp] = await conn.execute(
+    const [timestamp] = await conn.execute<TimestampRow[]>(
       'SELECT `timestamp` FROM `tmp_date`'
     );
-    const [tiny] = await conn.execute(
+    const [tiny] = await conn.execute<TinyRow[]>(
       'SELECT `signed`, `unsigned` FROM `tmp_tiny`'
     );
 

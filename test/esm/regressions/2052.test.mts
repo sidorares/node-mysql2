@@ -1,8 +1,8 @@
-import { assert, describe, it } from 'poku';
+import type { PrepareStatementInfo, QueryError } from '../../../index.js';
 import { Buffer } from 'node:buffer';
-import packets from '../../../lib/packets/index.js';
+import { assert, describe, it } from 'poku';
 import PrepareCommand from '../../../lib/commands/prepare.js';
-import type { QueryError, PrepareStatementInfo } from '../../../index.js';
+import packets from '../../../lib/packets/index.js';
 import { createConnection, getMysqlVersion } from '../common.test.mjs';
 
 await describe(async () => {
@@ -20,7 +20,7 @@ await describe(async () => {
       config: {
         charsetNumber: 33,
       },
-      writePacket: (packet: any) => {
+      writePacket: (packet: InstanceType<typeof packets.Packet>) => {
         // client -> server COM_PREPARE
         packet.writeHeader(1);
         assert.equal(
@@ -102,75 +102,61 @@ await describe(async () => {
     return incorrectVersions.includes(verString);
   })();
 
-  await it('E2E Prepare result with number of parameters incorrectly reported by the server', async () =>
-    new Promise((resolve, reject) => {
+  await it('E2E Prepare result with number of parameters incorrectly reported by the server', async () => {
+    const stmt = await new Promise<PrepareStatementInfo>((resolve, reject) => {
       connection.prepare(
         'select * from user order by ?',
-        async (err: QueryError | null, stmt: PrepareStatementInfo) => {
-          if (err) {
-            connection.end();
-            reject(err);
-
-            return;
-          }
-
-          if (hasIncorrectPrepareParameter) {
-            assert.equal(
-              // @ts-expect-error: TODO: implement typings
-              stmt.parameters.length,
-              0,
-              'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
-            );
-          } else {
-            assert.equal(
-              // @ts-expect-error: TODO: implement typings
-              stmt.parameters.length,
-              1,
-              'parameters length needs to be 1'
-            );
-          }
-
-          resolve(null);
+        (err: QueryError | null, _stmt: PrepareStatementInfo) => {
+          if (err) return reject(err);
+          resolve(_stmt);
         }
       );
-    }));
+    });
 
-  await it(
-    async () =>
-      new Promise((resolve, reject) => {
-        connection.prepare(
-          'select * from user where user.User like ? order by ?',
-          async (err: QueryError | null, stmt: PrepareStatementInfo) => {
-            if (err) {
-              connection.end();
-              reject(err);
-
-              return;
-            }
-
-            if (hasIncorrectPrepareParameter) {
-              assert.equal(
-                // @ts-expect-error: TODO: implement typings
-                stmt.parameters.length,
-                1,
-                'should report 1 actual parameters when 2 placeholders used in ORDER BY?'
-              );
-            } else {
-              assert.equal(
-                // @ts-expect-error: TODO: implement typings
-                stmt.parameters.length,
-                2,
-                'parameters length needs to be 2'
-              );
-            }
-
-            resolve(null);
-          }
-        );
-      })
-  );
-
-  connection.end((err: QueryError | null) => {
-    assert.ifError(err);
+    if (hasIncorrectPrepareParameter) {
+      assert.equal(
+        // @ts-expect-error: TODO: implement typings
+        stmt.parameters.length,
+        0,
+        'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
+      );
+    } else {
+      assert.equal(
+        // @ts-expect-error: TODO: implement typings
+        stmt.parameters.length,
+        1,
+        'parameters length needs to be 1'
+      );
+    }
   });
+
+  await it(async () => {
+    const stmt = await new Promise<PrepareStatementInfo>((resolve, reject) => {
+      connection.prepare(
+        'select * from user where user.User like ? order by ?',
+        (err: QueryError | null, _stmt: PrepareStatementInfo) => {
+          if (err) return reject(err);
+          resolve(_stmt);
+        }
+      );
+    });
+
+    if (hasIncorrectPrepareParameter) {
+      assert.equal(
+        // @ts-expect-error: TODO: implement typings
+        stmt.parameters.length,
+        1,
+        'should report 1 actual parameters when 2 placeholders used in ORDER BY?'
+      );
+    } else {
+      assert.equal(
+        // @ts-expect-error: TODO: implement typings
+        stmt.parameters.length,
+        2,
+        'parameters length needs to be 2'
+      );
+    }
+  });
+
+  connection.end();
 });

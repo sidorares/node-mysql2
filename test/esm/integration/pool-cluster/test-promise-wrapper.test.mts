@@ -1,11 +1,13 @@
-import { it, assert, describe } from 'poku';
-import type { QueryError } from '../../../../index.js';
+import type { QueryError, RowDataPacket } from '../../../../index.js';
+import { assert, describe, it } from 'poku';
 import promiseDriver from '../../../../promise.js';
 import { config } from '../../common.test.mjs';
 
-const { createPoolCluster } = promiseDriver;
+type TestRow = RowDataPacket & { a: number };
 
 await describe('Test pool cluster', async () => {
+  const { createPoolCluster } = promiseDriver;
+
   await it(async () => {
     const poolCluster = createPoolCluster();
 
@@ -100,13 +102,13 @@ await describe('Test pool cluster', async () => {
     assert.ok(connection, 'should get connection');
     connection.release();
 
-    const [result] = await poolNamespace.query(
+    const [result] = await poolNamespace.query<TestRow[]>(
       'SELECT 1 as a from dual where 1 = ?',
       [1]
     );
     assert.equal(result[0]['a'], 1, 'should query successfully');
 
-    const [result2] = await poolNamespace.execute(
+    const [result2] = await poolNamespace.execute<TestRow[]>(
       'SELECT 1 as a from dual where 1 = ?',
       [1]
     );

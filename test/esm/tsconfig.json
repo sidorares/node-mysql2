@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.mts"],
+  "include": ["**/*.mts", "../globals.d.ts"],
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["ESNext"],
@@ -11,13 +11,17 @@
     "allowJs": true,
     "strict": true,
     "alwaysStrict": true,
-    "strictFunctionTypes": false,
+    "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "noImplicitAny": false,
+    "resolveJsonModule": true,
+    "noImplicitAny": true,
     "noImplicitThis": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowUnreachableCode": false,
-    "allowUnusedLabels": false
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "allowUnusedLabels": false,
+    "skipLibCheck": true
   }
 }

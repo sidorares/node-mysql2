@@ -1,5 +1,8 @@
-import { it, describe, assert } from 'poku';
+import type { ResultSetHeader, RowDataPacket } from '../../../../index.js';
+import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
+
+type TestRow = RowDataPacket & { test: number; customProp?: boolean };
 
 await describe('Execute: Results Creation', async () => {
   const connection = createConnection().promise();
@@ -14,7 +17,9 @@ await describe('Execute: Results Creation', async () => {
     const proto = Object.getPrototypeOf(emptyObject);
     const privateObjectProps: string[] = Object.getOwnPropertyNames(proto);
 
-    const [results] = await connection.execute('SELECT 1+1 AS `test`');
+    const [results] = await connection.execute<TestRow[]>(
+      'SELECT 1+1 AS `test`'
+    );
 
     assert.deepStrictEqual(results, expected, 'Ensure exact object "results"');
     assert.deepStrictEqual(
@@ -41,7 +46,7 @@ await describe('Execute: Results Creation', async () => {
   });
 
   await it(async () => {
-    const [result] = await connection.execute('SET @1 = 1;');
+    const [result] = await connection.execute<ResultSetHeader>('SET @1 = 1;');
 
     assert.strictEqual(
       result.constructor.name,
