@@ -11,7 +11,7 @@ const commonConfig = defineConfig({
 
 const parallel = defineConfig({
   ...commonConfig,
-  exclude: [/test[\\/]esm[\\/]global/],
+  exclude: [/test[\\/]global/, /test[\\/]tsc-build/],
   concurrency: 8,
 });
 
