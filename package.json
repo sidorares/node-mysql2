@@ -81,7 +81,6 @@
     "error-stack-parser": "^2.1.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-async-await": "^0.0.0",
-    "eslint-plugin-markdown": "^5.1.0",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.0.0",
     "poku": "^3.0.3-canary.8f374795",

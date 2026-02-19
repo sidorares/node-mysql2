@@ -1,4 +1,4 @@
-import markdown from 'eslint-plugin-markdown';
+import markdown from '@eslint/markdown';
 import asyncAwait from 'eslint-plugin-async-await';
 import globals from 'globals';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
