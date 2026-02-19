@@ -156,11 +156,6 @@ await describe('Change User Multi Factor', async () => {
 
         conn.on('connect', () => {
           conn.changeUser({ password1, password2 }, () => {
-            assert.deepStrictEqual(completed, [
-              'auth_test_plugin1',
-              'auth_test_plugin2',
-            ]);
-
             conn.end(() => {
               server.close(() => resolve());
             });
@@ -168,5 +163,10 @@ await describe('Change User Multi Factor', async () => {
         });
       });
     });
+
+    assert.deepStrictEqual(completed, [
+      'auth_test_plugin1',
+      'auth_test_plugin2',
+    ]);
   });
 });

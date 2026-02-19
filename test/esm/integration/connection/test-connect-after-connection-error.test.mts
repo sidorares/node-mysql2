@@ -15,6 +15,8 @@ await describe('Connect After Connection Error', async () => {
   const ERROR_TEXT = 'Connection lost: The server closed the connection.';
 
   await it('should return error when connecting after server close', async () => {
+    let connectError: QueryError | undefined;
+
     await new Promise<void>((resolve) => {
       // @ts-expect-error: TODO: implement typings
       const server = mysql.createServer();
@@ -46,7 +48,7 @@ await describe('Connect After Connection Error', async () => {
 
         clientConnection.once('error', () => {
           clientConnection.connect((err: QueryError | null) => {
-            assert.equal(err?.message, ERROR_TEXT);
+            connectError = err ?? undefined;
             // @ts-expect-error: TODO: implement typings
             clientConnection.close();
             // @ts-expect-error: internal access
@@ -57,5 +59,7 @@ await describe('Connect After Connection Error', async () => {
         });
       });
     });
+
+    assert.equal(connectError?.message, ERROR_TEXT);
   });
 });

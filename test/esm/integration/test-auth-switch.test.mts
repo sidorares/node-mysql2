@@ -109,6 +109,10 @@ await describe('Auth Switch', async () => {
       );
     });
 
+    let connectData:
+      | { serverVersion: string; connectionId: number }
+      | undefined;
+
     await new Promise<void>((resolve) => {
       // @ts-expect-error: TODO: implement typings
       server.listen(0, () => {
@@ -144,8 +148,7 @@ await describe('Auth Switch', async () => {
         conn.on(
           'connect',
           (data: { serverVersion: string; connectionId: number }) => {
-            assert.equal(data.serverVersion, 'node.js rocks');
-            assert.equal(data.connectionId, 1234);
+            connectData = data;
 
             conn.end(() => {
               server.close(() => resolve());
@@ -154,5 +157,8 @@ await describe('Auth Switch', async () => {
         );
       });
     });
+
+    assert.equal(connectData!.serverVersion, 'node.js rocks');
+    assert.equal(connectData!.connectionId, 1234);
   });
 });

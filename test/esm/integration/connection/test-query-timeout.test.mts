@@ -8,17 +8,16 @@ import { createConnection } from '../../common.test.mjs';
 if (typeof Deno !== 'undefined') process.exit(0);
 
 await describe('Query Timeout', async () => {
+  const connection = createConnection({ debug: false });
+  connection.on('error', (err: NodeJS.ErrnoException) => {
+    assert.equal(
+      err.message,
+      'Connection lost: The server closed the connection.'
+    );
+    assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+  });
+
   await it('should handle query and execute timeouts', async () => {
-    const connection = createConnection({ debug: false });
-
-    connection.on('error', (err: NodeJS.ErrnoException) => {
-      assert.equal(
-        err.message,
-        'Connection lost: The server closed the connection.'
-      );
-      assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
-    });
-
     await new Promise<void>((resolve, reject) => {
       connection.query(
         { sql: 'SELECT sleep(3) as a', timeout: 500 },
@@ -94,7 +93,6 @@ await describe('Query Timeout', async () => {
       connection.execute('SELECT sleep(1) as a', (_err, res) => {
         try {
           assert.deepEqual(res, [{ a: 0 }]);
-          connection.end();
           resolve();
         } catch (e) {
           reject(e);
@@ -103,55 +101,61 @@ await describe('Query Timeout', async () => {
     });
   });
 
+  connection.end();
+
   /**
    * if connect timeout
    * we should return connect timeout error instead of query timeout error
    */
+  // @ts-expect-error: TODO: implement typings
+  const timeoutServer = mysql.createServer();
+  timeoutServer.on('connection', (conn) => {
+    conn.on('error', (err: NodeJS.ErrnoException) => {
+      assert.equal(
+        err.message,
+        'Connection lost: The server closed the connection.'
+      );
+      assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+    });
+  });
+
+  let connectionTimeout: ReturnType<typeof mysql.createConnection> | undefined;
+
   await it('should return connect timeout error instead of query timeout error', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const port = await new Promise<number>((resolve) => {
       // @ts-expect-error: TODO: implement typings
-      const server = mysql.createServer();
-      server.on('connection', (conn) => {
-        conn.on('error', (err: NodeJS.ErrnoException) => {
-          assert.equal(
-            err.message,
-            'Connection lost: The server closed the connection.'
-          );
-          assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
-        });
-      });
-      // @ts-expect-error: TODO: implement typings
-      server.listen(0, () => {
+      timeoutServer.listen(0, () => {
         // @ts-expect-error: internal access
-        const port = server._server.address().port;
-
-        const connectionTimeout = mysql.createConnection({
-          host: 'localhost',
-          port: port,
-          connectTimeout: 1000,
-        });
-
-        // return connect timeout error first
-        connectionTimeout.query(
-          { sql: 'SELECT sleep(3) as a', timeout: 50 },
-          (err, res) => {
-            try {
-              console.log('ok');
-              assert.equal(res, null);
-              assert.ok(err);
-              assert.equal(err.code, 'ETIMEDOUT');
-              assert.equal(err.message, 'connect ETIMEDOUT');
-              connectionTimeout.destroy();
-              // @ts-expect-error: internal access
-              server._server.close(() => {
-                resolve();
-              });
-            } catch (e) {
-              reject(e);
-            }
-          }
-        );
+        resolve(timeoutServer._server.address().port);
       });
     });
+
+    connectionTimeout = mysql.createConnection({
+      host: 'localhost',
+      port,
+      connectTimeout: 1000,
+    });
+
+    const result = await new Promise<{
+      err: NodeJS.ErrnoException | null;
+      res: unknown;
+    }>((resolve) => {
+      connectionTimeout!.query(
+        { sql: 'SELECT sleep(3) as a', timeout: 50 },
+        (err, res) => resolve({ err, res })
+      );
+    });
+
+    assert.equal(result.res, null);
+    assert.ok(result.err);
+    assert.equal(result.err.code, 'ETIMEDOUT');
+    assert.equal(result.err.message, 'connect ETIMEDOUT');
+  });
+
+  connectionTimeout?.destroy();
+
+  await new Promise<void>((resolve) => {
+    // @ts-expect-error: internal access
+    timeoutServer._server.close(() => resolve());
   });
 });

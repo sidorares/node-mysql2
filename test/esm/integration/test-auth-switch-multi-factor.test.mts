@@ -171,12 +171,6 @@ await describe('Auth Switch Multi Factor', async () => {
         });
 
         conn.on('connect', () => {
-          assert.deepStrictEqual(completed, [
-            'auth_test_plugin1',
-            'auth_test_plugin2',
-            'auth_test_plugin3',
-          ]);
-
           conn.end();
           // @ts-expect-error: TODO: implement typings
           server.close();
@@ -184,5 +178,11 @@ await describe('Auth Switch Multi Factor', async () => {
         });
       });
     });
+
+    assert.deepStrictEqual(completed, [
+      'auth_test_plugin1',
+      'auth_test_plugin2',
+      'auth_test_plugin3',
+    ]);
   });
 });

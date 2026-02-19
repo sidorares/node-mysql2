@@ -53,17 +53,12 @@ class TestAuthSwitchPluginError extends Command {
 await describe('Auth Switch Plugin Error', async () => {
   await it('should handle auth plugin sync error', async () => {
     let error: { code?: string; message?: string; fatal?: boolean } | undefined;
+    let serverError: NodeJS.ErrnoException | undefined;
 
     await new Promise<void>((resolve) => {
       const server = mysql.createServer((conn) => {
         conn.on('error', (err: NodeJS.ErrnoException) => {
-          // The server must close the connection
-          assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
-
-          // The plugin reports a fatal error
-          assert.equal(error?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
-          assert.equal(error?.message, 'boom');
-          assert.equal(error?.fatal, true);
+          serverError = err;
           resolve();
         });
         // @ts-expect-error: TODO: implement typings
@@ -102,5 +97,10 @@ await describe('Auth Switch Plugin Error', async () => {
         });
       });
     });
+
+    assert.equal(serverError?.code, 'PROTOCOL_CONNECTION_LOST');
+    assert.equal(error?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
+    assert.equal(error?.message, 'boom');
+    assert.equal(error?.fatal, true);
   });
 });

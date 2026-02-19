@@ -83,18 +83,6 @@ await describe('Auth Switch Plugin Async Error', async () => {
 
       checkDone = () => {
         if (!clientError || !serverError) return;
-
-        // The server must close the connection (RST or FIN)
-        assert.ok(
-          serverError.code === 'PROTOCOL_CONNECTION_LOST' ||
-            serverError.code === 'ECONNRESET'
-        );
-
-        // The plugin reports a fatal error
-        assert.equal(clientError.code, 'AUTH_SWITCH_PLUGIN_ERROR');
-        assert.equal(clientError.message, 'boom');
-        assert.equal(clientError.fatal, true);
-
         server.close(() => resolve());
       };
 
@@ -124,5 +112,13 @@ await describe('Auth Switch Plugin Async Error', async () => {
         });
       });
     });
+
+    assert.ok(
+      serverError?.code === 'PROTOCOL_CONNECTION_LOST' ||
+        serverError?.code === 'ECONNRESET'
+    );
+    assert.equal(clientError?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
+    assert.equal(clientError?.message, 'boom');
+    assert.equal(clientError?.fatal, true);
   });
 });

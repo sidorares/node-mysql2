@@ -136,7 +136,6 @@ await describe('Binary Multiple Results', async () => {
           if (testIndex + 1 < tests.length) {
             do_test(testIndex + 1);
           } else {
-            mysql.end();
             resolve();
           }
         };
@@ -154,80 +153,95 @@ await describe('Binary Multiple Results', async () => {
           const textCmd = mysql.query(sql, (err, _rows, _columns) => {
             if (err) return reject(err);
 
-            const arrOrColumn = function (c: unknown): unknown {
-              if (Array.isArray(c)) {
-                return c.map(arrOrColumn);
+            try {
+              const arrOrColumn = function (c: unknown): unknown {
+                if (Array.isArray(c)) {
+                  return c.map(arrOrColumn);
+                }
+
+                if (typeof c === 'undefined') {
+                  return void 0;
+                }
+
+                // @ts-expect-error: internal access
+                const column = c.inspect() as Record<string, unknown>;
+                // "columnLength" is non-deterministic and the display width for integer
+                // data types was deprecated on MySQL 8.0.17.
+                // https://dev.mysql.com/doc/refman/8.0/en/numeric-type-syntax.html
+                delete column.columnLength;
+
+                return column;
+              };
+
+              assert.deepEqual(expectation[0], _rows);
+              assert.deepEqual(expectation[1], arrOrColumn(_columns));
+
+              const q = mysql.execute(sql);
+              let resIndex = 0;
+              let rowIndex = 0;
+              let fieldIndex = -1;
+
+              function checkRow(row: {
+                constructor: { name: string };
+                [key: string]: unknown;
+              }) {
+                try {
+                  const index = fieldIndex;
+                  const multiRows = _rows as unknown[];
+                  if (_numResults === 1) {
+                    assert.equal(index, 0);
+                    if (row.constructor.name === 'ResultSetHeader') {
+                      assert.deepEqual(_rows, row);
+                    } else {
+                      assert.deepEqual(multiRows[rowIndex], row);
+                    }
+                  } else {
+                    if (resIndex !== index) {
+                      rowIndex = 0;
+                      resIndex = index;
+                    }
+                    if (row.constructor.name === 'ResultSetHeader') {
+                      assert.deepEqual(multiRows[index], row);
+                    } else {
+                      assert.deepEqual(
+                        (multiRows[index] as unknown[])[rowIndex],
+                        row
+                      );
+                    }
+                  }
+                  rowIndex++;
+                } catch (e) {
+                  reject(e as Error);
+                }
               }
 
-              if (typeof c === 'undefined') {
-                return void 0;
-              }
-
-              // @ts-expect-error: internal access
-              const column = c.inspect() as Record<string, unknown>;
-              // "columnLength" is non-deterministic and the display width for integer
-              // data types was deprecated on MySQL 8.0.17.
-              // https://dev.mysql.com/doc/refman/8.0/en/numeric-type-syntax.html
-              delete column.columnLength;
-
-              return column;
-            };
-
-            assert.deepEqual(expectation[0], _rows);
-            assert.deepEqual(expectation[1], arrOrColumn(_columns));
-
-            const q = mysql.execute(sql);
-            let resIndex = 0;
-            let rowIndex = 0;
-            let fieldIndex = -1;
-
-            function checkRow(row: {
-              constructor: { name: string };
-              [key: string]: unknown;
-            }) {
-              const index = fieldIndex;
-              const multiRows = _rows as unknown[];
-              if (_numResults === 1) {
-                assert.equal(index, 0);
-                if (row.constructor.name === 'ResultSetHeader') {
-                  assert.deepEqual(_rows, row);
-                } else {
-                  assert.deepEqual(multiRows[rowIndex], row);
-                }
-              } else {
-                if (resIndex !== index) {
-                  rowIndex = 0;
-                  resIndex = index;
-                }
-                if (row.constructor.name === 'ResultSetHeader') {
-                  assert.deepEqual(multiRows[index], row);
-                } else {
-                  assert.deepEqual(
-                    (multiRows[index] as unknown[])[rowIndex],
-                    row
-                  );
+              function checkFields(fields: unknown) {
+                try {
+                  fieldIndex++;
+                  const index = fieldIndex;
+                  if (_numResults === 1) {
+                    assert.equal(index, 0);
+                    assert.deepEqual(
+                      arrOrColumn(_columns),
+                      arrOrColumn(fields)
+                    );
+                  } else {
+                    assert.deepEqual(
+                      arrOrColumn(_columns[index]),
+                      arrOrColumn(fields)
+                    );
+                  }
+                } catch (e) {
+                  reject(e as Error);
                 }
               }
-              rowIndex++;
+
+              q.on('result', checkRow);
+              q.on('fields', checkFields);
+              q.on('end', next);
+            } catch (e) {
+              reject(e as Error);
             }
-
-            function checkFields(fields: unknown) {
-              fieldIndex++;
-              const index = fieldIndex;
-              if (_numResults === 1) {
-                assert.equal(index, 0);
-                assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
-              } else {
-                assert.deepEqual(
-                  arrOrColumn(_columns[index]),
-                  arrOrColumn(fields)
-                );
-              }
-            }
-
-            q.on('result', checkRow);
-            q.on('fields', checkFields);
-            q.on('end', next);
           });
 
           textCmd.on('fields', () => {
@@ -238,4 +252,6 @@ await describe('Binary Multiple Results', async () => {
       do_test(0);
     });
   });
+
+  mysql.end();
 });

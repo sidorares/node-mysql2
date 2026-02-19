@@ -12,6 +12,9 @@ process.on('uncaughtException', (err: NodeJS.ErrnoException) => {
 
 await describe('Pool Connect Error', async () => {
   await it('should emit error code 1040 for connection and pool', async () => {
+    let err1: NodeJS.ErrnoException | undefined;
+    let err2: NodeJS.ErrnoException | undefined;
+
     await new Promise<void>((resolve) => {
       const server = mysql.createServer((conn) => {
         conn.serverHandshake({
@@ -28,8 +31,6 @@ await describe('Pool Connect Error', async () => {
         });
       });
 
-      let err1: NodeJS.ErrnoException | undefined,
-        err2: NodeJS.ErrnoException | undefined;
       let done = false;
 
       // @ts-expect-error: TODO: implement typings
@@ -50,8 +51,6 @@ await describe('Pool Connect Error', async () => {
           if (done || err1 === undefined || err2 === undefined || !poolEnded)
             return;
           done = true;
-          assert.equal(err1?.errno, 1040);
-          assert.equal(err2?.errno, 1040);
           conn.destroy();
           server.close(() => resolve());
         };
@@ -77,5 +76,8 @@ await describe('Pool Connect Error', async () => {
         });
       });
     });
+
+    assert.equal(err1?.errno, 1040);
+    assert.equal(err2?.errno, 1040);
   });
 });

@@ -15,6 +15,8 @@ await describe('Execute Null Bitmap', async () => {
       >('SELECT @@GLOBAL.max_prepared_stmt_count as backup');
     const originalMaxPrepared = savedRows[0].backup;
 
+    const results: { value: number; expected: number }[] = [];
+
     await new Promise<void>((resolve, reject) => {
       const params = [1, 2];
       let query = 'select ? + ?';
@@ -23,21 +25,15 @@ await describe('Execute Null Bitmap', async () => {
         connection.execute<TestRow[]>(`${query} as t`, params, (err, _rows) => {
           if (err) return reject(err);
           if (params.length < 50) {
-            assert.equal(
-              _rows[0].t,
-              params.reduce((x: number, y: number) => x + y)
-            );
+            results.push({
+              value: _rows[0].t,
+              expected: params.reduce((x: number, y: number) => x + y),
+            });
             query += ' + ?';
             params.push(params.length);
             dotest();
           } else {
-            connection.query(
-              `SET GLOBAL max_prepared_stmt_count=${originalMaxPrepared}`,
-              () => {
-                connection.end();
-                resolve();
-              }
-            );
+            resolve();
           }
         });
       }
@@ -47,5 +43,15 @@ await describe('Execute Null Bitmap', async () => {
         dotest();
       });
     });
+
+    for (const r of results) {
+      assert.equal(r.value, r.expected);
+    }
+
+    await connection
+      .promise()
+      .query(`SET GLOBAL max_prepared_stmt_count=${originalMaxPrepared}`);
   });
+
+  connection.end();
 });
