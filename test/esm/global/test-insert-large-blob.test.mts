@@ -6,8 +6,8 @@ import { createConnection } from '../common.test.mjs';
 type BlobRow = RowDataPacket & { id: number; content: Buffer };
 
 // intentionally disabled
-const _disabled = false;
 
+const _disabled = false as boolean;
 if (_disabled) {
   await describe('Insert Large Blob', async () => {
     const connection = createConnection();

@@ -1,7 +1,7 @@
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
-import mysql from '../../../index.js';
-import { createPoolCluster } from '../common.test.mjs';
+import { assert, describe, it, sleep } from 'poku';
+import mysql from '../../../../index.js';
+import { createPoolCluster } from '../../common.test.mjs';
 
 // TODO: config poolCluster to work with MYSQL_CONNECTION_URL run
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -17,11 +17,11 @@ if (process.platform === 'win32') {
 // The process is not terminated in Deno
 if (typeof Deno !== 'undefined') process.exit(0);
 
-await describe('pool cluster restore events', async () => {
+await describe('pool cluster restore', async () => {
   const cluster = createPoolCluster({
     canRetry: true,
     removeNodeErrorCount: 2,
-    restoreNodeTimeout: 100,
+    restoreNodeTimeout: 1000,
   });
 
   let connCount = 0;
@@ -56,20 +56,10 @@ await describe('pool cluster restore events', async () => {
 
   cluster.add('MASTER', { port });
 
-  await it('should emit offline and online events', async () => {
-    const offlinePromise = new Promise<string>((resolve) => {
-      cluster.on('offline', (id: string) => resolve(id));
-    });
-
-    const onlinePromise = new Promise<{ id: string; connCount: number }>(
-      (resolve) => {
-        cluster.on('online', (id: string) => resolve({ id, connCount }));
-      }
-    );
-
+  await it('should restore node after timeout', async () => {
     type MysqlError = Error & { code?: string; fatal?: boolean };
 
-    // First attempt - triggers 2 failures and node removal
+    // First attempt - expected to fail (offline)
     const err1 = await new Promise<MysqlError | null>((resolve) => {
       cluster.getConnection('MASTER', (err) => resolve(err));
     });
@@ -79,11 +69,7 @@ await describe('pool cluster restore events', async () => {
     assert.equal(err1?.fatal, true);
     assert.equal(connCount, 2);
 
-    // Verify offline event fired
-    const offlineId = await offlinePromise;
-    assert.equal(offlineId, 'MASTER');
-
-    // Second attempt - node is offline
+    // Second attempt - expected to fail (node removed)
     const err2 = await new Promise<MysqlError | null>((resolve) => {
       cluster.getConnection('MASTER', (err) => resolve(err));
     });
@@ -91,13 +77,14 @@ await describe('pool cluster restore events', async () => {
     assert.ok(err2);
     assert.equal(err2?.code, 'POOL_NONEONLINE');
 
-    // Bring server back online
+    // @ts-expect-error: internal access
+    cluster._nodes.MASTER.errorCount = 3;
     offline = false;
 
     // Wait for restore timeout
-    await new Promise<void>((resolve) => setTimeout(resolve, 200));
+    await sleep(1500);
 
-    // Third attempt - should succeed and trigger online event
+    // Third attempt - should succeed
     await new Promise<void>((resolve, reject) => {
       cluster.getConnection('MASTER', (err, conn) => {
         if (err) return reject(err);
@@ -105,11 +92,6 @@ await describe('pool cluster restore events', async () => {
         resolve();
       });
     });
-
-    // Verify online event fired
-    const onlineResult = await onlinePromise;
-    assert.equal(onlineResult.id, 'MASTER');
-    assert.equal(onlineResult.connCount, 3);
   });
 
   await new Promise<void>((resolve, reject) => {

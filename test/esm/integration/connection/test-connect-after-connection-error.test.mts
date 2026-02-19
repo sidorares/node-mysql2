@@ -1,15 +1,15 @@
-import type { Connection, QueryError } from '../../../index.js';
+import type { Connection, QueryError } from '../../../../index.js';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import mysql from '../../../index.js';
+import mysql from '../../../../index.js';
 
 // The process is not terminated in Deno
 if (typeof Deno !== 'undefined') process.exit(0);
 
-// process.on('uncaughtException', (err: NodeJS.ErrnoException) => {
-//   if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE') return;
-//   throw err;
-// });
+process.on('uncaughtException', (err: NodeJS.ErrnoException) => {
+  if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE') return;
+  throw err;
+});
 
 await describe('Connect After Connection Error', async () => {
   const ERROR_TEXT = 'Connection lost: The server closed the connection.';
