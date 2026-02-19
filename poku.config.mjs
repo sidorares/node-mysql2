@@ -12,7 +12,7 @@ const commonConfig = defineConfig({
 const parallel = defineConfig({
   ...commonConfig,
   exclude: [/test[\\/]esm[\\/]global/],
-  concurrency: 8,
+  concurrency: 4,
 });
 
 const sequential = defineConfig({
