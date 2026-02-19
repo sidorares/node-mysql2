@@ -1,3 +1,6 @@
 {
+  "imports": {
+    "poku": "npm:poku@3.0.3-canary.8f374795"
+  },
   "unstable": ["sloppy-imports"]
 }
