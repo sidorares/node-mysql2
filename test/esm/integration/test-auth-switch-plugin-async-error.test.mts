@@ -11,6 +11,11 @@ import Packets from '../../../lib/packets/index.js';
 // The process is not terminated in Deno
 if (typeof Deno !== 'undefined') process.exit(0);
 
+process.on('uncaughtException', (err: NodeJS.ErrnoException) => {
+  if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE') return;
+  throw err;
+});
+
 class TestAuthSwitchPluginError extends Command {
   args: Record<string, unknown>;
   serverHello: unknown;
