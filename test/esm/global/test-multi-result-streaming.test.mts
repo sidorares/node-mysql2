@@ -11,7 +11,11 @@ await describe('Multi Result Streaming', async () => {
   const sql2 =
     'select * from information_schema.columns order by table_schema, table_name, ordinal_position limit 1;';
 
-  await conn.promise().query('set global max_allowed_packet=524288000');
+  const [savedRows] = await conn
+    .promise()
+    .query<RowDataPacket[]>('SELECT @@GLOBAL.max_allowed_packet as backup');
+  const originalMaxAllowedPacket = savedRows[0].backup;
+  await conn.promise().query('SET GLOBAL max_allowed_packet=524288000');
 
   const compare1 = await conn.promise().query(sql1);
   const compare2 = await conn.promise().query(sql2);
@@ -45,6 +49,10 @@ await describe('Multi Result Streaming', async () => {
       stream.on('error', (e: Error) => reject(e));
       stream.on('end', () => resolve());
     });
+
+    await conn
+      .promise()
+      .query('SET GLOBAL max_allowed_packet = ?', [originalMaxAllowedPacket]);
 
     assert.equal(captured1.length, 1);
     assert.equal(captured2.length, 1);

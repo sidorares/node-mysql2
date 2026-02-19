@@ -1,6 +1,5 @@
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../index.js';
 
 // The process is not terminated in Deno
@@ -8,6 +7,9 @@ if (typeof Deno !== 'undefined') process.exit(0);
 
 await describe('Pool Connect Error', async () => {
   await it('should emit error code 1040 for connection and pool', async () => {
+    let err1: NodeJS.ErrnoException | undefined;
+    let err2: NodeJS.ErrnoException | undefined;
+
     await new Promise<void>((resolve) => {
       const server = mysql.createServer((conn) => {
         conn.serverHandshake({
@@ -24,20 +26,14 @@ await describe('Pool Connect Error', async () => {
         });
       });
 
-      let err1: NodeJS.ErrnoException | undefined,
-        err2: NodeJS.ErrnoException | undefined;
       let done = false;
 
-      portfinder.getPort((_err, port) => {
-        server.listen(port);
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
 
-        const checkDone = () => {
-          if (done || err1 === undefined || err2 === undefined) return;
-          done = true;
-          assert.equal(err1?.errno, 1040);
-          assert.equal(err2?.errno, 1040);
-          server.close(() => resolve());
-        };
+        let poolEnded = false;
 
         const conn = mysql.createConnection({
           user: 'test_user',
@@ -45,6 +41,15 @@ await describe('Pool Connect Error', async () => {
           database: 'test_database',
           port: port,
         });
+
+        const checkDone = () => {
+          if (done || err1 === undefined || err2 === undefined || !poolEnded)
+            return;
+          done = true;
+          conn.destroy();
+          server.close(() => resolve());
+        };
+
         conn.on('error', (err) => {
           err1 = err;
           checkDone();
@@ -59,10 +64,15 @@ await describe('Pool Connect Error', async () => {
 
         pool.query('test sql', (err) => {
           err2 = err ?? undefined;
-          pool.end();
-          checkDone();
+          pool.end(() => {
+            poolEnded = true;
+            checkDone();
+          });
         });
       });
     });
+
+    assert.equal(err1?.errno, 1040);
+    assert.equal(err2?.errno, 1040);
   });
 });

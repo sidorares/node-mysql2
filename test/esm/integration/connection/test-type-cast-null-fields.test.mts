@@ -31,19 +31,16 @@ await describe('Type Cast Null Fields', async () => {
   });
 
   await it('should return null for null fields', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const results = await new Promise<InsertTestRow[]>((resolve, reject) => {
       connection.query<InsertTestRow[]>(
         `SELECT * FROM ${table}`,
-        (_err, _results) => {
-          if (_err) return reject(_err);
-
-          assert.strictEqual(_results[0].date, null);
-          assert.strictEqual(_results[0].number, null);
-
-          connection.end();
-          resolve();
-        }
+        (_err, _results) => (_err ? reject(_err) : resolve(_results))
       );
     });
+
+    assert.strictEqual(results[0].date, null);
+    assert.strictEqual(results[0].number, null);
   });
+
+  connection.end();
 });

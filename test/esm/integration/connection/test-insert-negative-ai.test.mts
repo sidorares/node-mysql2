@@ -18,38 +18,35 @@ await describe('Insert Negative Auto Increment', async () => {
           `\`title\` varchar(255),` +
           `PRIMARY KEY (\`id\`)` +
           `) ENGINE=InnoDB DEFAULT CHARSET=utf8`,
-        (_err) => {
-          if (_err) return reject(_err);
-          // insert the negative AI
-          connection.query<ResultSetHeader>(
-            `INSERT INTO \`${testTable}\`` +
-              ` (id, title) values (-999, "${testData}")`,
-            (_err, insertResult) => {
-              if (_err) return reject(_err);
-
-              // select the row with negative AI
-              connection.query<NegAIRow[]>(
-                `SELECT * FROM \`${testTable}\`` +
-                  ` WHERE id = ${insertResult.insertId}`,
-                (_err, selectResult) => {
-                  if (_err) return reject(_err);
-
-                  assert.strictEqual(insertResult.insertId, -999);
-                  assert.strictEqual(selectResult.length, 1);
-                  assert.equal(
-                    selectResult[0].id,
-                    String(insertResult.insertId)
-                  );
-                  assert.equal(selectResult[0].title, testData);
-
-                  connection.end();
-                  resolve();
-                }
-              );
-            }
-          );
-        }
+        (err) => (err ? reject(err) : resolve())
       );
     });
+
+    // insert the negative AI
+    const insertResult = await new Promise<ResultSetHeader>(
+      (resolve, reject) => {
+        connection.query<ResultSetHeader>(
+          `INSERT INTO \`${testTable}\`` +
+            ` (id, title) values (-999, "${testData}")`,
+          (err, result) => (err ? reject(err) : resolve(result))
+        );
+      }
+    );
+
+    // select the row with negative AI
+    const selectResult = await new Promise<NegAIRow[]>((resolve, reject) => {
+      connection.query<NegAIRow[]>(
+        `SELECT * FROM \`${testTable}\`` +
+          ` WHERE id = ${insertResult.insertId}`,
+        (err, result) => (err ? reject(err) : resolve(result))
+      );
+    });
+
+    assert.strictEqual(insertResult.insertId, -999);
+    assert.strictEqual(selectResult.length, 1);
+    assert.equal(selectResult[0].id, String(insertResult.insertId));
+    assert.equal(selectResult[0].title, testData);
   });
+
+  connection.end();
 });

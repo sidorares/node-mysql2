@@ -1,4 +1,4 @@
-import type { RowDataPacket } from '../../../../index.js';
+import type { FieldPacket, RowDataPacket } from '../../../../index.js';
 import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
@@ -47,29 +47,34 @@ await describe('Binary NotNull Nulls', async () => {
   );
 
   await it('should handle null values in NOT NULL columns', async () => {
-    await new Promise<void>((resolve, reject) => {
-      conn.connect((err) => {
-        if (err) return reject(err);
+    const [rows, fields] = await new Promise<[RowDataPacket[], FieldPacket[]]>(
+      (resolve, reject) => {
+        conn.connect((err) => {
+          if (err) return reject(err);
 
-        conn.execute<RowDataPacket[]>(
-          "SELECT `ac`.`username`, CONCAT('[', GROUP_CONCAT(DISTINCT `acf`.`flag` SEPARATOR ','), ']') flags FROM tmp_account ac LEFT JOIN tmp_account_flags acf ON `acf`.account = `ac`.id LEFT JOIN tmp_account_session acs ON `acs`.account = `ac`.id WHERE `acs`.`session`=?",
-          ['asid=75efb145482ce22f4544390cad233c749c1b43e4'],
-          (_err, rows, fields) => {
-            /*
-            this assertion is valid for mysql8 < 8.0.17 and not longer valid in 8.0.18
-            TODO: investigate why and remove
-            const flagNotNull = fields[0].flags & FieldFlags.NOT_NULL;
-            const valueIsNull = rows[0][fields[0].name] === null;
-            assert(flagNotNull && valueIsNull);
-            */
+          conn.execute<RowDataPacket[]>(
+            "SELECT `ac`.`username`, CONCAT('[', GROUP_CONCAT(DISTINCT `acf`.`flag` SEPARATOR ','), ']') flags FROM tmp_account ac LEFT JOIN tmp_account_flags acf ON `acf`.account = `ac`.id LEFT JOIN tmp_account_session acs ON `acs`.account = `ac`.id WHERE `acs`.`session`=?",
+            ['asid=75efb145482ce22f4544390cad233c749c1b43e4'],
+            (_err, _rows, _fields) => {
+              if (_err) return reject(_err);
+              resolve([_rows, _fields]);
+            }
+          );
+        });
+      }
+    );
 
-            const valueIsNull = rows[0][fields[0].name] === null;
-            assert(valueIsNull);
-            conn.end();
-            resolve();
-          }
-        );
-      });
-    });
+    /*
+    this assertion is valid for mysql8 < 8.0.17 and not longer valid in 8.0.18
+    TODO: investigate why and remove
+    const flagNotNull = fields[0].flags & FieldFlags.NOT_NULL;
+    const valueIsNull = rows[0][fields[0].name] === null;
+    assert(flagNotNull && valueIsNull);
+    */
+
+    const valueIsNull = rows[0][fields[0].name] === null;
+    assert(valueIsNull);
   });
+
+  conn.end();
 });

@@ -1,7 +1,7 @@
-import type { ResultSetHeader, RowDataPacket } from '../../../../index.js';
+import type { ResultSetHeader, RowDataPacket } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import { assert, describe, it } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection } from '../common.test.mjs';
 
 type BlobRow = RowDataPacket & { id: number; content: Buffer };
 

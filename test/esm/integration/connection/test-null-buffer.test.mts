@@ -9,25 +9,27 @@ await describe('Null Buffer', async () => {
   connection.query('INSERT INTO binary_table VALUES(null)');
 
   await it('should handle null buffer values', async () => {
-    await new Promise<void>((resolve, reject) => {
-      connection.query<RowDataPacket[]>(
-        'SELECT * from binary_table',
-        (err, rowsTextProtocol) => {
-          if (err) return reject(err);
-          connection.execute<RowDataPacket[]>(
-            'SELECT * from binary_table',
-            (err, rowsBinaryProtocol) => {
-              if (err) return reject(err);
+    const rowsTextProtocol = await new Promise<RowDataPacket[]>(
+      (resolve, reject) => {
+        connection.query<RowDataPacket[]>(
+          'SELECT * from binary_table',
+          (err, rows) => (err ? reject(err) : resolve(rows))
+        );
+      }
+    );
 
-              assert.deepEqual(rowsTextProtocol[0], { stuff: null });
-              assert.deepEqual(rowsBinaryProtocol[0], { stuff: null });
+    const rowsBinaryProtocol = await new Promise<RowDataPacket[]>(
+      (resolve, reject) => {
+        connection.execute<RowDataPacket[]>(
+          'SELECT * from binary_table',
+          (err, rows) => (err ? reject(err) : resolve(rows))
+        );
+      }
+    );
 
-              connection.end();
-              resolve();
-            }
-          );
-        }
-      );
-    });
+    assert.deepEqual(rowsTextProtocol[0], { stuff: null });
+    assert.deepEqual(rowsBinaryProtocol[0], { stuff: null });
   });
+
+  connection.end();
 });

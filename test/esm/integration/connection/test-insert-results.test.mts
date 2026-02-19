@@ -23,28 +23,30 @@ await describe('Insert Results', async () => {
   );
 
   await it('should return correct insert results', async () => {
-    await new Promise<void>((resolve, reject) => {
-      connection.query<ResultSetHeader>(
-        `INSERT INTO ${table} SET title="${text}"`,
-        (err, result) => {
-          if (err) return reject(err);
-          connection.query<InsertTestRow[]>(
-            `SELECT * FROM ${table} WHERE id = ${result.insertId}`,
-            (_err, result2) => {
-              if (_err) return reject(_err);
+    const insertResult = await new Promise<ResultSetHeader>(
+      (resolve, reject) => {
+        connection.query<ResultSetHeader>(
+          `INSERT INTO ${table} SET title="${text}"`,
+          (err, result) => (err ? reject(err) : resolve(result))
+        );
+      }
+    );
 
-              assert.strictEqual(result.insertId, 1);
-              assert.strictEqual(result2.length, 1);
-              // TODO: type conversions
-              assert.equal(result2[0].id, String(result.insertId));
-              assert.equal(result2[0].title, text);
+    const selectResult = await new Promise<InsertTestRow[]>(
+      (resolve, reject) => {
+        connection.query<InsertTestRow[]>(
+          `SELECT * FROM ${table} WHERE id = ${insertResult.insertId}`,
+          (err, result) => (err ? reject(err) : resolve(result))
+        );
+      }
+    );
 
-              connection.end();
-              resolve();
-            }
-          );
-        }
-      );
-    });
+    assert.strictEqual(insertResult.insertId, 1);
+    assert.strictEqual(selectResult.length, 1);
+    // TODO: type conversions
+    assert.equal(selectResult[0].id, String(insertResult.insertId));
+    assert.equal(selectResult[0].title, text);
   });
+
+  connection.end();
 });

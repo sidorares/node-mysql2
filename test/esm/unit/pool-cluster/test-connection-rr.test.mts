@@ -35,14 +35,6 @@ await describe('pool cluster connection RR', async () => {
           if (count <= 4) {
             getConnection(count);
           } else {
-            assert.deepEqual(order, [
-              'SLAVE1',
-              'SLAVE2',
-              'SLAVE1',
-              'SLAVE2',
-              'SLAVE1',
-            ]);
-            cluster.end();
             resolve();
           }
         });
@@ -50,5 +42,8 @@ await describe('pool cluster connection RR', async () => {
 
       getConnection(0);
     });
+
+    assert.deepEqual(order, ['SLAVE1', 'SLAVE2', 'SLAVE1', 'SLAVE2', 'SLAVE1']);
+    cluster.end();
   });
 });

@@ -1,7 +1,6 @@
 import type { QueryError } from '../../../../index.js';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import ClientFlags from '../../../../lib/constants/client.js';
 
@@ -85,8 +84,10 @@ async function testReadOnlyError(
       });
     });
 
-    portfinder.getPort(async (_err, port) => {
-      server.listen(port);
+    // @ts-expect-error: TODO: implement typings
+    server.listen(0, async () => {
+      // @ts-expect-error: internal access
+      const port = server._server.address().port;
 
       const pool = mysql
         .createPool({

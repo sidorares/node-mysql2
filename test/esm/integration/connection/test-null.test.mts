@@ -9,34 +9,27 @@ await describe('Null', async () => {
   connection.query('INSERT INTO t VALUES(null)');
 
   await it('should handle null values', async () => {
-    await new Promise<void>((resolve, reject) => {
-      let rows: RowDataPacket[];
-      let rows1: RowDataPacket[];
-      let fields1: FieldPacket[];
-
+    const castRows = await new Promise<RowDataPacket[]>((resolve, reject) => {
       connection.query<RowDataPacket[]>(
         'SELECT cast(NULL AS CHAR) as cast_result',
-        (err, _rows) => {
-          if (err) return reject(err);
-          rows = _rows;
-        }
-      );
-      connection.query<RowDataPacket[]>(
-        'SELECT * from t',
-        (err, _rows, _fields) => {
-          if (err) return reject(err);
-          rows1 = _rows;
-          fields1 = _fields;
-
-          assert.deepEqual(rows, [{ cast_result: null }]);
-          // assert.equal(fields[0].columnType, 253); // depeding on the server type could be 253 or 3, disabling this check for now
-          assert.deepEqual(rows1, [{ i: null }]);
-          assert.equal(fields1[0].columnType, 3);
-
-          connection.end();
-          resolve();
-        }
+        (err, _rows) => (err ? reject(err) : resolve(_rows))
       );
     });
+
+    const [rows1, fields1] = await new Promise<
+      [RowDataPacket[], FieldPacket[]]
+    >((resolve, reject) => {
+      connection.query<RowDataPacket[]>(
+        'SELECT * from t',
+        (err, _rows, _fields) => (err ? reject(err) : resolve([_rows, _fields]))
+      );
+    });
+
+    assert.deepEqual(castRows, [{ cast_result: null }]);
+    // assert.equal(fields[0].columnType, 253); // depeding on the server type could be 253 or 3, disabling this check for now
+    assert.deepEqual(rows1, [{ i: null }]);
+    assert.equal(fields1[0].columnType, 3);
   });
+
+  connection.end();
 });

@@ -52,7 +52,16 @@ await describe('Nested Tables Query', async () => {
   };
 
   await it('should handle nested tables and row formats', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const results = await new Promise<{
+      rows1: RowDataPacket[];
+      rows2: RowDataPacket[];
+      rows3: RowDataPacket[];
+      rows4: RowDataPacket[];
+      rows5: RowDataPacket[];
+      rows1e: RowDataPacket[];
+      rows2e: RowDataPacket[];
+      rows3e: RowDataPacket[];
+    }>((resolve, reject) => {
       let rows1: RowDataPacket[];
       let rows2: RowDataPacket[];
       let rows3: RowDataPacket[];
@@ -60,7 +69,6 @@ await describe('Nested Tables Query', async () => {
       let rows5: RowDataPacket[];
       let rows1e: RowDataPacket[];
       let rows2e: RowDataPacket[];
-      let rows3e: RowDataPacket[];
 
       connection.query<RowDataPacket[]>(options1, (err, _rows) => {
         if (err) return reject(err);
@@ -99,63 +107,83 @@ await describe('Nested Tables Query', async () => {
 
       connection.execute<RowDataPacket[]>(options3, (err, _rows) => {
         if (err) return reject(err);
-        rows3e = _rows;
-
-        assert.equal(rows1.length, 1, 'First row length');
-        assert.equal(rows1[0].nested_test.id, 1, 'First row nested id');
-        assert.equal(
-          rows1[0].nested_test.title,
-          'test',
-          'First row nested title'
-        );
-        assert.equal(rows2.length, 1, 'Second row length');
-        assert.equal(rows2[0].nested_test_id, 1, 'Second row nested id');
-        assert.equal(
-          rows2[0].nested_test_title,
-          'test',
-          'Second row nested title'
-        );
-
-        assert.equal(Array.isArray(rows3[0]), true, 'Third row type');
-        assert.equal(rows3[0][0], 1, 'Third row value 1');
-        assert.equal(rows3[0][1], 'test', 'Third row value 2');
-
-        assert.equal(rows4.length, 1, 'Fourth row length');
-        assert.deepEqual(
-          rows4[0],
-          {
-            nested: {
-              title: 'test1',
-            },
-            notNested: {
-              id: 1,
-              title: 'test',
-            },
-          },
-          'Fourth row value'
-        );
-        assert.equal(rows5.length, 1, 'Fifth row length');
-        assert.deepEqual(
-          rows5[0],
-          {
-            nested2: {
-              title: 'test1',
-            },
-            notNested: {
-              id: 1,
-              title: 'test',
-            },
-          },
-          'Fifth row value'
-        );
-
-        assert.deepEqual(rows1, rows1e, 'Compare rows1 with rows1e');
-        assert.deepEqual(rows2, rows2e, 'Compare rows2 with rows2e');
-        assert.deepEqual(rows3, rows3e, 'Compare rows3 with rows3e');
-
-        connection.end();
-        resolve();
+        resolve({
+          rows1,
+          rows2,
+          rows3,
+          rows4,
+          rows5,
+          rows1e,
+          rows2e,
+          rows3e: _rows,
+        });
       });
     });
+
+    assert.equal(results.rows1.length, 1, 'First row length');
+    assert.equal(results.rows1[0].nested_test.id, 1, 'First row nested id');
+    assert.equal(
+      results.rows1[0].nested_test.title,
+      'test',
+      'First row nested title'
+    );
+    assert.equal(results.rows2.length, 1, 'Second row length');
+    assert.equal(results.rows2[0].nested_test_id, 1, 'Second row nested id');
+    assert.equal(
+      results.rows2[0].nested_test_title,
+      'test',
+      'Second row nested title'
+    );
+
+    assert.equal(Array.isArray(results.rows3[0]), true, 'Third row type');
+    assert.equal(results.rows3[0][0], 1, 'Third row value 1');
+    assert.equal(results.rows3[0][1], 'test', 'Third row value 2');
+
+    assert.equal(results.rows4.length, 1, 'Fourth row length');
+    assert.deepEqual(
+      results.rows4[0],
+      {
+        nested: {
+          title: 'test1',
+        },
+        notNested: {
+          id: 1,
+          title: 'test',
+        },
+      },
+      'Fourth row value'
+    );
+    assert.equal(results.rows5.length, 1, 'Fifth row length');
+    assert.deepEqual(
+      results.rows5[0],
+      {
+        nested2: {
+          title: 'test1',
+        },
+        notNested: {
+          id: 1,
+          title: 'test',
+        },
+      },
+      'Fifth row value'
+    );
+
+    assert.deepEqual(
+      results.rows1,
+      results.rows1e,
+      'Compare rows1 with rows1e'
+    );
+    assert.deepEqual(
+      results.rows2,
+      results.rows2e,
+      'Compare rows2 with rows2e'
+    );
+    assert.deepEqual(
+      results.rows3,
+      results.rows3e,
+      'Compare rows3 with rows3e'
+    );
   });
+
+  connection.end();
 });

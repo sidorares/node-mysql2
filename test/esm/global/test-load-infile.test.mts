@@ -2,12 +2,12 @@ import type {
   QueryError,
   ResultSetHeader,
   RowDataPacket,
-} from '../../../../index.js';
+} from '../../../index.js';
 import fs from 'node:fs';
 import process from 'node:process';
 import { PassThrough } from 'node:stream';
 import { assert, describe, it } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection } from '../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
@@ -16,8 +16,13 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 
 await describe('Load Infile', async () => {
   const connection = createConnection();
-
   const table = 'load_data_test';
+
+  const [savedLocalInfile] = await connection
+    .promise()
+    .query<RowDataPacket[]>('SELECT @@GLOBAL.local_infile as backup');
+  const originalLocalInfile = savedLocalInfile[0].backup;
+
   connection.query('SET GLOBAL local_infile = true', assert.ifError);
   connection.query(
     [
@@ -35,12 +40,13 @@ await describe('Load Infile', async () => {
     `FIELDS TERMINATED BY ? (id, title)`;
 
   await it('should load data from file and stream', async () => {
-    await new Promise<void>((resolve, reject) => {
-      let ok: ResultSetHeader;
-      let rows: RowDataPacket[];
-      let loadErr: QueryError | null = null;
-      let loadResult: ResultSetHeader;
+    let ok: ResultSetHeader;
+    let rows: RowDataPacket[];
+    let loadErr: QueryError | null = null;
+    let loadResult: ResultSetHeader;
+    let streamResult: ResultSetHeader;
 
+    await new Promise<void>((resolve, reject) => {
       connection.query<ResultSetHeader>(
         {
           sql,
@@ -87,30 +93,30 @@ await describe('Load Infile', async () => {
           values: [badPath, ','],
           infileStreamFactory: createMyStream,
         },
-        (err, streamResult) => {
+        (err, _streamResult) => {
           if (err) return reject(err);
-
-          assert.equal(ok.affectedRows, 4);
-          assert.equal(rows.length, 4);
-          assert.equal(rows[0].id, 1);
-          assert.equal(rows[0].title.trim(), 'Hello World');
-
-          assert(loadErr, 'Expected LOAD DATA error');
-          if (!loadErr) {
-            return;
-          }
-          assert.equal(
-            loadErr.message,
-            `As a result of LOCAL INFILE command server wants to read /does_not_exist.csv file, but as of v2.0 you must provide streamFactory option returning ReadStream.`
-          );
-          assert.equal(loadResult.affectedRows, 0);
-
-          assert.equal(streamResult.affectedRows, 2);
-
-          connection.end();
+          streamResult = _streamResult;
           resolve();
         }
       );
     });
+
+    assert.equal(ok!.affectedRows, 4);
+    assert.equal(rows!.length, 4);
+    assert.equal(rows![0].id, 1);
+    assert.equal(rows![0].title.trim(), 'Hello World');
+
+    assert(loadErr, 'Expected LOAD DATA error');
+    assert.equal(
+      loadErr!.message,
+      `As a result of LOCAL INFILE command server wants to read /does_not_exist.csv file, but as of v2.0 you must provide streamFactory option returning ReadStream.`
+    );
+    assert.equal(loadResult!.affectedRows, 0);
+    assert.equal(streamResult!.affectedRows, 2);
   });
+
+  await connection
+    .promise()
+    .query('SET GLOBAL local_infile = ?', [originalLocalInfile]);
+  connection.end();
 });

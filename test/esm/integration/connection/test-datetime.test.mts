@@ -184,7 +184,6 @@ await describe('Datetime', async () => {
         (err, _rows) => {
           if (err) return reject(err);
           rows2 = _rows;
-          connection.end();
           checkDone();
         }
       );
@@ -194,7 +193,6 @@ await describe('Datetime', async () => {
         (err, _rows) => {
           if (err) return reject(err);
           rows3 = _rows;
-          connectionZ.end();
           checkDone();
         }
       );
@@ -215,7 +213,6 @@ await describe('Datetime', async () => {
         (err, _rows) => {
           if (err) return reject(err);
           rows6 = _rows;
-          connection1.end();
           checkDone();
         }
       );
@@ -223,7 +220,6 @@ await describe('Datetime', async () => {
       connection2.execute<RowDataPacket[]>('select * from t', (err, _rows) => {
         if (err) return reject(err);
         rows8 = _rows;
-        connection2.end();
         checkDone();
       });
 
@@ -232,7 +228,6 @@ await describe('Datetime', async () => {
         (err, _rows) => {
           if (err) return reject(err);
           rows7 = _rows;
-          connection0930.end();
           checkDone();
         }
       );
@@ -329,4 +324,10 @@ await describe('Datetime', async () => {
       formatUTCDateTime(adjustTZ(datetime, tzOffset), 6)
     );
   });
+
+  connection.end();
+  connection1.end();
+  connection2.end();
+  connectionZ.end();
+  connection0930.end();
 });

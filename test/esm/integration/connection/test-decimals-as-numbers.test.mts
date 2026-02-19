@@ -21,29 +21,27 @@ await describe('Decimals as Numbers', async () => {
   connection2.query('INSERT INTO t2 set d1=?', [largeMoneyValue]);
 
   await it('should return decimals as strings when decimalNumbers is false', async () => {
-    await new Promise<void>((resolve, reject) => {
-      connection1.execute<RowDataPacket[]>(
-        'select d1 from t1',
-        (err, _rows) => {
-          if (err) return reject(err);
-          assert.equal(_rows[0].d1.constructor, String);
-          assert.equal(_rows[0].d1, largeDecimalExpected);
-          connection1.end();
-          resolve();
-        }
+    const rows1 = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection1.execute<RowDataPacket[]>('select d1 from t1', (err, _rows) =>
+        err ? reject(err) : resolve(_rows)
       );
     });
+
+    assert.equal(rows1[0].d1.constructor, String);
+    assert.equal(rows1[0].d1, largeDecimalExpected);
   });
 
   await it('should return decimals as numbers when decimalNumbers is true', async () => {
-    await new Promise<void>((resolve, reject) => {
-      connection2.query<RowDataPacket[]>('select d1 from t2', (err, _rows) => {
-        if (err) return reject(err);
-        assert.equal(_rows[0].d1.constructor, Number);
-        assert.equal(_rows[0].d1, largeMoneyValue);
-        connection2.end();
-        resolve();
-      });
+    const rows2 = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection2.query<RowDataPacket[]>('select d1 from t2', (err, _rows) =>
+        err ? reject(err) : resolve(_rows)
+      );
     });
+
+    assert.equal(rows2[0].d1.constructor, Number);
+    assert.equal(rows2[0].d1, largeMoneyValue);
   });
+
+  connection1.end();
+  connection2.end();
 });

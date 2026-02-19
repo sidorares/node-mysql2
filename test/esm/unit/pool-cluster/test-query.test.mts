@@ -20,21 +20,21 @@ await describe('pool cluster connection query', async () => {
 
     const connection = cluster.of('*');
 
-    await new Promise<void>((resolve, reject) => {
-      connection.query<RowDataPacket[]>('SELECT 1', (err, rows) => {
-        if (err) return reject(err);
-        assert.equal(rows.length, 1);
-        assert.equal(rows[0]['1'], 1);
-        // @ts-expect-error: internal access
-        assert.deepEqual(cluster._serviceableNodeIds, [
-          'MASTER',
-          'SLAVE1',
-          'SLAVE2',
-        ]);
-
-        cluster.end();
-        resolve();
-      });
+    const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.query<RowDataPacket[]>('SELECT 1', (err, _rows) =>
+        err ? reject(err) : resolve(_rows)
+      );
     });
+
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0]['1'], 1);
+    // @ts-expect-error: internal access
+    assert.deepEqual(cluster._serviceableNodeIds, [
+      'MASTER',
+      'SLAVE1',
+      'SLAVE2',
+    ]);
+
+    cluster.end();
   });
 });

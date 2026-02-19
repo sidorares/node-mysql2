@@ -32,25 +32,32 @@ await describe('Named Placeholders', async () => {
   connection.config.namedPlaceholders = true;
 
   await it('should handle named placeholders', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const result = await new Promise<{
+      execRows: RowDataPacket[];
+      execSumRows: RowDataPacket[];
+      queryRows: RowDataPacket[];
+      querySumRows: RowDataPacket[];
+      cmdSql: string;
+      cmdValues: unknown;
+      qCmdSql: string;
+      qCmdValues: unknown;
+    }>((resolve, reject) => {
+      let execRows: RowDataPacket[];
+      let execSumRows: RowDataPacket[];
+      let queryRows: RowDataPacket[];
+
       const cmd = connection.execute(
         'SELECT * from test_table where num1 < :numParam and num2 > :lParam',
         { lParam: 100, numParam: 2 },
         (err, rows) => {
           if (err) return reject(err);
-          assert.deepEqual(rows, [{ id: 4, num1: -5, num2: 8000000 }]);
+          execRows = rows as RowDataPacket[];
         }
       );
-      assert.equal(
-        cmd.sql,
-        'SELECT * from test_table where num1 < ? and num2 > ?'
-      );
-      // @ts-expect-error: TODO: implement typings for Query.values
-      assert.deepEqual(cmd.values, [2, 100]);
 
       connection.execute('SELECT :a + :a as sum', { a: 2 }, (err, rows) => {
         if (err) return reject(err);
-        assert.deepEqual(rows, [{ sum: 4 }]);
+        execSumRows = rows as RowDataPacket[];
       });
 
       const qCmd = connection.query(
@@ -58,23 +65,42 @@ await describe('Named Placeholders', async () => {
         { lParam: 100, numParam: 2 },
         (err, rows) => {
           if (err) return reject(err);
-          assert.deepEqual(rows, [{ id: 4, num1: -5, num2: 8000000 }]);
+          queryRows = rows as RowDataPacket[];
         }
       );
-      assert.equal(
-        qCmd.sql,
-        'SELECT * from test_table where num1 < 2 and num2 > 100'
-      );
-      // @ts-expect-error: TODO: implement typings for Query.values
-      assert.deepEqual(qCmd.values, [2, 100]);
 
       connection.query('SELECT :a + :a as sum', { a: 2 }, (err, rows) => {
         if (err) return reject(err);
-        assert.deepEqual(rows, [{ sum: 4 }]);
-        connection.end();
-        resolve();
+        resolve({
+          execRows,
+          execSumRows,
+          queryRows,
+          querySumRows: rows as RowDataPacket[],
+          cmdSql: cmd.sql,
+          // @ts-expect-error: TODO: implement typings for Query.values
+          cmdValues: cmd.values,
+          qCmdSql: qCmd.sql,
+          // @ts-expect-error: TODO: implement typings for Query.values
+          qCmdValues: qCmd.values,
+        });
       });
     });
+
+    assert.equal(
+      result.cmdSql,
+      'SELECT * from test_table where num1 < ? and num2 > ?'
+    );
+    assert.deepEqual(result.cmdValues, [2, 100]);
+    assert.deepEqual(result.execRows, [{ id: 4, num1: -5, num2: 8000000 }]);
+    assert.deepEqual(result.execSumRows, [{ sum: 4 }]);
+
+    assert.equal(
+      result.qCmdSql,
+      'SELECT * from test_table where num1 < 2 and num2 > 100'
+    );
+    assert.deepEqual(result.qCmdValues, [2, 100]);
+    assert.deepEqual(result.queryRows, [{ id: 4, num1: -5, num2: 8000000 }]);
+    assert.deepEqual(result.querySumRows, [{ sum: 4 }]);
 
     const namedSql = connection.format(
       'SELECT * from test_table where num1 < :numParam and num2 > :lParam',
@@ -100,13 +126,16 @@ await describe('Named Placeholders', async () => {
     // @ts-expect-error: TODO: implement typings
     pool.config.connectionConfig.namedPlaceholders = true;
 
-    await new Promise<void>((resolve, reject) => {
-      pool.query<SumRow[]>('SELECT :a + :a as sum', { a: 2 }, (err, rows) => {
-        pool.end();
+    const rows = await new Promise<SumRow[]>((resolve, reject) => {
+      pool.query<SumRow[]>('SELECT :a + :a as sum', { a: 2 }, (err, _rows) => {
         if (err) return reject(err);
-        assert.deepEqual(rows, [{ sum: 4 }]);
-        resolve();
+        resolve(_rows);
       });
     });
+
+    assert.deepEqual(rows, [{ sum: 4 }]);
+    pool.end();
   });
+
+  connection.end();
 });

@@ -200,30 +200,30 @@ await describe('Execute No Column Definition', async () => {
   const connection = createConnection();
 
   await it('should handle explain with no column definitions', async () => {
-    await new Promise<void>((resolve, reject) => {
-      connection.execute<RowDataPacket[]>(
-        'explain SELECT 1',
-        (err, rows, fields) => {
-          if (err) return reject(err);
+    const [rows, fields] = await new Promise<[RowDataPacket[], FieldPacket[]]>(
+      (resolve, reject) => {
+        connection.execute<RowDataPacket[]>(
+          'explain SELECT 1',
+          (err, _rows, _fields) =>
+            err ? reject(err) : resolve([_rows, _fields])
+        );
+      }
+    );
 
-          assert.deepEqual(rows, expectedRows);
-          fields.forEach((f: FieldPacket, index: number) => {
-            // @ts-expect-error: TODO: implement typings
-            const fi = f.inspect();
-            // "columnLength" is non-deterministic
-            delete fi.columnLength;
+    assert.deepEqual(rows, expectedRows);
+    fields.forEach((f: FieldPacket, index: number) => {
+      // @ts-expect-error: TODO: implement typings
+      const fi = f.inspect();
+      // "columnLength" is non-deterministic
+      delete fi.columnLength;
 
-            assert.deepEqual(
-              Object.keys(fi).sort(),
-              Object.keys(expectedFields[index]).sort()
-            );
-            assert.deepEqual(expectedFields[index], fi);
-          });
-
-          connection.end();
-          resolve();
-        }
+      assert.deepEqual(
+        Object.keys(fi).sort(),
+        Object.keys(expectedFields[index]).sort()
       );
+      assert.deepEqual(expectedFields[index], fi);
     });
   });
+
+  connection.end();
 });

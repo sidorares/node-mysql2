@@ -21,6 +21,7 @@ await describe('Disconnects', async () => {
   await it('should handle server disconnect', async () => {
     let rows: RowDataPacket[] | undefined;
     let fields: FieldPacket[] | undefined;
+    let disconnectError: (Error & { code?: string }) | undefined;
 
     const connections: Connection[] = [];
 
@@ -46,7 +47,7 @@ await describe('Disconnects', async () => {
               rows = _rows;
               fields = _fields;
               connection.on('error', (_err) => {
-                err = _err;
+                disconnectError = _err;
               });
 
               connections.forEach((conn) => {
@@ -55,7 +56,6 @@ await describe('Disconnects', async () => {
               });
               // @ts-expect-error: internal access
               server._server.close(() => {
-                assert.equal(err?.code, 'PROTOCOL_CONNECTION_LOST');
                 resolve();
               });
             }
@@ -89,6 +89,7 @@ await describe('Disconnects', async () => {
       );
     });
 
+    assert.equal(disconnectError?.code, 'PROTOCOL_CONNECTION_LOST');
     assert.deepEqual(rows, [{ 1: 1 }]);
     assert.equal(fields?.[0].name, '1');
   });

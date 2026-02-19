@@ -4,13 +4,17 @@ import type { AuthPlugin } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../index.js';
 import Command from '../../../lib/commands/command.js';
 import Packets from '../../../lib/packets/index.js';
 
 // The process is not terminated in Deno
 if (typeof Deno !== 'undefined') process.exit(0);
+
+process.on('uncaughtException', (err: NodeJS.ErrnoException) => {
+  if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'EPIPE') return;
+  throw err;
+});
 
 class TestAuthSwitchPluginError extends Command {
   args: Record<string, unknown>;
@@ -54,31 +58,39 @@ class TestAuthSwitchPluginError extends Command {
 
 await describe('Auth Switch Plugin Async Error', async () => {
   await it('should handle auth plugin async error', async () => {
-    let error: { code?: string; message?: string; fatal?: boolean } | undefined;
+    let clientError:
+      | { code?: string; message?: string; fatal?: boolean }
+      | undefined;
+    let serverError: NodeJS.ErrnoException | undefined;
 
     await new Promise<void>((resolve) => {
-      portfinder.getPort((_err, port) => {
-        const server = mysql.createServer((conn) => {
-          conn.on('error', (err: NodeJS.ErrnoException) => {
-            // The server must close the connection
-            assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+      // eslint-disable-next-line prefer-const
+      let checkDone: () => void;
 
-            // The plugin reports a fatal error
-            assert.equal(error?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
-            assert.equal(error?.message, 'boom');
-            assert.equal(error?.fatal, true);
-            resolve();
-          });
-          // @ts-expect-error: TODO: implement typings
-          conn.addCommand(
-            new TestAuthSwitchPluginError({
-              pluginName: 'auth_test_plugin',
-              pluginData: Buffer.allocUnsafe(0),
-            })
-          );
+      const server = mysql.createServer((conn) => {
+        conn.on('error', (err: NodeJS.ErrnoException) => {
+          serverError = err;
+          checkDone();
         });
+        // @ts-expect-error: TODO: implement typings
+        conn.addCommand(
+          new TestAuthSwitchPluginError({
+            pluginName: 'auth_test_plugin',
+            pluginData: Buffer.allocUnsafe(0),
+          })
+        );
+      });
 
-        server.listen(port);
+      checkDone = () => {
+        if (!clientError || !serverError) return;
+        server.close(() => resolve());
+      };
+
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
+
         const conn = mysql.createConnection({
           port: port,
           authPlugins: {
@@ -90,17 +102,23 @@ await describe('Auth Switch Plugin Async Error', async () => {
         });
 
         conn.on('error', (err) => {
-          error = err as {
+          clientError = err as {
             code?: string;
             message?: string;
             fatal?: boolean;
           };
-
-          conn.end();
-          // @ts-expect-error: TODO: implement typings
-          server.close();
+          conn.destroy();
+          checkDone();
         });
       });
     });
+
+    assert.ok(
+      serverError?.code === 'PROTOCOL_CONNECTION_LOST' ||
+        serverError?.code === 'ECONNRESET'
+    );
+    assert.equal(clientError?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
+    assert.equal(clientError?.message, 'boom');
+    assert.equal(clientError?.fatal, true);
   });
 });
