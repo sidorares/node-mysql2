@@ -10,17 +10,15 @@ const commonConfig = defineConfig({
 
 const parallel = defineConfig({
   ...commonConfig,
-  include: 'test/esm',
   exclude: [/test[\\/]esm[\\/]global/],
   concurrency: 4,
 });
 
 const sequential = defineConfig({
   ...commonConfig,
-  include: 'test/esm/global',
   concurrency: 1,
 });
 
-const suite = process.env.SUITE;
+const suite = process.env.SUITE === 'global' ? sequential : parallel;
 
-export default suite === 'global' ? sequential : parallel;
+export default suite;
