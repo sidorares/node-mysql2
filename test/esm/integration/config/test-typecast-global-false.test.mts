@@ -27,16 +27,14 @@ await describe('Typecast Global False', async () => {
   );
 
   await it('should return raw buffers when typeCast is false', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const res = await new Promise<RowDataPacket[]>((resolve, reject) => {
       connection.execute(
         'SELECT * FROM binpar_null_test',
-        (err, res: RowDataPacket[]) => {
-          if (err) return reject(err);
-          executeTests(res);
-          resolve();
-        }
+        (err, _res: RowDataPacket[]) => (err ? reject(err) : resolve(_res))
       );
     });
+
+    executeTests(res);
   });
 
   connection.end();

@@ -20,22 +20,20 @@ await describe('Typecast Overwriting Execute', async () => {
   });
 
   await it('should use connection-level typeCast', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const res = await new Promise<TypecastRow[]>((resolve, reject) => {
       connection.execute<TypecastRow[]>(
         {
           sql: 'select "foo uppercase" as foo',
         },
-        (err, res) => {
-          if (err) return reject(err);
-          assert.equal(res[0].foo, 'FOO UPPERCASE');
-          resolve();
-        }
+        (err, _res) => (err ? reject(err) : resolve(_res))
       );
     });
+
+    assert.equal(res[0].foo, 'FOO UPPERCASE');
   });
 
   await it('should override with execute-level typeCast', async () => {
-    await new Promise<void>((resolve, reject) => {
+    const res = await new Promise<TypecastRow[]>((resolve, reject) => {
       connection.execute<TypecastRow[]>(
         {
           sql: 'select "foo lowercase" as foo',
@@ -51,13 +49,11 @@ await describe('Typecast Overwriting Execute', async () => {
             return next();
           },
         },
-        (err, res) => {
-          if (err) return reject(err);
-          assert.equal(res[0].foo, 'foo lowercase');
-          resolve();
-        }
+        (err, _res) => (err ? reject(err) : resolve(_res))
       );
     });
+
+    assert.equal(res[0].foo, 'foo lowercase');
   });
 
   connection.end();

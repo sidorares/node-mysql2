@@ -3,7 +3,6 @@
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../index.js';
 import Command from '../../../lib/commands/command.js';
 import Packets from '../../../lib/packets/index.js';
@@ -58,41 +57,38 @@ class TestUnknownHandshakePacket extends Command {
 
 await describe('Handshake Unknown Packet Error', async () => {
   await it('should handle unknown handshake packet error', async () => {
-    let error: { code?: string; message?: string; fatal?: boolean };
+    let error: { code?: string; message?: string; fatal?: boolean } | undefined;
+    let serverError: NodeJS.ErrnoException | undefined;
 
     await new Promise<void>((resolve) => {
-      portfinder.getPort((_err, port) => {
-        const server = mysql.createServer((conn) => {
-          conn.on('error', (err: Error & { code?: string }) => {
-            // The server must close the connection
-            assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
-
-            // The plugin reports a fatal error
-            assert.equal(error.code, 'HANDSHAKE_UNKNOWN_ERROR');
-            assert.equal(
-              error.message,
-              'Unexpected packet during handshake phase'
-            );
-            assert.equal(error.fatal, true);
-            resolve();
-          });
-          // @ts-expect-error: TODO: implement typings
-          conn.addCommand(new TestUnknownHandshakePacket(Buffer.alloc(0)));
+      const server = mysql.createServer((conn) => {
+        conn.on('error', (err: NodeJS.ErrnoException) => {
+          serverError = err;
+          server.close(() => resolve());
         });
+        // @ts-expect-error: TODO: implement typings
+        conn.addCommand(new TestUnknownHandshakePacket(Buffer.alloc(0)));
+      });
 
-        server.listen(port);
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
+
         const conn = mysql.createConnection({
           port: port,
         });
 
         conn.on('error', (err) => {
           error = err;
-
           conn.end();
-          // @ts-expect-error: TODO: implement typings
-          server.close();
         });
       });
     });
+
+    assert.equal(error?.code, 'HANDSHAKE_UNKNOWN_ERROR');
+    assert.equal(error?.message, 'Unexpected packet during handshake phase');
+    assert.equal(error?.fatal, true);
+    assert.equal(serverError?.code, 'PROTOCOL_CONNECTION_LOST');
   });
 });

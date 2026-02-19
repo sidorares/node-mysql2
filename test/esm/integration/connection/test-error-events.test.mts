@@ -1,5 +1,12 @@
+import process from 'node:process';
 import { assert, describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
+
+let exceptionCount = 0;
+
+process.on('uncaughtException', () => {
+  exceptionCount++;
+});
 
 await describe('Error Events', async () => {
   await it('should handle error events without uncaught exceptions', async () => {
@@ -28,5 +35,6 @@ await describe('Error Events', async () => {
     });
 
     assert.equal(callCount, 2);
+    assert.equal(exceptionCount, 0);
   });
 });

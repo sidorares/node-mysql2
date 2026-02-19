@@ -1,6 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
+import { assert, describe, it, sleep } from 'poku';
 import mysql from '../../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -19,76 +18,87 @@ if (process.platform === 'win32') {
 if (typeof Deno !== 'undefined') process.exit(0);
 
 await describe('pool cluster restore', async () => {
+  const cluster = createPoolCluster({
+    canRetry: true,
+    removeNodeErrorCount: 2,
+    restoreNodeTimeout: 1000,
+  });
+
+  let connCount = 0;
+  let offline = true;
+
+  // @ts-expect-error: TODO: implement typings
+  const server = mysql.createServer();
+
+  server.on('connection', (conn) => {
+    connCount += 1;
+
+    if (offline) {
+      conn.close();
+    } else {
+      conn.serverHandshake({
+        serverVersion: 'node.js rocks',
+      });
+      conn.on('error', () => {
+        // server side of the connection
+        // ignore disconnects
+      });
+    }
+  });
+
+  const port = await new Promise<number>((resolve) => {
+    // @ts-expect-error: TODO: implement typings
+    server.listen(0, () => {
+      // @ts-expect-error: internal access
+      resolve(server._server.address().port as number);
+    });
+  });
+
+  cluster.add('MASTER', { port });
+
   await it('should restore node after timeout', async () => {
-    const cluster = createPoolCluster({
-      canRetry: true,
-      removeNodeErrorCount: 2,
-      restoreNodeTimeout: 100,
+    type MysqlError = Error & { code?: string; fatal?: boolean };
+
+    // First attempt - expected to fail (offline)
+    const err1 = await new Promise<MysqlError | null>((resolve) => {
+      cluster.getConnection('MASTER', (err) => resolve(err));
     });
 
-    let connCount = 0;
-    let offline = true;
+    assert.ok(err1);
+    assert.equal(err1?.code, 'PROTOCOL_CONNECTION_LOST');
+    assert.equal(err1?.fatal, true);
+    assert.equal(connCount, 2);
 
-    // @ts-expect-error: TODO: implement typings
-    const server = mysql.createServer();
+    // Second attempt - expected to fail (node removed)
+    const err2 = await new Promise<MysqlError | null>((resolve) => {
+      cluster.getConnection('MASTER', (err) => resolve(err));
+    });
 
+    assert.ok(err2);
+    assert.equal(err2?.code, 'POOL_NONEONLINE');
+
+    // @ts-expect-error: internal access
+    cluster._nodes.MASTER.errorCount = 3;
+    offline = false;
+
+    // Wait for restore timeout
+    await sleep(1500);
+
+    // Third attempt - should succeed
     await new Promise<void>((resolve, reject) => {
-      portfinder.getPort((_err, port) => {
-        cluster.add('MASTER', { port });
-
-        // @ts-expect-error: TODO: implement typings
-        server.listen(port + 0, (err) => {
-          if (err) return reject(err);
-
-          cluster.getConnection('MASTER', (err) => {
-            assert.ok(err);
-            assert.equal(err?.code, 'PROTOCOL_CONNECTION_LOST');
-            // @ts-expect-error: TODO: implement typings
-            assert.equal(err?.fatal, true);
-            assert.equal(connCount, 2);
-
-            cluster.getConnection('MASTER', (err) => {
-              assert.ok(err);
-              assert.equal(err?.code, 'POOL_NONEONLINE');
-
-              // @ts-expect-error: internal access
-              cluster._nodes.MASTER.errorCount = 3;
-
-              offline = false;
-            });
-
-            setTimeout(() => {
-              cluster.getConnection('MASTER', (err, conn) => {
-                if (err) return reject(err);
-                conn.release();
-
-                cluster.end((err) => {
-                  if (err) return reject(err);
-                  // @ts-expect-error: TODO: implement typings
-                  server.close();
-                  resolve();
-                });
-              });
-            }, 200);
-          });
-        });
-
-        server.on('connection', (conn) => {
-          connCount += 1;
-
-          if (offline) {
-            conn.close();
-          } else {
-            conn.serverHandshake({
-              serverVersion: 'node.js rocks',
-            });
-            conn.on('error', () => {
-              // server side of the connection
-              // ignore disconnects
-            });
-          }
-        });
+      cluster.getConnection('MASTER', (err, conn) => {
+        if (err) return reject(err);
+        conn.release();
+        resolve();
       });
     });
+  });
+
+  await new Promise<void>((resolve, reject) => {
+    cluster.end((err) => (err ? reject(err) : resolve()));
+  });
+
+  await new Promise<void>((resolve) => {
+    server.close(() => resolve());
   });
 });

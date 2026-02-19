@@ -66,7 +66,6 @@ await describe('Binary Charset String', async () => {
         if (err) return reject(err);
         rows3 = _rows;
         fields3 = _fields;
-        connection.end();
         resolve();
       });
     });
@@ -85,4 +84,6 @@ await describe('Binary Charset String', async () => {
     assert.deepEqual(rows5, [{ "x'010203'": Buffer.from([1, 2, 3]) }]);
     assert.equal(fields5?.[0].name, "x'010203'");
   });
+
+  connection.end();
 });

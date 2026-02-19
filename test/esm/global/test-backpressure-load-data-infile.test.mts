@@ -1,9 +1,13 @@
-import type { QueryError, ResultSetHeader } from '../../../../index.js';
+import type {
+  QueryError,
+  ResultSetHeader,
+  RowDataPacket,
+} from '../../../index.js';
 import Net from 'node:net';
 import { Duplex, Readable } from 'node:stream';
 import { assert, log, skip, sleep, test } from 'poku';
-import driver from '../../../../index.js';
-import { config } from '../../common.test.mjs';
+import driver from '../../../index.js';
+import { config } from '../common.test.mjs';
 
 if (config.compress) {
   skip(
@@ -33,6 +37,14 @@ class BigInput extends Readable {
 }
 
 await test('load data infile backpressure on local stream', async () => {
+  const setupConn = driver.createConnection(config);
+  const [savedRows] = await setupConn
+    .promise()
+    .query<RowDataPacket[]>('SELECT @@GLOBAL.local_infile as backup');
+  const originalLocalInfile = savedRows[0].backup;
+
+  await setupConn.promise().query('SET GLOBAL local_infile = 1');
+
   const netStream = Net.connect(config.port, config.host);
   netStream.setNoDelay(true);
   await new Promise<void>((resolve, reject) =>
@@ -85,7 +97,6 @@ await test('load data infile backpressure on local stream', async () => {
   connection.query(
     {
       sql: `
-      set global local_infile = 1;
       create temporary table test_load_data_backpressure (id varchar(100));
       load data local infile "_" replace into table test_load_data_backpressure;
     `,
@@ -102,6 +113,11 @@ await test('load data infile backpressure on local stream', async () => {
   // @ts-expect-error: TODO: implement typings
   connection.close();
   netStream.destroy();
+
+  await setupConn
+    .promise()
+    .query('SET GLOBAL local_infile = ?', [originalLocalInfile]);
+  setupConn.end();
 
   assert.ok(
     bigInput.count < bigInput.MAX_EXPECTED_ROWS,

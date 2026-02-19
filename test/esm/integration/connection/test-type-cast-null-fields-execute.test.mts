@@ -26,31 +26,28 @@ await describe('Type Cast Null Fields (execute)', async () => {
           'PRIMARY KEY (`id`)',
           ') ENGINE=InnoDB DEFAULT CHARSET=utf8',
         ].join('\n'),
-        (err) => {
-          if (err) return reject(err);
-
-          connection.execute(
-            `INSERT INTO ${table} (date, number) VALUES (?, ?)`,
-            [null, null],
-            (err) => {
-              if (err) return reject(err);
-
-              connection.execute<InsertTestRow[]>(
-                `SELECT * FROM ${table}`,
-                (err, _results) => {
-                  if (err) return reject(err);
-
-                  assert.strictEqual(_results[0].date, null);
-                  assert.strictEqual(_results[0].number, null);
-
-                  connection.end();
-                  resolve();
-                }
-              );
-            }
-          );
-        }
+        (err) => (err ? reject(err) : resolve())
       );
     });
+
+    await new Promise<void>((resolve, reject) => {
+      connection.execute(
+        `INSERT INTO ${table} (date, number) VALUES (?, ?)`,
+        [null, null],
+        (err) => (err ? reject(err) : resolve())
+      );
+    });
+
+    const results = await new Promise<InsertTestRow[]>((resolve, reject) => {
+      connection.execute<InsertTestRow[]>(
+        `SELECT * FROM ${table}`,
+        (err, _results) => (err ? reject(err) : resolve(_results))
+      );
+    });
+
+    assert.strictEqual(results[0].date, null);
+    assert.strictEqual(results[0].number, null);
   });
+
+  connection.end();
 });

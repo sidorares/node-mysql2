@@ -2,7 +2,6 @@ import type { Connection } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../index.js';
 import Command from '../../../lib/commands/command.js';
 import Packets from '../../../lib/packets/index.js';
@@ -110,8 +109,16 @@ await describe('Auth Switch', async () => {
       );
     });
 
+    let connectData:
+      | { serverVersion: string; connectionId: number }
+      | undefined;
+
     await new Promise<void>((resolve) => {
-      portfinder.getPort((_err: Error | null, port: number) => {
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
+
         const makeSwitchHandler = function () {
           let count = 0;
           return function (
@@ -129,7 +136,6 @@ await describe('Auth Switch', async () => {
           };
         };
 
-        server.listen(port);
         const conn = mysql.createConnection({
           user: 'test_user',
           password: 'test',
@@ -142,16 +148,17 @@ await describe('Auth Switch', async () => {
         conn.on(
           'connect',
           (data: { serverVersion: string; connectionId: number }) => {
-            assert.equal(data.serverVersion, 'node.js rocks');
-            assert.equal(data.connectionId, 1234);
+            connectData = data;
 
-            conn.end();
-            // @ts-expect-error: TODO: implement typings
-            server.close();
-            resolve();
+            conn.end(() => {
+              server.close(() => resolve());
+            });
           }
         );
       });
     });
+
+    assert.equal(connectData!.serverVersion, 'node.js rocks');
+    assert.equal(connectData!.connectionId, 1234);
   });
 });

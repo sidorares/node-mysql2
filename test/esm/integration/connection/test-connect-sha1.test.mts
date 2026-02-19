@@ -2,7 +2,6 @@ import type { Connection, QueryError } from '../../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import auth from '../../../../lib/auth_41.js';
 
@@ -32,29 +31,37 @@ await describe('Connect SHA1', async () => {
     let _1_2 = false;
     let _1_3 = false;
     let queryCalls = 0;
+    let queryReceived: string | undefined;
+    let queryError1Code: string | undefined;
+    let queryError2Code: string | undefined;
+    let queryError3Code: string | undefined;
 
     await new Promise<void>((resolve) => {
-      portfinder.getPort((_err, port) => {
-        // @ts-expect-error: TODO: implement typings
-        const server = mysql.createServer();
-        server.listen(port);
-        server.on('connection', (conn: Connection) => {
-          conn.serverHandshake({
-            protocolVersion: 10,
-            serverVersion: 'node.js rocks',
-            connectionId: 1234,
-            statusFlags: 2,
-            characterSet: 8,
-            capabilityFlags: 0xffffff,
-            authCallback: authenticate,
-          });
-          conn.on('query', (sql: string) => {
-            assert.equal(sql, 'select 1+1');
-            queryCalls++;
-            // @ts-expect-error: TODO: implement typings
-            conn.close();
-          });
+      // @ts-expect-error: TODO: implement typings
+      const server = mysql.createServer();
+
+      server.on('connection', (conn: Connection) => {
+        conn.serverHandshake({
+          protocolVersion: 10,
+          serverVersion: 'node.js rocks',
+          connectionId: 1234,
+          statusFlags: 2,
+          characterSet: 8,
+          capabilityFlags: 0xffffff,
+          authCallback: authenticate,
         });
+        conn.on('query', (sql: string) => {
+          queryReceived = sql;
+          queryCalls++;
+          // @ts-expect-error: TODO: implement typings
+          conn.close();
+        });
+      });
+
+      // @ts-expect-error: TODO: implement typings
+      server.listen(0, () => {
+        // @ts-expect-error: internal access
+        const port = server._server.address().port;
 
         // @ts-expect-error: TODO: implement typings
         const connection = mysql.createConnection({
@@ -72,24 +79,28 @@ await describe('Connect SHA1', async () => {
         });
 
         connection.query('select 1+1', (err: QueryError | null) => {
-          assert.equal(err?.code, 'PROTOCOL_CONNECTION_LOST');
+          queryError1Code = err?.code;
           // @ts-expect-error: internal access
           server._server.close();
         });
 
         connection.query('select 1+2', (err: QueryError | null) => {
-          assert.equal(err?.code, 'PROTOCOL_CONNECTION_LOST');
+          queryError2Code = err?.code;
           _1_2 = true;
         });
 
         connection.query('select 1+3', (err: QueryError | null) => {
-          assert.equal(err?.code, 'PROTOCOL_CONNECTION_LOST');
+          queryError3Code = err?.code;
           _1_3 = true;
           resolve();
         });
       });
     });
 
+    assert.equal(queryReceived, 'select 1+1');
+    assert.equal(queryError1Code, 'PROTOCOL_CONNECTION_LOST');
+    assert.equal(queryError2Code, 'PROTOCOL_CONNECTION_LOST');
+    assert.equal(queryError3Code, 'PROTOCOL_CONNECTION_LOST');
     assert.equal(queryCalls, 1);
     assert.equal(_1_2, true);
     assert.equal(_1_3, true);

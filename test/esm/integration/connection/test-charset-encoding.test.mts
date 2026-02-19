@@ -21,38 +21,33 @@ await describe('Charset Encoding', async () => {
     let resultData: CharsetRow[] | undefined;
 
     await new Promise<void>((resolve, reject) => {
-      connection.query('DROP TABLE IF EXISTS `test-charset-encoding`', () => {
-        connection.query(
-          'CREATE TABLE IF NOT EXISTS `test-charset-encoding` ' +
-            '( `field` VARCHAR(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci)',
-          (err) => {
-            if (err) return reject(err);
-            connection.query('DELETE from `test-charset-encoding`', (err) => {
+      connection.query(
+        'CREATE TEMPORARY TABLE `test-charset-encoding` ' +
+          '( `field` VARCHAR(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci)',
+        (err) => {
+          if (err) return reject(err);
+
+          testData.forEach((data) => {
+            connection.query(
+              'INSERT INTO `test-charset-encoding` (field) values(?)',
+              [data],
+              (err2) => {
+                if (err2) return reject(err2);
+              }
+            );
+          });
+
+          connection.query<CharsetRow[]>(
+            'SELECT * from `test-charset-encoding`',
+            (err, results) => {
               if (err) return reject(err);
-
-              testData.forEach((data) => {
-                connection.query(
-                  'INSERT INTO `test-charset-encoding` (field) values(?)',
-                  [data],
-                  (err2) => {
-                    if (err2) return reject(err2);
-                  }
-                );
-              });
-
-              connection.query<CharsetRow[]>(
-                'SELECT * from `test-charset-encoding`',
-                (err, results) => {
-                  if (err) return reject(err);
-                  resultData = results;
-                  connection.end();
-                  resolve();
-                }
-              );
-            });
-          }
-        );
-      });
+              resultData = results;
+              connection.end();
+              resolve();
+            }
+          );
+        }
+      );
     });
 
     resultData?.forEach((data: CharsetRow, index: number) => {

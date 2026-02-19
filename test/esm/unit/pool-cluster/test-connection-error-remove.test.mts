@@ -1,6 +1,5 @@
 import process, { exit } from 'node:process';
 import { assert, describe, it } from 'poku';
-import portfinder from 'portfinder';
 import mysql from '../../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -19,71 +18,79 @@ if (process.platform === 'win32') {
 }
 
 await describe('pool cluster error remove', async () => {
-  await it('should remove node on connection error', async () => {
-    const cluster = createPoolCluster({
-      removeNodeErrorCount: 1,
-    });
+  const cluster = createPoolCluster({
+    removeNodeErrorCount: 1,
+  });
 
-    let connCount = 0;
+  let connCount = 0;
 
-    // @ts-expect-error: TODO: implement typings
-    const server1 = mysql.createServer();
-    // @ts-expect-error: TODO: implement typings
-    const server2 = mysql.createServer();
+  // @ts-expect-error: TODO: implement typings
+  const server1 = mysql.createServer();
+  // @ts-expect-error: TODO: implement typings
+  const server2 = mysql.createServer();
 
-    await new Promise<void>((resolve, reject) => {
-      portfinder.getPort((_err, port) => {
-        cluster.add('SLAVE1', { port: port + 0 });
-        cluster.add('SLAVE2', { port: port + 1 });
+  server1.on('connection', (conn) => {
+    connCount += 1;
+    conn.close();
+  });
 
-        // @ts-expect-error: TODO: implement typings
-        server1.listen(port + 0, (err) => {
-          if (err) return reject(err);
-
-          // @ts-expect-error: TODO: implement typings
-          server2.listen(port + 1, (err) => {
-            if (err) return reject(err);
-
-            const pool = cluster.of('*', 'ORDER');
-            let removedNodeId: string | number;
-
-            cluster.on('remove', (nodeId) => {
-              removedNodeId = nodeId;
-            });
-
-            pool.getConnection((err, connection) => {
-              if (err) return reject(err);
-
-              assert.equal(connCount, 2);
-              // @ts-expect-error: internal access
-              assert.equal(connection._clusterId, 'SLAVE2');
-              assert.equal(removedNodeId, 'SLAVE1');
-              // @ts-expect-error: internal access
-              assert.deepEqual(cluster._serviceableNodeIds, ['SLAVE2']);
-
-              connection.release();
-
-              cluster.end((err) => {
-                if (err) return reject(err);
-                resolve();
-                exit();
-              });
-            });
-          });
-        });
-
-        server1.on('connection', (conn) => {
-          connCount += 1;
-          conn.close();
-        });
-
-        server2.on('connection', (conn) => {
-          connCount += 1;
-          conn.serverHandshake({
-            serverVersion: 'node.js rocks',
-          });
-        });
-      });
+  server2.on('connection', (conn) => {
+    connCount += 1;
+    conn.serverHandshake({
+      serverVersion: 'node.js rocks',
     });
   });
+
+  const port1 = await new Promise<number>((resolve, reject) => {
+    // @ts-expect-error: TODO: implement typings
+    server1.listen(0, (err?: Error) => {
+      if (err) return reject(err);
+      // @ts-expect-error: internal access
+      resolve(server1._server.address().port as number);
+    });
+  });
+
+  const port2 = await new Promise<number>((resolve, reject) => {
+    // @ts-expect-error: TODO: implement typings
+    server2.listen(0, (err?: Error) => {
+      if (err) return reject(err);
+      // @ts-expect-error: internal access
+      resolve(server2._server.address().port as number);
+    });
+  });
+
+  cluster.add('SLAVE1', { port: port1 });
+  cluster.add('SLAVE2', { port: port2 });
+
+  const pool = cluster.of('*', 'ORDER');
+  let removedNodeId: string | number;
+
+  cluster.on('remove', (nodeId) => {
+    removedNodeId = nodeId;
+  });
+
+  await it('should remove node on connection error', async () => {
+    const result = await new Promise<{ clusterId: string }>(
+      (resolve, reject) => {
+        pool.getConnection((err, connection) => {
+          if (err) return reject(err);
+          // @ts-expect-error: internal access
+          const clusterId = connection._clusterId as string;
+          connection.release();
+          resolve({ clusterId });
+        });
+      }
+    );
+
+    assert.equal(connCount, 2);
+    assert.equal(result.clusterId, 'SLAVE2');
+    assert.equal(removedNodeId, 'SLAVE1');
+    // @ts-expect-error: internal access
+    assert.deepEqual(cluster._serviceableNodeIds, ['SLAVE2']);
+  });
+
+  await new Promise<void>((resolve, reject) => {
+    cluster.end((err) => (err ? reject(err) : resolve()));
+  });
+  exit();
 });

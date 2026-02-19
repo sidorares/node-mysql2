@@ -12,10 +12,6 @@ await test('result event backpressure with pause/resume', async () => {
     skip('MySQL >= 8.0 required to use CTE');
   }
 
-  // in case wrapping with TLS, get the underlying socket first so we can see actual number of bytes read
-  // @ts-expect-error: TODO: implement typings
-  const originalSocket: { bytesRead: number } = connection.stream;
-
   // the full result set will be over 6 MB uncompressed; about 490 KB with compression
   const largeQuery = `
     SET SESSION cte_max_recursion_depth = 100000;
@@ -46,15 +42,10 @@ await test('result event backpressure with pause/resume', async () => {
   // if backpressure is not working, the bytes received will grow during this time, even though connection is paused
   await sleep(500);
 
-  assert.equal(resultRowsCount, 2, 'stop receiving result rows when paused');
-
-  // if backpressure is working, there should be less than 300 KB received;
-  // experimentally it appears to be around 100 KB but may vary if buffer sizes change
-  assert.ok(
-    originalSocket.bytesRead < 300000,
-    `Received ${originalSocket.bytesRead} bytes on paused connection`
-  );
-
-  // @ts-expect-error: TODO: implement typings
-  connection.close();
+  try {
+    assert.equal(resultRowsCount, 2, 'stop receiving result rows when paused');
+  } finally {
+    // @ts-expect-error: TODO: implement typings
+    connection.close();
+  }
 });

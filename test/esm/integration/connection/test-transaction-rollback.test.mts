@@ -20,32 +20,30 @@ await describe('Transaction Rollback', async () => {
 
   await it('should rollback a transaction successfully', async () => {
     await new Promise<void>((resolve, reject) => {
-      connection.beginTransaction((err) => {
-        if (err) return reject(err);
-
-        const row = {
-          id: 1,
-          title: 'Test row',
-        };
-
-        connection.query(`INSERT INTO ${table} SET ?`, row, (err) => {
-          if (err) return reject(err);
-
-          connection.rollback((err) => {
-            if (err) return reject(err);
-
-            connection.query<RowDataPacket[]>(
-              `SELECT * FROM ${table}`,
-              (err, rows) => {
-                if (err) return reject(err);
-                connection.end();
-                assert.equal(rows.length, 0);
-                resolve();
-              }
-            );
-          });
-        });
-      });
+      connection.beginTransaction((err) => (err ? reject(err) : resolve()));
     });
+
+    await new Promise<void>((resolve, reject) => {
+      connection.query(
+        `INSERT INTO ${table} SET ?`,
+        { id: 1, title: 'Test row' },
+        (err) => (err ? reject(err) : resolve())
+      );
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      connection.rollback((err) => (err ? reject(err) : resolve()));
+    });
+
+    const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.query<RowDataPacket[]>(
+        `SELECT * FROM ${table}`,
+        (err, _rows) => (err ? reject(err) : resolve(_rows))
+      );
+    });
+
+    assert.equal(rows.length, 0);
   });
+
+  connection.end();
 });

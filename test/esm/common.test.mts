@@ -13,7 +13,6 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import portfinder from 'portfinder';
 import driver from '../../index.js';
 import ClientFlags from '../../lib/constants/client.js';
 
@@ -265,9 +264,11 @@ export const createServer = function (
     }
   });
 
-  portfinder.getPort((_: Error | null, port: number) => {
-    // @ts-expect-error: TODO: implement typings
-    server.listen(port, onListening);
+  // @ts-expect-error: TODO: implement typings
+  server.listen(0, () => {
+    // @ts-expect-error: internal access
+    server._port = server._server.address().port;
+    onListening();
   });
 
   return server;

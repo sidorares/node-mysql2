@@ -8,36 +8,38 @@ await describe('Track Encodings', async () => {
 
   await it('should track koi8r encoding', async () => {
     await new Promise<void>((resolve, reject) => {
-      connection.query('SET character_set_client=koi8r', (err) => {
-        if (err) return reject(err);
-        connection.query<RowDataPacket[]>(
-          `SELECT ? as result`,
-          [text],
-          (err, rows) => {
-            if (err) return reject(err);
-            assert.equal(rows[0].result, text);
-            resolve();
-          }
-        );
-      });
+      connection.query('SET character_set_client=koi8r', (err) =>
+        err ? reject(err) : resolve()
+      );
     });
+
+    const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.query<RowDataPacket[]>(
+        `SELECT ? as result`,
+        [text],
+        (err, _rows) => (err ? reject(err) : resolve(_rows))
+      );
+    });
+
+    assert.equal(rows[0].result, text);
   });
 
   await it('should track cp1251 encoding', async () => {
     await new Promise<void>((resolve, reject) => {
-      connection.query('SET character_set_client=cp1251', (err) => {
-        if (err) return reject(err);
-        connection.query<RowDataPacket[]>(
-          `SELECT ? as result`,
-          [text],
-          (err, rows) => {
-            if (err) return reject(err);
-            assert.equal(rows[0].result, text);
-            resolve();
-          }
-        );
-      });
+      connection.query('SET character_set_client=cp1251', (err) =>
+        err ? reject(err) : resolve()
+      );
     });
+
+    const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.query<RowDataPacket[]>(
+        `SELECT ? as result`,
+        [text],
+        (err, _rows) => (err ? reject(err) : resolve(_rows))
+      );
+    });
+
+    assert.equal(rows[0].result, text);
   });
 
   connection.end();

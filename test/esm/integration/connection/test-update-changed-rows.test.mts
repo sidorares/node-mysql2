@@ -33,36 +33,27 @@ await describe('Update Changed Rows', async () => {
   connection.query('insert into changed_rows(value) values(3)');
 
   await it('should track changed rows correctly', async () => {
-    await new Promise<void>((resolve, reject) => {
-      let result1: ResultSetHeader;
-      let result2: ResultSetHeader;
-
+    const result1 = await new Promise<ResultSetHeader>((resolve, reject) => {
       connection.execute<ResultSetHeader>(
         'update changed_rows set value=1',
         [],
-        (err, _result) => {
-          if (err) return reject(err);
-
-          result1 = _result;
-          connection.execute<ResultSetHeader>(
-            'update changed_rows set value=1',
-            [],
-            (err, _result) => {
-              if (err) return reject(err);
-
-              result2 = _result;
-
-              assert.equal(result1.affectedRows, 4);
-              assert.equal(result1.changedRows, 2);
-              assert.equal(result2.affectedRows, 4);
-              assert.equal(result2.changedRows, 0);
-
-              connection.end();
-              resolve();
-            }
-          );
-        }
+        (err, _result) => (err ? reject(err) : resolve(_result))
       );
     });
+
+    const result2 = await new Promise<ResultSetHeader>((resolve, reject) => {
+      connection.execute<ResultSetHeader>(
+        'update changed_rows set value=1',
+        [],
+        (err, _result) => (err ? reject(err) : resolve(_result))
+      );
+    });
+
+    assert.equal(result1.affectedRows, 4);
+    assert.equal(result1.changedRows, 2);
+    assert.equal(result2.affectedRows, 4);
+    assert.equal(result2.changedRows, 0);
   });
+
+  connection.end();
 });
