@@ -45,6 +45,7 @@ jobs:
       - run: node tools/create-db.js
       - name: Run tests
         run: npm test
+        timeout-minutes: 10
         env:
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}

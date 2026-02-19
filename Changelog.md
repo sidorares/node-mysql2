@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.3](https://github.com/sidorares/node-mysql2/compare/v3.17.2...v3.17.3) (2026-02-19)
+
+
+### Bug Fixes
+
+* fix `PoolConnection.end` callback and promise resolution ([#3937](https://github.com/sidorares/node-mysql2/issues/3937)) ([18ff2c6](https://github.com/sidorares/node-mysql2/commit/18ff2c6e802f4b827bfd9d6066af377b220404df))
+
 ## [3.17.2](https://github.com/sidorares/node-mysql2/compare/v3.17.1...v3.17.2) (2026-02-16)
 
 

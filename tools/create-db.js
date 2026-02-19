@@ -1,6 +1,6 @@
 'use strict';
 
-const conn = require('../test/common.test.cjs').createConnection({
+const conn = require('./common.js').createConnection({
   database: 'mysql',
 });
 conn.query('CREATE DATABASE IF NOT EXISTS test', (err) => {

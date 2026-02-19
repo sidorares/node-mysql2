@@ -6,6 +6,8 @@ services:
     environment:
       MYSQL_DATABASE: 'test'
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - '3306:3306'
     healthcheck:
       test: ['CMD', 'mysql', '-h', 'localhost', '-u', 'root', '-e', 'SELECT 1']
       interval: 1s
