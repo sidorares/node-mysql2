@@ -3,7 +3,6 @@
 import { defineConfig } from 'poku';
 
 const commonConfig = defineConfig({
-  debug: true,
   reporter: 'compact',
   deno: {
     allow: ['read', 'env', 'net', 'sys'],
