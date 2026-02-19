@@ -12,6 +12,7 @@ await describe('Pool end with default config', async () => {
   await it('should emit deprecation warning when calling conn.end()', async () => {
     const pool = createPool();
     let warningEmitted = false;
+    let callbackInvoked = false;
 
     await new Promise<void>((resolve) => {
       pool.getConnection((_err1: Error | null, connection: PoolConnection) => {
@@ -24,11 +25,14 @@ await describe('Pool end with default config', async () => {
           );
         });
 
-        connection.end();
+        connection.end(() => {
+          callbackInvoked = true;
+        });
         pool.end(() => resolve());
       });
     });
 
     assert(warningEmitted, 'Warning should be emitted');
+    assert(callbackInvoked, 'Callback should be invoked');
   });
 });
