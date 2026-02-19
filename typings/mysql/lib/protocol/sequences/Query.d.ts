@@ -12,7 +12,8 @@ export type QueryValues =
   | null
   | Blob
   | Buffer
-  | ({} | null)[];
+  | ({} | null)[]
+  | { [key: string]: QueryValues };
 
 export interface QueryOptions {
   /**
