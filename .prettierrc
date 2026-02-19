@@ -22,7 +22,7 @@
       }
     },
     {
-      "files": "test/esm/**/*.mts",
+      "files": "test/**/*.mts",
       "options": {
         "plugins": ["@ianvs/prettier-plugin-sort-imports"],
         "importOrder": [

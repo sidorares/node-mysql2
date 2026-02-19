@@ -145,7 +145,7 @@ export default [
     },
   },
   {
-    files: ['test/esm/**/*.mts'],
+    files: ['test/**/*.mts'],
     rules: {
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
