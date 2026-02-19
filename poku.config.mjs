@@ -1,4 +1,6 @@
-const { defineConfig } = require('poku');
+// @ts-check
+
+import { defineConfig } from 'poku';
 
 const commonConfig = defineConfig({
   debug: true,
@@ -11,7 +13,7 @@ const commonConfig = defineConfig({
 const parallel = defineConfig({
   ...commonConfig,
   exclude: [/test[\\/]esm[\\/]global/],
-  concurrency: 4,
+  concurrency: 8,
 });
 
 const sequential = defineConfig({
@@ -21,4 +23,4 @@ const sequential = defineConfig({
 
 const suite = process.env.SUITE === 'global' ? sequential : parallel;
 
-module.exports = suite;
+export default suite;
