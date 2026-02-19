@@ -27,6 +27,7 @@ await describe('Errors', async () => {
       let onExecuteErrorEvent: boolean | undefined;
       let onQueryErrorEvent: boolean | undefined;
       let onExecuteErrorEvent1: boolean | undefined;
+      let onQueryErrorEvent1: boolean | undefined;
 
       connection
         .execute('error in execute', [], (err) => {
@@ -60,13 +61,14 @@ await describe('Errors', async () => {
         onExecuteErrorEvent1 = true;
       });
       connection.query('error in query 1').on('error', () => {
+        onQueryErrorEvent1 = true;
         resolve({
           executeErr,
           queryErr,
           onExecuteErrorEvent,
           onQueryErrorEvent,
           onExecuteErrorEvent1,
-          onQueryErrorEvent1: true,
+          onQueryErrorEvent1,
         });
       });
     });

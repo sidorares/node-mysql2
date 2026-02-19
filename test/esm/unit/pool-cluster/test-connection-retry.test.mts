@@ -44,9 +44,10 @@ await describe('pool cluster retry', async () => {
     }
   });
 
-  const port = await new Promise<number>((resolve) => {
+  const port = await new Promise<number>((resolve, reject) => {
     // @ts-expect-error: TODO: implement typings
-    server.listen(0, () => {
+    server.listen(0, (err?: Error) => {
+      if (err) return reject(err);
       // @ts-expect-error: internal access
       resolve(server._server.address().port as number);
     });

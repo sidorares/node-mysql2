@@ -57,13 +57,22 @@ await describe('pool cluster restore events', async () => {
   cluster.add('MASTER', { port });
 
   await it('should emit offline and online events', async () => {
+    let offlineEvents = 0;
+    let onlineEvents = 0;
+
     const offlinePromise = new Promise<string>((resolve) => {
-      cluster.on('offline', (id: string) => resolve(id));
+      cluster.on('offline', (id: string) => {
+        offlineEvents++;
+        resolve(id);
+      });
     });
 
     const onlinePromise = new Promise<{ id: string; connCount: number }>(
       (resolve) => {
-        cluster.on('online', (id: string) => resolve({ id, connCount }));
+        cluster.on('online', (id: string) => {
+          onlineEvents++;
+          resolve({ id, connCount });
+        });
       }
     );
 
@@ -110,6 +119,10 @@ await describe('pool cluster restore events', async () => {
     const onlineResult = await onlinePromise;
     assert.equal(onlineResult.id, 'MASTER');
     assert.equal(onlineResult.connCount, 3);
+
+    // Verify events fired exactly once
+    assert.equal(offlineEvents, 1);
+    assert.equal(onlineEvents, 1);
   });
 
   await new Promise<void>((resolve, reject) => {

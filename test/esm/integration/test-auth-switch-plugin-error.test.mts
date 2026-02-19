@@ -59,7 +59,7 @@ await describe('Auth Switch Plugin Error', async () => {
       const server = mysql.createServer((conn) => {
         conn.on('error', (err: NodeJS.ErrnoException) => {
           serverError = err;
-          resolve();
+          server.close(() => resolve());
         });
         // @ts-expect-error: TODO: implement typings
         conn.addCommand(
@@ -90,17 +90,14 @@ await describe('Auth Switch Plugin Error', async () => {
             message?: string;
             fatal?: boolean;
           };
-
           conn.end();
-          // @ts-expect-error: TODO: implement typings
-          server.close();
         });
       });
     });
 
-    assert.equal(serverError?.code, 'PROTOCOL_CONNECTION_LOST');
     assert.equal(error?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
     assert.equal(error?.message, 'boom');
     assert.equal(error?.fatal, true);
+    assert.equal(serverError?.code, 'PROTOCOL_CONNECTION_LOST');
   });
 });

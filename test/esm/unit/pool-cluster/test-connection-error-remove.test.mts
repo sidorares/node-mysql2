@@ -41,17 +41,19 @@ await describe('pool cluster error remove', async () => {
     });
   });
 
-  const port1 = await new Promise<number>((resolve) => {
+  const port1 = await new Promise<number>((resolve, reject) => {
     // @ts-expect-error: TODO: implement typings
-    server1.listen(0, () => {
+    server1.listen(0, (err?: Error) => {
+      if (err) return reject(err);
       // @ts-expect-error: internal access
       resolve(server1._server.address().port as number);
     });
   });
 
-  const port2 = await new Promise<number>((resolve) => {
+  const port2 = await new Promise<number>((resolve, reject) => {
     // @ts-expect-error: TODO: implement typings
-    server2.listen(0, () => {
+    server2.listen(0, (err?: Error) => {
+      if (err) return reject(err);
       // @ts-expect-error: internal access
       resolve(server2._server.address().port as number);
     });

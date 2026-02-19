@@ -58,13 +58,13 @@ class TestUnknownHandshakePacket extends Command {
 await describe('Handshake Unknown Packet Error', async () => {
   await it('should handle unknown handshake packet error', async () => {
     let error: { code?: string; message?: string; fatal?: boolean } | undefined;
-    let serverError: (Error & { code?: string }) | undefined;
+    let serverError: NodeJS.ErrnoException | undefined;
 
     await new Promise<void>((resolve) => {
       const server = mysql.createServer((conn) => {
-        conn.on('error', (err: Error & { code?: string }) => {
+        conn.on('error', (err: NodeJS.ErrnoException) => {
           serverError = err;
-          resolve();
+          server.close(() => resolve());
         });
         // @ts-expect-error: TODO: implement typings
         conn.addCommand(new TestUnknownHandshakePacket(Buffer.alloc(0)));
@@ -81,17 +81,14 @@ await describe('Handshake Unknown Packet Error', async () => {
 
         conn.on('error', (err) => {
           error = err;
-
           conn.end();
-          // @ts-expect-error: TODO: implement typings
-          server.close();
         });
       });
     });
 
-    assert.equal(serverError?.code, 'PROTOCOL_CONNECTION_LOST');
     assert.equal(error?.code, 'HANDSHAKE_UNKNOWN_ERROR');
     assert.equal(error?.message, 'Unexpected packet during handshake phase');
     assert.equal(error?.fatal, true);
+    assert.equal(serverError?.code, 'PROTOCOL_CONNECTION_LOST');
   });
 });
