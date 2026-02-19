@@ -3,15 +3,15 @@ import { describe, it } from 'poku';
 import { createConnection } from '../common.test.mjs';
 
 await describe('Execute and Unprepare', async () => {
-  await it('should execute and unprepare repeatedly', async () => {
-    const connection = createConnection();
-    const [savedRows] = await connection
-      .promise()
-      .query<
-        RowDataPacket[]
-      >('SELECT @@GLOBAL.max_prepared_stmt_count as backup');
-    const originalMaxPrepared = savedRows[0].backup;
+  const connection = createConnection();
+  const [savedRows] = await connection
+    .promise()
+    .query<
+      RowDataPacket[]
+    >('SELECT @@GLOBAL.max_prepared_stmt_count as backup');
+  const originalMaxPrepared = savedRows[0].backup;
 
+  await it('should execute and unprepare repeatedly', async () => {
     await new Promise<void>((resolve, reject) => {
       const max = 500;
       function exec(i: number) {
@@ -22,13 +22,7 @@ await describe('Execute and Unprepare', async () => {
             return reject(err);
           }
           if (i > max) {
-            connection.query(
-              `SET GLOBAL max_prepared_stmt_count=${originalMaxPrepared}`,
-              () => {
-                connection.end();
-                resolve();
-              }
-            );
+            resolve();
           } else {
             exec(i + 1);
           }
@@ -42,4 +36,10 @@ await describe('Execute and Unprepare', async () => {
       });
     });
   });
+
+  await connection
+    .promise()
+    .query(`SET GLOBAL max_prepared_stmt_count=${originalMaxPrepared}`);
+
+  connection.end();
 });

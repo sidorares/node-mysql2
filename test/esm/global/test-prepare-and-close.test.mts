@@ -4,16 +4,15 @@ import { describe, it } from 'poku';
 import { createConnection } from '../common.test.mjs';
 
 await describe('Prepare and Close', async () => {
+  const connection = createConnection();
+  const [savedRows] = await connection
+    .promise()
+    .query<
+      RowDataPacket[]
+    >('SELECT @@GLOBAL.max_prepared_stmt_count as backup');
+  const originalMaxPrepared = savedRows[0].backup;
+
   await it('should prepare and close statements repeatedly', async () => {
-    const connection = createConnection();
-
-    const [savedRows] = await connection
-      .promise()
-      .query<
-        RowDataPacket[]
-      >('SELECT @@GLOBAL.max_prepared_stmt_count as backup');
-    const originalMaxPrepared = savedRows[0].backup;
-
     await new Promise<void>((resolve, reject) => {
       const max = 500;
       const start = process.hrtime();
@@ -27,15 +26,7 @@ await describe('Prepare and Close', async () => {
             const ns = end[0] * 1e9 + end[1];
 
             console.log(`${(max * 1e9) / ns} prepares/sec`);
-
-            connection.query(
-              `SET GLOBAL max_prepared_stmt_count=${originalMaxPrepared}`,
-              () => {
-                connection.end();
-                resolve();
-              }
-            );
-
+            resolve();
             return;
           }
 
@@ -50,4 +41,10 @@ await describe('Prepare and Close', async () => {
       });
     });
   });
+
+  await connection
+    .promise()
+    .query(`SET GLOBAL max_prepared_stmt_count=${originalMaxPrepared}`);
+
+  connection.end();
 });

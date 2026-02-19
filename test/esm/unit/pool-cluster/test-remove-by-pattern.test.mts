@@ -77,6 +77,8 @@ await describe('pool cluster remove by pattern', async () => {
   await new Promise<void>((resolve, reject) => {
     cluster.end((err) => (err ? reject(err) : resolve()));
   });
-  // @ts-expect-error: TODO: implement typings
-  server.close();
+
+  await new Promise<void>((resolve) => {
+    server.close(() => resolve());
+  });
 });
