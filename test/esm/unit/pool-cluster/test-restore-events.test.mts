@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, sleep } from 'poku';
 import mysql from '../../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -21,7 +21,7 @@ await describe('pool cluster restore events', async () => {
   const cluster = createPoolCluster({
     canRetry: true,
     removeNodeErrorCount: 2,
-    restoreNodeTimeout: 100,
+    restoreNodeTimeout: 1000,
   });
 
   let connCount = 0;
@@ -104,7 +104,7 @@ await describe('pool cluster restore events', async () => {
     offline = false;
 
     // Wait for restore timeout
-    await new Promise<void>((resolve) => setTimeout(resolve, 200));
+    await sleep(1500);
 
     // Third attempt - should succeed and trigger online event
     await new Promise<void>((resolve, reject) => {
