@@ -1,30 +1,14 @@
 'use strict';
 
-const fs = require('node:fs');
-const path = require('node:path');
 const process = require('node:process');
-
-const disableEval = process.env.STATIC_PARSER === '1';
 
 const config = {
   host: process.env.MYSQL_HOST || 'localhost',
   user: process.env.MYSQL_USER || 'root',
   password: (process.env.CI ? process.env.MYSQL_PASSWORD : '') || '',
   database: process.env.MYSQL_DATABASE || 'test',
-  compress: process.env.MYSQL_USE_COMPRESSION === '1',
   port: process.env.MYSQL_PORT || 3306,
-  disableEval,
 };
-
-if (process.env.MYSQL_USE_TLS === '1') {
-  config.ssl = {
-    rejectUnauthorized: false,
-    ca: fs.readFileSync(
-      path.join(__dirname, '../test/fixtures/ssl/certs/ca.pem'),
-      'utf-8'
-    ),
-  };
-}
 
 exports.waitDatabaseReady = function (callback) {
   const start = Date.now();
@@ -84,33 +68,6 @@ exports.createConnection = function (args) {
     args = {};
   }
 
-  const params = {
-    host: args.host || config.host,
-    rowsAsArray: args.rowsAsArray,
-    user: (args && args.user) || config.user,
-    password: (args && args.password) || config.password,
-    database: (args && args.database) || config.database,
-    multipleStatements: args ? args.multipleStatements : false,
-    port: (args && args.port) || config.port,
-    debug: process.env.DEBUG || (args && args.debug),
-    supportBigNumbers: args && args.supportBigNumbers,
-    bigNumberStrings: args && args.bigNumberStrings,
-    compress: (args && args.compress) || config.compress,
-    decimalNumbers: args && args.decimalNumbers,
-    charset: args && args.charset,
-    timezone: args && args.timezone,
-    dateStrings: args && args.dateStrings,
-    authSwitchHandler: args && args.authSwitchHandler,
-    typeCast: args && args.typeCast,
-    namedPlaceholders: args && args.namedPlaceholders,
-    connectTimeout: args && args.connectTimeout,
-    nestTables: args && args.nestTables,
-    ssl: (args && args.ssl) ?? config.ssl,
-    jsonStrings: args && args.jsonStrings,
-    disableEval,
-    flags: args && args.flags,
-  };
-
-  const conn = driver.createConnection(params);
+  const conn = driver.createConnection({ ...config, ...args });
   return conn;
 };
