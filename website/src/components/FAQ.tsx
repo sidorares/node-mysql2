@@ -1,5 +1,4 @@
-import { FC, ReactNode } from 'react';
-// eslint-disable-next-line import/no-unresolved
+import type { FC, ReactNode } from 'react';
 import Details from '@theme/Details';
 
 export type FAQProps = {

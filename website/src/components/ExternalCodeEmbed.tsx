@@ -1,10 +1,9 @@
-import { useState, useEffect, FC } from 'react';
+import { useState, useEffect, type FC } from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-// eslint-disable-next-line import/no-unresolved
 import CodeBlock from '@theme/CodeBlock';
 import { Loading } from '@site/src/components/Loading';
 import {
-  MethodType,
+  type MethodType,
   extractMethodContent,
 } from '@site/helpers/extract-method-content';
 

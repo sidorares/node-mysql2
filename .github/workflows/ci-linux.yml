@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 22, 23]
+        node-version: [18, 20, 22, 24]
         mysql-version: ['mysql:8.3']
         use-compression: [0, 1]
         use-tls: [0, 1]
@@ -58,7 +58,7 @@ jobs:
         run: node tools/wait-up.js
 
       - name: Run tests
-        run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run test
+        run: MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run test
         timeout-minutes: 10
 
   tests-linux-bun:
@@ -66,7 +66,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bun-version: [latest, canary]
+        bun-version: [latest]
         mysql-version: ['mysql:8.3']
         use-compression: [0, 1]
         use-tls: [0, 1]
@@ -112,66 +112,7 @@ jobs:
           MYSQL_PORT: ${{ env.MYSQL_PORT }}
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
-          FILTER: test-select-1|test-select-ssl
         run: bun run test:bun
-        timeout-minutes: 10
-
-  tests-linux-deno-v1:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        deno-version: [v1.x]
-        mysql-version: ['mysql:8.3']
-        use-compression: [0, 1]
-        static-parser: [0, 1]
-        # TODO: investigate error when using SSL (1)
-        #
-        # errno: -4094
-        # code: "UNKNOWN"
-        # syscall: "read"
-        use-tls: [0]
-
-    env:
-      STATIC_PARSER: ${{ matrix.static-parser }}
-
-    name: Deno ${{ matrix.deno-version }} - DB ${{ matrix.mysql-version }} - SSL=${{matrix.use-tls}} Compression=${{matrix.use-compression}} Static Parser=${{matrix.static-parser}}
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up MySQL
-        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/test/fixtures/custom-conf:/etc/mysql/conf.d -v $PWD/test/fixtures/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
-
-      - name: Set up Deno ${{ matrix.deno-version }}
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: ${{ matrix.deno-version }}
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: npm-linux-${{ hashFiles('package-lock.json') }}
-          restore-keys: npm-linux-
-
-      - name: Install npm dependencies
-        run: npm ci
-
-      - name: Wait mysql server is ready
-        run: node tools/wait-up.js
-
-      - name: run tests
-        env:
-          MYSQL_USER: ${{ env.MYSQL_USER }}
-          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
-          MYSQL_PORT: ${{ env.MYSQL_PORT }}
-          MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
-          MYSQL_USE_TLS: ${{ matrix.use-tls }}
-        run: deno task test:deno -- --denoCjs='.js,.cjs'
         timeout-minutes: 10
 
   tests-linux-deno-v2:
@@ -179,7 +120,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        deno-version: [v2.x, canary]
+        deno-version: [v2.x]
         mysql-version: ['mysql:8.3']
         use-compression: [0, 1]
         static-parser: [0, 1]

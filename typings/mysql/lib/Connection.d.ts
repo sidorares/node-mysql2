@@ -335,7 +335,16 @@ export interface ConnectionOptions {
    * (Default: false)
    */
   jsonStrings?: boolean;
+
+  gracefulEnd?: boolean;
 }
+
+export type ConnectionState =
+  | 'disconnected'
+  | 'protocol_handshake'
+  | 'connected'
+  | 'authenticated'
+  | 'error';
 
 declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
   config: ConnectionOptions;
@@ -343,6 +352,8 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
   threadId: number;
 
   authorized: boolean;
+
+  readonly state: ConnectionState;
 
   static createQuery<
     T extends

@@ -37,6 +37,7 @@ jobs:
              [[ "$MESSAGE" =~ ci: ]] ||
              [[ "$MESSAGE" =~ cd: ]] ||
              [[ "$MESSAGE" =~ docs\(.*\): ]] ||
+             [[ "$MESSAGE" =~ test\(.*\): ]] ||
              [[ "$MESSAGE" =~ ci\(.*\): ]] ||
              [[ "$MESSAGE" =~ cd\(.*\): ]] ||
              [[ "$MESSAGE" =~ chore\(website\) ]]; then

@@ -3,6 +3,18 @@ import { OkPacket, RowDataPacket, FieldPacket } from '../packets/index.js';
 import { Readable } from 'stream';
 import { TypeCast } from '../../parsers/typeCast.js';
 
+export type QueryValues =
+  | string
+  | number
+  | bigint
+  | boolean
+  | Date
+  | null
+  | Blob
+  | Buffer
+  | ({} | null)[]
+  | { [key: string]: QueryValues };
+
 export interface QueryOptions {
   /**
    * The SQL for the query
@@ -12,7 +24,7 @@ export interface QueryOptions {
   /**
    * The values for the query
    */
-  values?: any | any[] | { [param: string]: any };
+  values?: QueryValues;
 
   /**
    * This overrides the namedPlaceholders option set at the connection level.
@@ -92,9 +104,9 @@ export interface StreamOptions {
   highWaterMark?: number;
 
   /**
-   * The object mode of the stream (Default: true)
+   * The object mode of the stream is always set to `true`
    */
-  objectMode?: any;
+  objectMode?: true;
 }
 
 export interface QueryError extends NodeJS.ErrnoException {

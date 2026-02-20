@@ -1,5 +1,5 @@
 import { FieldPacket, QueryResult } from '../../packets/index.js';
-import { QueryOptions, QueryableConstructor } from '../Query.js';
+import { QueryOptions, QueryableConstructor, QueryValues } from '../Query.js';
 
 export declare function ExecutableBase<T extends QueryableConstructor>(
   Base?: T
@@ -8,14 +8,14 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
     execute<T extends QueryResult>(sql: string): Promise<[T, FieldPacket[]]>;
     execute<T extends QueryResult>(
       sql: string,
-      values: any
+      values: QueryValues
     ): Promise<[T, FieldPacket[]]>;
     execute<T extends QueryResult>(
       options: QueryOptions
     ): Promise<[T, FieldPacket[]]>;
     execute<T extends QueryResult>(
       options: QueryOptions,
-      values: any
+      values: QueryValues
     ): Promise<[T, FieldPacket[]]>;
   };
 } & T;

@@ -8,9 +8,9 @@ export const extractMethodContent = (
   const lines = text.split('\n');
   const startPattern = `${type} ${methodName}`;
 
-  let insideSegment: boolean = false;
-  let depth: number = 0;
-  let extractedCode: string = '';
+  let insideSegment = false;
+  let depth = 0;
+  let extractedCode = '';
 
   for (const line of lines) {
     if (line.includes(startPattern)) insideSegment = true;
@@ -18,7 +18,7 @@ export const extractMethodContent = (
     if (insideSegment) {
       if (line.includes('{')) depth++;
 
-      extractedCode += line + '\n';
+      extractedCode += `${line}\n`;
 
       if (line.includes('}')) {
         depth--;

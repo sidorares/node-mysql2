@@ -1,6 +1,3 @@
-/**
- * sqlstring types are based on https://www.npmjs.com/package/@types/sqlstring, version 2.3.2
- */
 import { Pool as BasePool, PoolOptions } from './lib/Pool.js';
 import {
   Connection as BaseConnection,
@@ -23,6 +20,13 @@ import {
   PrepareStatementInfo,
 } from './lib/protocol/sequences/Prepare.js';
 import { Server } from './lib/Server.js';
+import {
+  escape as SqlStringEscape,
+  escapeId as SqlStringEscapeId,
+  format as SqlStringFormat,
+  raw as SqlStringRaw,
+} from 'sql-escaper';
+export type { Raw, SqlValue, Timezone } from 'sql-escaper';
 
 export {
   ConnectionOptions,
@@ -39,6 +43,7 @@ export * from './lib/protocol/packets/index.js';
 export * from './lib/Auth.js';
 export * from './lib/constants/index.js';
 export * from './lib/parsers/index.js';
+export * from './lib/Connection.js';
 
 // Expose class interfaces
 export interface Connection extends BaseConnection {}
@@ -56,26 +61,10 @@ export function createPool(config: PoolOptions): BasePool;
 
 export function createPoolCluster(config?: PoolClusterOptions): PoolCluster;
 
-type TimeZone = 'local' | 'Z' | (string & NonNullable<unknown>);
-export function escape(
-  value: any,
-  stringifyObjects?: boolean,
-  timeZone?: TimeZone
-): string;
-
-export function escapeId(value: any, forbidQualified?: boolean): string;
-
-export function format(sql: string): string;
-export function format(
-  sql: string,
-  values: any | any[],
-  stringifyObjects?: boolean,
-  timeZone?: TimeZone
-): string;
-
-export function raw(sql: string): {
-  toSqlString: () => string;
-};
+export const escape: typeof SqlStringEscape;
+export const escapeId: typeof SqlStringEscapeId;
+export const format: typeof SqlStringFormat;
+export const raw: typeof SqlStringRaw;
 
 export interface ConnectionConfig extends ConnectionOptions {
   mergeFlags(defaultFlags: string[], userFlags: string[] | string): number;

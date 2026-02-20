@@ -58,7 +58,8 @@ jobs:
         run: node tools/wait-up.js
 
       - name: Run tests
-        run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run coverage-test
+        run: FILTER=${{matrix.filter}} MYSQL_USE_TLS=${{ matrix.use-tls }} MYSQL_USE_COMPRESSION=${{ matrix.use-compression }} npm run test:coverage
+        timeout-minutes: 15
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4

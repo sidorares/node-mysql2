@@ -1,4 +1,4 @@
-import markdown from 'eslint-plugin-markdown';
+import markdown from '@eslint/markdown';
 import asyncAwait from 'eslint-plugin-async-await';
 import globals from 'globals';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
@@ -83,6 +83,33 @@ export default [
       ],
     },
   },
+  ...compat.extends('plugin:@typescript-eslint/recommended').map((config) => ({
+    ...config,
+    files: ['**/*.mts'],
+  })),
+  {
+    files: ['**/*.mts'],
+    plugins: {
+      '@typescript-eslint': typescriptEslint,
+    },
+    languageOptions: {
+      parser: tsParser,
+    },
+    rules: {
+      '@typescript-eslint/no-empty-interface': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      strict: 'off',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'ImportDeclaration[source.value=/^\\./][source.value!=/\\.(m?js|json)$/]',
+          message:
+            'Local imports must have the explicit .mjs, .js, or .json extension',
+        },
+      ],
+    },
+  },
   {
     files: ['**/*.md'],
     processor: 'markdown/markdown',
@@ -111,14 +138,21 @@ export default [
     },
   },
   {
-    files: ['**/**/*.test.ts'],
+    files: ['**/**/*.test.ts', '**/**/*.test.mts'],
     rules: {
       '@typescript-eslint/no-unused-expressions': 'off',
       'arrow-parens': ['error', 'always'],
     },
   },
   {
-    files: ['**/*.mjs'],
+    files: ['test/**/*.mts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
+    },
+  },
+  {
+    files: ['**/*.mjs', '**/*.mts'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

@@ -110,23 +110,64 @@ const connection = mysql.createConnection({
 connection.query('SELECT 1+1 as test1', console.log);
 ```
 
-`stream` also can be a function. In that case function result has to be duplex stream, and it is used for connection transport. This is required if you connect pool using custom transport as new pooled connection needs new stream. [Example](https://github.com/sidorares/node-mysql2/issues/80) connecting over socks5 proxy:
+`stream` also can be a function. In that case function result has to be duplex stream, and it is used for connection transport. This is required if you connect pool using custom transport as new pooled connection needs new stream. Below is an updated SOCKS5 proxy example using the **modern API**, where `stream` returns a stream or a Promise resolving to a stream.
 
 ```js
 const mysql = require('mysql2');
-const SocksConnection = require('socksjs');
+const { SocksClient } = require('socks');
+
 const pool = mysql.createPool({
   database: 'test',
   user: 'foo',
   password: 'bar',
-  stream: function (cb) {
-    const newStream = new SocksConnection(
-      { host: 'remote.host', port: 3306 },
-      { host: 'localhost', port: 1080 }
-    );
-    cb(null, newStream);
+
+  // modern usage: stream returns a Duplex or a Promise that resolves to one
+  stream: async () => {
+    const { socket } = await SocksClient.createConnection({
+      proxy: {
+        host: 'localhost',
+        port: 1080,
+        type: 5,
+      },
+      destination: {
+        host: 'remote.host',
+        port: 3306,
+      },
+    });
+    return socket; // must be a Duplex stream
   },
 });
 ```
 
-In addition to password `createConnection()`, `createPool()` and `changeUser()` accept `passwordSha1` option. This is useful when implementing proxies as plaintext password might be not available.
+**Note:**
+
+Older documentation used a callback-style API:
+
+```js
+stream: function (cb) {
+  cb(null, stream);
+}
+```
+
+This callback style no longer works on current versions of mysql2 and causes:
+
+```
+TypeError: cb is not a function
+```
+
+Use the modern return-style function shown above.
+
+## In addition to password `createConnection()`, `createPool()` and `changeUser()` accept `passwordSha1` option.
+
+This is useful when implementing proxies as plaintext password might be not available.
+
+## Graceful pool connection end
+
+```js
+const pool = mysql.createPool({
+  gracefulEnd: true,
+});
+```
+
+By default, calling end on a pool connection will result in a warning being emitted and the connection being released back to the pool. This is for compatibility with mysqljs/mysql.
+By providing `gracefulEnd: true` when creating the pool, calling end on a pooled connection will actually close the connection instead of releasing it back to the pool.
