@@ -1,11 +1,11 @@
 import { assert, describe, it } from 'poku';
 import mysql from '../../../../index.js';
 
-await describe('Charset to Encoding coverage', async () => {
+describe('Charset to Encoding coverage', () => {
   const charsets = mysql.Charsets;
   const encodings = mysql.CharsetToEncoding;
 
-  await it('every charset ID should have a defined encoding', async () => {
+  it('every charset ID should have a defined encoding', () => {
     const missing: string[] = [];
     const seen = new Set<number>();
 
