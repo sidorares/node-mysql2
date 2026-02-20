@@ -1,10 +1,8 @@
 import type { Connection, QueryError } from '../../../index.js';
-import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import mysql from '../../../index.js';
 
-// The process is not terminated in Deno
-if (typeof Deno !== 'undefined') process.exit(0);
+if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 
 await describe('Connect After Connection Error', async () => {
   const ERROR_TEXT = 'Connection lost: The server closed the connection.';

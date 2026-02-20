@@ -1,7 +1,6 @@
 import type { Connection, QueryError } from '../../../index.js';
 import { Buffer } from 'node:buffer';
-import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import mysql from '../../../index.js';
 import auth from '../../../lib/auth_41.js';
 
@@ -11,8 +10,7 @@ type AuthParams = {
   authToken: Buffer;
 };
 
-// The process is not terminated in Deno
-if (typeof Deno !== 'undefined') process.exit(0);
+if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 
 function authenticate(params: AuthParams, cb: (err: Error | null) => void) {
   const doubleSha = auth.doubleSha1('testpassword');

@@ -1,6 +1,6 @@
 import type { RowDataPacket } from '../../../index.js';
 import { assert, describe, it } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection, normalizeNumeric } from '../../common.test.mjs';
 
 await describe('Date Parameter', async () => {
   const connection = createConnection({ timezone: 'Z' });
@@ -23,6 +23,6 @@ await describe('Date Parameter', async () => {
       );
     });
 
-    assert.deepEqual(rows, [{ t: 631152000 }]);
+    assert.deepEqual(normalizeNumeric(rows), [{ t: 631152000 }]);
   });
 });

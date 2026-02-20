@@ -7,13 +7,11 @@ import type { FieldPacket, RowDataPacket } from '../../../index.js';
 import process from 'node:process';
 // @ts-expect-error: no typings available
 import assert from 'assert-diff';
-import { describe, it } from 'poku';
+import { describe, it, skip } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
-// different error codes for PS, disabling for now
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
-  console.log('skipping test for planetscale');
-  process.exit(0);
+  skip('Skipping test for PlanetScale: different error codes');
 }
 
 // https://github.com/sidorares/node-mysql2/issues/130

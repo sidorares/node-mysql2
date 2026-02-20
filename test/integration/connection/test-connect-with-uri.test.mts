@@ -1,13 +1,12 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import { createConnectionWithURI } from '../../common.test.mjs';
 
 if (process.env.MYSQL_CONNECTION_URL) {
-  console.log(
-    'skipping test when mysql server is configured using MYSQL_CONNECTION_URL'
+  skip(
+    'Skipping test when mysql server is configured using MYSQL_CONNECTION_URL'
   );
-  process.exit(0);
 }
 
 await describe('Connect With URI', async () => {

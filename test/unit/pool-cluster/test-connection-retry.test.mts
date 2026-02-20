@@ -1,20 +1,16 @@
-import process, { exit } from 'node:process';
-import { assert, describe, it } from 'poku';
+import process from 'node:process';
+import { assert, describe, it, skip } from 'poku';
 import mysql from '../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
-// The process is not terminated in Deno
-if (typeof Deno !== 'undefined') process.exit(0);
+if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 
-// TODO: config poolCluster to work with MYSQL_CONNECTION_URL run
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
-  console.log('skipping test for planetscale');
-  process.exit(0);
+  skip('Skipping test for PlanetScale');
 }
 
 if (process.platform === 'win32') {
-  console.log('This test is known to fail on windows. FIXME: investi=gate why');
-  exit(0);
+  skip('Windows: test is known to fail (FIXME: investigate why)');
 }
 
 await describe('pool cluster retry', async () => {

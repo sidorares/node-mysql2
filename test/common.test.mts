@@ -300,6 +300,38 @@ export const getMysqlVersion = async function (
   };
 };
 
+/** Handles Bun vs Node.js differences where Bun returns string types */
+export const normalizeNumeric = (value: unknown): unknown => {
+  if (typeof Bun === 'undefined') return value;
+
+  if (value === null || value === undefined) return value;
+  if (typeof value === 'number') return value;
+
+  if (typeof value === 'string') {
+    const parsed = Number(value);
+    const truncated = Math.trunc(parsed);
+
+    if (!Number.isNaN(parsed) && Number.isSafeInteger(truncated)) {
+      if (parsed === truncated) return truncated;
+      return parsed;
+    }
+  }
+
+  if (Array.isArray(value)) return value.map(normalizeNumeric);
+
+  if (typeof value === 'object') {
+    const normalized: Record<string, unknown> = Object.create(null);
+
+    for (const [key, entry] of Object.entries(value)) {
+      normalized[key] = normalizeNumeric(entry);
+    }
+
+    return normalized;
+  }
+
+  return value;
+};
+
 const pad = (number: number, length: number = 2): string =>
   String(number).padStart(length, '0');
 

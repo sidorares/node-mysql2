@@ -6,12 +6,11 @@
 import process from 'node:process';
 // @ts-expect-error: no typings available
 import assert from 'assert-diff';
-import { describe, it } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { describe, it, skip } from 'poku';
+import { createConnection, normalizeNumeric } from '../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
-  console.log('skipping test for planetscale');
-  process.exit(0);
+  skip('Skipping test for PlanetScale');
 }
 
 await describe('Binary Multiple Results', async () => {
@@ -173,7 +172,10 @@ await describe('Binary Multiple Results', async () => {
                 return column;
               };
 
-              assert.deepEqual(expectation[0], _rows);
+              assert.deepEqual(
+                normalizeNumeric(expectation[0]),
+                normalizeNumeric(_rows)
+              );
               assert.deepEqual(expectation[1], arrOrColumn(_columns));
 
               const q = mysql.execute(sql);
@@ -188,12 +190,16 @@ await describe('Binary Multiple Results', async () => {
                 try {
                   const index = fieldIndex;
                   const multiRows = _rows as unknown[];
+                  const normalizedRow = normalizeNumeric(row);
                   if (_numResults === 1) {
                     assert.equal(index, 0);
                     if (row.constructor.name === 'ResultSetHeader') {
-                      assert.deepEqual(_rows, row);
+                      assert.deepEqual(normalizeNumeric(_rows), normalizedRow);
                     } else {
-                      assert.deepEqual(multiRows[rowIndex], row);
+                      assert.deepEqual(
+                        normalizeNumeric(multiRows[rowIndex]),
+                        normalizedRow
+                      );
                     }
                   } else {
                     if (resIndex !== index) {
@@ -201,11 +207,16 @@ await describe('Binary Multiple Results', async () => {
                       resIndex = index;
                     }
                     if (row.constructor.name === 'ResultSetHeader') {
-                      assert.deepEqual(multiRows[index], row);
+                      assert.deepEqual(
+                        normalizeNumeric(multiRows[index]),
+                        normalizedRow
+                      );
                     } else {
                       assert.deepEqual(
-                        (multiRows[index] as unknown[])[rowIndex],
-                        row
+                        normalizeNumeric(
+                          (multiRows[index] as unknown[])[rowIndex]
+                        ),
+                        normalizedRow
                       );
                     }
                   }

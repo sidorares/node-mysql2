@@ -1,13 +1,11 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
-// TODO - this could be re-enabled
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
-  console.log('skipping test for planetscale');
-  process.exit(0);
+  skip('Skipping test for PlanetScale: TODO - this could be re-enabled');
 }
 
 await describe('Binary Charset String', async () => {

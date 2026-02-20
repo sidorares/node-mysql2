@@ -2,8 +2,7 @@
 
 import type { Connection } from '../../index.js';
 import { Buffer } from 'node:buffer';
-import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import mysql from '../../index.js';
 import Command from '../../lib/commands/command.js';
 import Packets from '../../lib/packets/index.js';
@@ -13,8 +12,7 @@ type AuthSwitchArgs = {
   pluginData: Buffer;
 };
 
-// The process is not terminated in Deno
-if (typeof Deno !== 'undefined') process.exit(0);
+if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 
 class TestAuthMultiFactor extends Command {
   args: AuthSwitchArgs[];
