@@ -63,7 +63,7 @@ services:
       MYSQL_USE_COMPRESSION: 0
       MYSQL_USE_TLS: 0
       STATIC_PARSER: 0
-      FILTER: 'test-select-1|test-select-ssl'
+      FILTER: ''
     volumes:
       - ../:/usr/app:ro
     working_dir: /usr/app

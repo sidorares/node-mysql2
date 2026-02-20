@@ -66,7 +66,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bun-version: [latest, canary]
+        bun-version: [latest]
         mysql-version: ['mysql:8.3']
         use-compression: [0, 1]
         use-tls: [0, 1]
@@ -112,7 +112,6 @@ jobs:
           MYSQL_PORT: ${{ env.MYSQL_PORT }}
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
-          FILTER: test-select-1|test-select-ssl
         run: bun run test:bun
         timeout-minutes: 10
 
@@ -121,7 +120,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        deno-version: [v2.x, canary]
+        deno-version: [v2.x]
         mysql-version: ['mysql:8.3']
         use-compression: [0, 1]
         static-parser: [0, 1]
