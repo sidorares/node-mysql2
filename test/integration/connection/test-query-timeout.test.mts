@@ -1,11 +1,9 @@
 import assert from 'node:assert';
-import process from 'node:process';
-import { describe, it } from 'poku';
+import { describe, it, skip } from 'poku';
 import mysql from '../../../index.js';
 import { createConnection } from '../../common.test.mjs';
 
-// The process is not terminated in Deno
-if (typeof Deno !== 'undefined') process.exit(0);
+if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 
 await describe('Query Timeout', async () => {
   const connection = createConnection({ debug: false });

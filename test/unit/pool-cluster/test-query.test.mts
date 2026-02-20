@@ -1,12 +1,11 @@
 import type { RowDataPacket } from '../../../index.js';
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import { createPoolCluster, getConfig } from '../../common.test.mjs';
 
 // TODO: config poolCluster to work with MYSQL_CONNECTION_URL run
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
-  console.log('skipping test for planetscale');
-  process.exit(0);
+  skip('Skipping test for PlanetScale');
 }
 
 await describe('pool cluster connection query', async () => {

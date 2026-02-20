@@ -1,6 +1,5 @@
 import type { QueryError } from '../../../index.js';
-import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import mysql from '../../../index.js';
 import ClientFlags from '../../../lib/constants/client.js';
 
@@ -10,8 +9,7 @@ type FailoverResult = {
   secondThreadId: number;
 };
 
-// The process is not terminated in Deno
-if (typeof Deno !== 'undefined') process.exit(0);
+if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 
 // Simulate Aurora MySQL failover: a writable connection becomes read-only.
 // After failover, writes return one of these read-only errors:

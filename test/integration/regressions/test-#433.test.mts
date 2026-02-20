@@ -1,12 +1,10 @@
 import type { QueryError, RowDataPacket } from '../../../index.js';
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
-// TODO: reach out to PlanetScale to clarify charset support
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
-  console.log('skipping test for planetscale');
-  process.exit(0);
+  skip('PlanetScale: charset support unclear (TODO: clarify)');
 }
 
 await describe('Regression #433', async () => {

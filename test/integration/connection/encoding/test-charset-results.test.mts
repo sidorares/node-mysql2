@@ -1,14 +1,13 @@
 import type { FieldPacket, RowDataPacket } from '../../../../index.js';
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import mysql from '../../../../index.js';
 import { createConnection } from '../../../common.test.mjs';
 
 type PayloadRow = RowDataPacket & Record<string, string>;
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
-  console.log('skipping test for planetscale (unsupported non utf8 charsets)');
-  process.exit(0);
+  skip('PlanetScale: unsupported non-UTF8 charsets');
 }
 
 await describe('Charset Results', async () => {

@@ -1,13 +1,10 @@
 import type { PoolConnection, QueryError, RowDataPacket } from '../../index.js';
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import { createConnection, createPool } from '../common.test.mjs';
 
-// planetscale does not support KILL, skipping this test
-// https://planetscale.com/docs/reference/mysql-compatibility
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
-  console.log('skipping test, planetscale does not support KILL');
-  process.exit(0);
+  skip('PlanetScale does not support KILL');
 }
 
 await describe('Pool Disconnect', async () => {

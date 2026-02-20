@@ -2,17 +2,15 @@
 
 import type { QueryError } from '../../index.js';
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import errors from '../../lib/constants/errors.js';
 import { createConnection } from '../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
-  console.log('skipping test for planetscale');
-  process.exit(0);
+  skip('Skipping test for PlanetScale');
 }
 
-// Uncaught AssertionError: Connection lost: The server closed the connection. == The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior.
-if (typeof Deno !== 'undefined') process.exit(0);
+if (typeof Deno !== 'undefined') skip('Deno: Connection lost assertion error');
 
 await describe('Server Close', async () => {
   await it('should detect server-initiated connection close', async () => {

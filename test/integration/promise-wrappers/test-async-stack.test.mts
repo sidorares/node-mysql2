@@ -1,12 +1,11 @@
 import type { ConnectionOptions } from '../../../index.js';
 import process from 'node:process';
 import ErrorStackParser from 'error-stack-parser';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import { createConnection as promiseCreateConnection } from '../../../promise.js';
 import { config } from '../../common.test.mjs';
 
-// Uncaught Error: connect ECONNREFUSED 127.0.0.1:33066 - Local (undefined:undefined)
-if (typeof Deno !== 'undefined') process.exit(0);
+if (typeof Deno !== 'undefined') skip('Deno: connect ECONNREFUSED');
 
 await describe('Async stack traces', async () => {
   const createConnection = async function (args?: ConnectionOptions) {
