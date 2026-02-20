@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.4](https://github.com/sidorares/node-mysql2/compare/v3.17.3...v3.17.4) (2026-02-20)
+
+
+### Bug Fixes
+
+* types for query values ([#3985](https://github.com/sidorares/node-mysql2/issues/3985)) ([a9c8d09](https://github.com/sidorares/node-mysql2/commit/a9c8d090e027e7597559e608e6e831d8d714c642))
+
 ## [3.17.3](https://github.com/sidorares/node-mysql2/compare/v3.17.2...v3.17.3) (2026-02-19)
 
 
