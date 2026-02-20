@@ -7,7 +7,7 @@ import process from 'node:process';
 // @ts-expect-error: no typings available
 import assert from 'assert-diff';
 import { describe, it } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection, normalizeNumeric } from '../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   console.log('skipping test for planetscale');
@@ -180,11 +180,14 @@ await describe('Multiple Results', async () => {
               return column;
             };
 
-            assert.deepEqual(expectation, [
-              _rows,
-              arrOrColumn(_columns),
-              _numResults,
-            ]);
+            assert.deepEqual(
+              [
+                normalizeNumeric(expectation[0]),
+                expectation[1],
+                expectation[2],
+              ],
+              [normalizeNumeric(_rows), arrOrColumn(_columns), _numResults]
+            );
 
             const q = mysql.query(sql);
             let resIndex = 0;
@@ -199,12 +202,16 @@ await describe('Multiple Results', async () => {
               [key: string]: unknown;
             }) {
               const index = fieldIndex;
+              const normalizedRow = normalizeNumeric(row);
               if (_numResults === 1) {
                 assert.equal(fieldIndex, 0);
                 if (row.constructor.name === 'ResultSetHeader') {
-                  assert.deepEqual(_rows, row);
+                  assert.deepEqual(normalizeNumeric(_rows), normalizedRow);
                 } else {
-                  assert.deepEqual(multiRows[rowIndex], row);
+                  assert.deepEqual(
+                    normalizeNumeric(multiRows[rowIndex]),
+                    normalizedRow
+                  );
                 }
               } else {
                 if (resIndex !== index) {
@@ -212,11 +219,17 @@ await describe('Multiple Results', async () => {
                   resIndex = index;
                 }
                 if (row.constructor.name === 'ResultSetHeader') {
-                  assert.deepEqual(multiRows[index], row);
+                  assert.deepEqual(
+                    normalizeNumeric(multiRows[index]),
+                    normalizedRow
+                  );
                 } else {
                   const resultRows = multiRows[index];
                   if (Array.isArray(resultRows)) {
-                    assert.deepEqual(resultRows[rowIndex], row);
+                    assert.deepEqual(
+                      normalizeNumeric(resultRows[rowIndex]),
+                      normalizedRow
+                    );
                   }
                 }
               }

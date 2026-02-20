@@ -6,12 +6,12 @@
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
 import type { Connection, FieldPacket, RowDataPacket } from '../../../index.js';
-import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import { createConnection, createServer } from '../../common.test.mjs';
 
-// The process is not terminated in Deno
-if (typeof Deno !== 'undefined') process.exit(0);
+if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
+if (typeof Bun !== 'undefined')
+  skip('Bun: net incompatibility with mock server');
 
 await describe('Disconnects', async () => {
   await it('should handle server disconnect', async () => {
