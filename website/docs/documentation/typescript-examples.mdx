@@ -381,6 +381,46 @@ For `ProcedureCallPacket<RowDataPacket[]>`, please see the following examples.
 
 <hr />
 
+### QueryValues
+
+<Stability level={2} />
+
+The `QueryValues` type represents the allowed types for query parameter values:
+
+```ts
+import mysql, { RowDataPacket, QueryValues } from 'mysql2';
+
+const conn = mysql.createConnection({
+  user: 'test',
+  database: 'test',
+});
+
+const values: QueryValues = [1, 'test', null];
+
+conn.query<RowDataPacket[]>(
+  'SELECT * FROM users WHERE id = ? AND name = ? AND deleted_at = ?',
+  values,
+  (_err, rows) => {
+    console.log(rows);
+  }
+);
+```
+
+The `QueryValues` type includes the following types:
+
+- `string`
+- `number`
+- `bigint`
+- `boolean`
+- `Date`
+- `null`
+- `Blob`
+- `Buffer`
+- `({} | null)[]` (array of values)
+- `{ [key: string]: QueryValues }` (named placeholders)
+
+<hr />
+
 ### OkPacket
 
 <Stability

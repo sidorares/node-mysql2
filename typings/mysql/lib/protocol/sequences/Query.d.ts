@@ -3,6 +3,18 @@ import { OkPacket, RowDataPacket, FieldPacket } from '../packets/index.js';
 import { Readable } from 'stream';
 import { TypeCast } from '../../parsers/typeCast.js';
 
+export type QueryValues =
+  | string
+  | number
+  | bigint
+  | boolean
+  | Date
+  | null
+  | Blob
+  | Buffer
+  | ({} | null)[]
+  | { [key: string]: QueryValues };
+
 export interface QueryOptions {
   /**
    * The SQL for the query
@@ -12,7 +24,7 @@ export interface QueryOptions {
   /**
    * The values for the query
    */
-  values?: any | any[] | { [param: string]: any };
+  values?: QueryValues;
 
   /**
    * This overrides the namedPlaceholders option set at the connection level.
