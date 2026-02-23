@@ -15,19 +15,17 @@ const clusterQuery = (cluster: PoolCluster, sql: string) =>
   });
 
 await describe('PoolCluster should implement Symbol.dispose', async () => {
-  const cluster = createPoolCluster();
+  using cluster = createPoolCluster();
 
   cluster.add('MASTER', getConfig());
 
   it('should be a function', () => {
     assert.strictEqual(typeof cluster[Symbol.dispose], 'function');
   });
-
-  cluster[Symbol.dispose]();
 });
 
 await describe('dispose should end the pool cluster', async () => {
-  const cluster = createPoolCluster();
+  using cluster = createPoolCluster();
 
   cluster.add('MASTER', getConfig());
 
@@ -45,8 +43,8 @@ await describe('dispose should end the pool cluster', async () => {
   });
 });
 
-await describe('dispose should handle end before dispose on pool cluster', async () => {
-  const cluster = createPoolCluster();
+await describe('dispose should handle manual end before dispose on pool cluster', async () => {
+  using cluster = createPoolCluster();
 
   cluster.add('MASTER', getConfig());
 

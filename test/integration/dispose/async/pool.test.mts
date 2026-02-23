@@ -68,7 +68,7 @@ await describe('Pool should serve a new connection after await using releases th
 });
 
 await describe('asyncDispose should end the pool', async () => {
-  const pool = createPool({ ...config, connectionLimit: 1 });
+  await using pool = createPool({ ...config, connectionLimit: 1 });
   const [rows] = await pool.query<RowDataPacket[]>('SELECT 1');
 
   await pool[Symbol.asyncDispose]();
@@ -83,8 +83,8 @@ await describe('asyncDispose should end the pool', async () => {
   });
 });
 
-await describe('asyncDispose should handle end before asyncDispose on pool', async () => {
-  const pool = createPool({ ...config, connectionLimit: 1 });
+await describe('asyncDispose should handle manual end before asyncDispose on pool', async () => {
+  await using pool = createPool({ ...config, connectionLimit: 1 });
 
   await pool.end();
   await pool[Symbol.asyncDispose]();

@@ -8,19 +8,17 @@ if (!('asyncDispose' in Symbol)) {
 }
 
 await describe('PromisePoolCluster should implement Symbol.asyncDispose', async () => {
-  const cluster = createPoolCluster();
+  await using cluster = createPoolCluster();
 
   cluster.add('MASTER', config);
 
   it('should be a function', () => {
     assert.strictEqual(typeof cluster[Symbol.asyncDispose], 'function');
   });
-
-  await cluster[Symbol.asyncDispose]();
 });
 
 await describe('asyncDispose should end the pool cluster', async () => {
-  const cluster = createPoolCluster();
+  await using cluster = createPoolCluster();
 
   cluster.add('MASTER', config);
 
@@ -38,8 +36,8 @@ await describe('asyncDispose should end the pool cluster', async () => {
   });
 });
 
-await describe('asyncDispose should handle end before asyncDispose on pool cluster', async () => {
-  const cluster = createPoolCluster();
+await describe('asyncDispose should handle manual end before asyncDispose on pool cluster', async () => {
+  await using cluster = createPoolCluster();
 
   cluster.add('MASTER', config);
   await cluster.end();

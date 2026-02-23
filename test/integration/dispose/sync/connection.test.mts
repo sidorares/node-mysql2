@@ -15,17 +15,15 @@ const query = (conn: Connection, sql: string) =>
   });
 
 await describe('Connection should implement Symbol.dispose', async () => {
-  const conn = createConnection();
+  using conn = createConnection();
 
   it('should be a function', () => {
     assert.strictEqual(typeof conn[Symbol.dispose], 'function');
   });
-
-  conn.end();
 });
 
 await describe('dispose should end the connection', async () => {
-  const conn = createConnection();
+  using conn = createConnection();
   const rows = await query(conn, 'SELECT 1');
 
   conn[Symbol.dispose]();
@@ -40,8 +38,8 @@ await describe('dispose should end the connection', async () => {
   });
 });
 
-await describe('dispose should handle destroy before dispose on connection', async () => {
-  const conn = createConnection();
+await describe('dispose should handle manual destroy before dispose on connection', async () => {
+  using conn = createConnection();
   const rows = await query(conn, 'SELECT 1');
 
   conn.destroy();

@@ -16,7 +16,7 @@ await describe('PromiseConnection should implement Symbol.asyncDispose', async (
 });
 
 await describe('asyncDispose should end the connection', async () => {
-  const conn = await createConnection(config);
+  await using conn = await createConnection(config);
   const [rows] = await conn.query<RowDataPacket[]>('SELECT 1');
 
   await conn[Symbol.asyncDispose]();
@@ -31,8 +31,8 @@ await describe('asyncDispose should end the connection', async () => {
   });
 });
 
-await describe('asyncDispose should handle destroy before asyncDispose on connection', async () => {
-  const conn = await createConnection(config);
+await describe('asyncDispose should handle manual destroy before asyncDispose on connection', async () => {
+  await using conn = await createConnection(config);
   const [rows] = await conn.query<RowDataPacket[]>('SELECT 1');
 
   conn.destroy();

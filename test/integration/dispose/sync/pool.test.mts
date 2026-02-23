@@ -23,19 +23,16 @@ const query = (conn: PoolConnection, sql: string) =>
   });
 
 await describe('PoolConnection should implement Symbol.dispose', async () => {
-  const pool = createPool({ connectionLimit: 1 });
-  const conn = await getConnection(pool);
+  using pool = createPool({ connectionLimit: 1 });
+  using conn = await getConnection(pool);
 
   it('should be a function', () => {
     assert.strictEqual(typeof conn[Symbol.dispose], 'function');
   });
-
-  conn.release();
-  await pool.promise().end();
 });
 
 await describe('using should release the connection back to the pool', async () => {
-  const pool = createPool({ connectionLimit: 1 });
+  using pool = createPool({ connectionLimit: 1 });
 
   await it('should use and dispose the connection', async () => {
     using conn = await getConnection(pool);
@@ -48,12 +45,10 @@ await describe('using should release the connection back to the pool', async () 
     // @ts-expect-error: internal access
     assert.strictEqual(pool._freeConnections.length, 1);
   });
-
-  await pool.promise().end();
 });
 
 await describe('Pool should serve a new connection after using releases the previous one', async () => {
-  const pool = createPool({ connectionLimit: 1 });
+  using pool = createPool({ connectionLimit: 1 });
 
   await it('should use and dispose the first connection', async () => {
     using conn = await getConnection(pool);
@@ -73,13 +68,11 @@ await describe('Pool should serve a new connection after using releases the prev
     // @ts-expect-error: internal access
     assert.strictEqual(pool._allConnections.length, 1);
   });
-
-  await pool.promise().end();
 });
 
 await describe('dispose should release the connection', async () => {
-  const pool = createPool({ connectionLimit: 1 });
-  const conn = await getConnection(pool);
+  using pool = createPool({ connectionLimit: 1 });
+  using conn = await getConnection(pool);
   const rows = await query(conn, 'SELECT 1');
 
   conn[Symbol.dispose]();
@@ -92,12 +85,10 @@ await describe('dispose should release the connection', async () => {
     // @ts-expect-error: internal access
     assert.strictEqual(pool._freeConnections.length, 1);
   });
-
-  await pool.promise().end();
 });
 
 await describe('using should handle manual `destroy` before automatic dispose', async () => {
-  const pool = createPool({ connectionLimit: 1 });
+  using pool = createPool({ connectionLimit: 1 });
 
   await it('should not error when connection is destroyed within using', async () => {
     using conn = await getConnection(pool);
@@ -111,31 +102,27 @@ await describe('using should handle manual `destroy` before automatic dispose', 
     // @ts-expect-error: internal access
     assert.strictEqual(pool._allConnections.length, 0);
   });
-
-  await pool.promise().end();
 });
 
 await describe('Pool should implement Symbol.dispose', async () => {
-  const pool = createPool({ connectionLimit: 1 });
+  using pool = createPool({ connectionLimit: 1 });
 
   it('should be a function', () => {
     assert.strictEqual(typeof pool[Symbol.dispose], 'function');
   });
-
-  await pool.promise().end();
 });
 
 await describe('dispose should end the pool', async () => {
-  const pool = createPool({ connectionLimit: 1 });
-  const conn = await getConnection(pool);
-  const rows = await query(conn, 'SELECT 1');
+  using pool = createPool({ connectionLimit: 1 });
 
-  conn.release();
-  pool[Symbol.dispose]();
+  await it('should query and release the connection', async () => {
+    using conn = await getConnection(pool);
+    const rows = await query(conn, 'SELECT 1');
 
-  it('should have received the query result', () => {
     assert.deepStrictEqual(rows, [{ 1: 1 }]);
   });
+
+  pool[Symbol.dispose]();
 
   it('should have closed the pool', () => {
     // @ts-expect-error: internal access
@@ -143,8 +130,8 @@ await describe('dispose should end the pool', async () => {
   });
 });
 
-await describe('dispose should handle end before dispose on pool', async () => {
-  const pool = createPool({ connectionLimit: 1 });
+await describe('dispose should handle manual end before dispose on pool', async () => {
+  using pool = createPool({ connectionLimit: 1 });
 
   await pool.promise().end();
   pool[Symbol.dispose]();
