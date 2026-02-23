@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.17.5](https://github.com/sidorares/node-mysql2/compare/v3.17.4...v3.17.5) (2026-02-23)
+
+
+### Bug Fixes
+
+* add missing charset encoding for UTF8MB4_0900_BIN ([#3855](https://github.com/sidorares/node-mysql2/issues/3855)) ([c9a0dcd](https://github.com/sidorares/node-mysql2/commit/c9a0dcd90feba6dc802e1eb929a112310a6cef36))
+* **deps:** include `@types/node` as a peer dependency ([#4108](https://github.com/sidorares/node-mysql2/issues/4108)) ([5f8ac97](https://github.com/sidorares/node-mysql2/commit/5f8ac97175f89888fec64304c9ce5d39a4ef473c))
+* fix wrong length number write to packet ([#3177](https://github.com/sidorares/node-mysql2/issues/3177)) ([0e06e02](https://github.com/sidorares/node-mysql2/commit/0e06e02e376be549757046622d425095ed9e577b))
+* **pool:** resolve potential memory leak ([#4111](https://github.com/sidorares/node-mysql2/issues/4111)) ([8aa2052](https://github.com/sidorares/node-mysql2/commit/8aa205221683ea9160baa869a3b5db2a2c24741c))
+
 ## [3.17.4](https://github.com/sidorares/node-mysql2/compare/v3.17.3...v3.17.4) (2026-02-20)
 
 
