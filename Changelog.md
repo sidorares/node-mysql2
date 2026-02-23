@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.18.0](https://github.com/sidorares/node-mysql2/compare/v3.17.5...v3.18.0) (2026-02-23)
+
+
+### Features
+
+* add `Symbol.dispose` and `Symbol.asyncDispose` support for Connections, Pools, and Pool Clusters ([#4112](https://github.com/sidorares/node-mysql2/issues/4112)) ([1e612dc](https://github.com/sidorares/node-mysql2/commit/1e612dc615c4fcfe4bf41079d689c690ac717b66))
+
 ## [3.17.5](https://github.com/sidorares/node-mysql2/compare/v3.17.4...v3.17.5) (2026-02-23)
 
 
