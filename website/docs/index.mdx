@@ -105,6 +105,9 @@ try {
 } catch (err) {
   console.log(err);
 }
+
+// Close the connection
+await connection.end();
 ```
 
   </TabItem>
@@ -136,11 +139,88 @@ connection.query(
   ['Page', 45],
   function (err, results) {
     console.log(results);
+
+    // Close the connection
+    connection.end();
   }
 );
 ```
 
-</TabItem>
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // .end() is called automatically when leaving the scope
+  await using connection = await mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+  });
+
+  // A simple SELECT query
+  const [results, fields] = await connection.query(
+    'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45'
+  );
+
+  console.log(results); // results contains rows returned by server
+  console.log(fields); // fields contains extra meta data about results, if available
+
+  // Using placeholders
+  const [results2] = await connection.query(
+    'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+    ['Page', 45]
+  );
+
+  console.log(results2);
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+import mysql from 'mysql2';
+
+{
+  // .end() is called automatically when leaving the scope
+  using connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+  });
+
+  // A simple SELECT query
+  connection.query(
+    'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
+    function (err, results, fields) {
+      console.log(results); // results contains rows returned by server
+      console.log(fields); // fields contains extra meta data about results, if available
+    }
+  );
+
+  // Using placeholders
+  connection.query(
+    'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+    ['Page', 45],
+    function (err, results) {
+      console.log(results);
+    }
+  );
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
 </Tabs>
 
 <hr />
@@ -180,6 +260,9 @@ try {
 } catch (err) {
   console.log(err);
 }
+
+// Close the connection
+await connection.end();
 ```
 
   </TabItem>
@@ -202,9 +285,73 @@ connection.execute(
   function (err, results, fields) {
     console.log(results); // results contains rows returned by server
     console.log(fields); // fields contains extra meta data about results, if available
+
+    // Close the connection
+    connection.end();
   }
 );
 ```
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // create the connection to database
+  // .end() is called automatically when leaving the scope
+  await using connection = await mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+  });
+
+  // execute will internally call prepare and query
+  const [results, fields] = await connection.execute(
+    'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+    ['Rick C-137', 53]
+  );
+
+  console.log(results); // results contains rows returned by server
+  console.log(fields); // fields contains extra meta data about results, if available
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+
+{
+  // create the connection to database
+  // .end() is called automatically when leaving the scope
+  using connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+  });
+
+  // execute will internally call prepare and query
+  connection.execute(
+    'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
+    ['Rick C-137', 53],
+    function (err, results, fields) {
+      console.log(results); // results contains rows returned by server
+      console.log(fields); // fields contains extra meta data about results, if available
+    }
+  );
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
 
   </TabItem>
 </Tabs>
@@ -242,6 +389,11 @@ const pool = mysql.createPool({
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
 });
+
+// ... some query
+
+// Close the pool
+await pool.end();
 ```
 
     </TabItem>
@@ -263,7 +415,70 @@ const pool = mysql.createPool({
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
 });
+
+// ... some query
+
+// Close the pool
+pool.end();
 ```
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // pool.end() is called automatically when leaving the scope
+  await using pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+    waitForConnections: true,
+    connectionLimit: 10,
+    maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+    idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
+  });
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+import mysql from 'mysql2';
+
+{
+  // pool.end() is called automatically when leaving the scope
+  using pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+    waitForConnections: true,
+    connectionLimit: 10,
+    maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+    idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
+  });
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
 
   </TabItem>
 </Tabs>
@@ -318,6 +533,12 @@ await conn.query(/* ... */);
 pool.releaseConnection(conn);
 ```
 
+- Additionally, directly release the connection using the `connection` object:
+
+```js
+conn.release();
+```
+
   </TabItem>
   <TabItem value='Callback'>
 
@@ -332,14 +553,147 @@ pool.getConnection(function (err, conn) {
 });
 ```
 
-  </TabItem>
-</Tabs>
-
 - Additionally, directly release the connection using the `connection` object:
 
 ```js
 conn.release();
 ```
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+// For pool initialization, see above
+{
+  await using conn = await pool.getConnection();
+
+  // Do something with the connection
+  await conn.query(/* ... */);
+
+  // No need to manually release — .release() is called
+  // automatically when leaving the scope
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+// For pool initialization, see above
+pool.getConnection(function (err, _conn) {
+  using conn = _conn;
+
+  // Do something with the connection
+  conn.query(/* ... */);
+
+  // No need to manually release — .release() is called
+  // automatically when leaving the scope
+});
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+</Tabs>
+
+<hr />
+
+### Using Pool Clusters
+
+Pool clusters allow you to manage multiple connection pools for different database servers, enabling features like read/write splitting and load balancing.
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+const cluster = mysql.createPoolCluster();
+
+cluster.add('MASTER', {
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+const [rows] = await cluster.of('*').query('SELECT * FROM users');
+console.log(rows);
+
+cluster.end();
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+const mysql = require('mysql2');
+
+const cluster = mysql.createPoolCluster();
+
+cluster.add('MASTER', {
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+cluster.of('*').query('SELECT * FROM users', function (err, rows) {
+  console.log(rows);
+});
+
+cluster.end();
+```
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // cluster.end() is called automatically when leaving the scope
+  await using cluster = mysql.createPoolCluster();
+
+  cluster.add('MASTER', {
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+  });
+
+  const [rows] = await cluster.of('*').query('SELECT * FROM users');
+  console.log(rows);
+}
+```
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+import mysql from 'mysql2';
+
+{
+  // cluster.end() is called automatically when leaving the scope
+  using cluster = mysql.createPoolCluster();
+
+  cluster.add('MASTER', {
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+  });
+
+  cluster.of('*').query('SELECT * FROM users', function (err, rows) {
+    console.log(rows);
+  });
+}
+```
+
+  </TabItem>
+</Tabs>
 
 <hr />
 

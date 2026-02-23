@@ -65,6 +65,8 @@ export interface Connection extends QueryableAndExecutableBase {
 
   end(options?: any): Promise<void>;
 
+  [Symbol.asyncDispose](): Promise<void>;
+
   destroy(): void;
 
   pause(): void;
@@ -82,6 +84,7 @@ export interface Connection extends QueryableAndExecutableBase {
 export interface PoolConnection extends Connection {
   release(): void;
   connection: Connection;
+  [Symbol.asyncDispose](): Promise<void>;
 }
 
 export interface Pool extends Connection {
@@ -111,6 +114,8 @@ export interface PoolCluster extends EventEmitter {
   add(group: string, config: PoolOptions): void;
 
   end(): Promise<void>;
+
+  [Symbol.asyncDispose](): Promise<void>;
 
   getConnection(): Promise<PoolConnection>;
   getConnection(group: string): Promise<PoolConnection>;

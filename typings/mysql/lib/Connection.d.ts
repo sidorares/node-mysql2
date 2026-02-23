@@ -393,6 +393,8 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
   end(callback?: (err: QueryError | null) => void): void;
   end(options: any, callback?: (err: QueryError | null) => void): void;
 
+  [Symbol.dispose](): void;
+
   destroy(): void;
 
   pause(): void;
