@@ -53,6 +53,8 @@ declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
     callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any
   ): void;
 
+  [Symbol.dispose](): void;
+
   on(event: string, listener: (...args: any[]) => void): this;
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;
   on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
