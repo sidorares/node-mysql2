@@ -115,6 +115,8 @@ export interface PoolCluster extends EventEmitter {
 
   end(): Promise<void>;
 
+  [Symbol.asyncDispose](): Promise<void>;
+
   getConnection(): Promise<PoolConnection>;
   getConnection(group: string): Promise<PoolConnection>;
   getConnection(group: string, selector: string): Promise<PoolConnection>;

@@ -134,6 +134,12 @@ class PromisePoolCluster extends EventEmitter {
       });
     });
   }
+
+  async [Symbol.asyncDispose]() {
+    if (!this.poolCluster._closed) {
+      await this.end();
+    }
+  }
 }
 
 /**

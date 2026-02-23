@@ -1,11 +1,17 @@
 import type {
   Connection,
   Pool,
+  PoolCluster,
   PoolConnection,
   RowDataPacket,
 } from '../../../index.js';
 import { assert, describe, it, skip } from 'poku';
-import { createConnection, createPool } from '../../common.test.mjs';
+import {
+  createConnection,
+  createPool,
+  createPoolCluster,
+  getConfig,
+} from '../../common.test.mjs';
 
 if (!('dispose' in Symbol)) {
   skip('Symbol.dispose is not supported in this runtime');
@@ -183,5 +189,51 @@ await describe('dispose should handle end before dispose on pool', async () => {
   it('should have closed the pool', () => {
     // @ts-expect-error: internal access
     assert.strictEqual(pool._closed, true);
+  });
+});
+
+const clusterQuery = (cluster: PoolCluster, sql: string) =>
+  new Promise<RowDataPacket[]>((resolve, reject) => {
+    cluster.of('*').query<RowDataPacket[]>(sql, (err, rows) => {
+      if (err) return reject(err);
+      resolve(rows);
+    });
+  });
+
+await describe('PoolCluster should implement Symbol.dispose', async () => {
+  const cluster = createPoolCluster();
+  cluster.add('MASTER', getConfig());
+
+  it('should be a function', () => {
+    assert.strictEqual(typeof cluster[Symbol.dispose], 'function');
+  });
+
+  cluster[Symbol.dispose]();
+});
+
+await describe('dispose should end the pool cluster', async () => {
+  const cluster = createPoolCluster();
+  cluster.add('MASTER', getConfig());
+  const rows = await clusterQuery(cluster, 'SELECT 1');
+  assert.deepStrictEqual(rows, [{ 1: 1 }]);
+  cluster[Symbol.dispose]();
+
+  it('should have closed the pool cluster', () => {
+    // @ts-expect-error: internal access
+    assert.strictEqual(cluster._closed, true);
+  });
+});
+
+await describe('dispose should handle end before dispose on pool cluster', async () => {
+  const cluster = createPoolCluster();
+  cluster.add('MASTER', getConfig());
+  await new Promise<void>((resolve, reject) => {
+    cluster.end((err) => (err ? reject(err) : resolve()));
+  });
+  cluster[Symbol.dispose]();
+
+  it('should have closed the pool cluster', () => {
+    // @ts-expect-error: internal access
+    assert.strictEqual(cluster._closed, true);
   });
 });

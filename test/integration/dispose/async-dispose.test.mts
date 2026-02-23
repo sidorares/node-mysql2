@@ -1,7 +1,11 @@
 import type { RowDataPacket } from '../../../index.js';
 import type { PoolConnection } from '../../../promise.js';
 import { assert, describe, it, skip } from 'poku';
-import { createConnection, createPool } from '../../../promise.js';
+import {
+  createConnection,
+  createPool,
+  createPoolCluster,
+} from '../../../promise.js';
 import { config } from '../../common.test.mjs';
 
 if (!('asyncDispose' in Symbol)) {
@@ -135,5 +139,41 @@ await describe('force await using should handle manual `destroy` before automati
   it('should have closed the connection', () => {
     // @ts-expect-error: internal access
     assert.strictEqual(conn.connection._closing, true);
+  });
+});
+
+await describe('PromisePoolCluster should implement Symbol.asyncDispose', async () => {
+  const cluster = createPoolCluster();
+  cluster.add('MASTER', config);
+
+  it('should be a function', () => {
+    assert.strictEqual(typeof cluster[Symbol.asyncDispose], 'function');
+  });
+
+  await cluster[Symbol.asyncDispose]();
+});
+
+await describe('asyncDispose should end the pool cluster', async () => {
+  const cluster = createPoolCluster();
+  cluster.add('MASTER', config);
+  const [rows] = await cluster.of('*').query<RowDataPacket[]>('SELECT 1');
+  assert.deepStrictEqual(rows, [{ 1: 1 }]);
+  await cluster[Symbol.asyncDispose]();
+
+  it('should have closed the pool cluster', () => {
+    // @ts-expect-error: internal access
+    assert.strictEqual(cluster.poolCluster._closed, true);
+  });
+});
+
+await describe('asyncDispose should handle end before asyncDispose on pool cluster', async () => {
+  const cluster = createPoolCluster();
+  cluster.add('MASTER', config);
+  await cluster.end();
+  await cluster[Symbol.asyncDispose]();
+
+  it('should have closed the pool cluster', () => {
+    // @ts-expect-error: internal access
+    assert.strictEqual(cluster.poolCluster._closed, true);
   });
 });
