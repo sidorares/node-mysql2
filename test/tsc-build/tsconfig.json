@@ -19,7 +19,8 @@
     "skipLibCheck": false,
     "noEmitOnError": true,
     "noEmit": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
     "isolatedModules": true
   }
 }

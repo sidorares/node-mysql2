@@ -7,10 +7,6 @@ import { access } from '../baseConnection.test.js';
 
   conn.connection;
 
-  try {
-    // @ts-expect-error: The pool can't be a connection itself
-    pool.connection;
-  } catch (err) {
-    console.log('This error is expected', err);
-  }
+  // @ts-expect-error: The pool can't be a connection itself
+  pool.connection;
 })();

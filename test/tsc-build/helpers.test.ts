@@ -16,22 +16,3 @@ export const isResultSetHeader = (
 
   return keys.every((key) => key in data);
 };
-
-export const isOkPacket = (
-  data: unknown
-): data is mysql.OkPacket | mysqlp.OkPacket => {
-  if (!data || typeof data !== 'object') return false;
-
-  const keys = [
-    'fieldCount',
-    'affectedRows',
-    'changedRows',
-    'insertId',
-    'serverStatus',
-    'warningCount',
-    'message',
-    'protocol41',
-  ];
-
-  return keys.every((key) => key in data);
-};

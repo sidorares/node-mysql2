@@ -152,6 +152,12 @@ export default [
     },
   },
   {
+    files: ['test/tsc-build/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
+  {
     files: ['**/*.mjs', '**/*.mts'],
     languageOptions: {
       ecmaVersion: 'latest',
