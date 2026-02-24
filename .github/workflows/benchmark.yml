@@ -3,7 +3,7 @@ name: Benchmark
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [master]
 
   workflow_dispatch:
 
@@ -55,7 +55,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ./cache
-          key: ${{ runner.os }}-benchmark
+          key: ${{ runner.os }}-benchmark-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-benchmark-
 
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
@@ -63,9 +65,9 @@ jobs:
           tool: 'benchmarkjs'
           output-file-path: output.txt
           external-data-json-path: ./cache/benchmark-data.json
-          fail-on-alert: false
+          fail-on-alert: true
           auto-push: false
-          alert-threshold: '150%'
+          alert-threshold: '110%'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
           alert-comment-cc-users: '@sidorares'
