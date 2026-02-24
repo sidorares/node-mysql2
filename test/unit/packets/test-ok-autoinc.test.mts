@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import Packets from '../../../lib/packets/index.js';
 
 describe('OK packet with auto-increment', () => {
@@ -6,7 +6,7 @@ describe('OK packet with auto-increment', () => {
     const packet = Packets.OK.toPacket({ affectedRows: 0, insertId: 1 });
 
     // 5 bytes for an OK packet, plus one byte to store affectedRows plus one byte to store the insertId
-    assert.equal(
+    strict.equal(
       packet.length(),
       11,
       `${

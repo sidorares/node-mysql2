@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Then on Query', async () => {
@@ -22,6 +22,6 @@ await describe('Then on Query', async () => {
       });
     });
 
-    assert.equal(error, false);
+    strict.equal(error, false);
   });
 });

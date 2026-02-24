@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import Packets from '../../../lib/packets/index.js';
 
 describe('DateTime packet parsing', () => {
@@ -10,7 +10,7 @@ describe('DateTime packet parsing', () => {
     packet.readInt16(); // unused
     const d = packet.readDateTime('Z');
     if (d === null) throw new Error('expected d to be non-null');
-    assert.equal(+d, 1358816523000);
+    strict.equal(+d, 1358816523000);
   });
 
   it('should parse a datetime packet with mixed string fields', () => {
@@ -22,13 +22,13 @@ describe('DateTime packet parsing', () => {
 
     packet.readInt16(); // ignore
     const s = packet.readLengthCodedString('cesu8');
-    assert.equal(s, 'foo1');
+    strict.equal(s, 'foo1');
     const d = packet.readDateTime('Z');
     if (d === null) throw new Error('expected d to be non-null');
-    assert.equal(+d, 1455030069425);
+    strict.equal(+d, 1455030069425);
 
     const s1 = packet.readLengthCodedString('cesu8');
-    assert.equal(s1, 'bar1');
-    assert.equal(packet.offset, packet.end);
+    strict.equal(s1, 'bar1');
+    strict.equal(packet.offset, packet.end);
   });
 });

@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import mysql from '../../../../index.js';
 
 describe('Charset to Encoding coverage', () => {
@@ -16,7 +16,7 @@ describe('Charset to Encoding coverage', () => {
       if (encodings[id] === undefined) missing.push(`${name} (id=${id})`);
     }
 
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       missing,
       [],
       `Missing encoding mappings: ${missing.join(', ')}`

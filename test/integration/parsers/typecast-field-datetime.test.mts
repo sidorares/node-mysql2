@@ -1,5 +1,5 @@
 import type { RowDataPacket, TypeCastField } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type DateRow = RowDataPacket & { datetime: string | null };
@@ -37,6 +37,6 @@ await describe('typeCast field.datetime', async () => {
   await conn.end();
 
   it(() => {
-    assert.equal(execute.date, query.date, 'DATETIME');
+    strict.equal(execute.date, query.date, 'DATETIME');
   });
 });

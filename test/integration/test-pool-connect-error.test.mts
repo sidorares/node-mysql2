@@ -1,4 +1,4 @@
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../index.js';
 
 if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
@@ -70,7 +70,7 @@ await describe('Pool Connect Error', async () => {
       });
     });
 
-    assert.equal(err1?.errno, 1040);
-    assert.equal(err2?.errno, 1040);
+    strict.equal(err1?.errno, 1040);
+    strict.equal(err2?.errno, 1040);
   });
 });

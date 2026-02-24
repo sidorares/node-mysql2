@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Execute Bind Boolean', async () => {
@@ -17,7 +17,7 @@ await describe('Execute Bind Boolean', async () => {
       );
     });
 
-    assert.deepEqual(rows, [{ trueValue: 1, falseValue: 0 }]);
+    strict.deepEqual(rows, [{ trueValue: 1, falseValue: 0 }]);
   });
 
   connection.end();

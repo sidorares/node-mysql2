@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, skip, sleep, test } from 'poku';
+import { skip, sleep, strict, test } from 'poku';
 import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 await test('result event backpressure with pause/resume', async () => {
@@ -43,7 +43,7 @@ await test('result event backpressure with pause/resume', async () => {
   await sleep(500);
 
   try {
-    assert.equal(resultRowsCount, 2, 'stop receiving result rows when paused');
+    strict.equal(resultRowsCount, 2, 'stop receiving result rows when paused');
   } finally {
     // @ts-expect-error: TODO: implement typings
     connection.close();

@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it, skip, sleep } from 'poku';
+import { describe, it, skip, sleep, strict } from 'poku';
 import mysql from '../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -79,22 +79,22 @@ await describe('pool cluster restore events', async () => {
       cluster.getConnection('MASTER', (err) => resolve(err));
     });
 
-    assert.ok(err1);
-    assert.equal(err1?.code, 'PROTOCOL_CONNECTION_LOST');
-    assert.equal(err1?.fatal, true);
-    assert.equal(connCount, 2);
+    strict.ok(err1);
+    strict.equal(err1?.code, 'PROTOCOL_CONNECTION_LOST');
+    strict.equal(err1?.fatal, true);
+    strict.equal(connCount, 2);
 
     // Verify offline event fired
     const offlineId = await offlinePromise;
-    assert.equal(offlineId, 'MASTER');
+    strict.equal(offlineId, 'MASTER');
 
     // Second attempt - node is offline
     const err2 = await new Promise<MysqlError | null>((resolve) => {
       cluster.getConnection('MASTER', (err) => resolve(err));
     });
 
-    assert.ok(err2);
-    assert.equal(err2?.code, 'POOL_NONEONLINE');
+    strict.ok(err2);
+    strict.equal(err2?.code, 'POOL_NONEONLINE');
 
     // Bring server back online
     offline = false;
@@ -113,12 +113,12 @@ await describe('pool cluster restore events', async () => {
 
     // Verify online event fired
     const onlineResult = await onlinePromise;
-    assert.equal(onlineResult.id, 'MASTER');
-    assert.equal(onlineResult.connCount, 3);
+    strict.equal(onlineResult.id, 'MASTER');
+    strict.equal(onlineResult.connCount, 3);
 
     // Verify events fired exactly once
-    assert.equal(offlineEvents, 1);
-    assert.equal(onlineEvents, 1);
+    strict.equal(offlineEvents, 1);
+    strict.equal(onlineEvents, 1);
   });
 
   await new Promise<void>((resolve, reject) => {

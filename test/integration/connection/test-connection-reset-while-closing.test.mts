@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import assert from 'node:assert';
+import strict from 'node:assert/strict';
 import { describe, it } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
@@ -19,7 +19,7 @@ await describe('Connection Reset While Closing', async () => {
     const connection = createConnection();
 
     connection.on('error', (err: Error & { code?: string }) => {
-      assert.notEqual(err.code, 'ECONNRESET');
+      strict.notEqual(err.code, 'ECONNRESET');
     });
 
     const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
@@ -29,7 +29,7 @@ await describe('Connection Reset While Closing', async () => {
       });
     });
 
-    assert.equal(rows[0]['1'], 1);
+    strict.equal(rows[0]['1'], 1);
     // @ts-expect-error: TODO: implement typings
     connection.close();
     // @ts-expect-error: TODO: implement typings

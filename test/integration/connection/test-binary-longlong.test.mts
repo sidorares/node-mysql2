@@ -1,6 +1,6 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
-import { createConnection, normalizeNumeric } from '../../common.test.mjs';
+import { describe, it, strict } from 'poku';
+import { createConnection } from '../../common.test.mjs';
 
 type LongLongRow = {
   id: number;
@@ -45,8 +45,8 @@ await describe('Binary LongLong', async () => {
   ];
 
   const bigNums_bnStringsTrueTrue: LongLongRow[] = [
-    { id: 1, ls: 10, lu: 10 },
-    { id: 2, ls: -11, lu: 11 },
+    { id: 1, ls: '10', lu: '10' },
+    { id: 2, ls: '-11', lu: '11' },
     { id: 3, ls: '965432100123456789', lu: '1965432100123456789' },
     { id: 4, ls: '-965432100123456789', lu: '2965432100123456789' },
     { id: 5, ls: null, lu: null },
@@ -126,12 +126,12 @@ await describe('Binary LongLong', async () => {
       testExecute(5, true, true);
     });
 
-    assert.deepEqual(normalizeNumeric(results[0]), bigNums_bnStringsFalse);
-    assert.deepEqual(normalizeNumeric(results[1]), bigNums_bnStringsTrueFalse);
-    assert.deepEqual(normalizeNumeric(results[2]), bigNums_bnStringsTrueTrue);
-    assert.deepEqual(normalizeNumeric(results[3]), bigNums_bnStringsFalse);
-    assert.deepEqual(normalizeNumeric(results[4]), bigNums_bnStringsTrueFalse);
-    assert.deepEqual(normalizeNumeric(results[5]), bigNums_bnStringsTrueTrue);
+    strict.deepEqual(results[0], bigNums_bnStringsFalse);
+    strict.deepEqual(results[1], bigNums_bnStringsTrueFalse);
+    strict.deepEqual(results[2], bigNums_bnStringsTrueTrue);
+    strict.deepEqual(results[3], bigNums_bnStringsFalse);
+    strict.deepEqual(results[4], bigNums_bnStringsTrueFalse);
+    strict.deepEqual(results[5], bigNums_bnStringsTrueTrue);
   });
 
   conn.end();

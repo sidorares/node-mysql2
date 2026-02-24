@@ -1,5 +1,5 @@
 import type { PoolConnection } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createPool } from '../../common.test.mjs';
 
 /**
@@ -18,7 +18,7 @@ await describe('Pool end with default config', async () => {
       pool.getConnection((_err1: Error | null, connection: PoolConnection) => {
         connection.on('warn', (warning: Error) => {
           warningEmitted = true;
-          assert(
+          strict(
             warning.message.startsWith(
               'Calling conn.end() to release a pooled connection is deprecated'
             )
@@ -32,7 +32,7 @@ await describe('Pool end with default config', async () => {
       });
     });
 
-    assert(warningEmitted, 'Warning should be emitted');
-    assert(callbackInvoked, 'Callback should be invoked');
+    strict(warningEmitted, 'Warning should be emitted');
+    strict(callbackInvoked, 'Callback should be invoked');
   });
 });

@@ -1,5 +1,5 @@
 import type { Pool, PoolConnection } from '../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createPool } from '../common.test.mjs';
 
 /** Returns the raw `PoolConnection` with access to `EventEmitter` listeners. */
@@ -19,7 +19,7 @@ await describe('Pool Memory Leak (issue #3904)', async () => {
     try {
       const errorListenerCount = conn.listenerCount('error');
 
-      assert.strictEqual(
+      strict.strictEqual(
         errorListenerCount,
         1,
         `Expected 1 error listener, but found ${errorListenerCount}.`
@@ -42,13 +42,13 @@ await describe('Pool Memory Leak (issue #3904)', async () => {
       const errorListeners = conn.listenerCount('error');
       const connectListeners = conn.listenerCount('connect');
 
-      assert.strictEqual(
+      strict.strictEqual(
         errorListeners,
         1,
         `Expected 1 error listener after queries, but found ${errorListeners}.`
       );
 
-      assert.strictEqual(
+      strict.strictEqual(
         connectListeners,
         0,
         `Expected 0 connect listeners, but found ${connectListeners}.`
@@ -78,7 +78,7 @@ await describe('Pool Memory Leak (issue #3904)', async () => {
         return original.toString().includes('connectCalled');
       });
 
-      assert(
+      strict(
         !hasStaleListener,
         'Found a stale callbackOnce error listener that retains query result references.'
       );

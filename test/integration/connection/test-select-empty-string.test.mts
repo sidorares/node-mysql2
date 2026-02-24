@@ -1,5 +1,5 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Select Empty String', async () => {
@@ -18,6 +18,6 @@ await describe('Select Empty String', async () => {
       });
     });
 
-    assert.deepEqual(rows!, [{ [fields![0].name]: '' }]);
+    strict.deepEqual(rows!, [{ [fields![0].name]: '' }]);
   });
 });

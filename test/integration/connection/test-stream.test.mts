@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Stream', async () => {
@@ -86,10 +86,10 @@ await describe('Stream', async () => {
       });
     });
 
-    assert.deepEqual(rows!.length, 2);
-    assert.deepEqual(rows!, rows1);
-    assert.deepEqual(rows!, rows2);
-    assert.deepEqual(rows!, rows3);
-    assert.deepEqual(rows!, rows4);
+    strict.deepEqual(rows!.length, 2);
+    strict.deepEqual(rows!, rows1);
+    strict.deepEqual(rows!, rows2);
+    strict.deepEqual(rows!, rows3);
+    strict.deepEqual(rows!, rows4);
   });
 });

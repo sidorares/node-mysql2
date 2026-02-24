@@ -1,6 +1,6 @@
 import type { QueryError, RowDataPacket } from '../../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type BufRow = RowDataPacket & { buf: string };
@@ -38,7 +38,7 @@ await describe('Buffer Params', async () => {
       );
     });
 
-    assert.deepEqual(rows, [{ buf: buf.toString('hex').toUpperCase() }]);
-    assert.deepEqual(rows1, [{ buf: buf.toString('hex').toUpperCase() }]);
+    strict.deepEqual(rows, [{ buf: buf.toString('hex').toUpperCase() }]);
+    strict.deepEqual(rows1, [{ buf: buf.toString('hex').toUpperCase() }]);
   });
 });

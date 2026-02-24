@@ -1,5 +1,5 @@
 import { EOL } from 'node:os';
-import { assert, describe, it, listFiles } from 'poku';
+import { describe, it, listFiles, strict } from 'poku';
 
 await describe('Check for invalid file types found in restricted directories', async () => {
   const invalidFiles: string[] = [];
@@ -30,7 +30,7 @@ await describe('Check for invalid file types found in restricted directories', a
   await checkExtensions(['test/tsc-build'], /(\.test\.ts|tsconfig\.json)$/);
 
   it(() => {
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       invalidFiles.length,
       0,
       Array.from(new Set(message)).join(EOL) ||

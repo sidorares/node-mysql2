@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Typecast Global False', async () => {
@@ -11,9 +11,9 @@ await describe('Typecast Global False', async () => {
   const COL_2_VALUE = 'col v2';
 
   function executeTests(res: RowDataPacket[]) {
-    assert.equal(res[0].v1.toString('ascii'), COL_1_VALUE);
-    assert.equal(res[0].n1, null);
-    assert.equal(res[0].v2.toString('ascii'), COL_2_VALUE);
+    strict.equal(res[0].v1.toString('ascii'), COL_1_VALUE);
+    strict.equal(res[0].n1, null);
+    strict.equal(res[0].v2.toString('ascii'), COL_2_VALUE);
   }
 
   connection.query(

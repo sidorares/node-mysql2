@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection, useTestDb } from '../../common.test.mjs';
 
 await describe('Transaction Rollback', async () => {
@@ -42,7 +42,7 @@ await describe('Transaction Rollback', async () => {
       );
     });
 
-    assert.equal(rows.length, 0);
+    strict.equal(rows.length, 0);
   });
 
   connection.end();

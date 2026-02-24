@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -64,8 +64,8 @@ await describe('pool cluster retry', async () => {
       }
     );
 
-    assert.equal(connCount, 2);
-    assert.equal(result.clusterId, 'MASTER');
+    strict.equal(connCount, 2);
+    strict.equal(result.clusterId, 'MASTER');
   });
 
   await new Promise<void>((resolve, reject) => {

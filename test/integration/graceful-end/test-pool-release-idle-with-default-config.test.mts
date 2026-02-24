@@ -1,5 +1,5 @@
 import type { PoolConnection } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createPool } from '../../common.test.mjs';
 
 /**
@@ -40,7 +40,7 @@ await describe('Pool release idle with default config', async () => {
       });
     });
 
-    assert(!quitCommandReceived, 'quit command should not have been received');
+    strict(!quitCommandReceived, 'quit command should not have been received');
     console.log = originalLog;
   });
 });

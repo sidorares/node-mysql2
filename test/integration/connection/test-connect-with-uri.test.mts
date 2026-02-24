@@ -1,6 +1,6 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnectionWithURI } from '../../common.test.mjs';
 
 if (process.env.MYSQL_CONNECTION_URL) {
@@ -26,7 +26,7 @@ await describe('Connect With URI', async () => {
       });
     });
 
-    assert.deepEqual(rows, [{ 1: 1 }]);
-    assert.equal(fields?.[0].name, '1');
+    strict.deepEqual(rows, [{ 1: 1 }]);
+    strict.equal(fields?.[0].name, '1');
   });
 });

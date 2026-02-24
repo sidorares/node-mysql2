@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import clientConstants from '../../../lib/constants/client.js';
 import Packet from '../../../lib/packets/packet.js';
 import ResultSetHeader from '../../../lib/packets/resultset_header.js';
@@ -22,7 +22,7 @@ const mkpacket = (str: string) => {
 
 describe('OK packet with session track', () => {
   it('should parse session track packet (regression #989, case 1)', () => {
-    assert.doesNotThrow(() => {
+    strict.doesNotThrow(() => {
       const packet = mkpacket(
         `1b 00 00 01
            00
@@ -34,7 +34,7 @@ describe('OK packet with session track', () => {
   });
 
   it('should parse session track packet (regression #989, case 2)', () => {
-    assert.doesNotThrow(() => {
+    strict.doesNotThrow(() => {
       const packet = mkpacket(
         `13 00 00 01 00 01 00 02 40 00 00 00 0a 14 08 fe 18 25 e7 06 00 00 00`
       );

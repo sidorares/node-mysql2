@@ -1,7 +1,7 @@
 // TODO: `namedPlaceholders` can't be disabled at query level
 import type { RowDataPacket } from '../../index.js';
 import type { Pool as PromisePool } from '../../promise.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection, createPool } from '../common.test.mjs';
 
 type ResultRow = RowDataPacket & { result: number };
@@ -16,9 +16,9 @@ await describe('Test namedPlaceholder as command parameter in connection', async
 
   //   try {
   //     await c.query({ sql: query, namedPlaceholders: false }, values);
-  //     assert.fail('Enabled in connection config, disabled in query command');
+  //     strict.fail('Enabled in connection config, disabled in query command');
   //   } catch (err) {
-  //     assert(
+  //     strict(
   //       err?.sqlMessage.match(/right syntax to use near ':named'/),
   //       'Enabled in connection config, disabled in query command',
   //     );
@@ -36,7 +36,7 @@ await describe('Test namedPlaceholder as command parameter in connection', async
     );
     await c.end();
 
-    assert.equal(
+    strict.equal(
       rows[0].result,
       1,
       'Disabled in connection config, enabled in query command'
@@ -48,9 +48,9 @@ await describe('Test namedPlaceholder as command parameter in connection', async
 
   //   try {
   //     await c.execute({ sql: query, namedPlaceholders: false }, values);
-  //     assert.fail('Enabled in connection config, disabled in execute command');
+  //     strict.fail('Enabled in connection config, disabled in execute command');
   //   } catch (err) {
-  //     assert(
+  //     strict(
   //       err?.sqlMessage.match(/right syntax to use near ':named'/),
   //       'Enabled in connection config, disabled in execute command',
   //     );
@@ -68,7 +68,7 @@ await describe('Test namedPlaceholder as command parameter in connection', async
     );
     await c.end();
 
-    assert.equal(
+    strict.equal(
       rows[0].result,
       1,
       'Disabled in connection config, enabled in execute command'
@@ -80,9 +80,9 @@ await describe('Test namedPlaceholder as command parameter in connection', async
 
   //   try {
   //     await c.query({ sql: query, namedPlaceholders: false }, values);
-  //     assert.fail('Enabled in pool config, disabled in query command');
+  //     strict.fail('Enabled in pool config, disabled in query command');
   //   } catch (err) {
-  //     assert(
+  //     strict(
   //       err?.sqlMessage.match(/right syntax to use near ':named'/),
   //       'Enabled in pool config, disabled in query command',
   //     );
@@ -100,7 +100,7 @@ await describe('Test namedPlaceholder as command parameter in connection', async
     );
     await c.end();
 
-    assert.equal(
+    strict.equal(
       rows[0].result,
       1,
       'Disabled in pool config, enabled in query command'
@@ -112,9 +112,9 @@ await describe('Test namedPlaceholder as command parameter in connection', async
 
   //   try {
   //     await c.execute({ sql: query, namedPlaceholders: false }, values);
-  //     assert.fail('Enabled in pool config, disabled in execute command');
+  //     strict.fail('Enabled in pool config, disabled in execute command');
   //   } catch (err) {
-  //     assert(
+  //     strict(
   //       err?.sqlMessage.match(/right syntax to use near ':named'/),
   //       'Enabled in pool config, disabled in execute command',
   //     );
@@ -132,7 +132,7 @@ await describe('Test namedPlaceholder as command parameter in connection', async
     );
     await c.end();
 
-    assert.equal(
+    strict.equal(
       rows[0].result,
       1,
       'Disabled in pool config, enabled in execute command'

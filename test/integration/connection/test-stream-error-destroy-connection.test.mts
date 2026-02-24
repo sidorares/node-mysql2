@@ -1,5 +1,5 @@
 import type { Connection } from '../../../index.js';
-import { afterEach, assert, beforeEach, describe, it } from 'poku';
+import { afterEach, beforeEach, describe, it, strict } from 'poku';
 import { config, createConnection } from '../../common.test.mjs';
 
 const { database: currentDatabase } = config;
@@ -63,9 +63,9 @@ describe('test stream error destroy connection:', async () => {
 
     const uncaughtExceptionError = state.uncaughtExceptionError;
     if (uncaughtExceptionError === null) {
-      assert.fail('Expected an uncaught exception error');
+      strict.fail('Expected an uncaught exception error');
     } else {
-      assert.equal(
+      strict.equal(
         uncaughtExceptionError.message,
         `Table '${currentDatabase}.invalid_table' doesn't exist`
       );
@@ -89,9 +89,9 @@ describe('test stream error destroy connection:', async () => {
 
     const uncaughtExceptionError = state.uncaughtExceptionError;
     if (uncaughtExceptionError === null) {
-      assert.fail('Expected an uncaught exception error');
+      strict.fail('Expected an uncaught exception error');
     } else {
-      assert.equal(
+      strict.equal(
         uncaughtExceptionError.message,
         `Table '${currentDatabase}.invalid_table' doesn't exist`
       );

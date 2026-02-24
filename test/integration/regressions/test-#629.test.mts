@@ -1,5 +1,5 @@
 import type { QueryError, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Regression #629', async () => {
@@ -67,9 +67,9 @@ await describe('Regression #629', async () => {
       const row = actualRows[index];
       Object.keys(exp).map((key) => {
         if (key.startsWith('date')) {
-          assert.equal(+exp[key as keyof typeof exp], +row[key]);
+          strict.equal(+exp[key as keyof typeof exp], +row[key]);
         } else {
-          assert.equal(exp[key as keyof typeof exp], row[key]);
+          strict.equal(exp[key as keyof typeof exp], row[key]);
         }
       });
     });

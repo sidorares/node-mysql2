@@ -1,66 +1,75 @@
 import type { PoolConnection } from '../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createPool } from '../common.test.mjs';
 
 await describe('Pool Release Idle Connection Timeout', async () => {
-  await it('should destroy all idle connections after timeout', async () => {
-    const pool = createPool({
-      connectionLimit: 3,
-      maxIdle: 1,
-      idleTimeout: 1000,
-    });
+  const pool = createPool({
+    connectionLimit: 3,
+    maxIdle: 1,
+    idleTimeout: 1000,
+  });
 
+  let connection1!: PoolConnection;
+  let connection2!: PoolConnection;
+  let connection3!: PoolConnection;
+  let connection4!: PoolConnection;
+  let allConnsAfterRelease = -1;
+  let freeConnsAfterRelease = -1;
+  let allConnsAfterTimeout = -1;
+  let freeConnsAfterTimeout = -1;
+  let allConnsAfterNew = -1;
+  let freeConnsAfterNew = -1;
+
+  await it('should destroy all idle connections after timeout', async () => {
     await new Promise<void>((resolve, reject) => {
       pool.getConnection(
-        (err1: NodeJS.ErrnoException | null, connection1: PoolConnection) => {
+        (err1: NodeJS.ErrnoException | null, conn1: PoolConnection) => {
           if (err1) return reject(err1);
-          assert.ok(connection1);
+          connection1 = conn1;
+
           pool.getConnection(
-            (
-              err2: NodeJS.ErrnoException | null,
-              connection2: PoolConnection
-            ) => {
+            (err2: NodeJS.ErrnoException | null, conn2: PoolConnection) => {
               if (err2) return reject(err2);
-              assert.ok(connection2);
-              assert.notStrictEqual(connection1, connection2);
+              connection2 = conn2;
+
               pool.getConnection(
-                (
-                  err3: NodeJS.ErrnoException | null,
-                  connection3: PoolConnection
-                ) => {
+                (err3: NodeJS.ErrnoException | null, conn3: PoolConnection) => {
                   if (err3) return reject(err3);
-                  assert.ok(connection3);
-                  assert.notStrictEqual(connection1, connection3);
-                  assert.notStrictEqual(connection2, connection3);
-                  connection1.release();
-                  connection2.release();
-                  connection3.release();
+                  connection3 = conn3;
+
+                  conn1.release();
+                  conn2.release();
+                  conn3.release();
+
                   // @ts-expect-error: internal access
-                  assert(pool._allConnections.length === 3);
+                  allConnsAfterRelease = pool._allConnections.length;
                   // @ts-expect-error: internal access
-                  assert(pool._freeConnections.length === 3);
-                  // after two seconds, the above 3 connection should have been destroyed
+                  freeConnsAfterRelease = pool._freeConnections.length;
+
+                  // after two seconds, the above 3 connections should have been destroyed
                   setTimeout(() => {
                     // @ts-expect-error: internal access
-                    assert(pool._allConnections.length === 0);
+                    allConnsAfterTimeout = pool._allConnections.length;
                     // @ts-expect-error: internal access
-                    assert(pool._freeConnections.length === 0);
+                    freeConnsAfterTimeout = pool._freeConnections.length;
+
                     // Creating a new connection should create a fresh one
                     pool.getConnection(
                       (
                         err4: NodeJS.ErrnoException | null,
-                        connection4: PoolConnection
+                        conn4: PoolConnection
                       ) => {
                         if (err4) return reject(err4);
-                        assert.ok(connection4);
+                        connection4 = conn4;
+
                         // @ts-expect-error: internal access
-                        assert(pool._allConnections.length === 1);
+                        allConnsAfterNew = pool._allConnections.length;
                         // @ts-expect-error: internal access
-                        assert(pool._freeConnections.length === 0);
-                        connection4.release();
-                        connection4.destroy();
-                        pool.end();
-                        resolve();
+                        freeConnsAfterNew = pool._freeConnections.length;
+
+                        conn4.release();
+                        conn4.destroy();
+                        pool.end(() => resolve());
                       }
                     );
                   }, 2000);
@@ -71,5 +80,32 @@ await describe('Pool Release Idle Connection Timeout', async () => {
         }
       );
     });
+  });
+
+  it('should have 2 connections in the pool', () => {
+    strict(connection2);
+    strict.notStrictEqual(connection1, connection2);
+  });
+
+  it('should have 3 connections in the pool', () => {
+    strict(connection3);
+    strict.notStrictEqual(connection1, connection3);
+    strict.notStrictEqual(connection2, connection3);
+  });
+
+  it('should have 3 free connections in the pool', () => {
+    strict(allConnsAfterRelease === 3);
+    strict(freeConnsAfterRelease === 3);
+  });
+
+  it('should have no connections in the pool', () => {
+    strict(allConnsAfterTimeout === 0);
+    strict(freeConnsAfterTimeout === 0);
+  });
+
+  it('should create a new connection after idle timeout', () => {
+    strict(connection4);
+    strict(allConnsAfterNew === 1);
+    strict(freeConnsAfterNew === 0);
   });
 });

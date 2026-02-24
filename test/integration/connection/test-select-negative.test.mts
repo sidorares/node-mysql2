@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Select Negative', async () => {
@@ -23,7 +23,7 @@ await describe('Select Negative', async () => {
       });
     });
 
-    assert.deepEqual(rows!, [{ v: -1 }]);
-    assert.deepEqual(rows1!, [{ v: -1 }]);
+    strict.deepEqual(rows!, [{ v: -1 }]);
+    strict.deepEqual(rows1!, [{ v: -1 }]);
   });
 });

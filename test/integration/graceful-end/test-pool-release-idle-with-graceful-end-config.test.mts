@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createPool } from '../../common.test.mjs';
 
 /**
@@ -38,7 +38,7 @@ await describe('Pool release idle with gracefulEnd config', async () => {
       });
     });
 
-    assert(quitCommandReceived, 'quit command should have been received');
+    strict(quitCommandReceived, 'quit command should have been received');
     console.log = originalLog;
   });
 });

@@ -6,7 +6,7 @@ import type {
 import fs from 'node:fs';
 import process from 'node:process';
 import { PassThrough } from 'node:stream';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -22,7 +22,7 @@ await describe('Load Infile', async () => {
     .query<RowDataPacket[]>('SELECT @@GLOBAL.local_infile as backup');
   const originalLocalInfile = savedLocalInfile[0].backup;
 
-  connection.query('SET GLOBAL local_infile = true', assert.ifError);
+  connection.query('SET GLOBAL local_infile = true', strict.ifError);
   connection.query(
     [
       `CREATE TEMPORARY TABLE \`${table}\` (`,
@@ -100,18 +100,18 @@ await describe('Load Infile', async () => {
       );
     });
 
-    assert.equal(ok!.affectedRows, 4);
-    assert.equal(rows!.length, 4);
-    assert.equal(rows![0].id, 1);
-    assert.equal(rows![0].title.trim(), 'Hello World');
+    strict.equal(ok!.affectedRows, 4);
+    strict.equal(rows!.length, 4);
+    strict.equal(rows![0].id, 1);
+    strict.equal(rows![0].title.trim(), 'Hello World');
 
-    assert(loadErr, 'Expected LOAD DATA error');
-    assert.equal(
+    strict(loadErr, 'Expected LOAD DATA error');
+    strict.equal(
       loadErr!.message,
       `As a result of LOCAL INFILE command server wants to read /does_not_exist.csv file, but as of v2.0 you must provide streamFactory option returning ReadStream.`
     );
-    assert.equal(loadResult!.affectedRows, 0);
-    assert.equal(streamResult!.affectedRows, 2);
+    strict.equal(loadResult!.affectedRows, 0);
+    strict.equal(streamResult!.affectedRows, 2);
   });
 
   await connection

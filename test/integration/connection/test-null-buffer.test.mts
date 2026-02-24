@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Null Buffer', async () => {
@@ -27,8 +27,8 @@ await describe('Null Buffer', async () => {
       }
     );
 
-    assert.deepEqual(rowsTextProtocol[0], { stuff: null });
-    assert.deepEqual(rowsBinaryProtocol[0], { stuff: null });
+    strict.deepEqual(rowsTextProtocol[0], { stuff: null });
+    strict.deepEqual(rowsBinaryProtocol[0], { stuff: null });
   });
 
   connection.end();

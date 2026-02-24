@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Decimals as Numbers', async () => {
@@ -27,8 +27,8 @@ await describe('Decimals as Numbers', async () => {
       );
     });
 
-    assert.equal(rows1[0].d1.constructor, String);
-    assert.equal(rows1[0].d1, largeDecimalExpected);
+    strict.equal(rows1[0].d1.constructor, String);
+    strict.equal(rows1[0].d1, largeDecimalExpected);
   });
 
   await it('should return decimals as numbers when decimalNumbers is true', async () => {
@@ -38,8 +38,8 @@ await describe('Decimals as Numbers', async () => {
       );
     });
 
-    assert.equal(rows2[0].d1.constructor, Number);
-    assert.equal(rows2[0].d1, largeMoneyValue);
+    strict.equal(rows2[0].d1.constructor, Number);
+    strict.equal(rows2[0].d1, largeMoneyValue);
   });
 
   connection1.end();

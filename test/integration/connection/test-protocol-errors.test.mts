@@ -6,7 +6,7 @@
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection, createServer } from '../../common.test.mjs';
 
 if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
@@ -76,13 +76,13 @@ await describe('Protocol Errors', async () => {
       );
     });
 
-    assert.deepEqual(rows!, [{ 1: 1 }]);
-    assert.equal(fields![0].name, '1');
-    assert.equal(
+    strict.deepEqual(rows!, [{ 1: 1 }]);
+    strict.equal(fields![0].name, '1');
+    strict.equal(
       error!.message,
       'Unexpected packet while no commands in the queue'
     );
-    assert.equal(error!.fatal, true);
-    assert.equal(error!.code, 'PROTOCOL_UNEXPECTED_PACKET');
+    strict.equal(error!.fatal, true);
+    strict.equal(error!.code, 'PROTOCOL_UNEXPECTED_PACKET');
   });
 });

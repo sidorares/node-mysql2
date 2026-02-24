@@ -1,6 +1,6 @@
 import type { RowDataPacket } from '../../../index.js';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createPoolCluster, getConfig } from '../../common.test.mjs';
 
 // TODO: config poolCluster to work with MYSQL_CONNECTION_URL run
@@ -25,10 +25,10 @@ await describe('pool cluster connection query', async () => {
       );
     });
 
-    assert.equal(rows.length, 1);
-    assert.equal(rows[0]['1'], 1);
+    strict.equal(rows.length, 1);
+    strict.equal(rows[0]['1'], 1);
     // @ts-expect-error: internal access
-    assert.deepEqual(cluster._serviceableNodeIds, [
+    strict.deepEqual(cluster._serviceableNodeIds, [
       'MASTER',
       'SLAVE1',
       'SLAVE2',

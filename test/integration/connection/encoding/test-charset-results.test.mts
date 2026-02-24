@@ -1,6 +1,6 @@
 import type { FieldPacket, RowDataPacket } from '../../../../index.js';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../../../index.js';
 import { createConnection } from '../../../common.test.mjs';
 
@@ -33,20 +33,20 @@ await describe('Charset Results', async () => {
     );
 
     if (!fields || fields.length === 0) {
-      assert.fail('Expected metadata fields');
+      strict.fail('Expected metadata fields');
     }
     const firstField = fields[0];
     const characterSet = firstField.characterSet;
     if (characterSet === undefined) {
-      assert.fail('Expected characterSet metadata');
+      strict.fail('Expected characterSet metadata');
     }
     let iconvEncoding = encoding;
     if (encoding === 'utf8mb4') {
       iconvEncoding = 'utf8';
     }
-    assert.equal(mysql.CharsetToEncoding[characterSet], iconvEncoding);
-    assert.equal(firstField.name, payload);
-    assert.equal(rows[0][firstField.name], payload);
+    strict.equal(mysql.CharsetToEncoding[characterSet], iconvEncoding);
+    strict.equal(firstField.name, payload);
+    strict.equal(rows[0][firstField.name], payload);
   }
 
   async function tryEncodingExecute(encoding: string): Promise<void> {
@@ -68,21 +68,21 @@ await describe('Charset Results', async () => {
     );
 
     if (!fields || fields.length === 0) {
-      assert.fail('Expected metadata fields');
+      strict.fail('Expected metadata fields');
     }
     const firstField = fields[0];
     const characterSet = firstField.characterSet;
     if (characterSet === undefined) {
-      assert.fail('Expected characterSet metadata');
+      strict.fail('Expected characterSet metadata');
     }
     let iconvEncoding = encoding;
     if (encoding === 'utf8mb4') {
       iconvEncoding = 'utf8';
     }
-    assert.equal(mysql.CharsetToEncoding[characterSet], iconvEncoding);
+    strict.equal(mysql.CharsetToEncoding[characterSet], iconvEncoding);
     // TODO: figure out correct metadata encodings setup for binary protocol
-    //  assert.equal(firstField.name, payload);
-    assert.equal(rows[0][firstField.name], payload);
+    //  strict.equal(firstField.name, payload);
+    strict.equal(rows[0][firstField.name], payload);
   }
 
   const encodings = ['cp1251', 'koi8r', 'cp866', 'utf8mb4'];

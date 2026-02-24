@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 describe('Execute Bind Undefined', () => {
@@ -18,13 +18,13 @@ describe('Execute Bind Undefined', () => {
   }
 
   it('should throw TypeError for undefined parameter', () => {
-    assert(error instanceof Error, 'Expected TypeError to be thrown');
+    strict(error instanceof Error, 'Expected TypeError to be thrown');
     if (!error) {
       return;
     }
-    assert.equal(error.name, 'TypeError');
+    strict.equal(error.name, 'TypeError');
     if (!error.message.match(/undefined/)) {
-      assert.fail("Expected error.message to contain 'undefined'");
+      strict.fail("Expected error.message to contain 'undefined'");
     }
   });
 });

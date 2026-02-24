@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -54,7 +54,7 @@ await describe('pool cluster remove by name', async () => {
       }
     );
 
-    assert.strictEqual(result1.clusterId, 'SLAVE1');
+    strict.strictEqual(result1.clusterId, 'SLAVE1');
     cluster.remove('SLAVE1');
 
     const result2 = await new Promise<{ clusterId: string }>(
@@ -69,7 +69,7 @@ await describe('pool cluster remove by name', async () => {
       }
     );
 
-    assert.strictEqual(result2.clusterId, 'SLAVE2');
+    strict.strictEqual(result2.clusterId, 'SLAVE2');
     cluster.remove('SLAVE2');
 
     const err = await new Promise<(Error & { code?: string }) | null>(
@@ -78,8 +78,8 @@ await describe('pool cluster remove by name', async () => {
       }
     );
 
-    assert.ok(err);
-    assert.equal(err?.code, 'POOL_NOEXIST');
+    strict.ok(err);
+    strict.equal(err?.code, 'POOL_NOEXIST');
 
     cluster.remove('SLAVE1');
     cluster.remove('SLAVE2');

@@ -3,7 +3,7 @@ import type {
   TypeCastField,
   TypeCastNext,
 } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Typecast Global Option', async () => {
@@ -35,7 +35,7 @@ await describe('Typecast Global Option', async () => {
       );
     });
 
-    assert.equal(res[0].foo, 'foobar');
+    strict.equal(res[0].foo, 'foobar');
   });
 
   // global typecast works
@@ -49,7 +49,7 @@ await describe('Typecast Global Option', async () => {
       );
     });
 
-    assert.equal(res[0].foo, 'FOOBAR');
+    strict.equal(res[0].foo, 'FOOBAR');
   });
 
   connection.end();

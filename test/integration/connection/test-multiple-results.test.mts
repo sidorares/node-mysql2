@@ -5,15 +5,16 @@
 
 import process from 'node:process';
 // @ts-expect-error: no typings available
-import assert from 'assert-diff';
+import strict from 'assert-diff';
 import { describe, it, skip } from 'poku';
-import { createConnection, normalizeNumeric } from '../../common.test.mjs';
+import { createConnection } from '../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   skip('Skipping test for PlanetScale');
 }
 
 await describe('Multiple Results', async () => {
+  const runtime = typeof Bun !== 'undefined' ? 'bun' : 'default';
   const mysql = createConnection({
     multipleStatements: true,
   });
@@ -40,8 +41,8 @@ await describe('Multiple Results', async () => {
   rs2.serverStatus = 2;
 
   const twoInsertResult = [[rs1, rs2], [undefined, undefined], 2];
-  const select1 = [{ 1: '1' }];
-  const select2 = [{ 2: '2' }];
+  const select1 = [{ 1: { default: '1', bun: 1 }[runtime] }];
+  const select2 = [{ 2: { default: '2', bun: 2 }[runtime] }];
   const fields1 = [
     {
       catalog: 'def',
@@ -179,13 +180,9 @@ await describe('Multiple Results', async () => {
               return column;
             };
 
-            assert.deepEqual(
-              [
-                normalizeNumeric(expectation[0]),
-                expectation[1],
-                expectation[2],
-              ],
-              [normalizeNumeric(_rows), arrOrColumn(_columns), _numResults]
+            strict.deepEqual(
+              [expectation[0], expectation[1], expectation[2]],
+              [_rows, arrOrColumn(_columns), _numResults]
             );
 
             const q = mysql.query(sql);
@@ -201,16 +198,12 @@ await describe('Multiple Results', async () => {
               [key: string]: unknown;
             }) {
               const index = fieldIndex;
-              const normalizedRow = normalizeNumeric(row);
               if (_numResults === 1) {
-                assert.equal(fieldIndex, 0);
+                strict.equal(fieldIndex, 0);
                 if (row.constructor.name === 'ResultSetHeader') {
-                  assert.deepEqual(normalizeNumeric(_rows), normalizedRow);
+                  strict.deepEqual(_rows, row);
                 } else {
-                  assert.deepEqual(
-                    normalizeNumeric(multiRows[rowIndex]),
-                    normalizedRow
-                  );
+                  strict.deepEqual(multiRows[rowIndex], row);
                 }
               } else {
                 if (resIndex !== index) {
@@ -218,17 +211,11 @@ await describe('Multiple Results', async () => {
                   resIndex = index;
                 }
                 if (row.constructor.name === 'ResultSetHeader') {
-                  assert.deepEqual(
-                    normalizeNumeric(multiRows[index]),
-                    normalizedRow
-                  );
+                  strict.deepEqual(multiRows[index], row);
                 } else {
                   const resultRows = multiRows[index];
                   if (Array.isArray(resultRows)) {
-                    assert.deepEqual(
-                      normalizeNumeric(resultRows[rowIndex]),
-                      normalizedRow
-                    );
+                    strict.deepEqual(resultRows[rowIndex], row);
                   }
                 }
               }
@@ -238,10 +225,10 @@ await describe('Multiple Results', async () => {
             function checkFields(fields: unknown) {
               fieldIndex++;
               if (_numResults === 1) {
-                assert.equal(fieldIndex, 0);
-                assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
+                strict.equal(fieldIndex, 0);
+                strict.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
               } else {
-                assert.deepEqual(
+                strict.deepEqual(
                   arrOrColumn(_columns[fieldIndex]),
                   arrOrColumn(fields)
                 );

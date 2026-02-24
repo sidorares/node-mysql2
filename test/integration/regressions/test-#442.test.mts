@@ -1,5 +1,5 @@
 import type { QueryError, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Regression #442', async () => {
@@ -50,10 +50,10 @@ await describe('Regression #442', async () => {
     testRows.map((tRow, index) => {
       const cols = testFields;
       const aRow = actualRows[index];
-      assert.equal(aRow[cols[0]], tRow[0]);
-      assert.equal(aRow[cols[1]], tRow[1]);
-      assert.equal(aRow[cols[2]], tRow[2]);
-      assert.equal(aRow[cols[3]], tRow[3]);
+      strict.equal(aRow[cols[0]], tRow[0]);
+      strict.equal(aRow[cols[1]], tRow[1]);
+      strict.equal(aRow[cols[2]], tRow[2]);
+      strict.equal(aRow[cols[3]], tRow[3]);
     });
   });
 });

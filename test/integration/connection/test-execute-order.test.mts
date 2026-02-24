@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Execute Order', async () => {
@@ -24,6 +24,6 @@ await describe('Execute Order', async () => {
       });
     });
 
-    assert.deepEqual(order, [0, 1, 2]);
+    strict.deepEqual(order, [0, 1, 2]);
   });
 });

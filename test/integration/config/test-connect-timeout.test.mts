@@ -1,4 +1,4 @@
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../../index.js';
 
 if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
@@ -10,11 +10,11 @@ await describe('Connect Timeout', async () => {
       const server = mysql.createServer();
       server.on('connection', (conn) => {
         conn.on('error', (err: NodeJS.ErrnoException) => {
-          assert.equal(
+          strict.equal(
             err.message,
             'Connection lost: The server closed the connection.'
           );
-          assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+          strict.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
         });
       });
 
@@ -30,7 +30,7 @@ await describe('Connect Timeout', async () => {
         });
 
         connection.on('error', (err) => {
-          assert.equal(err.code, 'ETIMEDOUT');
+          strict.equal(err.code, 'ETIMEDOUT');
           connection.destroy();
           // @ts-expect-error: internal access
           server._server.close(() => {

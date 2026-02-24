@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection, useTestDb } from '../../common.test.mjs';
 
 type TransactionRow = RowDataPacket & {
@@ -47,7 +47,7 @@ await describe('Transaction Commit', async () => {
       );
     });
 
-    assert.equal(rows?.length, 1);
+    strict.equal(rows?.length, 1);
   });
 
   connection.end();

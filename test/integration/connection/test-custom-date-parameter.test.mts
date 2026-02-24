@@ -1,9 +1,10 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { describe, it, strict } from 'poku';
+import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 await describe('Custom Date Parameter', async () => {
   const connection = createConnection({ timezone: 'Z' });
+  const { major } = await getMysqlVersion(connection);
 
   // @ts-expect-error: intentionally replacing global Date for testing
   // eslint-disable-next-line no-global-assign
@@ -28,12 +29,14 @@ await describe('Custom Date Parameter', async () => {
         (err, _rows) => {
           if (err) return reject(err);
           rows = _rows;
-          connection.end();
-          resolve();
+          connection.end(() => {
+            resolve();
+          });
         }
       );
     });
 
-    assert.equal(rows?.[0].t, 650073600);
+    const expected = major < 8 ? 650073600 : '650073600.000000';
+    strict.equal(rows?.[0].t, expected);
   });
 });

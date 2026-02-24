@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it, skip, sleep } from 'poku';
+import { describe, it, skip, sleep, strict } from 'poku';
 import mysql from '../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -60,18 +60,18 @@ await describe('pool cluster restore', async () => {
       cluster.getConnection('MASTER', (err) => resolve(err));
     });
 
-    assert.ok(err1);
-    assert.equal(err1?.code, 'PROTOCOL_CONNECTION_LOST');
-    assert.equal(err1?.fatal, true);
-    assert.equal(connCount, 2);
+    strict.ok(err1);
+    strict.equal(err1?.code, 'PROTOCOL_CONNECTION_LOST');
+    strict.equal(err1?.fatal, true);
+    strict.equal(connCount, 2);
 
     // Second attempt - expected to fail (node removed)
     const err2 = await new Promise<MysqlError | null>((resolve) => {
       cluster.getConnection('MASTER', (err) => resolve(err));
     });
 
-    assert.ok(err2);
-    assert.equal(err2?.code, 'POOL_NONEONLINE');
+    strict.ok(err2);
+    strict.equal(err2?.code, 'POOL_NONEONLINE');
 
     // @ts-expect-error: internal access
     cluster._nodes.MASTER.errorCount = 3;

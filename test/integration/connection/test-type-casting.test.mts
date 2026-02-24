@@ -1,6 +1,6 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import driver from '../../../index.js';
 import { createConnection, useTestDb } from '../../common.test.mjs';
 import typeCastingTests from './type-casting-tests.test.mjs';
@@ -98,18 +98,18 @@ await describe('Type Casting (query)', async () => {
       // check that the column type matches the type name stored in driver.Types
       const columnType = fieldData[test.columnName ?? ''];
       const columnTypeName = getTypeNameByCode(columnType);
-      assert.equal(test.columnType === columnTypeName, true, test.columnName);
+      strict.equal(test.columnType === columnTypeName, true, test.columnName);
       let expected: unknown = test.expect || test.insert;
       let got: unknown = row?.[test.columnName ?? ''];
       let _message;
 
       if (expected instanceof Date) {
-        assert.equal(got instanceof Date, true, test.type);
+        strict.equal(got instanceof Date, true, test.type);
 
         expected = String(expected);
         got = String(got);
       } else if (Buffer.isBuffer(expected)) {
-        assert.equal(Buffer.isBuffer(got), true, test.type);
+        strict.equal(Buffer.isBuffer(got), true, test.type);
 
         expected = String(Array.prototype.slice.call(expected));
         got = String(Array.prototype.slice.call(got));
@@ -119,12 +119,12 @@ await describe('Type Casting (query)', async () => {
         _message = `got: "${JSON.stringify(got)}" expected: "${JSON.stringify(
           expected
         )}" test: ${test.type}`;
-        assert.deepEqual(expected, got, _message);
+        strict.deepEqual(expected, got, _message);
       } else {
         _message = `got: "${got}" (${typeof got}) expected: "${expected}" (${typeof expected}) test: ${
           test.type
         }`;
-        assert.strictEqual(expected, got, _message);
+        strict.strictEqual(expected, got, _message);
       }
     });
   });

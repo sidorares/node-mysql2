@@ -1,5 +1,5 @@
 import type { format as Format } from 'sql-escaper';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import driver from '../../../index.js';
 import { config, localDate } from '../../common.test.mjs';
 
@@ -21,7 +21,7 @@ await describe('stringifyObjects: false', async () => {
     it('should return the query unchanged', () => {
       const query: string = format('SELECT * FROM users', []);
 
-      assert.strictEqual(query, 'SELECT * FROM users');
+      strict.strictEqual(query, 'SELECT * FROM users');
     });
   });
 
@@ -31,7 +31,7 @@ await describe('stringifyObjects: false', async () => {
         'admin@example.com',
       ]);
 
-      assert.strictEqual(
+      strict.strictEqual(
         query,
         "SELECT * FROM users WHERE email = 'admin@example.com'"
       );
@@ -42,7 +42,7 @@ await describe('stringifyObjects: false', async () => {
         { email: 1 },
       ]);
 
-      assert.strictEqual(
+      strict.strictEqual(
         query,
         "SELECT * FROM users WHERE email = '[object Object]'"
       );
@@ -56,7 +56,7 @@ await describe('stringifyObjects: false', async () => {
         ['admin@example.com', 'wrong_password']
       );
 
-      assert.strictEqual(
+      strict.strictEqual(
         query,
         "SELECT * FROM users WHERE email = 'admin@example.com' AND password = 'wrong_password'"
       );
@@ -68,7 +68,7 @@ await describe('stringifyObjects: false', async () => {
         [{ email: 1 }, 'user1_pass']
       );
 
-      assert.strictEqual(
+      strict.strictEqual(
         query,
         "SELECT * FROM users WHERE email = '[object Object]' AND password = 'user1_pass'"
       );
@@ -79,7 +79,7 @@ await describe('stringifyObjects: false', async () => {
     it('should generate a safe query for a legitimate id', () => {
       const query: string = format('DELETE FROM users WHERE id = ?', [1]);
 
-      assert.strictEqual(query, 'DELETE FROM users WHERE id = 1');
+      strict.strictEqual(query, 'DELETE FROM users WHERE id = 1');
     });
 
     it('should not generate a SQL fragment for object { id: true }', () => {
@@ -87,7 +87,7 @@ await describe('stringifyObjects: false', async () => {
         { id: true },
       ]);
 
-      assert.strictEqual(
+      strict.strictEqual(
         query,
         "DELETE FROM users WHERE id = '[object Object]'"
       );
@@ -100,7 +100,7 @@ await describe('stringifyObjects: false', async () => {
         { name: 'foo', email: 'bar@test.com' },
       ]);
 
-      assert.strictEqual(
+      strict.strictEqual(
         query,
         "UPDATE users SET `name` = 'foo', `email` = 'bar@test.com'"
       );
@@ -111,7 +111,7 @@ await describe('stringifyObjects: false', async () => {
         { name: 'foo', email: 'bar@test.com' },
       ]);
 
-      assert.strictEqual(
+      strict.strictEqual(
         query,
         "INSERT INTO users SET `name` = 'foo', `email` = 'bar@test.com'"
       );
@@ -123,7 +123,7 @@ await describe('stringifyObjects: false', async () => {
         ['foo', 'bar@test.com', { name: 'foo', email: 'bar@test.com' }]
       );
 
-      assert.strictEqual(
+      strict.strictEqual(
         query,
         "INSERT INTO users (name, email) VALUES ('foo', 'bar@test.com') ON DUPLICATE KEY UPDATE `name` = 'foo', `email` = 'bar@test.com'"
       );
@@ -138,7 +138,7 @@ await describe('stringifyObjects: false', async () => {
         [date]
       );
 
-      assert.strictEqual(
+      strict.strictEqual(
         query,
         `SELECT * FROM events WHERE created_at = '${localDate(date)}'`
       );
@@ -151,7 +151,7 @@ await describe('stringifyObjects: false', async () => {
         ['test', date]
       );
 
-      assert.strictEqual(
+      strict.strictEqual(
         query,
         `INSERT INTO logs (message, created_at) VALUES ('test', '${localDate(date)}')`
       );

@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../common.test.mjs';
 
 await describe('Multi Result Streaming', async () => {
@@ -21,10 +21,10 @@ await describe('Multi Result Streaming', async () => {
   const compare2 = await conn.promise().query(sql2);
 
   if (!compare1 || compare1.length < 1) {
-    assert.fail('no results for comparison 1');
+    strict.fail('no results for comparison 1');
   }
   if (!compare2 || compare2.length < 1) {
-    assert.fail('no results for comparison 2');
+    strict.fail('no results for comparison 2');
   }
 
   await it('should stream multi-result sets correctly', async () => {
@@ -54,10 +54,10 @@ await describe('Multi Result Streaming', async () => {
       .promise()
       .query('SET GLOBAL max_allowed_packet = ?', [originalMaxAllowedPacket]);
 
-    assert.equal(captured1.length, 1);
-    assert.equal(captured2.length, 1);
-    assert.deepEqual(captured1[0], (compare1[0] as RowDataPacket[])[0]);
-    assert.deepEqual(captured2[0], (compare2[0] as RowDataPacket[])[0]);
+    strict.equal(captured1.length, 1);
+    strict.equal(captured2.length, 1);
+    strict.deepEqual(captured1[0], (compare1[0] as RowDataPacket[])[0]);
+    strict.deepEqual(captured2[0], (compare2[0] as RowDataPacket[])[0]);
   });
 
   conn.end();

@@ -4,7 +4,7 @@
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type SqlModeRow = RowDataPacket & { value: string };
@@ -49,11 +49,11 @@ await describe('Invalid Date Result', async () => {
       );
     });
 
-    assert.deepEqual(
+    strict.deepEqual(
       Object.prototype.toString.call(rows?.[0].t),
       '[object Date]'
     );
-    assert.deepEqual(isInvalidTime(rows?.[0].t), true);
+    strict.deepEqual(isInvalidTime(rows?.[0].t), true);
   });
 
   connection.end();

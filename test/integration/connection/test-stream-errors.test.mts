@@ -6,7 +6,7 @@
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
 import type { Connection } from '../../../index.js';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection, createServer } from '../../common.test.mjs';
 
 type TestError = Error & { code?: string; fatal?: boolean };
@@ -91,12 +91,12 @@ await describe('Stream Errors', async () => {
       );
     });
 
-    assert.equal(receivedError1?.fatal, true);
-    assert.equal(receivedError1?.code, err.code);
-    assert.equal(receivedError2?.fatal, true);
-    assert.equal(receivedError2?.code, err.code);
-    assert.equal(receivedError3?.fatal, true);
-    assert.equal(
+    strict.equal(receivedError1?.fatal, true);
+    strict.equal(receivedError1?.code, err.code);
+    strict.equal(receivedError2?.fatal, true);
+    strict.equal(receivedError2?.code, err.code);
+    strict.equal(receivedError3?.fatal, true);
+    strict.equal(
       receivedError3?.message,
       "Can't add new command when connection is in closed state"
     );

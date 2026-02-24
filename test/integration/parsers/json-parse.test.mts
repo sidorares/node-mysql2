@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type JsonRow = RowDataPacket & { json_result: { test: boolean } };
@@ -12,7 +12,7 @@ await describe('JSON Parser', async () => {
       `SELECT CAST('{"test": true}' AS JSON) AS json_result`
     );
 
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       result[0].json_result,
       { test: true },
       'Ensure JSON return parsed (query)'
@@ -24,7 +24,7 @@ await describe('JSON Parser', async () => {
       `SELECT CAST('{"test": true}' AS JSON) AS json_result`
     );
 
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       result[0].json_result,
       { test: true },
       'Ensure JSON return parsed (execute)'

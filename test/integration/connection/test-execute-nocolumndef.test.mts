@@ -6,7 +6,7 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
 import process from 'node:process';
 // @ts-expect-error: no typings available
-import assert from 'assert-diff';
+import strict from 'assert-diff';
 import { describe, it, skip } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
@@ -208,18 +208,18 @@ await describe('Execute No Column Definition', async () => {
       }
     );
 
-    assert.deepEqual(rows, expectedRows);
+    strict.deepEqual(rows, expectedRows);
     fields.forEach((f: FieldPacket, index: number) => {
       // @ts-expect-error: TODO: implement typings
       const fi = f.inspect();
       // "columnLength" is non-deterministic
       delete fi.columnLength;
 
-      assert.deepEqual(
+      strict.deepEqual(
         Object.keys(fi).sort(),
         Object.keys(expectedFields[index]).sort()
       );
-      assert.deepEqual(expectedFields[index], fi);
+      strict.deepEqual(expectedFields[index], fi);
     });
   });
 

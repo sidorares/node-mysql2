@@ -1,5 +1,5 @@
 import type { Connection } from '../../../index.js';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../../index.js';
 
 if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
@@ -30,11 +30,11 @@ await describe('Connect Time Error', async () => {
         });
 
         connection.query('select 1+1', (err) => {
-          assert.equal(err?.message, ERROR_TEXT);
+          strict.equal(err?.message, ERROR_TEXT);
         });
 
         connection.query('select 1+2', (err) => {
-          assert.equal(err?.message, ERROR_TEXT);
+          strict.equal(err?.message, ERROR_TEXT);
           // @ts-expect-error: TODO: implement typings
           connection.close();
           // @ts-expect-error: internal access

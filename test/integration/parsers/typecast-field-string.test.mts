@@ -1,5 +1,5 @@
 import type { RowDataPacket, TypeCastField } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type DateRow = RowDataPacket & { date: string | null };
@@ -88,16 +88,16 @@ await describe('typeCast field.string', async () => {
   await conn.end();
 
   it(() => {
-    assert.deepStrictEqual(query.date, execute.date, 'DATE');
-    assert.deepStrictEqual(query.time, execute.time, 'TIME');
-    assert.deepStrictEqual(query.datetime, execute.datetime, 'DATETIME');
-    assert.deepStrictEqual(query.timestamp, execute.timestamp, 'TIMESTAMP');
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(query.date, execute.date, 'DATE');
+    strict.deepStrictEqual(query.time, execute.time, 'TIME');
+    strict.deepStrictEqual(query.datetime, execute.datetime, 'DATETIME');
+    strict.deepStrictEqual(query.timestamp, execute.timestamp, 'TIMESTAMP');
+    strict.deepStrictEqual(
       query.tiny.signed,
       execute.tiny.signed,
       'TINY (signed)'
     );
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       query.tiny.unsigned,
       execute.tiny.unsigned,
       'TINY (unsigned)'

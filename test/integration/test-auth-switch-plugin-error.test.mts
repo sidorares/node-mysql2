@@ -1,7 +1,7 @@
 // Copyright (c) 2021, Oracle and/or its affiliates.
 
 import { Buffer } from 'node:buffer';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../index.js';
 import Command from '../../lib/commands/command.js';
 import Packets from '../../lib/packets/index.js';
@@ -93,9 +93,9 @@ await describe('Auth Switch Plugin Error', async () => {
       });
     });
 
-    assert.equal(error?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
-    assert.equal(error?.message, 'boom');
-    assert.equal(error?.fatal, true);
-    assert.equal(serverError?.code, 'PROTOCOL_CONNECTION_LOST');
+    strict.equal(error?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
+    strict.equal(error?.message, 'boom');
+    strict.equal(error?.fatal, true);
+    strict.equal(serverError?.code, 'PROTOCOL_CONNECTION_LOST');
   });
 });
