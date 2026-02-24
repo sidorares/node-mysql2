@@ -21,7 +21,7 @@ await describe('Query Timeout', async () => {
         { sql: 'SELECT sleep(3) as a', timeout: 500 },
         (err, res) => {
           try {
-            strict.equal(res, null);
+            strict.equal(res, undefined);
             strict.ok(err);
             strict.equal(err.code, 'PROTOCOL_SEQUENCE_TIMEOUT');
             strict.equal(err.message, 'Query inactivity timeout');
@@ -54,7 +54,7 @@ await describe('Query Timeout', async () => {
         { sql: 'SELECT sleep(3) as a', timeout: 500 },
         (err, res) => {
           try {
-            strict.equal(res, null);
+            strict.equal(res, undefined);
             strict.ok(err);
             strict.equal(err.code, 'PROTOCOL_SEQUENCE_TIMEOUT');
             strict.equal(err.message, 'Query inactivity timeout');
@@ -79,7 +79,7 @@ await describe('Query Timeout', async () => {
         { sql: 'select 1 from non_existing_table', timeout: 500 },
         (err, res) => {
           try {
-            strict.equal(res, null);
+            strict.equal(res, undefined);
             strict.ok(err);
             strict.equal(err.code, 'ER_NO_SUCH_TABLE');
           } catch (e) {
@@ -144,7 +144,7 @@ await describe('Query Timeout', async () => {
       );
     });
 
-    strict.equal(result.res, null);
+    strict.equal(result.res, undefined);
     strict.ok(result.err);
     strict.equal(result.err.code, 'ETIMEDOUT');
     strict.equal(result.err.message, 'connect ETIMEDOUT');

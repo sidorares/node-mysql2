@@ -34,6 +34,6 @@ await describe('Custom Date Parameter', async () => {
       );
     });
 
-    strict.equal(rows?.[0].t, 650073600);
+    strict.equal(rows?.[0].t, '650073600.000000');
   });
 });

@@ -1,6 +1,6 @@
 import type { RowDataPacket } from '../../../index.js';
 import { describe, it, strict } from 'poku';
-import { createConnection, normalizeNumeric } from '../../common.test.mjs';
+import { createConnection } from '../../common.test.mjs';
 
 type TestRow = RowDataPacket & { id: number; num: number; l: number };
 
@@ -37,10 +37,10 @@ await describe('Execute Signed', async () => {
       );
     });
 
-    strict.deepEqual(normalizeNumeric(rows), [
-      { id: 1, num: 1, l: 3 },
-      { id: 2, num: -2, l: -10 },
-      { id: 3, num: -1, l: -4000000 },
+    strict.deepEqual(rows, [
+      { id: 1, num: 1, l: '3' },
+      { id: 2, num: -2, l: '-10' },
+      { id: 3, num: -1, l: '-4000000' },
     ]);
   });
 

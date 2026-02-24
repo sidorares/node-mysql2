@@ -44,7 +44,7 @@ await describe('Insert Negative Auto Increment', async () => {
 
     strict.strictEqual(insertResult.insertId, -999);
     strict.strictEqual(selectResult.length, 1);
-    strict.equal(selectResult[0].id, String(insertResult.insertId));
+    strict.equal(selectResult[0].id, insertResult.insertId);
     strict.equal(selectResult[0].title, testData);
   });
 

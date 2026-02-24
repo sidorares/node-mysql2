@@ -44,7 +44,7 @@ await describe('Insert Results', async () => {
     strict.strictEqual(insertResult.insertId, 1);
     strict.strictEqual(selectResult.length, 1);
     // TODO: type conversions
-    strict.equal(selectResult[0].id, String(insertResult.insertId));
+    strict.equal(selectResult[0].id, insertResult.insertId);
     strict.equal(selectResult[0].title, text);
   });
 
