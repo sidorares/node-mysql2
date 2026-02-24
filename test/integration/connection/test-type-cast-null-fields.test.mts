@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection, useTestDb } from '../../common.test.mjs';
 
 type InsertTestRow = RowDataPacket & {
@@ -38,8 +38,8 @@ await describe('Type Cast Null Fields', async () => {
       );
     });
 
-    assert.strictEqual(results[0].date, null);
-    assert.strictEqual(results[0].number, null);
+    strict.strictEqual(results[0].date, null);
+    strict.strictEqual(results[0].number, null);
   });
 
   connection.end();

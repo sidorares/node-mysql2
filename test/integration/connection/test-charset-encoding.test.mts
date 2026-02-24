@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type CharsetRow = RowDataPacket & { field: string };
@@ -51,7 +51,7 @@ await describe('Charset Encoding', async () => {
     });
 
     resultData?.forEach((data: CharsetRow, index: number) => {
-      assert.equal(data.field, testData[index]);
+      strict.equal(data.field, testData[index]);
     });
   });
 });

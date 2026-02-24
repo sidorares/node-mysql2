@@ -1,6 +1,6 @@
 import type { ResultSetHeader, RowDataPacket } from '../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../common.test.mjs';
 
 type BlobRow = RowDataPacket & { id: number; content: Buffer };
@@ -64,8 +64,8 @@ if (_disabled) {
                   (_err, result2) => {
                     if (_err) return reject(_err);
 
-                    assert.equal(result2[0].id, String(result.insertId));
-                    assert.equal(
+                    strict.equal(result2[0].id, String(result.insertId));
+                    strict.equal(
                       result2[0].content.toString('hex'),
                       content.toString('hex')
                     );
@@ -79,7 +79,7 @@ if (_disabled) {
                           `SELECT * FROM ${table} WHERE id = ${result3.insertId}`,
                           (err, result4) => {
                             if (err) return reject(err);
-                            assert.equal(
+                            strict.equal(
                               result4[0].content.toString('hex'),
                               content1.toString('hex')
                             );

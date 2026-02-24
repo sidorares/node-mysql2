@@ -1,6 +1,6 @@
 import type { PoolConnection, QueryError, RowDataPacket } from '../../index.js';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection, createPool } from '../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -26,12 +26,12 @@ await describe('Pool Disconnect', async () => {
             // sleep required to give mysql time to close connection,
             // and callback called after connection with id is really closed
             conn.query('kill ?; select sleep(0.05)', [id], (err) => {
-              assert.ifError(err);
+              strict.ifError(err);
               killCount++;
               // TODO: this assertion needs to be fixed, after kill
               // connection is removed from _allConnections but not at a point this callback is called
               //
-              // assert.equal(pool._allConnections.length, tids.length);
+              // strict.equal(pool._allConnections.length, tids.length);
               if (killCount === pool.config.connectionLimit) {
                 resolve();
               }
@@ -55,8 +55,8 @@ await describe('Pool Disconnect', async () => {
           'select 1 as value',
           (err: QueryError | null, rows: RowDataPacket[]) => {
             numSelects++;
-            assert.ifError(err);
-            assert.equal(rows[0].value, 1);
+            strict.ifError(err);
+            strict.equal(rows[0].value, 1);
 
             // after all queries complete start killing connections
             if (numSelects === numSelectToPerform) {
@@ -67,7 +67,7 @@ await describe('Pool Disconnect', async () => {
       }
     });
 
-    assert.equal(numSelects, numSelectToPerform);
-    assert.equal(killCount, pool.config.connectionLimit);
+    strict.equal(numSelects, numSelectToPerform);
+    strict.equal(killCount, pool.config.connectionLimit);
   });
 });

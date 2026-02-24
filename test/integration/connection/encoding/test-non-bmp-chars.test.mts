@@ -1,6 +1,6 @@
 import type { FieldPacket, RowDataPacket } from '../../../../index.js';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../../../common.test.mjs';
 
 type UtfRow = RowDataPacket & Record<string, string>;
@@ -23,8 +23,8 @@ await describe('Non BMP Chars', async () => {
       }
     );
 
-    assert.equal(fields[0].name, pileOfPoo);
-    assert.equal(rows[0][fields[0].name], pileOfPoo);
+    strict.equal(fields[0].name, pileOfPoo);
+    strict.equal(rows[0][fields[0].name], pileOfPoo);
     connection.end();
   });
 
@@ -38,8 +38,8 @@ await describe('Non BMP Chars', async () => {
       }
     );
 
-    assert.equal(fields[0].name, '?');
-    assert.equal(rows[0]['?'], pileOfPoo);
+    strict.equal(fields[0].name, '?');
+    strict.equal(rows[0]['?'], pileOfPoo);
     connection2.end();
   });
 });

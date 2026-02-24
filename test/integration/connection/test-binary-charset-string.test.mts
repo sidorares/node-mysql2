@@ -1,7 +1,7 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -68,19 +68,19 @@ await describe('Binary Charset String', async () => {
       });
     });
 
-    assert.deepEqual(rows, [{ "x'010203'": Buffer.from([1, 2, 3]) }]);
-    assert.equal(fields?.[0].name, "x'010203'");
-    assert.deepEqual(rows1, [{ '010203': '010203' }]);
-    assert.equal(fields1?.[0].name, '010203');
-    assert.deepEqual(rows2, [{ "x'010203'": Buffer.from([1, 2, 3]) }]);
-    assert.equal(fields2?.[0].name, "x'010203'");
-    assert.deepEqual(rows3, [{ '010203': '010203' }]);
-    assert.equal(fields3?.[0].name, '010203');
+    strict.deepEqual(rows, [{ "x'010203'": Buffer.from([1, 2, 3]) }]);
+    strict.equal(fields?.[0].name, "x'010203'");
+    strict.deepEqual(rows1, [{ '010203': '010203' }]);
+    strict.equal(fields1?.[0].name, '010203');
+    strict.deepEqual(rows2, [{ "x'010203'": Buffer.from([1, 2, 3]) }]);
+    strict.equal(fields2?.[0].name, "x'010203'");
+    strict.deepEqual(rows3, [{ '010203': '010203' }]);
+    strict.equal(fields3?.[0].name, '010203');
 
-    assert.deepEqual(rows4, [{ "x'010203'": Buffer.from([1, 2, 3]) }]);
-    assert.equal(fields4?.[0].name, "x'010203'");
-    assert.deepEqual(rows5, [{ "x'010203'": Buffer.from([1, 2, 3]) }]);
-    assert.equal(fields5?.[0].name, "x'010203'");
+    strict.deepEqual(rows4, [{ "x'010203'": Buffer.from([1, 2, 3]) }]);
+    strict.equal(fields4?.[0].name, "x'010203'");
+    strict.deepEqual(rows5, [{ "x'010203'": Buffer.from([1, 2, 3]) }]);
+    strict.equal(fields5?.[0].name, "x'010203'");
   });
 
   connection.end();

@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection, normalizeNumeric } from '../../common.test.mjs';
 
 type LongLongRow = {
@@ -126,12 +126,12 @@ await describe('Binary LongLong', async () => {
       testExecute(5, true, true);
     });
 
-    assert.deepEqual(normalizeNumeric(results[0]), bigNums_bnStringsFalse);
-    assert.deepEqual(normalizeNumeric(results[1]), bigNums_bnStringsTrueFalse);
-    assert.deepEqual(normalizeNumeric(results[2]), bigNums_bnStringsTrueTrue);
-    assert.deepEqual(normalizeNumeric(results[3]), bigNums_bnStringsFalse);
-    assert.deepEqual(normalizeNumeric(results[4]), bigNums_bnStringsTrueFalse);
-    assert.deepEqual(normalizeNumeric(results[5]), bigNums_bnStringsTrueTrue);
+    strict.deepEqual(normalizeNumeric(results[0]), bigNums_bnStringsFalse);
+    strict.deepEqual(normalizeNumeric(results[1]), bigNums_bnStringsTrueFalse);
+    strict.deepEqual(normalizeNumeric(results[2]), bigNums_bnStringsTrueTrue);
+    strict.deepEqual(normalizeNumeric(results[3]), bigNums_bnStringsFalse);
+    strict.deepEqual(normalizeNumeric(results[4]), bigNums_bnStringsTrueFalse);
+    strict.deepEqual(normalizeNumeric(results[5]), bigNums_bnStringsTrueTrue);
   });
 
   conn.end();

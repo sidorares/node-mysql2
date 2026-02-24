@@ -1,5 +1,5 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Execute New Decimal', async () => {
@@ -21,8 +21,8 @@ await describe('Execute New Decimal', async () => {
       }
     );
 
-    assert.deepEqual(rows, [{ f: '12345.6700' }]);
-    assert.equal(fields[0].name, 'f');
+    strict.deepEqual(rows, [{ f: '12345.6700' }]);
+    strict.equal(fields[0].name, 'f');
   });
 
   connection.end();

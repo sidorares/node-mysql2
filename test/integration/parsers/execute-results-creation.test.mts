@@ -1,5 +1,5 @@
 import type { ResultSetHeader, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type TestRow = RowDataPacket & { test: number; customProp?: boolean };
@@ -21,24 +21,24 @@ await describe('Execute: Results Creation', async () => {
       'SELECT 1+1 AS `test`'
     );
 
-    assert.deepStrictEqual(results, expected, 'Ensure exact object "results"');
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(results, expected, 'Ensure exact object "results"');
+    strict.deepStrictEqual(
       Object.getOwnPropertyNames(results[0]),
       Object.getOwnPropertyNames(expected[0]),
       'Deep ensure exact object "results"'
     );
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       Object.getPrototypeOf(results[0]),
       Object.getPrototypeOf({}),
       'Ensure clean properties in results items'
     );
 
     privateObjectProps.forEach((prop) => {
-      assert(prop in results[0], `Ensure ${prop} exists`);
+      strict(prop in results[0], `Ensure ${prop} exists`);
     });
 
     results[0].customProp = true;
-    assert.strictEqual(
+    strict.strictEqual(
       results[0].customProp,
       true,
       'Ensure that the end-user is able to use custom props'
@@ -48,7 +48,7 @@ await describe('Execute: Results Creation', async () => {
   await it(async () => {
     const [result] = await connection.execute<ResultSetHeader>('SET @1 = 1;');
 
-    assert.strictEqual(
+    strict.strictEqual(
       result.constructor.name,
       'ResultSetHeader',
       'Ensure constructor name in result object'

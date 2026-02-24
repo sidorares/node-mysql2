@@ -1,6 +1,6 @@
 import type { QueryError, RowDataPacket } from '../../../index.js';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -65,10 +65,10 @@ await describe('Regression #433', async () => {
     testRows.map((tRow, index) => {
       const cols = testFields;
       const aRow = actualRows[index];
-      assert.equal(aRow[cols[0]], tRow[0]);
-      assert.equal(aRow[cols[1]], tRow[1]);
-      assert.equal(aRow[cols[2]], tRow[2]);
-      assert.equal(aRow[cols[3]], tRow[3]);
+      strict.equal(aRow[cols[0]], tRow[0]);
+      strict.equal(aRow[cols[1]], tRow[1]);
+      strict.equal(aRow[cols[2]], tRow[2]);
+      strict.equal(aRow[cols[3]], tRow[3]);
     });
 
     /* eslint quotes: 0 */
@@ -80,9 +80,9 @@ await describe('Regression #433', async () => {
 
     // @ts-expect-error: internal access
     if (connection._handshakePacket.serverVersion.match(/MariaDB/)) {
-      assert.equal(actualError, expectedErrorMariaDB);
+      strict.equal(actualError, expectedErrorMariaDB);
     } else {
-      assert.equal(actualError, expectedErrorMysql);
+      strict.equal(actualError, expectedErrorMysql);
     }
   });
 });

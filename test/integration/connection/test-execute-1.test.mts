@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../promise.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe(async () => {
@@ -8,12 +8,12 @@ await describe(async () => {
   await it('Simple execute should return expected values', async () => {
     const [_rows, _fields] = await connection.execute('SELECT 1 as test');
 
-    assert.deepEqual(
+    strict.deepEqual(
       _rows,
       [{ test: 1 }],
       'should execute simple SELECT 1 statement'
     );
-    assert.equal(_fields[0].name, 'test', 'should field name test');
+    strict.equal(_fields[0].name, 'test', 'should field name test');
   });
 
   await it('Simple execute with parameters should return expected values', async () => {
@@ -22,12 +22,12 @@ await describe(async () => {
       [123]
     );
 
-    assert.deepEqual(
+    strict.deepEqual(
       _rows,
       [{ test: 124 }],
       'should execute simple SELECT 1+? statement'
     );
-    assert.equal(_fields[0].name, 'test', 'should field name test');
+    strict.equal(_fields[0].name, 'test', 'should field name test');
   });
 
   await it('should execute simple INSERT + SELECT statements', async () => {
@@ -55,19 +55,19 @@ await describe(async () => {
       'SELECT * FROM announcements'
     );
 
-    assert.equal(_rows.length, 2, 'rows length needs to be 2');
-    assert.equal(
+    strict.equal(_rows.length, 2, 'rows length needs to be 2');
+    strict.equal(
       _rows[0].title,
       'Есть место, где заканчивается тротуар',
       'first row title'
     );
-    assert.equal(_rows[0].text, 'Расти борода, расти', 'first row text');
-    assert.equal(
+    strict.equal(_rows[0].text, 'Расти борода, расти', 'first row text');
+    strict.equal(
       _rows[1].title,
       'Граждане Российской Федерации имеют право собираться мирно без оружия',
       'second row title'
     );
-    assert.equal(
+    strict.equal(
       _rows[1].text,
       'проводить собрания, митинги и демонстрации, шествия и пикетирование',
       'second row text'

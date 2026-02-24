@@ -1,5 +1,5 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Binary NotNull Nulls', async () => {
@@ -69,11 +69,11 @@ await describe('Binary NotNull Nulls', async () => {
     TODO: investigate why and remove
     const flagNotNull = fields[0].flags & FieldFlags.NOT_NULL;
     const valueIsNull = rows[0][fields[0].name] === null;
-    assert(flagNotNull && valueIsNull);
+    strict(flagNotNull && valueIsNull);
     */
 
     const valueIsNull = rows[0][fields[0].name] === null;
-    assert(valueIsNull);
+    strict(valueIsNull);
   });
 
   conn.end();

@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Datetime', async () => {
@@ -234,92 +234,92 @@ await describe('Datetime', async () => {
     });
 
     const connBadTz = createConnection({ timezone: 'utc' });
-    assert.equal(connBadTz.config.timezone, 'Z');
+    strict.equal(connBadTz.config.timezone, 'Z');
     connBadTz.end();
 
     // local TZ
-    assert.equal(rows[0].t.constructor, Date);
-    assert.equal(rows[0].t.getDate(), date.getDate());
-    assert.equal(rows[0].t.getHours(), date.getHours());
-    assert.equal(rows[0].t.getMinutes(), date.getMinutes());
-    assert.equal(rows[0].t.getSeconds(), date.getSeconds());
+    strict.equal(rows[0].t.constructor, Date);
+    strict.equal(rows[0].t.getDate(), date.getDate());
+    strict.equal(rows[0].t.getHours(), date.getHours());
+    strict.equal(rows[0].t.getMinutes(), date.getMinutes());
+    strict.equal(rows[0].t.getSeconds(), date.getSeconds());
 
     // UTC
-    assert.equal(rowsZ[0].t.constructor, Date);
-    assert.equal(rowsZ[0].t.getDate(), date.getDate());
-    assert.equal(rowsZ[0].t.getHours(), date.getHours());
-    assert.equal(rowsZ[0].t.getMinutes(), date.getMinutes());
-    assert.equal(rowsZ[0].t.getSeconds(), date.getSeconds());
+    strict.equal(rowsZ[0].t.constructor, Date);
+    strict.equal(rowsZ[0].t.getDate(), date.getDate());
+    strict.equal(rowsZ[0].t.getHours(), date.getHours());
+    strict.equal(rowsZ[0].t.getMinutes(), date.getMinutes());
+    strict.equal(rowsZ[0].t.getSeconds(), date.getSeconds());
 
     // +09:30
-    assert.equal(rows0930[0].t.constructor, Date);
-    assert.equal(rows0930[0].t.getDate(), date.getDate());
-    assert.equal(rows0930[0].t.getHours(), date.getHours());
-    assert.equal(rows0930[0].t.getMinutes(), date.getMinutes());
-    assert.equal(rows0930[0].t.getSeconds(), date.getSeconds());
+    strict.equal(rows0930[0].t.constructor, Date);
+    strict.equal(rows0930[0].t.getDate(), date.getDate());
+    strict.equal(rows0930[0].t.getHours(), date.getHours());
+    strict.equal(rows0930[0].t.getMinutes(), date.getMinutes());
+    strict.equal(rows0930[0].t.getSeconds(), date.getSeconds());
 
     // local TZ
-    assert.equal(rows1[0].t.constructor, Date);
-    assert.equal(
+    strict.equal(rows1[0].t.constructor, Date);
+    strict.equal(
       rows1[0].t.getTime(),
       new Date('Mon Jan 01 1990 00:00:00 UTC').getTime()
     );
 
     // UTC
-    assert.equal(rows1Z[0].t.constructor, Date);
-    assert.equal(
+    strict.equal(rows1Z[0].t.constructor, Date);
+    strict.equal(
       rows1Z[0].t.getTime(),
       new Date('Mon Jan 01 1990 00:00:00 UTC').getTime()
     );
 
     // +09:30
-    assert.equal(rows10930[0].t.constructor, Date);
-    assert.equal(
+    strict.equal(rows10930[0].t.constructor, Date);
+    strict.equal(
       rows10930[0].t.getTime(),
       new Date('Mon Jan 01 1990 00:00:00 UTC').getTime()
     );
 
     // local TZ
-    assert.equal(rows2[0].d1.getTime(), toMidnight(date).getTime());
-    assert.equal(rows2[0].d2.getTime(), datetime.getTime());
-    assert.equal(rows2[0].d3.getTime(), datetime.getTime());
-    assert.equal(rows2[0].d4, formatUTCDate(adjustTZ(date)));
-    assert.equal(rows2[0].d5, formatUTCDateTime(adjustTZ(datetime), 3));
-    assert.equal(rows2[0].d6, formatUTCDateTime(adjustTZ(datetime), 6));
+    strict.equal(rows2[0].d1.getTime(), toMidnight(date).getTime());
+    strict.equal(rows2[0].d2.getTime(), datetime.getTime());
+    strict.equal(rows2[0].d3.getTime(), datetime.getTime());
+    strict.equal(rows2[0].d4, formatUTCDate(adjustTZ(date)));
+    strict.equal(rows2[0].d5, formatUTCDateTime(adjustTZ(datetime), 3));
+    strict.equal(rows2[0].d6, formatUTCDateTime(adjustTZ(datetime), 6));
 
     // UTC
-    assert.equal(rows3[0].d1.getTime(), toMidnight(date, 0).getTime());
-    assert.equal(rows3[0].d2.getTime(), datetime.getTime());
-    assert.equal(rows3[0].d3.getTime(), datetime.getTime());
-    assert.equal(rows3[0].d4, formatUTCDate(date));
-    assert.equal(rows3[0].d5, formatUTCDateTime(datetime, 3));
-    assert.equal(rows3[0].d6, formatUTCDateTime(datetime, 6));
+    strict.equal(rows3[0].d1.getTime(), toMidnight(date, 0).getTime());
+    strict.equal(rows3[0].d2.getTime(), datetime.getTime());
+    strict.equal(rows3[0].d3.getTime(), datetime.getTime());
+    strict.equal(rows3[0].d4, formatUTCDate(date));
+    strict.equal(rows3[0].d5, formatUTCDateTime(datetime, 3));
+    strict.equal(rows3[0].d6, formatUTCDateTime(datetime, 6));
 
     // dateStrings
-    assert.deepEqual(rows4, dateAsStringExpected);
-    assert.deepEqual(rows5, dateAsStringExpected);
-    assert.equal(rows6.length, 1);
+    strict.deepEqual(rows4, dateAsStringExpected);
+    strict.deepEqual(rows5, dateAsStringExpected);
+    strict.equal(rows6.length, 1);
 
     // dateStrings as array
-    assert.equal(rows8[0].d1, '1990-01-01');
-    assert.equal(rows8[0].d1.constructor, String);
-    assert.equal(rows8[0].d2.constructor, Date);
-    assert.equal(rows8[0].d3.constructor, Date);
-    assert.equal(rows8[0].d4, null);
-    assert.equal(rows8[0].d5.constructor, Date);
-    assert.equal(rows8[0].d6.constructor, Date);
+    strict.equal(rows8[0].d1, '1990-01-01');
+    strict.equal(rows8[0].d1.constructor, String);
+    strict.equal(rows8[0].d2.constructor, Date);
+    strict.equal(rows8[0].d3.constructor, Date);
+    strict.equal(rows8[0].d4, null);
+    strict.equal(rows8[0].d5.constructor, Date);
+    strict.equal(rows8[0].d6.constructor, Date);
 
     // +09:30
     const tzOffset = -570;
-    assert.equal(rows7[0].d1.getTime(), toMidnight(date, tzOffset).getTime());
-    assert.equal(rows7[0].d2.getTime(), datetime.getTime());
-    assert.equal(rows7[0].d3.getTime(), datetime.getTime());
-    assert.equal(rows7[0].d4, formatUTCDate(adjustTZ(date, tzOffset)));
-    assert.equal(
+    strict.equal(rows7[0].d1.getTime(), toMidnight(date, tzOffset).getTime());
+    strict.equal(rows7[0].d2.getTime(), datetime.getTime());
+    strict.equal(rows7[0].d3.getTime(), datetime.getTime());
+    strict.equal(rows7[0].d4, formatUTCDate(adjustTZ(date, tzOffset)));
+    strict.equal(
       rows7[0].d5,
       formatUTCDateTime(adjustTZ(datetime, tzOffset), 3)
     );
-    assert.equal(
+    strict.equal(
       rows7[0].d6,
       formatUTCDateTime(adjustTZ(datetime, tzOffset), 6)
     );

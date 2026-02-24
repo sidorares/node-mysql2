@@ -2,7 +2,7 @@
 
 import type { Connection } from '../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../index.js';
 import Command from '../../lib/commands/command.js';
 import Packets from '../../lib/packets/index.js';
@@ -51,7 +51,7 @@ class TestAuthMultiFactor extends Command {
   sendAuthNextFactor(packet: unknown, connection: Connection): Function {
     // @ts-expect-error: TODO: implement typings
     const asr = Packets.AuthSwitchResponse.fromPacket(packet);
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       asr.data.toString(),
       this.args[this.authFactor].pluginName
     );
@@ -134,7 +134,7 @@ await describe('Auth Switch Multi Factor', async () => {
                   options.connection.config.password !==
                   options.connection.config.password2
                 ) {
-                  return assert.fail(
+                  return strict.fail(
                     'Incorrect authentication factor password.'
                   );
                 }
@@ -154,7 +154,7 @@ await describe('Auth Switch Multi Factor', async () => {
                   options.connection.config.password !==
                   options.connection.config.password3
                 ) {
-                  return assert.fail(
+                  return strict.fail(
                     'Incorrect authentication factor password.'
                   );
                 }
@@ -177,7 +177,7 @@ await describe('Auth Switch Multi Factor', async () => {
       });
     });
 
-    assert.deepStrictEqual(completed, [
+    strict.deepStrictEqual(completed, [
       'auth_test_plugin1',
       'auth_test_plugin2',
       'auth_test_plugin3',

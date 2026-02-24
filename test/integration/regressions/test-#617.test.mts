@@ -1,6 +1,6 @@
 import type { QueryError, RowDataPacket } from '../../../index.js';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -66,7 +66,7 @@ await describe('Regression #617', async () => {
     expected.map((exp, index) => {
       const row = actualRows[index];
       Object.keys(exp).map((key) => {
-        assert.equal(exp[key as keyof typeof exp], row[key]);
+        strict.equal(exp[key as keyof typeof exp], row[key]);
       });
     });
   });

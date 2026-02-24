@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createPool } from '../common.test.mjs';
 
 await describe('Pool End', async () => {
@@ -10,18 +10,18 @@ await describe('Pool End', async () => {
         if (err) return reject(err);
 
         // @ts-expect-error: internal access
-        assert(pool._allConnections.length === 1);
+        strict(pool._allConnections.length === 1);
         // @ts-expect-error: internal access
-        assert(pool._freeConnections.length === 0);
+        strict(pool._freeConnections.length === 0);
 
         // emit the end event, so the connection gets removed from the pool
         // @ts-expect-error: internal access
         conn.stream.emit('end');
 
         // @ts-expect-error: internal access
-        assert(pool._allConnections.length === 0);
+        strict(pool._allConnections.length === 0);
         // @ts-expect-error: internal access
-        assert(pool._freeConnections.length === 0);
+        strict(pool._freeConnections.length === 0);
 
         // As the connection has not really ended we need to do this ourselves
         conn.destroy();

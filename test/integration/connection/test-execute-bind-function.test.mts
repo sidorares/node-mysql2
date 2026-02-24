@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 describe('Execute Bind Function', () => {
@@ -18,13 +18,13 @@ describe('Execute Bind Function', () => {
   }
 
   it('should throw TypeError for function parameter', () => {
-    assert(error instanceof Error, 'Expected TypeError to be thrown');
+    strict(error instanceof Error, 'Expected TypeError to be thrown');
     if (!error) {
       return;
     }
-    assert.equal(error.name, 'TypeError');
+    strict.equal(error.name, 'TypeError');
     if (!error.message.match(/function/)) {
-      assert.fail("Expected error.message to contain 'function'");
+      strict.fail("Expected error.message to contain 'function'");
     }
   });
 });

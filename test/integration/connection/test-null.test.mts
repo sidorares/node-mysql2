@@ -1,5 +1,5 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Null', async () => {
@@ -25,10 +25,10 @@ await describe('Null', async () => {
       );
     });
 
-    assert.deepEqual(castRows, [{ cast_result: null }]);
-    // assert.equal(fields[0].columnType, 253); // depeding on the server type could be 253 or 3, disabling this check for now
-    assert.deepEqual(rows1, [{ i: null }]);
-    assert.equal(fields1[0].columnType, 3);
+    strict.deepEqual(castRows, [{ cast_result: null }]);
+    // strict.equal(fields[0].columnType, 253); // depeding on the server type could be 253 or 3, disabling this check for now
+    strict.deepEqual(rows1, [{ i: null }]);
+    strict.equal(fields1[0].columnType, 3);
   });
 
   connection.end();

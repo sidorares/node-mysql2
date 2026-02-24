@@ -1,6 +1,6 @@
 import type { ResultSetHeader } from '../../../index.js';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type CharsetStateChangeResult = ResultSetHeader & {
@@ -47,11 +47,11 @@ await describe('Track State Change', async () => {
       });
     });
 
-    assert.deepEqual(result1.stateChanges.systemVariables, {
+    strict.deepEqual(result1.stateChanges.systemVariables, {
       character_set_connection: 'koi8r',
       character_set_client: 'koi8r',
       character_set_results: 'koi8r',
     });
-    assert.deepEqual(result2.stateChanges.schema, 'mysql');
+    strict.deepEqual(result2.stateChanges.schema, 'mysql');
   });
 });

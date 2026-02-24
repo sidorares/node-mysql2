@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 type VectorRow = RowDataPacket & { test: number[] };
@@ -27,7 +27,7 @@ await describe(async () => {
 
   await it('Execute PS with vector response is parsed correctly', async () => {
     const [_rows] = await connection.execute<VectorRow[]>(sql);
-    assert.equal(
+    strict.equal(
       compareFLoatsArray(_rows[0].test, expectedArray),
       true,
       `${_rows[0].test} should be equal to ${expectedArray}`
@@ -36,7 +36,7 @@ await describe(async () => {
 
   await it('Select returning vector is parsed correctly', async () => {
     const [_rows] = await connection.query<VectorRow[]>(sql);
-    assert.equal(
+    strict.equal(
       compareFLoatsArray(_rows[0].test, expectedArray),
       true,
       `${_rows[0].test}  should be equal to  ${expectedArray}`

@@ -1,5 +1,5 @@
 import type { PrepareStatementInfo } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Prepare Simple', async () => {
@@ -32,14 +32,14 @@ await describe('Prepare Simple', async () => {
       });
     });
 
-    assert(stmt1, 'Expected prepared statement');
+    strict(stmt1, 'Expected prepared statement');
     // @ts-expect-error: TODO: implement typings
-    assert.equal(stmt1.query, query1);
+    strict.equal(stmt1.query, query1);
     // @ts-expect-error: TODO: implement typings
-    assert(stmt1.id >= 0);
+    strict(stmt1.id >= 0);
     // @ts-expect-error: TODO: implement typings
-    assert.equal(stmt1.columns.length, 1);
+    strict.equal(stmt1.columns.length, 1);
     // @ts-expect-error: TODO: implement typings
-    assert.equal(stmt1.parameters.length, 2);
+    strict.equal(stmt1.parameters.length, 2);
   });
 });

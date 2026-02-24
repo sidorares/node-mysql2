@@ -1,5 +1,5 @@
 import type { TypeCastField, TypeCastNext } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { _keyFromFields } from '../../../lib/parsers/parser_cache.js';
 
 interface CacheKeyTestData {
@@ -408,97 +408,97 @@ describe('Cache Key Serialization', () => {
 
   it(() => {
     const result1 = keyFrom(test1);
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       result1,
       '[null,"undefined",null,false,false,false,"undefined",null,false,null,[null,null,null,null,null,null,null]]'
     );
-    assert(JSON.parse(result1));
+    strict(JSON.parse(result1));
   });
 
   it(() => {
     const result2 = keyFrom(test2);
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       result2,
       '[null,"undefined",null,false,false,false,"undefined","local",false,null,[null,null,null,null,null,null,null]]'
     );
-    assert(JSON.parse(result2));
+    strict(JSON.parse(result2));
   });
 
   it(() => {
     const result3 = keyFrom(test3);
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       result3,
       '[null,"string","",false,false,false,true,"local",false,false,[null,null,null,null,null,null,null]]'
     );
-    assert(JSON.parse(result3));
+    strict(JSON.parse(result3));
   });
 
   it(() => {
     const result4 = keyFrom(test4);
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       result4,
       '["binary","boolean",false,false,false,false,true,"local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
     );
-    assert(JSON.parse(result4));
+    strict(JSON.parse(result4));
   });
 
   it(() => {
     const result4 = keyFrom(test4);
     const result5 = keyFrom(test5);
-    assert.deepStrictEqual(result4, result5);
-    assert(JSON.parse(result5));
+    strict.deepStrictEqual(result4, result5);
+    strict(JSON.parse(result5));
   });
 
   it(() => {
     const result6 = keyFrom(test6);
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       result6,
       '["binary","boolean",false,true,true,true,true,"\\"\\"`\'",true,"#",[":","©",null,"/",",","_","❌"]]'
     );
     // Ensuring that JSON is valid with invalid delimiters
-    assert(JSON.parse(result6));
+    strict(JSON.parse(result6));
   });
 
   it(() => {
     const result7 = keyFrom(test7);
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       result7,
       '["binary","boolean",true,true,true,true,true,"local",true,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
     );
-    assert(JSON.parse(result7));
+    strict(JSON.parse(result7));
   });
 
   it(() => {
     const result7 = keyFrom(test7);
     const result8 = keyFrom(test8);
-    assert.deepStrictEqual(result7, result8);
-    assert(JSON.parse(result8));
+    strict.deepStrictEqual(result7, result8);
+    strict(JSON.parse(result8));
   });
 
   it(() => {
     const result9 = keyFrom(test9);
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       result9,
       '["binary","boolean",false,false,false,true,"function","local",false,null,["id","3",null,"test","test","16899","63"]]'
     );
-    assert(JSON.parse(result9));
-    assert(JSON.parse(result9)[5] === true);
-    assert(JSON.parse(result9)[6] === 'function');
-    assert(JSON.parse(result9)[9] === null);
+    strict(JSON.parse(result9));
+    strict(JSON.parse(result9)[5] === true);
+    strict(JSON.parse(result9)[6] === 'function');
+    strict(JSON.parse(result9)[9] === null);
   });
 
   it(() => {
     const result10 = keyFrom(test10);
-    assert.deepStrictEqual(
+    strict.deepStrictEqual(
       result10,
       '["binary","boolean",false,false,false,false,false,"local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
     );
-    assert(JSON.parse(result10));
+    strict(JSON.parse(result10));
   });
 
   // Testing twice all existent tests needs to return 8 keys, since two of them expects to be the same
   it(() => {
-    assert(
+    strict(
       Array.from(
         new Set([
           keyFrom(test1),
@@ -540,7 +540,7 @@ describe('Cache Key Serialization', () => {
     const result1 = keyFrom(test1);
 
     // Testing twice all existent tests needs to return 8 keys, since two of them expects to be the same
-    assert(
+    strict(
       Array.from(
         new Set([
           result1,

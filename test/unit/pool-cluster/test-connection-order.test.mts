@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createPoolCluster, getConfig } from '../../common.test.mjs';
 
 // TODO: config poolCluster to work with MYSQL_CONNECTION_URL run
@@ -42,7 +42,7 @@ await describe('pool cluster connection ORDER', async () => {
       getConnection(0);
     });
 
-    assert.deepEqual(order, ['SLAVE1', 'SLAVE1', 'SLAVE1', 'SLAVE1', 'SLAVE1']);
+    strict.deepEqual(order, ['SLAVE1', 'SLAVE1', 'SLAVE1', 'SLAVE1', 'SLAVE1']);
     cluster.end();
   });
 });

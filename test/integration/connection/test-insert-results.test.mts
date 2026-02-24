@@ -1,5 +1,5 @@
 import type { ResultSetHeader, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type InsertTestRow = RowDataPacket & { id: number; title: string };
@@ -41,11 +41,11 @@ await describe('Insert Results', async () => {
       }
     );
 
-    assert.strictEqual(insertResult.insertId, 1);
-    assert.strictEqual(selectResult.length, 1);
+    strict.strictEqual(insertResult.insertId, 1);
+    strict.strictEqual(selectResult.length, 1);
     // TODO: type conversions
-    assert.equal(selectResult[0].id, String(insertResult.insertId));
-    assert.equal(selectResult[0].title, text);
+    strict.equal(selectResult[0].id, String(insertResult.insertId));
+    strict.equal(selectResult[0].title, text);
   });
 
   connection.end();

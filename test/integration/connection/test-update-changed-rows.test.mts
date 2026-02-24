@@ -1,6 +1,6 @@
 import type { ResultSetHeader } from '../../../index.js';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -48,10 +48,10 @@ await describe('Update Changed Rows', async () => {
       );
     });
 
-    assert.equal(result1.affectedRows, 4);
-    assert.equal(result1.changedRows, 2);
-    assert.equal(result2.affectedRows, 4);
-    assert.equal(result2.changedRows, 0);
+    strict.equal(result1.affectedRows, 4);
+    strict.equal(result1.changedRows, 2);
+    strict.equal(result2.affectedRows, 4);
+    strict.equal(result2.changedRows, 0);
   });
 
   connection.end();

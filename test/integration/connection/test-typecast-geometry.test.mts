@@ -1,6 +1,6 @@
 import type { RowDataPacket, TypeCastGeometry } from '../../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 type GeometryRow = RowDataPacket & { foo: TypeCastGeometry };
@@ -34,7 +34,7 @@ await describe('Typecast Geometry', async () => {
       );
     });
 
-    assert.deepEqual(geometryRes[0].foo, { x: 11, y: 0 });
+    strict.deepEqual(geometryRes[0].foo, { x: 11, y: 0 });
 
     const bufferRes = await new Promise<BufferRow[]>((resolve, reject) => {
       connection.query<BufferRow[]>(
@@ -51,7 +51,7 @@ await describe('Typecast Geometry', async () => {
       );
     });
 
-    assert.equal(Buffer.isBuffer(bufferRes[0].foo), true);
+    strict.equal(Buffer.isBuffer(bufferRes[0].foo), true);
   });
 
   connection.end();

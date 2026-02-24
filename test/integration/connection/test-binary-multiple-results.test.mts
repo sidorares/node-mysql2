@@ -5,7 +5,7 @@
 
 import process from 'node:process';
 // @ts-expect-error: no typings available
-import assert from 'assert-diff';
+import strict from 'assert-diff';
 import { describe, it, skip } from 'poku';
 import { createConnection, normalizeNumeric } from '../../common.test.mjs';
 
@@ -172,11 +172,11 @@ await describe('Binary Multiple Results', async () => {
                 return column;
               };
 
-              assert.deepEqual(
+              strict.deepEqual(
                 normalizeNumeric(expectation[0]),
                 normalizeNumeric(_rows)
               );
-              assert.deepEqual(expectation[1], arrOrColumn(_columns));
+              strict.deepEqual(expectation[1], arrOrColumn(_columns));
 
               const q = mysql.execute(sql);
               let resIndex = 0;
@@ -192,11 +192,11 @@ await describe('Binary Multiple Results', async () => {
                   const multiRows = _rows as unknown[];
                   const normalizedRow = normalizeNumeric(row);
                   if (_numResults === 1) {
-                    assert.equal(index, 0);
+                    strict.equal(index, 0);
                     if (row.constructor.name === 'ResultSetHeader') {
-                      assert.deepEqual(normalizeNumeric(_rows), normalizedRow);
+                      strict.deepEqual(normalizeNumeric(_rows), normalizedRow);
                     } else {
-                      assert.deepEqual(
+                      strict.deepEqual(
                         normalizeNumeric(multiRows[rowIndex]),
                         normalizedRow
                       );
@@ -207,12 +207,12 @@ await describe('Binary Multiple Results', async () => {
                       resIndex = index;
                     }
                     if (row.constructor.name === 'ResultSetHeader') {
-                      assert.deepEqual(
+                      strict.deepEqual(
                         normalizeNumeric(multiRows[index]),
                         normalizedRow
                       );
                     } else {
-                      assert.deepEqual(
+                      strict.deepEqual(
                         normalizeNumeric(
                           (multiRows[index] as unknown[])[rowIndex]
                         ),
@@ -231,13 +231,13 @@ await describe('Binary Multiple Results', async () => {
                   fieldIndex++;
                   const index = fieldIndex;
                   if (_numResults === 1) {
-                    assert.equal(index, 0);
-                    assert.deepEqual(
+                    strict.equal(index, 0);
+                    strict.deepEqual(
                       arrOrColumn(_columns),
                       arrOrColumn(fields)
                     );
                   } else {
-                    assert.deepEqual(
+                    strict.deepEqual(
                       arrOrColumn(_columns[index]),
                       arrOrColumn(fields)
                     );

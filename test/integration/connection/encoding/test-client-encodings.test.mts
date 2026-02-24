@@ -1,6 +1,6 @@
 import type { RowDataPacket } from '../../../../index.js';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -45,7 +45,7 @@ await describe('Client Encodings', async () => {
       );
     });
 
-    assert.equal(rows[0].name, 'привет, мир');
+    strict.equal(rows[0].name, 'привет, мир');
     connection2.end();
   });
 });

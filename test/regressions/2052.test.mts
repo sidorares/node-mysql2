@@ -1,6 +1,6 @@
 import type { PrepareStatementInfo, QueryError } from '../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import PrepareCommand from '../../lib/commands/prepare.js';
 import packets from '../../lib/packets/index.js';
 import { createConnection, getMysqlVersion } from '../common.test.mjs';
@@ -23,7 +23,7 @@ await describe(async () => {
       writePacket: (packet: InstanceType<typeof packets.Packet>) => {
         // client -> server COM_PREPARE
         packet.writeHeader(1);
-        assert.equal(
+        strict.equal(
           packet.buffer.toString('hex'),
           '1f0000011673656c656374202a2066726f6d207573657273206f72646572206279203f',
           'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
@@ -36,14 +36,14 @@ await describe(async () => {
         { sql: 'select * from users order by ?' },
         (err: QueryError | null, result: PrepareStatementInfo) => {
           try {
-            assert.equal(err, null, 'expect no error');
+            strict.equal(err, null, 'expect no error');
 
             // @ts-expect-error: TODO: implement typings
-            assert.equal(result.parameters.length, 0, 'parameters');
+            strict.equal(result.parameters.length, 0, 'parameters');
             // @ts-expect-error: TODO: implement typings
-            assert.equal(result.columns.length, 51, 'columns');
+            strict.equal(result.columns.length, 51, 'columns');
             // @ts-expect-error: TODO: implement typings
-            assert.equal(result.id, 1, 'id');
+            strict.equal(result.id, 1, 'id');
 
             resolve(null);
           } catch (error) {
@@ -114,14 +114,14 @@ await describe(async () => {
     });
 
     if (hasIncorrectPrepareParameter) {
-      assert.equal(
+      strict.equal(
         // @ts-expect-error: TODO: implement typings
         stmt.parameters.length,
         0,
         'should report 0 actual parameters when 1 placeholder is used in ORDER BY ?'
       );
     } else {
-      assert.equal(
+      strict.equal(
         // @ts-expect-error: TODO: implement typings
         stmt.parameters.length,
         1,
@@ -142,14 +142,14 @@ await describe(async () => {
     });
 
     if (hasIncorrectPrepareParameter) {
-      assert.equal(
+      strict.equal(
         // @ts-expect-error: TODO: implement typings
         stmt.parameters.length,
         1,
         'should report 1 actual parameters when 2 placeholders used in ORDER BY?'
       );
     } else {
-      assert.equal(
+      strict.equal(
         // @ts-expect-error: TODO: implement typings
         stmt.parameters.length,
         2,

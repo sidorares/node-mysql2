@@ -3,7 +3,7 @@
 import type { AuthPlugin } from '../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../index.js';
 import Command from '../../lib/commands/command.js';
 import Packets from '../../lib/packets/index.js';
@@ -112,12 +112,12 @@ await describe('Auth Switch Plugin Async Error', async () => {
       });
     });
 
-    assert.ok(
+    strict.ok(
       serverError?.code === 'PROTOCOL_CONNECTION_LOST' ||
         serverError?.code === 'ECONNRESET'
     );
-    assert.equal(clientError?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
-    assert.equal(clientError?.message, 'boom');
-    assert.equal(clientError?.fatal, true);
+    strict.equal(clientError?.code, 'AUTH_SWITCH_PLUGIN_ERROR');
+    strict.equal(clientError?.message, 'boom');
+    strict.equal(clientError?.fatal, true);
   });
 });

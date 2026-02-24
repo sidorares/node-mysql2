@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import Quit from '../../../lib/commands/quit.js';
 
 describe('Quit command', () => {
@@ -6,6 +6,6 @@ describe('Quit command', () => {
     const testCallback = (err: Error) => console.info(err.message);
     const testQuit = new Quit(testCallback);
 
-    assert.strictEqual(testQuit.onResult, testCallback);
+    strict.strictEqual(testQuit.onResult, testCallback);
   });
 });

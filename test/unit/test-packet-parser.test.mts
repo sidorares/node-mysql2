@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import PacketParser from '../../lib/packet_parser.js';
 import Packet from '../../lib/packets/packet.js';
 
@@ -25,26 +25,26 @@ function execute(str: string, verify: () => void) {
 }
 
 function p123() {
-  assert(packets.length === 1);
-  assert(packets[0].length() === 14);
-  assert(packets[0].sequenceId === 123);
+  strict(packets.length === 1);
+  strict(packets[0].length() === 14);
+  strict(packets[0].sequenceId === 123);
 }
 
 function p120_121() {
   packets.forEach((p) => {
     p.dump;
   });
-  assert(packets.length === 2);
-  assert(packets[0].length() === 4);
-  assert(packets[0].sequenceId === 120);
-  assert(packets[1].length() === 4);
-  assert(packets[1].sequenceId === 121);
+  strict(packets.length === 2);
+  strict(packets[0].length() === 4);
+  strict(packets[0].sequenceId === 120);
+  strict(packets[1].length() === 4);
+  strict(packets[1].sequenceId === 121);
 }
 
 function p42() {
-  assert(packets.length === 1);
-  assert(packets[0].length() === 4);
-  assert(packets[0].sequenceId === 42);
+  strict(packets.length === 1);
+  strict(packets[0].length() === 4);
+  strict(packets[0].sequenceId === 42);
 }
 
 function testBigPackets(
@@ -88,11 +88,11 @@ describe('PacketParser', () => {
 
   it('should parse two non-zero length packets with various chunk splits', () => {
     const p122_123 = function () {
-      assert(packets.length === 2);
-      assert(packets[0].length() === 9);
-      assert(packets[0].sequenceId === 122);
-      assert(packets[1].length() === 10);
-      assert(packets[1].sequenceId === 123);
+      strict(packets.length === 2);
+      strict(packets[0].length() === 9);
+      strict(packets[0].sequenceId === 122);
+      strict(packets[1].length() === 10);
+      strict(packets[1].sequenceId === 123);
     };
     execute('5,0,0,122,1,2,3,4,5,6,0,0,123,1,2,3,4,5,6', p122_123);
     execute('5,0,0,122,1,2,3,4,5|6,0,0,123,1,2,3,4,5,6', p122_123);
@@ -119,15 +119,15 @@ describe('PacketParser', () => {
 
     function assert2FullPackets(packets: PacketInstance[]) {
       function assertPacket(p: PacketInstance) {
-        assert.equal(p.length(), length + 4);
-        assert.equal(p.sequenceId, 42);
-        assert.equal(p.readInt8(), 123);
-        assert.equal(p.readInt8(), 124);
-        assert.equal(p.readInt8(), 125);
+        strict.equal(p.length(), length + 4);
+        strict.equal(p.sequenceId, 42);
+        strict.equal(p.readInt8(), 123);
+        strict.equal(p.readInt8(), 124);
+        strict.equal(p.readInt8(), 125);
       }
-      // assert.equal(packets[0].buffer.slice(0, 8).toString('hex'), expectation);
-      // assert.equal(packets[1].buffer.slice(0, 8).toString('hex'), expectation);
-      assert.equal(packets.length, 2);
+      // strict.equal(packets[0].buffer.slice(0, 8).toString('hex'), expectation);
+      // strict.equal(packets[1].buffer.slice(0, 8).toString('hex'), expectation);
+      strict.equal(packets.length, 2);
       assertPacket(packets[0]);
       assertPacket(packets[1]);
     }

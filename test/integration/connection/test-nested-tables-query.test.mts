@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection, useTestDb } from '../../common.test.mjs';
 
 await describe('Nested Tables Query', async () => {
@@ -120,27 +120,27 @@ await describe('Nested Tables Query', async () => {
       });
     });
 
-    assert.equal(results.rows1.length, 1, 'First row length');
-    assert.equal(results.rows1[0].nested_test.id, 1, 'First row nested id');
-    assert.equal(
+    strict.equal(results.rows1.length, 1, 'First row length');
+    strict.equal(results.rows1[0].nested_test.id, 1, 'First row nested id');
+    strict.equal(
       results.rows1[0].nested_test.title,
       'test',
       'First row nested title'
     );
-    assert.equal(results.rows2.length, 1, 'Second row length');
-    assert.equal(results.rows2[0].nested_test_id, 1, 'Second row nested id');
-    assert.equal(
+    strict.equal(results.rows2.length, 1, 'Second row length');
+    strict.equal(results.rows2[0].nested_test_id, 1, 'Second row nested id');
+    strict.equal(
       results.rows2[0].nested_test_title,
       'test',
       'Second row nested title'
     );
 
-    assert.equal(Array.isArray(results.rows3[0]), true, 'Third row type');
-    assert.equal(results.rows3[0][0], 1, 'Third row value 1');
-    assert.equal(results.rows3[0][1], 'test', 'Third row value 2');
+    strict.equal(Array.isArray(results.rows3[0]), true, 'Third row type');
+    strict.equal(results.rows3[0][0], 1, 'Third row value 1');
+    strict.equal(results.rows3[0][1], 'test', 'Third row value 2');
 
-    assert.equal(results.rows4.length, 1, 'Fourth row length');
-    assert.deepEqual(
+    strict.equal(results.rows4.length, 1, 'Fourth row length');
+    strict.deepEqual(
       results.rows4[0],
       {
         nested: {
@@ -153,8 +153,8 @@ await describe('Nested Tables Query', async () => {
       },
       'Fourth row value'
     );
-    assert.equal(results.rows5.length, 1, 'Fifth row length');
-    assert.deepEqual(
+    strict.equal(results.rows5.length, 1, 'Fifth row length');
+    strict.deepEqual(
       results.rows5[0],
       {
         nested2: {
@@ -168,17 +168,17 @@ await describe('Nested Tables Query', async () => {
       'Fifth row value'
     );
 
-    assert.deepEqual(
+    strict.deepEqual(
       results.rows1,
       results.rows1e,
       'Compare rows1 with rows1e'
     );
-    assert.deepEqual(
+    strict.deepEqual(
       results.rows2,
       results.rows2e,
       'Compare rows2 with rows2e'
     );
-    assert.deepEqual(
+    strict.deepEqual(
       results.rows3,
       results.rows3e,
       'Compare rows3 with rows3e'

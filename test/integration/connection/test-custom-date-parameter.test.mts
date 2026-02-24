@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Custom Date Parameter', async () => {
@@ -34,6 +34,6 @@ await describe('Custom Date Parameter', async () => {
       );
     });
 
-    assert.equal(rows?.[0].t, 650073600);
+    strict.equal(rows?.[0].t, 650073600);
   });
 });

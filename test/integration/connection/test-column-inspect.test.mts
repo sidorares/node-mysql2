@@ -1,5 +1,5 @@
 import util from 'node:util';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { config, createConnection, version } from '../../common.test.mjs';
 
 const { database: currentDatabase } = config;
@@ -60,7 +60,7 @@ await describe('Custom inspect for column definition', async () => {
       const inspectLine = normalizedInspectResults[l];
       const schemaLine = schemaArray[l];
 
-      assert.equal(
+      strict.equal(
         inspectLine,
         schemaLine,
         'Loop: Should map fields to a schema-like description when depth is > 1'
@@ -81,7 +81,7 @@ await describe('Custom inspect for column definition', async () => {
       const [, columns] = await connection.query('select * from test_fields2');
       const inspectResults = util.inspect(columns[1]);
 
-      assert.deepEqual(
+      strict.deepEqual(
         inspectResults,
         util.inspect({
           catalog: 'def',

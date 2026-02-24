@@ -4,7 +4,7 @@
  */
 
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type JsonRow = RowDataPacket & { data: { k: string } };
@@ -50,9 +50,9 @@ await describe('Insert JSON', async () => {
       );
     });
 
-    assert.equal(result.errorCode, 'ER_INVALID_JSON_TEXT');
-    assert.equal(result.errorNum, 3140);
-    assert.equal(result.res?.[0].data.k, 'v');
+    strict.equal(result.errorCode, 'ER_INVALID_JSON_TEXT');
+    strict.equal(result.errorNum, 3140);
+    strict.equal(result.res?.[0].data.k, 'v');
   });
 
   connection.end();

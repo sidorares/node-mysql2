@@ -4,7 +4,7 @@ import type {
   TypeCastNext,
 } from '../../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type FooRow = RowDataPacket & { foo: string };
@@ -41,7 +41,7 @@ await describe('Typecast Execute', async () => {
         {
           sql: 'select "foo uppercase" as foo',
           typeCast: function (field: TypeCastField, next: TypeCastNext) {
-            assert.equal('number', typeof field.length);
+            strict.equal('number', typeof field.length);
             if (field.type === 'VAR_STRING') {
               return field.string()?.toUpperCase();
             }
@@ -52,7 +52,7 @@ await describe('Typecast Execute', async () => {
       );
     });
 
-    assert.equal(res[0].foo, 'FOO UPPERCASE');
+    strict.equal(res[0].foo, 'FOO UPPERCASE');
   });
 
   await it('should return buffer when typeCast is false', async () => {
@@ -66,8 +66,8 @@ await describe('Typecast Execute', async () => {
       );
     });
 
-    assert(Buffer.isBuffer(res[0].foo));
-    assert.equal(res[0].foo.toString('utf8'), 'foobar');
+    strict(Buffer.isBuffer(res[0].foo));
+    strict.equal(res[0].foo.toString('utf8'), 'foobar');
   });
 
   await it('should handle null and pass-through with next()', async () => {
@@ -83,8 +83,8 @@ await describe('Typecast Execute', async () => {
       );
     });
 
-    assert.equal(rows[0].test, null);
-    assert.equal(rows[0].value, 6);
+    strict.equal(rows[0].test, null);
+    strict.equal(rows[0].value, 6);
   });
 
   await it('should typecast JSON with execute', async () => {
@@ -100,7 +100,7 @@ await describe('Typecast Execute', async () => {
       );
     });
 
-    assert.equal(rows[0].json_test.test, 42);
+    strict.equal(rows[0].json_test.test, 42);
   });
 
   // read geo fields
@@ -114,8 +114,8 @@ await describe('Typecast Execute', async () => {
       );
     });
 
-    assert.deepEqual({ x: 1, y: 1 }, res[0].p);
-    assert.deepEqual(
+    strict.deepEqual({ x: 1, y: 1 }, res[0].p);
+    strict.deepEqual(
       [
         { x: -71.160281, y: 42.258729 },
         { x: -71.160837, y: 42.259113 },
@@ -131,15 +131,15 @@ await describe('Typecast Execute', async () => {
         {
           sql: 'select * from geom_test',
           typeCast: function (field: TypeCastField, _next: TypeCastNext) {
-            assert.equal('geom_test', field.table);
+            strict.equal('geom_test', field.table);
 
             if (field.name === 'p' && field.type === 'GEOMETRY') {
-              assert.deepEqual({ x: 1, y: 1 }, field.geometry());
+              strict.deepEqual({ x: 1, y: 1 }, field.geometry());
               return { x: 2, y: 2 };
             }
 
             if (field.name === 'g' && field.type === 'GEOMETRY') {
-              assert.deepEqual(
+              strict.deepEqual(
                 [
                   { x: -71.160281, y: 42.258729 },
                   { x: -71.160837, y: 42.259113 },
@@ -155,15 +155,15 @@ await describe('Typecast Execute', async () => {
               ];
             }
 
-            assert.fail('should not reach here');
+            strict.fail('should not reach here');
           },
         },
         (err, _res) => (err ? reject(err) : resolve(_res))
       );
     });
 
-    assert.deepEqual({ x: 2, y: 2 }, res[0].p);
-    assert.deepEqual(
+    strict.deepEqual({ x: 2, y: 2 }, res[0].p);
+    strict.deepEqual(
       [
         { x: -70, y: 40 },
         { x: -60, y: 50 },

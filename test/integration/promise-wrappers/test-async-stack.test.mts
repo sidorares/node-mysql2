@@ -1,7 +1,7 @@
 import type { ConnectionOptions } from '../../../index.js';
 import process from 'node:process';
 import ErrorStackParser from 'error-stack-parser';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection as promiseCreateConnection } from '../../../promise.js';
 import { config } from '../../common.test.mjs';
 
@@ -25,7 +25,7 @@ await describe('Async stack traces', async () => {
     } catch (err) {
       const stack = ErrorStackParser.parse(err as Error);
       const stackExpected = ErrorStackParser.parse(e1!);
-      assert(
+      strict(
         stack[2].getLineNumber() === (stackExpected[0].getLineNumber() ?? 0) + 2
       );
     }
@@ -40,7 +40,7 @@ await describe('Async stack traces', async () => {
     } catch (err) {
       const stack = ErrorStackParser.parse(err as Error);
       const stackExpected = ErrorStackParser.parse(e2!);
-      assert(
+      strict(
         stack[1].getLineNumber() === (stackExpected[0].getLineNumber() ?? 0) + 1
       );
     } finally {

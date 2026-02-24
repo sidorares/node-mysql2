@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type TestRow = RowDataPacket & { test: number };
@@ -30,15 +30,15 @@ await describe('Execute Cached', async () => {
     });
 
     // @ts-expect-error: internal access
-    assert(connection._statements.size === 1);
+    strict(connection._statements.size === 1);
     // @ts-expect-error: internal access
-    assert(connection._statements.get(key).query === q);
+    strict(connection._statements.get(key).query === q);
     // @ts-expect-error: internal access
-    assert(connection._statements.get(key).parameters.length === 1);
+    strict(connection._statements.get(key).parameters.length === 1);
 
-    assert.deepEqual(rows1, [{ test: 124 }]);
-    assert.deepEqual(rows2, [{ test: 125 }]);
-    assert.deepEqual(rows3, [{ test: 126 }]);
+    strict.deepEqual(rows1, [{ test: 124 }]);
+    strict.deepEqual(rows2, [{ test: 125 }]);
+    strict.deepEqual(rows3, [{ test: 126 }]);
   });
 
   connection.end();

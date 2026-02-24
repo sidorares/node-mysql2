@@ -1,7 +1,7 @@
 import type { RowDataPacket } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -37,7 +37,7 @@ await describe('Change User Plugin Auth', async () => {
         err ? reject(err) : resolve(rows)
       );
     });
-    assert.deepEqual(onlyUsername(rows1[0]['current_user()']), 'changeuser1');
+    strict.deepEqual(onlyUsername(rows1[0]['current_user()']), 'changeuser1');
 
     await new Promise<void>((resolve, reject) => {
       connection.changeUser(
@@ -51,7 +51,7 @@ await describe('Change User Plugin Auth', async () => {
         err ? reject(err) : resolve(rows)
       );
     });
-    assert.deepEqual(onlyUsername(rows2[0]['current_user()']), 'changeuser2');
+    strict.deepEqual(onlyUsername(rows2[0]['current_user()']), 'changeuser2');
 
     await new Promise<void>((resolve, reject) => {
       connection.changeUser(
@@ -73,7 +73,7 @@ await describe('Change User Plugin Auth', async () => {
         err ? reject(err) : resolve(rows)
       );
     });
-    assert.deepEqual(onlyUsername(rows3[0]['current_user()']), 'changeuser1');
+    strict.deepEqual(onlyUsername(rows3[0]['current_user()']), 'changeuser1');
   });
 
   connection.end();

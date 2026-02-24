@@ -1,5 +1,5 @@
 import type { Pool, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection, createPool } from '../../common.test.mjs';
 
 type SumRow = RowDataPacket & { sum: number };
@@ -86,27 +86,27 @@ await describe('Named Placeholders', async () => {
       });
     });
 
-    assert.equal(
+    strict.equal(
       result.cmdSql,
       'SELECT * from test_table where num1 < ? and num2 > ?'
     );
-    assert.deepEqual(result.cmdValues, [2, 100]);
-    assert.deepEqual(result.execRows, [{ id: 4, num1: -5, num2: 8000000 }]);
-    assert.deepEqual(result.execSumRows, [{ sum: 4 }]);
+    strict.deepEqual(result.cmdValues, [2, 100]);
+    strict.deepEqual(result.execRows, [{ id: 4, num1: -5, num2: 8000000 }]);
+    strict.deepEqual(result.execSumRows, [{ sum: 4 }]);
 
-    assert.equal(
+    strict.equal(
       result.qCmdSql,
       'SELECT * from test_table where num1 < 2 and num2 > 100'
     );
-    assert.deepEqual(result.qCmdValues, [2, 100]);
-    assert.deepEqual(result.queryRows, [{ id: 4, num1: -5, num2: 8000000 }]);
-    assert.deepEqual(result.querySumRows, [{ sum: 4 }]);
+    strict.deepEqual(result.qCmdValues, [2, 100]);
+    strict.deepEqual(result.queryRows, [{ id: 4, num1: -5, num2: 8000000 }]);
+    strict.deepEqual(result.querySumRows, [{ sum: 4 }]);
 
     const namedSql = connection.format(
       'SELECT * from test_table where num1 < :numParam and num2 > :lParam',
       { lParam: 100, numParam: 2 }
     );
-    assert.equal(
+    strict.equal(
       namedSql,
       'SELECT * from test_table where num1 < 2 and num2 > 100'
     );
@@ -115,7 +115,7 @@ await describe('Named Placeholders', async () => {
       'SELECT * from test_table where num1 < ? and num2 > ?',
       [2, 100]
     );
-    assert.equal(
+    strict.equal(
       unnamedSql,
       'SELECT * from test_table where num1 < 2 and num2 > 100'
     );
@@ -133,7 +133,7 @@ await describe('Named Placeholders', async () => {
       });
     });
 
-    assert.deepEqual(rows, [{ sum: 4 }]);
+    strict.deepEqual(rows, [{ sum: 4 }]);
     pool.end();
   });
 

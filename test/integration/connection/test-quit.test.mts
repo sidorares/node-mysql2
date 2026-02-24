@@ -5,7 +5,7 @@
 // variable.
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection, createServer } from '../../common.test.mjs';
 
 if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
@@ -78,9 +78,9 @@ await describe('Quit', async () => {
       );
     });
 
-    assert.deepEqual(rows!, [{ 1: 1 }]);
-    assert.equal(fields![0].name, '1');
-    assert.equal(quitReceived!, true);
-    assert.equal(queryCli, queryServ!);
+    strict.deepEqual(rows!, [{ 1: 1 }]);
+    strict.equal(fields![0].name, '1');
+    strict.equal(quitReceived!, true);
+    strict.equal(queryCli, queryServ!);
   });
 });

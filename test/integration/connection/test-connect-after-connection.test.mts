@@ -1,5 +1,5 @@
 import type { Connection, QueryError } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Connect After Connection', async () => {
@@ -22,6 +22,6 @@ await describe('Connect After Connection', async () => {
       });
     });
 
-    assert.equal(connection, connection2);
+    strict.equal(connection, connection2);
   });
 });

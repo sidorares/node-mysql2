@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import Packets from '../../../lib/packets/index.js';
 
 describe('Time packet parsing', () => {
@@ -20,7 +20,7 @@ describe('Time packet parsing', () => {
       const packet = new Packets.Packet(4, buf, 0, buf.length);
       packet.readInt16(); // unused
       const d = packet.readTimeString(false);
-      assert.equal(d, expected);
+      strict.equal(d, expected);
     });
   }
 });

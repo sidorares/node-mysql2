@@ -1,5 +1,5 @@
 import type { ResultSetHeader, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type BigRow = RowDataPacket & { id: string; title: string };
@@ -29,7 +29,7 @@ await describe('Insert BigInt Big Number Strings', async () => {
         (err, result) => (err ? reject(err) : resolve(result))
       );
     });
-    assert.strictEqual(result1.insertId, 124);
+    strict.strictEqual(result1.insertId, 124);
 
     // > 24 bits
     connection.query("INSERT INTO bigs SET title='test', id=123456789");
@@ -40,7 +40,7 @@ await describe('Insert BigInt Big Number Strings', async () => {
         (err, result) => (err ? reject(err) : resolve(result))
       );
     });
-    assert.strictEqual(result2.insertId, 123456790);
+    strict.strictEqual(result2.insertId, 123456790);
 
     // big int
     connection.query("INSERT INTO bigs SET title='test', id=9007199254740992");
@@ -51,7 +51,7 @@ await describe('Insert BigInt Big Number Strings', async () => {
         (err, result) => (err ? reject(err) : resolve(result))
       );
     });
-    assert.strictEqual(result3.insertId, '9007199254740993');
+    strict.strictEqual(result3.insertId, '9007199254740993');
 
     connection.query("INSERT INTO bigs SET title='test', id=90071992547409924");
 
@@ -61,7 +61,7 @@ await describe('Insert BigInt Big Number Strings', async () => {
         (err, result) => (err ? reject(err) : resolve(result))
       );
     });
-    assert.strictEqual(result4.insertId, '90071992547409925');
+    strict.strictEqual(result4.insertId, '90071992547409925');
 
     const selectResult = await new Promise<BigRow[]>((resolve, reject) => {
       connection.query<BigRow[]>('select * from bigs', (err, result) =>
@@ -69,14 +69,14 @@ await describe('Insert BigInt Big Number Strings', async () => {
       );
     });
 
-    assert.strictEqual(selectResult[0].id, '123');
-    assert.strictEqual(selectResult[1].id, '124');
-    assert.strictEqual(selectResult[2].id, '123456789');
-    assert.strictEqual(selectResult[3].id, '123456790');
-    assert.strictEqual(selectResult[4].id, '9007199254740992');
-    assert.strictEqual(selectResult[5].id, '9007199254740993');
-    assert.strictEqual(selectResult[6].id, '90071992547409924');
-    assert.strictEqual(selectResult[7].id, '90071992547409925');
+    strict.strictEqual(selectResult[0].id, '123');
+    strict.strictEqual(selectResult[1].id, '124');
+    strict.strictEqual(selectResult[2].id, '123456789');
+    strict.strictEqual(selectResult[3].id, '123456790');
+    strict.strictEqual(selectResult[4].id, '9007199254740992');
+    strict.strictEqual(selectResult[5].id, '9007199254740993');
+    strict.strictEqual(selectResult[6].id, '90071992547409924');
+    strict.strictEqual(selectResult[7].id, '90071992547409925');
   });
 
   connection.end();

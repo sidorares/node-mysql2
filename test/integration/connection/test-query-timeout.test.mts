@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import strict from 'node:assert/strict';
 import { describe, it, skip } from 'poku';
 import mysql from '../../../index.js';
 import { createConnection } from '../../common.test.mjs';
@@ -8,11 +8,11 @@ if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 await describe('Query Timeout', async () => {
   const connection = createConnection({ debug: false });
   connection.on('error', (err: NodeJS.ErrnoException) => {
-    assert.equal(
+    strict.equal(
       err.message,
       'Connection lost: The server closed the connection.'
     );
-    assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+    strict.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
   });
 
   await it('should handle query and execute timeouts', async () => {
@@ -21,10 +21,10 @@ await describe('Query Timeout', async () => {
         { sql: 'SELECT sleep(3) as a', timeout: 500 },
         (err, res) => {
           try {
-            assert.equal(res, null);
-            assert.ok(err);
-            assert.equal(err.code, 'PROTOCOL_SEQUENCE_TIMEOUT');
-            assert.equal(err.message, 'Query inactivity timeout');
+            strict.equal(res, null);
+            strict.ok(err);
+            strict.equal(err.code, 'PROTOCOL_SEQUENCE_TIMEOUT');
+            strict.equal(err.message, 'Query inactivity timeout');
           } catch (e) {
             reject(e);
           }
@@ -35,7 +35,7 @@ await describe('Query Timeout', async () => {
         { sql: 'SELECT sleep(1) as a', timeout: 5000 },
         (_err, res) => {
           try {
-            assert.deepEqual(res, [{ a: 0 }]);
+            strict.deepEqual(res, [{ a: 0 }]);
           } catch (e) {
             reject(e);
           }
@@ -44,7 +44,7 @@ await describe('Query Timeout', async () => {
 
       connection.query('SELECT sleep(1) as a', (_err, res) => {
         try {
-          assert.deepEqual(res, [{ a: 0 }]);
+          strict.deepEqual(res, [{ a: 0 }]);
         } catch (e) {
           reject(e);
         }
@@ -54,10 +54,10 @@ await describe('Query Timeout', async () => {
         { sql: 'SELECT sleep(3) as a', timeout: 500 },
         (err, res) => {
           try {
-            assert.equal(res, null);
-            assert.ok(err);
-            assert.equal(err.code, 'PROTOCOL_SEQUENCE_TIMEOUT');
-            assert.equal(err.message, 'Query inactivity timeout');
+            strict.equal(res, null);
+            strict.ok(err);
+            strict.equal(err.code, 'PROTOCOL_SEQUENCE_TIMEOUT');
+            strict.equal(err.message, 'Query inactivity timeout');
           } catch (e) {
             reject(e);
           }
@@ -68,7 +68,7 @@ await describe('Query Timeout', async () => {
         { sql: 'SELECT sleep(1) as a', timeout: 5000 },
         (_err, res) => {
           try {
-            assert.deepEqual(res, [{ a: 0 }]);
+            strict.deepEqual(res, [{ a: 0 }]);
           } catch (e) {
             reject(e);
           }
@@ -79,9 +79,9 @@ await describe('Query Timeout', async () => {
         { sql: 'select 1 from non_existing_table', timeout: 500 },
         (err, res) => {
           try {
-            assert.equal(res, null);
-            assert.ok(err);
-            assert.equal(err.code, 'ER_NO_SUCH_TABLE');
+            strict.equal(res, null);
+            strict.ok(err);
+            strict.equal(err.code, 'ER_NO_SUCH_TABLE');
           } catch (e) {
             reject(e);
           }
@@ -90,7 +90,7 @@ await describe('Query Timeout', async () => {
 
       connection.execute('SELECT sleep(1) as a', (_err, res) => {
         try {
-          assert.deepEqual(res, [{ a: 0 }]);
+          strict.deepEqual(res, [{ a: 0 }]);
           resolve();
         } catch (e) {
           reject(e);
@@ -109,11 +109,11 @@ await describe('Query Timeout', async () => {
   const timeoutServer = mysql.createServer();
   timeoutServer.on('connection', (conn) => {
     conn.on('error', (err: NodeJS.ErrnoException) => {
-      assert.equal(
+      strict.equal(
         err.message,
         'Connection lost: The server closed the connection.'
       );
-      assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+      strict.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
     });
   });
 
@@ -144,10 +144,10 @@ await describe('Query Timeout', async () => {
       );
     });
 
-    assert.equal(result.res, null);
-    assert.ok(result.err);
-    assert.equal(result.err.code, 'ETIMEDOUT');
-    assert.equal(result.err.message, 'connect ETIMEDOUT');
+    strict.equal(result.res, null);
+    strict.ok(result.err);
+    strict.equal(result.err.code, 'ETIMEDOUT');
+    strict.equal(result.err.message, 'connect ETIMEDOUT');
   });
 
   connectionTimeout?.destroy();

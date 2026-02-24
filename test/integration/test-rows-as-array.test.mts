@@ -1,5 +1,5 @@
 import type { QueryError, RowDataPacket } from '../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../common.test.mjs';
 
 await describe('Rows As Array', async () => {
@@ -12,7 +12,7 @@ await describe('Rows As Array', async () => {
         'select 1+1 as a',
         (err: QueryError | null, rows: RowDataPacket[]) => {
           if (err) return reject(err);
-          assert.equal(rows[0][0], 2);
+          strict.equal(rows[0][0], 2);
         }
       );
 
@@ -20,7 +20,7 @@ await describe('Rows As Array', async () => {
         { sql: 'select 1+2 as a', rowsAsArray: false },
         (err: QueryError | null, rows: RowDataPacket[]) => {
           if (err) return reject(err);
-          assert.equal(rows[0].a, 3);
+          strict.equal(rows[0].a, 3);
         }
       );
 
@@ -28,7 +28,7 @@ await describe('Rows As Array', async () => {
         'select 1+1 as a',
         (err: QueryError | null, rows: RowDataPacket[]) => {
           if (err) return reject(err);
-          assert.equal(rows[0][0], 2);
+          strict.equal(rows[0][0], 2);
         }
       );
 
@@ -36,7 +36,7 @@ await describe('Rows As Array', async () => {
         { sql: 'select 1+2 as a', rowsAsArray: false },
         (err: QueryError | null, rows: RowDataPacket[]) => {
           if (err) return reject(err);
-          assert.equal(rows[0].a, 3);
+          strict.equal(rows[0].a, 3);
           c.end();
           resolve();
         }
@@ -53,7 +53,7 @@ await describe('Rows As Array', async () => {
         'select 1+1 as a',
         (err: QueryError | null, rows: RowDataPacket[]) => {
           if (err) return reject(err);
-          assert.equal(rows[0].a, 2);
+          strict.equal(rows[0].a, 2);
         }
       );
 
@@ -61,7 +61,7 @@ await describe('Rows As Array', async () => {
         { sql: 'select 1+2 as a', rowsAsArray: true },
         (err: QueryError | null, rows: RowDataPacket[]) => {
           if (err) return reject(err);
-          assert.equal(rows[0][0], 3);
+          strict.equal(rows[0][0], 3);
         }
       );
 
@@ -69,7 +69,7 @@ await describe('Rows As Array', async () => {
         'select 1+1 as a',
         (err: QueryError | null, rows: RowDataPacket[]) => {
           if (err) return reject(err);
-          assert.equal(rows[0].a, 2);
+          strict.equal(rows[0].a, 2);
         }
       );
 
@@ -77,7 +77,7 @@ await describe('Rows As Array', async () => {
         { sql: 'select 1+2 as a', rowsAsArray: true },
         (err: QueryError | null, rows: RowDataPacket[]) => {
           if (err) return reject(err);
-          assert.equal(rows[0][0], 3);
+          strict.equal(rows[0][0], 3);
           c1.end();
           resolve();
         }

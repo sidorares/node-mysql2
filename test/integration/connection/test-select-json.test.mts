@@ -3,7 +3,7 @@
  * issue#409: https://github.com/sidorares/node-mysql2/issues/409
  */
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Select JSON', async () => {
@@ -37,7 +37,7 @@ await describe('Select JSON', async () => {
       );
     });
 
-    assert.equal(textFetchedRows![0].json_test, face);
-    assert.equal(binaryFetchedRows![0].json_test, face);
+    strict.equal(textFetchedRows![0].json_test, face);
+    strict.equal(binaryFetchedRows![0].json_test, face);
   });
 });

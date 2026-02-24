@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type TotalRow = RowDataPacket & { total: number | string };
@@ -38,7 +38,7 @@ await describe('Text Parser: bigNumberStrings Sanitization', async () => {
     await it(label, async () => {
       const [results] = await connection.query<TotalRow[]>({ sql, ...options });
 
-      assert.strictEqual(typeof results[0].total, expectedType, label);
+      strict.strictEqual(typeof results[0].total, expectedType, label);
     });
   }
 

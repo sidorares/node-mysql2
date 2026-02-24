@@ -1,5 +1,5 @@
 import type { QueryError } from '../../../index.js';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../../index.js';
 import ClientFlags from '../../../lib/constants/client.js';
 
@@ -148,13 +148,13 @@ await describe('Aurora MySQL Failover - Read-Only Error Handling', async () => {
     await it(`should discard connection on pool.query() when error ${errorConfig.code} occurs`, async () => {
       const result = await testReadOnlyError(errorConfig, 'query');
 
-      assert.ok(result.errorReceived, 'Should receive an error');
-      assert.equal(
+      strict.ok(result.errorReceived, 'Should receive an error');
+      strict.equal(
         result.errorReceived?.errno,
         errorConfig.code,
         `Error code should be ${errorConfig.code}`
       );
-      assert.notEqual(
+      strict.notEqual(
         result.firstThreadId,
         result.secondThreadId,
         'Pool should have created a new connection (different threadId)'
@@ -164,13 +164,13 @@ await describe('Aurora MySQL Failover - Read-Only Error Handling', async () => {
     await it(`should discard connection on pool.execute() when error ${errorConfig.code} occurs`, async () => {
       const result = await testReadOnlyError(errorConfig, 'execute');
 
-      assert.ok(result.errorReceived, 'Should receive an error');
-      assert.equal(
+      strict.ok(result.errorReceived, 'Should receive an error');
+      strict.equal(
         result.errorReceived?.errno,
         errorConfig.code,
         `Error code should be ${errorConfig.code}`
       );
-      assert.notEqual(
+      strict.notEqual(
         result.firstThreadId,
         result.secondThreadId,
         'Pool should have created a new connection (different threadId)'

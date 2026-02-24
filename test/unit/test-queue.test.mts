@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import compressedProtocol from '../../lib/compressed_protocol.js';
 
 const { Queue } = compressedProtocol;
@@ -29,7 +29,7 @@ await describe('Queue', async () => {
       });
     });
 
-    assert.deepStrictEqual(order, [1, 2, 3, 4]);
+    strict.deepStrictEqual(order, [1, 2, 3, 4]);
   });
 
   await it('should accept new tasks after draining', async () => {
@@ -49,7 +49,7 @@ await describe('Queue', async () => {
       });
     });
 
-    assert.deepStrictEqual(order, [1, 2]);
+    strict.deepStrictEqual(order, [1, 2]);
 
     await new Promise<void>((resolve) => {
       q.push((task: { done: () => void }) => {
@@ -59,6 +59,6 @@ await describe('Queue', async () => {
       });
     });
 
-    assert.deepStrictEqual(order, [1, 2, 3]);
+    strict.deepStrictEqual(order, [1, 2, 3]);
   });
 });

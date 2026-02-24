@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Query Zero', async () => {
@@ -20,6 +20,6 @@ await describe('Query Zero', async () => {
       );
     });
 
-    assert.deepEqual(rows!, [{ result: 0 }]);
+    strict.deepEqual(rows!, [{ result: 0 }]);
   });
 });

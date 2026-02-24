@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
@@ -71,16 +71,16 @@ await describe('Errors', async () => {
       });
     });
 
-    assert.equal(result.executeErr?.errno, 1064);
-    assert.equal(result.executeErr?.code, 'ER_PARSE_ERROR');
-    assert.equal(result.executeErr?.sql, 'error in execute');
-    assert.equal(result.queryErr?.errno, 1064);
-    assert.equal(result.queryErr?.code, 'ER_PARSE_ERROR');
-    assert.equal(result.queryErr?.sql, 'error in query');
-    assert.equal(result.onExecuteErrorEvent, undefined);
-    assert.equal(result.onQueryErrorEvent, undefined);
-    assert.equal(result.onExecuteErrorEvent1, true);
-    assert.equal(result.onQueryErrorEvent1, true);
+    strict.equal(result.executeErr?.errno, 1064);
+    strict.equal(result.executeErr?.code, 'ER_PARSE_ERROR');
+    strict.equal(result.executeErr?.sql, 'error in execute');
+    strict.equal(result.queryErr?.errno, 1064);
+    strict.equal(result.queryErr?.code, 'ER_PARSE_ERROR');
+    strict.equal(result.queryErr?.sql, 'error in query');
+    strict.equal(result.onExecuteErrorEvent, undefined);
+    strict.equal(result.onQueryErrorEvent, undefined);
+    strict.equal(result.onExecuteErrorEvent1, true);
+    strict.equal(result.onQueryErrorEvent1, true);
   });
 
   connection.end();

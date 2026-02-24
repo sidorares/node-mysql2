@@ -1,5 +1,5 @@
 import type { QueryError, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import promiseDriver from '../../../promise.js';
 import { config } from '../../common.test.mjs';
 
@@ -13,7 +13,7 @@ await describe('Test pool cluster', async () => {
 
     poolCluster.once('warn', async function () {
       await new Promise((resolve) => {
-        assert.equal(
+        strict.equal(
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
@@ -32,7 +32,7 @@ await describe('Test pool cluster', async () => {
 
     poolCluster.once('remove', async function () {
       await new Promise((resolve) => {
-        assert.equal(
+        strict.equal(
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
@@ -51,7 +51,7 @@ await describe('Test pool cluster', async () => {
 
     poolCluster.once('offline', async function () {
       await new Promise((resolve) => {
-        assert.equal(
+        strict.equal(
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
@@ -70,7 +70,7 @@ await describe('Test pool cluster', async () => {
 
     poolCluster.once('online', async function () {
       await new Promise((resolve) => {
-        assert.equal(
+        strict.equal(
           // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
@@ -90,7 +90,7 @@ await describe('Test pool cluster', async () => {
 
     const poolNamespace = poolCluster.of('MASTER');
 
-    assert.equal(
+    strict.equal(
       // @ts-expect-error: TODO: implement typings
       poolNamespace.poolNamespace,
       // @ts-expect-error: TODO: implement typings
@@ -99,20 +99,20 @@ await describe('Test pool cluster', async () => {
 
     const connection = await poolNamespace.getConnection();
 
-    assert.ok(connection, 'should get connection');
+    strict.ok(connection, 'should get connection');
     connection.release();
 
     const [result] = await poolNamespace.query<TestRow[]>(
       'SELECT 1 as a from dual where 1 = ?',
       [1]
     );
-    assert.equal(result[0]['a'], 1, 'should query successfully');
+    strict.equal(result[0]['a'], 1, 'should query successfully');
 
     const [result2] = await poolNamespace.execute<TestRow[]>(
       'SELECT 1 as a from dual where 1 = ?',
       [1]
     );
-    assert.equal(result2[0]['a'], 1, 'should execute successfully');
+    strict.equal(result2[0]['a'], 1, 'should execute successfully');
 
     poolCluster.end();
   });
@@ -123,9 +123,9 @@ await describe('Test pool cluster', async () => {
 
     try {
       await poolCluster.getConnection('SLAVE1');
-      assert.fail('An error was expected');
+      strict.fail('An error was expected');
     } catch (error: unknown) {
-      assert.equal(
+      strict.equal(
         (error as QueryError).code,
         'POOL_NOEXIST',
         'should throw when PoolNamespace does not exist'
@@ -142,14 +142,14 @@ await describe('Test pool cluster', async () => {
     try {
       // @ts-expect-error: TODO: implement typings
       const connection = await poolCluster.getConnection(/SLAVE[12]/);
-      assert.equal(
+      strict.equal(
         // @ts-expect-error: TODO: implement typings
         connection.connection._clusterId,
         'SLAVE1',
         'should match regex pattern'
       );
     } catch {
-      assert.fail('should not throw');
+      strict.fail('should not throw');
     } finally {
       poolCluster.end();
     }

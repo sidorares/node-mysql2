@@ -1,6 +1,6 @@
 import type { RowDataPacket } from '../../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, test } from 'poku';
+import { strict, test } from 'poku';
 import { createConnection, useTestDb } from '../../common.test.mjs';
 import typeCastingTests from './type-casting-tests.test.mjs';
 
@@ -67,12 +67,12 @@ await test(async () => {
     let message: string;
 
     if (expected instanceof Date) {
-      assert.equal(got instanceof Date, true, test.type);
+      strict.equal(got instanceof Date, true, test.type);
 
       expected = String(expected);
       got = String(got);
     } else if (Buffer.isBuffer(expected)) {
-      assert.equal(Buffer.isBuffer(got), true, test.type);
+      strict.equal(Buffer.isBuffer(got), true, test.type);
 
       expected = String(Array.prototype.slice.call(expected));
       got = String(Array.prototype.slice.call(got));
@@ -82,12 +82,12 @@ await test(async () => {
       message = `got: "${JSON.stringify(got)}" expected: "${JSON.stringify(
         expected
       )}" test: ${test.type}`;
-      assert.deepEqual(expected, got, message);
+      strict.deepEqual(expected, got, message);
     } else {
       message = `got: "${got}" (${typeof got}) expected: "${expected}" (${typeof expected}) test: ${
         test.type
       }`;
-      assert.strictEqual(expected, got, message);
+      strict.strictEqual(expected, got, message);
     }
   });
 

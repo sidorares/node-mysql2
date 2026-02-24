@@ -1,6 +1,6 @@
 import type { Connection, QueryError } from '../../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../../index.js';
 import auth from '../../../lib/auth_41.js';
 
@@ -20,7 +20,7 @@ function authenticate(params: AuthParams, cb: (err: Error | null) => void) {
     params.authToken,
     doubleSha
   );
-  assert(isValid);
+  strict(isValid);
   cb(null);
 }
 
@@ -73,7 +73,7 @@ await describe('Connect SHA1', async () => {
         });
 
         connection.on('error', (err: QueryError) => {
-          assert.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+          strict.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
         });
 
         connection.query('select 1+1', (err: QueryError | null) => {
@@ -95,12 +95,12 @@ await describe('Connect SHA1', async () => {
       });
     });
 
-    assert.equal(queryReceived, 'select 1+1');
-    assert.equal(queryError1Code, 'PROTOCOL_CONNECTION_LOST');
-    assert.equal(queryError2Code, 'PROTOCOL_CONNECTION_LOST');
-    assert.equal(queryError3Code, 'PROTOCOL_CONNECTION_LOST');
-    assert.equal(queryCalls, 1);
-    assert.equal(_1_2, true);
-    assert.equal(_1_3, true);
+    strict.equal(queryReceived, 'select 1+1');
+    strict.equal(queryError1Code, 'PROTOCOL_CONNECTION_LOST');
+    strict.equal(queryError2Code, 'PROTOCOL_CONNECTION_LOST');
+    strict.equal(queryError3Code, 'PROTOCOL_CONNECTION_LOST');
+    strict.equal(queryCalls, 1);
+    strict.equal(_1_2, true);
+    strict.equal(_1_3, true);
   });
 });

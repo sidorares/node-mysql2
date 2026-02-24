@@ -1,5 +1,5 @@
 import type { Server } from '../../../typings/mysql/lib/Server.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import mysql from '../../../index.js';
 
 // Verifies that the Server.listen can be called with any combination of
@@ -31,7 +31,7 @@ await describe('Server Listen', async () => {
       // @ts-expect-error: TODO: implement typings
       server.listen(0, callback);
     });
-    assert.ok(fired, 'Callback for call with port did not fire');
+    strict.ok(fired, 'Callback for call with port did not fire');
   });
 
   await it('should listen with port and host', async () => {
@@ -39,7 +39,7 @@ await describe('Server Listen', async () => {
       // @ts-expect-error: TODO: implement typings
       server.listen(0, '127.0.0.1', callback);
     });
-    assert.ok(fired, 'Callback for call with port, host did not fire');
+    strict.ok(fired, 'Callback for call with port, host did not fire');
   });
 
   await it('should listen with port, host, and backlog', async () => {
@@ -48,6 +48,6 @@ await describe('Server Listen', async () => {
       server.listen(0, '127.0.0.1', 50, callback);
     });
 
-    assert.ok(fired, 'Callback for call with port, host, backlog did not fire');
+    strict.ok(fired, 'Callback for call with port, host, backlog did not fire');
   });
 });

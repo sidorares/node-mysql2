@@ -3,7 +3,7 @@ import type {
   TypeCastField,
   TypeCastNext,
 } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 const typeCastWrapper = function (
@@ -32,7 +32,7 @@ await describe('Text Parser: typeCast with JSON fields', async () => {
         },
         (err, rows) => {
           if (err) return reject(err);
-          assert.notEqual(rows[0].i.test, '😀');
+          strict.notEqual(rows[0].i.test, '😀');
           resolve();
         }
       );
@@ -48,7 +48,7 @@ await describe('Text Parser: typeCast with JSON fields', async () => {
         },
         (err, rows) => {
           if (err) return reject(err);
-          assert.equal(rows[0].i.test, '😀');
+          strict.equal(rows[0].i.test, '😀');
           resolve();
         }
       );

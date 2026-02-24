@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Select UTF8', async () => {
@@ -21,6 +21,6 @@ await describe('Select UTF8', async () => {
       );
     });
 
-    assert.equal(rows![0].result, multibyteText);
+    strict.equal(rows![0].result, multibyteText);
   });
 });

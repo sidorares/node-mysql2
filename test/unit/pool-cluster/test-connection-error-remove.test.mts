@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../../index.js';
 import { createPoolCluster } from '../../common.test.mjs';
 
@@ -78,11 +78,11 @@ await describe('pool cluster error remove', async () => {
       }
     );
 
-    assert.equal(connCount, 2);
-    assert.equal(result.clusterId, 'SLAVE2');
-    assert.equal(removedNodeId, 'SLAVE1');
+    strict.equal(connCount, 2);
+    strict.equal(result.clusterId, 'SLAVE2');
+    strict.equal(removedNodeId, 'SLAVE1');
     // @ts-expect-error: internal access
-    assert.deepEqual(cluster._serviceableNodeIds, ['SLAVE2']);
+    strict.deepEqual(cluster._serviceableNodeIds, ['SLAVE2']);
   });
 
   await new Promise<void>((resolve, reject) => {

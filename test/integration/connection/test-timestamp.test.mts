@@ -1,5 +1,5 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Timestamp', async () => {
@@ -47,20 +47,20 @@ await describe('Timestamp', async () => {
       );
     });
 
-    assert.deepEqual(rows[0].f.toString(), 'Invalid Date');
-    assert(rows[0].f instanceof Date);
-    assert(rows[1].f instanceof Date);
-    assert.equal(rows[1].f.getYear(), 113);
-    assert.equal(rows[1].f.getMonth(), 0);
-    assert.equal(rows[1].f.getDate(), 22);
-    assert.equal(rows[1].f.getHours(), 1);
-    assert.equal(rows[1].f.getMinutes(), 2);
-    assert.equal(rows[1].f.getSeconds(), 3);
-    assert.equal(fields[0].name, 'f');
-    assert.deepEqual(rows[1], rows1[1]);
+    strict.deepEqual(rows[0].f.toString(), 'Invalid Date');
+    strict(rows[0].f instanceof Date);
+    strict(rows[1].f instanceof Date);
+    strict.equal(rows[1].f.getYear(), 113);
+    strict.equal(rows[1].f.getMonth(), 0);
+    strict.equal(rows[1].f.getDate(), 22);
+    strict.equal(rows[1].f.getHours(), 1);
+    strict.equal(rows[1].f.getMinutes(), 2);
+    strict.equal(rows[1].f.getSeconds(), 3);
+    strict.equal(fields[0].name, 'f');
+    strict.deepEqual(rows[1], rows1[1]);
     // @ts-expect-error: TODO: implement typings
-    assert.deepEqual(fields[0].inspect(), fields1[0].inspect());
+    strict.deepEqual(fields[0].inspect(), fields1[0].inspect());
 
-    assert(rows2[0].t11 instanceof Date);
+    strict(rows2[0].t11 instanceof Date);
   });
 });

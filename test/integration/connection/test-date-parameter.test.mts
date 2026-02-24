@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection, normalizeNumeric } from '../../common.test.mjs';
 
 await describe('Date Parameter', async () => {
@@ -23,6 +23,6 @@ await describe('Date Parameter', async () => {
       );
     });
 
-    assert.deepEqual(normalizeNumeric(rows), [{ t: 631152000 }]);
+    strict.deepEqual(normalizeNumeric(rows), [{ t: 631152000 }]);
   });
 });

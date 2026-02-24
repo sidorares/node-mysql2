@@ -1,4 +1,4 @@
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import ColumnDefinition from '../../../lib/packets/column_definition.js';
 
 const sequenceId = 5;
@@ -22,7 +22,7 @@ describe('ColumnDefinition', () => {
       },
       sequenceId
     );
-    assert.equal(
+    strict.equal(
       packet.buffer.toString('hex', 4),
       '0364656607736f6d655f646208736f6d655f74626c08736f6d655f74626c08736f6d655f636f6c08736f6d655f636f6c0c2100f4010000088080010000'
     );
@@ -45,7 +45,7 @@ describe('ColumnDefinition', () => {
       },
       sequenceId
     );
-    assert.equal(
+    strict.equal(
       packet.buffer.toString('hex', 4),
       '036465660e735fd0bfd0bed0b3d0bed0b4d0b80e745fd0bfd0bed0b3d0bed0b4d0b80f6f745fd0bfd0bed0b3d0bed0b4d0b80e6e5fd0bfd0bed0b3d0bed0b4d0b80f6f6e5fd0bfd0bed0b3d0bed0b4d0b80c2100f4010000088080010000'
     );
@@ -70,7 +70,7 @@ describe('ColumnDefinition', () => {
       decimals: 0x1f,
     };
     const packet = ColumnDefinition.toPacket(inputColDef, sequenceId);
-    assert.equal(
+    strict.equal(
       packet.buffer.toString('hex', 4),
       '0364656600000011404076657273696f6e5f636f6d6d656e74000c08001c000000fd00001f0000'
     );
@@ -81,7 +81,7 @@ describe('ColumnDefinition', () => {
     // but ColumnDefinition.toPacket reads type from "columnType"
     // TODO: think how to make this more consistent
     const inspect = { columnType: 253, ...colDef.inspect() };
-    assert.deepEqual(inspect, inputColDef);
-    assert.equal(colDef.db, inputColDef.schema);
+    strict.deepEqual(inspect, inputColDef);
+    strict.equal(colDef.db, inputColDef.schema);
   });
 });

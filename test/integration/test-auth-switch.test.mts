@@ -1,6 +1,6 @@
 import type { Connection } from '../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../index.js';
 import Command from '../../lib/commands/command.js';
 import Packets from '../../lib/packets/index.js';
@@ -51,10 +51,10 @@ class TestAuthSwitchHandshake extends Command {
   readClientReply(packet: unknown, connection: Connection) {
     // @ts-expect-error: TODO: implement typings
     const clientHelloReply = Packets.HandshakeResponse.fromPacket(packet);
-    assert.equal(clientHelloReply.user, 'test_user');
-    assert.equal(clientHelloReply.database, 'test_database');
-    assert.equal(clientHelloReply.authPluginName, 'mysql_native_password');
-    assert.deepEqual(clientHelloReply.connectAttributes, {
+    strict.equal(clientHelloReply.user, 'test_user');
+    strict.equal(clientHelloReply.database, 'test_database');
+    strict.equal(clientHelloReply.authPluginName, 'mysql_native_password');
+    strict.deepEqual(clientHelloReply.connectAttributes, {
       ...connectAttributes,
       ...defaultConnectAttributes,
     });
@@ -85,7 +85,7 @@ class TestAuthSwitchHandshake extends Command {
 
   dispatchCommands(_packet: unknown, connection: Connection) {
     // Quit command here
-    // TODO: assert it's actually Quit
+    // TODO: strict it's actually Quit
     connection.end();
     return TestAuthSwitchHandshake.prototype.dispatchCommands;
   }
@@ -124,9 +124,9 @@ await describe('Auth Switch', async () => {
             cb: (err: null, response: string) => void
           ) {
             if (count === 0) {
-              assert.equal(data.pluginName, 'auth_test_plugin');
+              strict.equal(data.pluginName, 'auth_test_plugin');
             } else {
-              assert.equal(data.pluginData.toString(), `hahaha ${count}`);
+              strict.equal(data.pluginData.toString(), `hahaha ${count}`);
             }
 
             count++;
@@ -156,7 +156,7 @@ await describe('Auth Switch', async () => {
       });
     });
 
-    assert.equal(connectData!.serverVersion, 'node.js rocks');
-    assert.equal(connectData!.connectionId, 1234);
+    strict.equal(connectData!.serverVersion, 'node.js rocks');
+    strict.equal(connectData!.connectionId, 1234);
   });
 });

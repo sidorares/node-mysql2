@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Execute Bind Date', async () => {
@@ -18,7 +18,7 @@ await describe('Execute Bind Date', async () => {
       );
     });
 
-    assert.deepEqual(rows, [{ result: date }]);
+    strict.deepEqual(rows, [{ result: date }]);
   });
 
   connection.end();

@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Signed Tinyint', async () => {
@@ -27,7 +27,7 @@ await describe('Signed Tinyint', async () => {
       );
     });
 
-    assert.deepEqual(rows!, [
+    strict.deepEqual(rows!, [
       { b11: -3, b12: -120, b21: 500 },
       { b11: 3, b12: -110, b21: -500 },
     ]);

@@ -1,5 +1,5 @@
 import type { Connection, QueryError } from '../../../index.js';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../../index.js';
 
 if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
@@ -53,6 +53,6 @@ await describe('Connect After Connection Error', async () => {
       });
     });
 
-    assert.equal(connectError?.message, ERROR_TEXT);
+    strict.equal(connectError?.message, ERROR_TEXT);
   });
 });

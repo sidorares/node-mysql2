@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Null Double', async () => {
@@ -17,8 +17,8 @@ await describe('Null Double', async () => {
       });
     });
 
-    assert.deepEqual(rows[0], { i: null });
-    assert.deepEqual(rows[1], { i: 123 });
+    strict.deepEqual(rows[0], { i: null });
+    strict.deepEqual(rows[1], { i: 123 });
   });
 
   connection.end();

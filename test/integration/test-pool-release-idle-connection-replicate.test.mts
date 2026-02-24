@@ -1,5 +1,5 @@
 import type { PoolConnection } from '../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createPool } from '../common.test.mjs';
 
 /**
@@ -31,7 +31,7 @@ await describe('Pool Release Idle Connection Replicate', async () => {
       pool.getConnection(
         (err1: NodeJS.ErrnoException | null, connection1: PoolConnection) => {
           if (err1) return reject(err1);
-          assert.ok(connection1);
+          strict.ok(connection1);
 
           /**
            * Create the second connection and ensure it's in the pool as expected
@@ -42,7 +42,7 @@ await describe('Pool Release Idle Connection Replicate', async () => {
               connection2: PoolConnection
             ) => {
               if (err2) return reject(err2);
-              assert.ok(connection2);
+              strict.ok(connection2);
 
               /**
                * Create the third connection and ensure it's in the pool as expected
@@ -53,7 +53,7 @@ await describe('Pool Release Idle Connection Replicate', async () => {
                   connection3: PoolConnection
                 ) => {
                   if (err3) return reject(err3);
-                  assert.ok(connection3);
+                  strict.ok(connection3);
 
                   /**
                    * Release all the connections
@@ -67,13 +67,13 @@ await describe('Pool Release Idle Connection Replicate', async () => {
                    * that have been released are destroyed as expected.
                    */
                   setTimeout(() => {
-                    assert(
+                    strict(
                       // @ts-expect-error: internal access
                       pool._allConnections.length === 0,
                       // @ts-expect-error: internal access
                       `Expected all connections to be closed, but found ${pool._allConnections.length}`
                     );
-                    assert(
+                    strict(
                       // @ts-expect-error: internal access
                       pool._freeConnections.length === 0,
                       // @ts-expect-error: internal access

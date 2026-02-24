@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../../index.js';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createPoolCluster } from '../../../../promise.js';
 import { config } from '../../../common.test.mjs';
 
@@ -13,7 +13,7 @@ await describe('PromisePoolCluster should implement Symbol.asyncDispose', async 
   cluster.add('MASTER', config);
 
   it('should be a function', () => {
-    assert.strictEqual(typeof cluster[Symbol.asyncDispose], 'function');
+    strict.strictEqual(typeof cluster[Symbol.asyncDispose], 'function');
   });
 });
 
@@ -27,12 +27,12 @@ await describe('asyncDispose should end the pool cluster', async () => {
   await cluster[Symbol.asyncDispose]();
 
   it('should have received the query result', () => {
-    assert.deepStrictEqual(rows, [{ 1: 1 }]);
+    strict.deepStrictEqual(rows, [{ 1: 1 }]);
   });
 
   it('should have closed the pool cluster', () => {
     // @ts-expect-error: internal access
-    assert.strictEqual(cluster.poolCluster._closed, true);
+    strict.strictEqual(cluster.poolCluster._closed, true);
   });
 });
 
@@ -45,6 +45,6 @@ await describe('asyncDispose should handle manual end before asyncDispose on poo
 
   it('should have closed the pool cluster', () => {
     // @ts-expect-error: internal access
-    assert.strictEqual(cluster.poolCluster._closed, true);
+    strict.strictEqual(cluster.poolCluster._closed, true);
   });
 });

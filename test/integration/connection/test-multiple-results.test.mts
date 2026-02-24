@@ -5,7 +5,7 @@
 
 import process from 'node:process';
 // @ts-expect-error: no typings available
-import assert from 'assert-diff';
+import strict from 'assert-diff';
 import { describe, it, skip } from 'poku';
 import { createConnection, normalizeNumeric } from '../../common.test.mjs';
 
@@ -179,7 +179,7 @@ await describe('Multiple Results', async () => {
               return column;
             };
 
-            assert.deepEqual(
+            strict.deepEqual(
               [
                 normalizeNumeric(expectation[0]),
                 expectation[1],
@@ -203,11 +203,11 @@ await describe('Multiple Results', async () => {
               const index = fieldIndex;
               const normalizedRow = normalizeNumeric(row);
               if (_numResults === 1) {
-                assert.equal(fieldIndex, 0);
+                strict.equal(fieldIndex, 0);
                 if (row.constructor.name === 'ResultSetHeader') {
-                  assert.deepEqual(normalizeNumeric(_rows), normalizedRow);
+                  strict.deepEqual(normalizeNumeric(_rows), normalizedRow);
                 } else {
-                  assert.deepEqual(
+                  strict.deepEqual(
                     normalizeNumeric(multiRows[rowIndex]),
                     normalizedRow
                   );
@@ -218,14 +218,14 @@ await describe('Multiple Results', async () => {
                   resIndex = index;
                 }
                 if (row.constructor.name === 'ResultSetHeader') {
-                  assert.deepEqual(
+                  strict.deepEqual(
                     normalizeNumeric(multiRows[index]),
                     normalizedRow
                   );
                 } else {
                   const resultRows = multiRows[index];
                   if (Array.isArray(resultRows)) {
-                    assert.deepEqual(
+                    strict.deepEqual(
                       normalizeNumeric(resultRows[rowIndex]),
                       normalizedRow
                     );
@@ -238,10 +238,10 @@ await describe('Multiple Results', async () => {
             function checkFields(fields: unknown) {
               fieldIndex++;
               if (_numResults === 1) {
-                assert.equal(fieldIndex, 0);
-                assert.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
+                strict.equal(fieldIndex, 0);
+                strict.deepEqual(arrOrColumn(_columns), arrOrColumn(fields));
               } else {
-                assert.deepEqual(
+                strict.deepEqual(
                   arrOrColumn(_columns[fieldIndex]),
                   arrOrColumn(fields)
                 );

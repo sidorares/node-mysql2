@@ -1,5 +1,5 @@
 import type { Pool, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createPool } from '../../common.test.mjs';
 
 type TestRow = RowDataPacket & { str: string };
@@ -31,7 +31,7 @@ await describe('Parameters Questionmark', async () => {
         (err, rows) => {
           pool.end();
           if (err) return reject(err);
-          assert.deepEqual(rows, [{ str: 'should not change ?' }]);
+          strict.deepEqual(rows, [{ str: 'should not change ?' }]);
           resolve();
         }
       );

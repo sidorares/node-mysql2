@@ -5,7 +5,7 @@ import type {
 } from '../../index.js';
 import Net from 'node:net';
 import { Duplex, Readable } from 'node:stream';
-import { assert, log, skip, sleep, test } from 'poku';
+import { log, skip, sleep, strict, test } from 'poku';
 import driver from '../../index.js';
 import { config } from '../common.test.mjs';
 
@@ -119,7 +119,7 @@ await test('load data infile backpressure on local stream', async () => {
     .query('SET GLOBAL local_infile = ?', [originalLocalInfile]);
   setupConn.end();
 
-  assert.ok(
+  strict.ok(
     bigInput.count < bigInput.MAX_EXPECTED_ROWS,
     `expected backpressure to stop infile stream at less than ${bigInput.MAX_EXPECTED_ROWS} rows (read ${bigInput.count} rows)`
   );

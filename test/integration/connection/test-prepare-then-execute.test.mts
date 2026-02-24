@@ -3,7 +3,7 @@ import type {
   PrepareStatementInfo,
   RowDataPacket,
 } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Prepare Then Execute', async () => {
@@ -24,14 +24,14 @@ await describe('Prepare Then Execute', async () => {
       });
     });
 
-    assert(stmt, 'Expected prepared statement');
-    assert(columns, 'Expected statement metadata');
+    strict(stmt, 'Expected prepared statement');
+    strict(columns, 'Expected statement metadata');
     // @ts-expect-error: TODO: implement typings
-    assert.equal(stmt.columns.length, 1);
+    strict.equal(stmt.columns.length, 1);
     // @ts-expect-error: TODO: implement typings
-    assert.equal(stmt.parameters.length, 2);
-    assert.deepEqual(rows, [{ test: 235 }]);
-    assert.equal(columns[0].name, 'test');
+    strict.equal(stmt.parameters.length, 2);
+    strict.deepEqual(rows, [{ test: 235 }]);
+    strict.equal(columns[0].name, 'test');
   });
 
   connection.end();

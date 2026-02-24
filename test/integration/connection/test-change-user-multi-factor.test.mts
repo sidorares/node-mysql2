@@ -2,7 +2,7 @@
 
 import type { Connection } from '../../../index.js';
 import { Buffer } from 'node:buffer';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import mysql from '../../../index.js';
 import Command from '../../../lib/commands/command.js';
 import Packets from '../../../lib/packets/index.js';
@@ -64,7 +64,7 @@ class TestChangeUserMultiFactor extends Command {
   ): (_packet: unknown, connection: Connection) => unknown {
     console.log('this.authFactor:', this.authFactor);
     // const asr = Packets.AuthSwitchResponse.fromPacket(packet);
-    // assert.deepStrictEqual(asr.data.toString(), this.args[this.authFactor].pluginName);
+    // strict.deepStrictEqual(asr.data.toString(), this.args[this.authFactor].pluginName);
     if (this.authFactor === 1) {
       // send OK_Packet after the 3rd authentication factor
       connection.writeOk();
@@ -124,7 +124,7 @@ await describe('Change User Multi Factor', async () => {
             auth_test_plugin1(options: AuthPluginMetadata) {
               return () => {
                 if (options.connection.config.password !== password1) {
-                  return assert.fail(
+                  return strict.fail(
                     'Incorrect authentication factor password.'
                   );
                 }
@@ -138,7 +138,7 @@ await describe('Change User Multi Factor', async () => {
             auth_test_plugin2(options: AuthPluginMetadata) {
               return () => {
                 if (options.connection.config.password !== password2) {
-                  return assert.fail(
+                  return strict.fail(
                     'Incorrect authentication factor password.'
                   );
                 }
@@ -162,7 +162,7 @@ await describe('Change User Multi Factor', async () => {
       });
     });
 
-    assert.deepStrictEqual(completed, [
+    strict.deepStrictEqual(completed, [
       'auth_test_plugin1',
       'auth_test_plugin2',
     ]);

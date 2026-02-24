@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type TypecastRow = RowDataPacket & { foo: string };
@@ -7,7 +7,7 @@ type TypecastRow = RowDataPacket & { foo: string };
 await describe('Typecast Overwriting Execute', async () => {
   const connection = createConnection({
     typeCast: function (field, next) {
-      assert.equal('number', typeof field.length);
+      strict.equal('number', typeof field.length);
       if (field.type === 'VAR_STRING') {
         const value = field.string();
         if (value === null) {
@@ -29,7 +29,7 @@ await describe('Typecast Overwriting Execute', async () => {
       );
     });
 
-    assert.equal(res[0].foo, 'FOO UPPERCASE');
+    strict.equal(res[0].foo, 'FOO UPPERCASE');
   });
 
   await it('should override with execute-level typeCast', async () => {
@@ -38,7 +38,7 @@ await describe('Typecast Overwriting Execute', async () => {
         {
           sql: 'select "foo lowercase" as foo',
           typeCast: function (field, next) {
-            assert.equal('number', typeof field.length);
+            strict.equal('number', typeof field.length);
             if (field.type === 'VAR_STRING') {
               const value = field.string();
               if (value === null) {
@@ -53,7 +53,7 @@ await describe('Typecast Overwriting Execute', async () => {
       );
     });
 
-    assert.equal(res[0].foo, 'foo lowercase');
+    strict.equal(res[0].foo, 'foo lowercase');
   });
 
   connection.end();

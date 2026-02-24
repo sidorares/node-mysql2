@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Text Parser: timezone Sanitization', async () => {
@@ -14,7 +14,7 @@ await describe('Text Parser: timezone Sanitization', async () => {
       timezone: `'); process.env.TEST_ENV_VALUE = "not so much"; //`,
     });
 
-    assert.strictEqual(
+    strict.strictEqual(
       process.env.TEST_ENV_VALUE,
       'secure',
       'Timezone sanitization failed - code injection possible'

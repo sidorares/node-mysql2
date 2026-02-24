@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Execute Bind Number', async () => {
@@ -17,7 +17,7 @@ await describe('Execute Bind Number', async () => {
       );
     });
 
-    assert.deepEqual(rows, [
+    strict.deepEqual(rows, [
       {
         zeroValue: 0,
         positiveValue: 123,

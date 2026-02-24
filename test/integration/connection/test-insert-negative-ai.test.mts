@@ -1,5 +1,5 @@
 import type { ResultSetHeader, RowDataPacket } from '../../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 type NegAIRow = RowDataPacket & { id: number; title: string };
@@ -42,10 +42,10 @@ await describe('Insert Negative Auto Increment', async () => {
       );
     });
 
-    assert.strictEqual(insertResult.insertId, -999);
-    assert.strictEqual(selectResult.length, 1);
-    assert.equal(selectResult[0].id, String(insertResult.insertId));
-    assert.equal(selectResult[0].title, testData);
+    strict.strictEqual(insertResult.insertId, -999);
+    strict.strictEqual(selectResult.length, 1);
+    strict.equal(selectResult[0].id, String(insertResult.insertId));
+    strict.equal(selectResult[0].title, testData);
   });
 
   connection.end();

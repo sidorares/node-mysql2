@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 let exceptionCount = 0;
@@ -34,7 +34,7 @@ await describe('Error Events', async () => {
       });
     });
 
-    assert.equal(callCount, 2);
-    assert.equal(exceptionCount, 0);
+    strict.equal(callCount, 2);
+    strict.equal(exceptionCount, 0);
   });
 });

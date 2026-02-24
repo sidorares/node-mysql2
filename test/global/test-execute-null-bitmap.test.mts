@@ -1,5 +1,5 @@
 import type { RowDataPacket } from '../../index.js';
-import { assert, describe, it } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createConnection } from '../common.test.mjs';
 
 type TestRow = RowDataPacket & { t: number };
@@ -45,7 +45,7 @@ await describe('Execute Null Bitmap', async () => {
     });
 
     for (const r of results) {
-      assert.equal(r.value, r.expected);
+      strict.equal(r.value, r.expected);
     }
 
     await connection

@@ -1,5 +1,5 @@
 import type { Connection, RowDataPacket } from '../../../../index.js';
-import { assert, describe, it, skip } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import { createConnection } from '../../../common.test.mjs';
 
 if (!('dispose' in Symbol)) {
@@ -18,7 +18,7 @@ await describe('Connection should implement Symbol.dispose', async () => {
   using conn = createConnection();
 
   it('should be a function', () => {
-    assert.strictEqual(typeof conn[Symbol.dispose], 'function');
+    strict.strictEqual(typeof conn[Symbol.dispose], 'function');
   });
 });
 
@@ -29,12 +29,12 @@ await describe('dispose should end the connection', async () => {
   conn[Symbol.dispose]();
 
   it('should have received the query result', () => {
-    assert.deepStrictEqual(rows, [{ 1: 1 }]);
+    strict.deepStrictEqual(rows, [{ 1: 1 }]);
   });
 
   it('should have closed the connection', () => {
     // @ts-expect-error: internal access
-    assert.strictEqual(conn._closing, true);
+    strict.strictEqual(conn._closing, true);
   });
 });
 
@@ -46,11 +46,11 @@ await describe('dispose should handle manual destroy before dispose on connectio
   conn[Symbol.dispose]();
 
   it('should have received the query result', () => {
-    assert.deepStrictEqual(rows, [{ 1: 1 }]);
+    strict.deepStrictEqual(rows, [{ 1: 1 }]);
   });
 
   it('should have closed the connection', () => {
     // @ts-expect-error: internal access
-    assert.strictEqual(conn._closing, true);
+    strict.strictEqual(conn._closing, true);
   });
 });
