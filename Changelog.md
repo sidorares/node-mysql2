@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.18.1](https://github.com/sidorares/node-mysql2/compare/v3.18.0...v3.18.1) (2026-02-25)
+
+
+### Bug Fixes
+
+* **types:** ensure optional params in `query` and `execute` methods ([#4123](https://github.com/sidorares/node-mysql2/issues/4123)) ([3f4bbca](https://github.com/sidorares/node-mysql2/commit/3f4bbca38e8dcab4344841653cd26493b44a84f3))
+
 ## [3.18.0](https://github.com/sidorares/node-mysql2/compare/v3.17.5...v3.18.0) (2026-02-23)
 
 
