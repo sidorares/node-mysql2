@@ -5,13 +5,9 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
   Base?: T
 ): {
   new (...args: any[]): {
-    execute<T extends QueryResult>(sql: string): Promise<[T, FieldPacket[]]>;
     execute<T extends QueryResult>(
       sql: string,
       values?: QueryValues
-    ): Promise<[T, FieldPacket[]]>;
-    execute<T extends QueryResult>(
-      options: QueryOptions
     ): Promise<[T, FieldPacket[]]>;
     execute<T extends QueryResult>(
       options: QueryOptions,
