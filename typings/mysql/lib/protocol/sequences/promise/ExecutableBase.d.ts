@@ -8,14 +8,14 @@ export declare function ExecutableBase<T extends QueryableConstructor>(
     execute<T extends QueryResult>(sql: string): Promise<[T, FieldPacket[]]>;
     execute<T extends QueryResult>(
       sql: string,
-      values: QueryValues
+      values?: QueryValues
     ): Promise<[T, FieldPacket[]]>;
     execute<T extends QueryResult>(
       options: QueryOptions
     ): Promise<[T, FieldPacket[]]>;
     execute<T extends QueryResult>(
       options: QueryOptions,
-      values: QueryValues
+      values?: QueryValues
     ): Promise<[T, FieldPacket[]]>;
   };
 } & T;
