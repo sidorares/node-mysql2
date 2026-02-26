@@ -1,5 +1,5 @@
 import { FieldPacket, QueryResult } from '../../packets/index.js';
-import { QueryOptions, QueryableConstructor } from '../Query.js';
+import { QueryOptions, QueryValues, QueryableConstructor } from '../Query.js';
 
 export declare function QueryableBase<T extends QueryableConstructor>(
   Base?: T
@@ -7,12 +7,12 @@ export declare function QueryableBase<T extends QueryableConstructor>(
   new (...args: any[]): {
     query<T extends QueryResult>(
       sql: string,
-      values?: any
+      values?: QueryValues
     ): Promise<[T, FieldPacket[]]>;
 
     query<T extends QueryResult>(
       options: QueryOptions,
-      values?: any
+      values?: QueryValues
     ): Promise<[T, FieldPacket[]]>;
   };
 } & T;

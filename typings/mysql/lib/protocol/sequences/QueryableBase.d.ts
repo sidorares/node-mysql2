@@ -3,6 +3,7 @@ import {
   Query,
   QueryError,
   QueryOptions,
+  QueryValues,
   QueryableConstructor,
 } from './Query.js';
 
@@ -18,7 +19,7 @@ export declare function QueryableBase<T extends QueryableConstructor>(
     ): Query;
     query<T extends QueryResult>(
       sql: string,
-      values: any,
+      values: QueryValues,
       callback?:
         | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
         | undefined
@@ -26,12 +27,12 @@ export declare function QueryableBase<T extends QueryableConstructor>(
     query<T extends QueryResult>(
       options: QueryOptions,
       callback?:
-        | ((err: QueryError | null, result: T, fields?: FieldPacket[]) => any)
+        | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
         | undefined
     ): Query;
     query<T extends QueryResult>(
       options: QueryOptions,
-      values: any,
+      values: QueryValues,
       callback?:
         | ((err: QueryError | null, result: T, fields: FieldPacket[]) => any)
         | undefined
