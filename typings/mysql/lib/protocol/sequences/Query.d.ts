@@ -4,7 +4,7 @@ import { Readable } from 'stream';
 import { Timezone } from 'sql-escaper';
 import { TypeCast } from '../../parsers/typeCast.js';
 
-export type QueryValues =
+export type ExecuteValues =
   | string
   | number
   | bigint
@@ -14,6 +14,18 @@ export type QueryValues =
   | Blob
   | Buffer
   | ({} | null)[]
+  | { [key: string]: ExecuteValues };
+
+export type QueryValues =
+  | string
+  | number
+  | bigint
+  | boolean
+  | Date
+  | null
+  | Blob
+  | Buffer
+  | ({} | null | undefined)[]
   | { [key: string]: QueryValues };
 
 export interface QueryOptions {

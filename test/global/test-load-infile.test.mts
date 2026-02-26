@@ -22,6 +22,7 @@ await describe('Load Infile', async () => {
     .query<RowDataPacket[]>('SELECT @@GLOBAL.local_infile as backup');
   const originalLocalInfile = savedLocalInfile[0].backup;
 
+  // @ts-expect-error: strict.ifError is an assertion function incompatible with query callback type
   connection.query('SET GLOBAL local_infile = true', strict.ifError);
   connection.query(
     [

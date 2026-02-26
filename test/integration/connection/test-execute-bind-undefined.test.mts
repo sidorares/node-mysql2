@@ -1,30 +1,30 @@
+import type { RowDataPacket } from '../../../index.js';
 import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
-describe('Execute Bind Undefined', () => {
-  const connection = createConnection();
+await describe('Bind Undefined', async () => {
+  const connection = createConnection().promise();
 
-  let error: Error | null = null;
-
-  try {
-    connection.execute('SELECT ? AS result', [undefined], () => {});
-  } catch (err) {
-    if (err instanceof Error) {
-      error = err;
-    } else {
-      throw err;
-    }
-    connection.end();
-  }
-
-  it('should throw TypeError for undefined parameter', () => {
-    strict(error instanceof Error, 'Expected TypeError to be thrown');
-    if (!error) {
-      return;
-    }
-    strict.equal(error.name, 'TypeError');
-    if (!error.message.match(/undefined/)) {
-      strict.fail("Expected error.message to contain 'undefined'");
-    }
+  await it('execute: should throw TypeError for undefined parameter', async () => {
+    await strict.rejects(
+      // @ts-expect-error: testing that undefined bind parameter throws TypeError
+      connection.execute('SELECT ? AS result', [undefined]),
+      {
+        name: 'TypeError',
+        message:
+          'Bind parameters must not contain undefined. To pass SQL NULL specify JS null',
+      }
+    );
   });
+
+  await it('query: should accept undefined bind parameter as NULL', async () => {
+    const [results] = await connection.query<RowDataPacket[]>(
+      'SELECT ? AS result',
+      [undefined]
+    );
+
+    strict.strictEqual(results[0].result, null);
+  });
+
+  await connection.end();
 });
