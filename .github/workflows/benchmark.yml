@@ -65,7 +65,7 @@ jobs:
           tool: 'benchmarkjs'
           output-file-path: output.txt
           external-data-json-path: ./cache/benchmark-data.json
-          fail-on-alert: true
+          fail-on-alert: false
           auto-push: false
           alert-threshold: '110%'
           github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -10,7 +10,6 @@ await describe('Binary Parser: timezone Sanitization', async () => {
 
     await connection.execute({
       sql: 'SELECT NOW()',
-      // @ts-expect-error: TODO: implement typings
       timezone: `'); process.env.TEST_ENV_VALUE = "not so much"; //`,
     });
 

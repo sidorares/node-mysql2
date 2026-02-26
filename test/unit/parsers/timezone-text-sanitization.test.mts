@@ -10,7 +10,6 @@ await describe('Text Parser: timezone Sanitization', async () => {
 
     await connection.query({
       sql: 'SELECT NOW()',
-      // @ts-expect-error: TODO: implement typings
       timezone: `'); process.env.TEST_ENV_VALUE = "not so much"; //`,
     });
 

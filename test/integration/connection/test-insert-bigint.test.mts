@@ -71,9 +71,8 @@ await describe('Insert BigInt', async () => {
       connection.query<BigRow[]>(
         {
           sql: 'select * from bigs',
-          // @ts-expect-error: supportBigNumbers is not in QueryOptions typings
           supportBigNumbers: true,
-          bigNumberString: false,
+          bigNumberStrings: false,
         },
         (err, result) => (err ? reject(err) : resolve(result))
       );

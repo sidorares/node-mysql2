@@ -29,7 +29,6 @@ await describe('Text Parser: supportBigNumbers Sanitization', async () => {
     await it(label, async () => {
       const [results] = await connection.query<TotalRow[]>({
         sql,
-        // @ts-expect-error: TODO: implement typings
         supportBigNumbers,
       });
 
