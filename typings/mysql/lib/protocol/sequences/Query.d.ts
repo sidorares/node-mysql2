@@ -14,7 +14,7 @@ export type ExecuteValues =
   | Blob
   | Buffer
   | Uint8Array
-  | ({} | null)[]
+  | ExecuteValues[]
   | { [key: string]: ExecuteValues };
 
 export type QueryValues =
