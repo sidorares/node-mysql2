@@ -87,7 +87,6 @@ await describe('Binary LongLong', async () => {
         conn.query<RowDataPacket[]>(
           {
             sql: 'SELECT * from tmp_longlong',
-            // @ts-expect-error: TODO: implement typings
             supportBigNumbers: supportBigNumbers,
             bigNumberStrings: bigNumberStrings,
           },
@@ -106,7 +105,6 @@ await describe('Binary LongLong', async () => {
         conn.execute<RowDataPacket[]>(
           {
             sql: 'SELECT * from tmp_longlong',
-            // @ts-expect-error: TODO: implement typings
             supportBigNumbers: supportBigNumbers,
             bigNumberStrings: bigNumberStrings,
           },

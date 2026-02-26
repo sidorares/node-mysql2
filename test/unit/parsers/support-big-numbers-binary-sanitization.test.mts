@@ -29,7 +29,6 @@ await describe('Binary Parser: supportBigNumbers Sanitization', async () => {
     await it(label, async () => {
       const [results] = await connection.execute<TotalRow[]>({
         sql,
-        // @ts-expect-error: TODO: implement typings
         supportBigNumbers,
       });
 
