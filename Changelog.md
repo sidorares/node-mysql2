@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.18.2](https://github.com/sidorares/node-mysql2/compare/v3.18.1...v3.18.2) (2026-02-26)
+
+
+### Bug Fixes
+
+* **types:** add `supportBigNumbers`, `bigNumberStrings`, `dateStrings`, and `timezone` options to `QueryOptions` ([#4127](https://github.com/sidorares/node-mysql2/issues/4127)) ([b274e72](https://github.com/sidorares/node-mysql2/commit/b274e725afcb2c52c73867f9fa68e9dd1cf7890a))
+* **types:** extend `QueryValues` to callback-based methods ([#4129](https://github.com/sidorares/node-mysql2/issues/4129)) ([2ad5f0b](https://github.com/sidorares/node-mysql2/commit/2ad5f0b2eb693935f9d807c60818533dd45e1f6c))
+* **types:** improve `ExecuteValues` "nested" params ([#4133](https://github.com/sidorares/node-mysql2/issues/4133)) ([3f94950](https://github.com/sidorares/node-mysql2/commit/3f94950dea6fed36d6fc0a0a53feeb3a99fa01e3))
+* **types:** support `Raw` and `Uint8Array` params ([#4132](https://github.com/sidorares/node-mysql2/issues/4132)) ([bde9aec](https://github.com/sidorares/node-mysql2/commit/bde9aec815d723e6f632dfb272e78566111648c0))
+
 ## [3.18.1](https://github.com/sidorares/node-mysql2/compare/v3.18.0...v3.18.1) (2026-02-25)
 
 
