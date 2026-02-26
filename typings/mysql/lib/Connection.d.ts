@@ -5,6 +5,7 @@
 
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
+import { Timezone } from 'sql-escaper';
 import { Query, QueryError } from './protocol/sequences/Query.js';
 import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
 import {
@@ -150,7 +151,7 @@ export interface ConnectionOptions {
   /**
    * The timezone used to store local dates. (Default: 'local')
    */
-  timezone?: string | 'local';
+  timezone?: Timezone;
 
   /**
    * The milliseconds before a timeout occurs during the initial connection to the MySQL server. (Default: 10 seconds)
