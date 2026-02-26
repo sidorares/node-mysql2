@@ -7,6 +7,7 @@ await describe('Bind Function', async () => {
 
   await it('execute: should throw TypeError for function parameter', async () => {
     await strict.rejects(
+      // @ts-expect-error: testing runtime behavior when passing a function as a parameter
       connection.execute('SELECT ? AS result', [function () {}]),
       {
         name: 'TypeError',
