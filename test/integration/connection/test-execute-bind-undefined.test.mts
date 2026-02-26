@@ -17,6 +17,15 @@ await describe('Bind Undefined', async () => {
     );
   });
 
+  await it('execute: should accept undefined as values (no bind parameters)', async () => {
+    const [results] = await connection.execute<RowDataPacket[]>(
+      'SELECT 1 AS result',
+      undefined
+    );
+
+    strict.strictEqual(results[0].result, 1);
+  });
+
   await it('query: should accept undefined bind parameter as NULL', async () => {
     const [results] = await connection.query<RowDataPacket[]>(
       'SELECT ? AS result',
@@ -24,6 +33,15 @@ await describe('Bind Undefined', async () => {
     );
 
     strict.strictEqual(results[0].result, null);
+  });
+
+  await it('query: should accept undefined as values (no bind parameters)', async () => {
+    const [results] = await connection.query<RowDataPacket[]>(
+      'SELECT 1 AS result',
+      undefined
+    );
+
+    strict.strictEqual(results[0].result, 1);
   });
 
   await connection.end();
