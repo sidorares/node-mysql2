@@ -1,7 +1,7 @@
 import { Sequence } from './Sequence.js';
 import { OkPacket, RowDataPacket, FieldPacket } from '../packets/index.js';
 import { Readable } from 'stream';
-import { Timezone } from 'sql-escaper';
+import { Raw, Timezone } from 'sql-escaper';
 import { TypeCast } from '../../parsers/typeCast.js';
 
 export type ExecuteValues =
@@ -13,6 +13,7 @@ export type ExecuteValues =
   | null
   | Blob
   | Buffer
+  | Uint8Array
   | ({} | null)[]
   | { [key: string]: ExecuteValues };
 
@@ -23,8 +24,11 @@ export type QueryValues =
   | boolean
   | Date
   | null
+  | undefined
   | Blob
   | Buffer
+  | Uint8Array
+  | Raw
   | ({} | null | undefined)[]
   | { [key: string]: QueryValues };
 
