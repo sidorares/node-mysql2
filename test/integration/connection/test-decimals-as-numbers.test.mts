@@ -42,6 +42,33 @@ await describe('Decimals as Numbers', async () => {
     strict.equal(rows2[0].d1, largeMoneyValue);
   });
 
+  await it('should parse DECIMAL(36,18) with many fractional digits correctly (issue #3690)', async () => {
+    const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection2.query<RowDataPacket[]>(
+        'SELECT CAST("+50000.000000000000000000" AS DECIMAL(36,18)) as big_decimal',
+        (err, _rows) => (err ? reject(err) : resolve(_rows))
+      );
+    });
+
+    strict.equal(rows[0].big_decimal.constructor, Number);
+    strict.equal(rows[0].big_decimal, 50000);
+  });
+
+  await it('should parse DOUBLE with scientific notation correctly (issue #2928)', async () => {
+    const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection2.query<RowDataPacket[]>(
+        'SELECT +1.7976931348623157e308 as max_double, ' +
+          '-1.7976931348623157e308 as min_double, ' +
+          '1e100 as sci_notation',
+        (err, _rows) => (err ? reject(err) : resolve(_rows))
+      );
+    });
+
+    strict.equal(rows[0].max_double, 1.7976931348623157e308);
+    strict.equal(rows[0].min_double, -1.7976931348623157e308);
+    strict.equal(rows[0].sci_notation, 1e100);
+  });
+
   connection1.end();
   connection2.end();
 });
