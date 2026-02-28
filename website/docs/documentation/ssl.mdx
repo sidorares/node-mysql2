@@ -10,12 +10,12 @@ See full list of [SslOptions](https://github.com/sidorares/node-mysql2/blob/mast
 
 ## SSL Options
 
-To enable SSL without manually providing certificates and assuming they are already trusted by the host machine, you can specify an empty object, for example:
+To enable SSL without manually providing certificates and assuming they are already trusted by the host machine, you can specify `ssl: true` or `ssl: {}`, for example:
 
 ```ts
 const connection = await mysql.createConnection({
   host: 'localhost',
-  ssl: {},
+  ssl: true,
 });
 ```
 
