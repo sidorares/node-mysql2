@@ -75,10 +75,10 @@ await describe('HandshakeResponse with auth plugin name', async () => {
     try {
       new HandshakeResponse({
         ...baseConfig,
-        authToken: 'not a buffer' as any,
+        authToken: 'not a buffer' as unknown as Buffer,
         authPluginName: 'caching_sha2_password',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (
         err instanceof TypeError &&
         err.message.includes('must be a Buffer')
@@ -95,9 +95,9 @@ await describe('HandshakeResponse with auth plugin name', async () => {
       new HandshakeResponse({
         ...baseConfig,
         authToken: Buffer.alloc(32),
-        authPluginName: 12345 as any,
+        authPluginName: 12345 as unknown as string,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (
         err instanceof TypeError &&
         err.message.includes('must be a string')

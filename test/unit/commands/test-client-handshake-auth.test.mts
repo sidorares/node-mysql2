@@ -20,18 +20,25 @@ await describe('ClientHandshake auth method selection', async () => {
     await it('should return empty buffer for empty password', () => {
       const token = handshake.calculateSha256Token('', Buffer.alloc(20));
 
-      strict.equal(token.length, 0, 'Empty password should return empty buffer');
+      strict.equal(
+        token.length,
+        0,
+        'Empty password should return empty buffer'
+      );
     });
 
     await it('should return empty buffer for null password', () => {
-      const token = handshake.calculateSha256Token(null as any, Buffer.alloc(20));
+      const token = handshake.calculateSha256Token(
+        null as unknown as string,
+        Buffer.alloc(20)
+      );
 
       strict.equal(token.length, 0, 'Null password should return empty buffer');
     });
 
     await it('should return empty buffer for undefined password', () => {
       const token = handshake.calculateSha256Token(
-        undefined as any,
+        undefined as unknown as string,
         Buffer.alloc(20)
       );
 
@@ -111,7 +118,11 @@ await describe('ClientHandshake auth method selection', async () => {
 
       const token = handshake.calculateSha256Token(longPassword, scramble);
 
-      strict.equal(token.length, 32, 'Token should be 32 bytes for long passwords');
+      strict.equal(
+        token.length,
+        32,
+        'Token should be 32 bytes for long passwords'
+      );
     });
 
     await it('should handle special characters', () => {
@@ -120,7 +131,11 @@ await describe('ClientHandshake auth method selection', async () => {
 
       const token = handshake.calculateSha256Token(specialPassword, scramble);
 
-      strict.equal(token.length, 32, 'Token should be 32 bytes for special characters');
+      strict.equal(
+        token.length,
+        32,
+        'Token should be 32 bytes for special characters'
+      );
     });
 
     await it('should handle unicode characters', () => {
@@ -185,10 +200,7 @@ await describe('ClientHandshake auth method selection', async () => {
     });
 
     await it('should return false for unknown auth method', () => {
-      const result = handshake.canUseAuthMethodDirectly(
-        'unknown_method',
-        true
-      );
+      const result = handshake.canUseAuthMethodDirectly('unknown_method', true);
       strict.equal(result, false, 'Unknown methods should fallback');
     });
   });
