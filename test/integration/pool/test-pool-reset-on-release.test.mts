@@ -144,10 +144,8 @@ await describe('Pool Reset On Release', async () => {
       );
     });
 
-    const stmtsBefore = (conn1 as unknown as { _statements?: { size: number } })
-      ._statements
-      ? (conn1 as unknown as { _statements: { size: number } })._statements.size
-      : 0;
+    // @ts-expect-error: internal access
+    const stmtsBefore = conn1._statements ? conn1._statements.size : 0;
     strict.ok(stmtsBefore > 0, 'Should have cached statements');
 
     conn1.release();
@@ -160,10 +158,8 @@ await describe('Pool Reset On Release', async () => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
-    const stmtsAfter = (conn2 as unknown as { _statements?: { size: number } })
-      ._statements
-      ? (conn2 as unknown as { _statements: { size: number } })._statements.size
-      : 0;
+    // @ts-expect-error: internal access
+    const stmtsAfter = conn2._statements ? conn2._statements.size : 0;
     strict.equal(stmtsAfter, 0, 'Statement cache should be cleared');
 
     // New statements should work fine
