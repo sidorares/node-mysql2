@@ -426,6 +426,8 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
 
   ping(callback?: (err: QueryError | null) => any): void;
 
+  reset(callback?: (err: QueryError | null) => any): void;
+
   writeOk(args?: OkPacketParams): void;
 
   writeError(args?: ErrorPacketParams): void;
