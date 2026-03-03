@@ -1,4 +1,8 @@
-import type { PoolConnection, RowDataPacket } from '../../../index.js';
+import type {
+  PoolConnection,
+  QueryError,
+  RowDataPacket,
+} from '../../../index.js';
 import { describe, it, strict } from 'poku';
 import { createPool } from '../../common.test.mjs';
 
@@ -98,9 +102,9 @@ await describe('Pool Reset On Release', async () => {
     });
 
     // Simulate a connection that will fail reset by destroying it
-    conn1.reset = function (cb: (err?: Error) => void) {
+    conn1.reset = function (cb?: (err: QueryError | null) => any): void {
       // Force an error
-      process.nextTick(() => cb(new Error('Reset failed')));
+      if (cb) process.nextTick(() => cb(new Error('Reset failed') as QueryError));
     };
 
     // Release should handle the error
@@ -139,9 +143,9 @@ await describe('Pool Reset On Release', async () => {
       );
     });
 
-    const stmtsBefore = (conn1 as { _statements?: { size: number } })
+    const stmtsBefore = (conn1 as unknown as { _statements?: { size: number } })
       ._statements
-      ? (conn1 as { _statements: { size: number } })._statements.size
+      ? (conn1 as unknown as { _statements: { size: number } })._statements.size
       : 0;
     strict.ok(stmtsBefore > 0, 'Should have cached statements');
 
@@ -155,8 +159,9 @@ await describe('Pool Reset On Release', async () => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
-    const stmtsAfter = (conn2 as { _statements?: { size: number } })._statements
-      ? (conn2 as { _statements: { size: number } })._statements.size
+    const stmtsAfter = (conn2 as unknown as { _statements?: { size: number } })
+      ._statements
+      ? (conn2 as unknown as { _statements: { size: number } })._statements.size
       : 0;
     strict.equal(stmtsAfter, 0, 'Statement cache should be cleared');
 

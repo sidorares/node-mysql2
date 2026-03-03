@@ -104,9 +104,11 @@ await describe('Reset Connection', async () => {
     });
 
     // Check that statement is cached
-    const statementsBefore = (connection as { _statements?: { size: number } })
-      ._statements
-      ? (connection as { _statements: { size: number } })._statements.size
+    const statementsBefore = (
+      connection as unknown as { _statements?: { size: number } }
+    )._statements
+      ? (connection as unknown as { _statements: { size: number } })._statements
+          .size
       : 0;
     strict.ok(statementsBefore > 0, 'Statement should be cached');
 
@@ -116,9 +118,11 @@ await describe('Reset Connection', async () => {
     });
 
     // Check that cache is cleared
-    const statementsAfter = (connection as { _statements?: { size: number } })
-      ._statements
-      ? (connection as { _statements: { size: number } })._statements.size
+    const statementsAfter = (
+      connection as unknown as { _statements?: { size: number } }
+    )._statements
+      ? (connection as unknown as { _statements: { size: number } })._statements
+          .size
       : 0;
     strict.equal(statementsAfter, 0, 'Statement cache should be cleared');
 
