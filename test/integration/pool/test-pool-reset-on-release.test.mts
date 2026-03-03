@@ -155,8 +155,7 @@ await describe('Pool Reset On Release', async () => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
-    const stmtsAfter = (conn2 as { _statements?: { size: number } })
-      ._statements
+    const stmtsAfter = (conn2 as { _statements?: { size: number } })._statements
       ? (conn2 as { _statements: { size: number } })._statements.size
       : 0;
     strict.equal(stmtsAfter, 0, 'Statement cache should be cleared');
