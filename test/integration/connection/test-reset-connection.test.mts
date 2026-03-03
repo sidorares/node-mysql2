@@ -33,8 +33,9 @@ await describe('Reset Connection', async () => {
 
     // Verify variable is set
     const rowsBefore = await new Promise<RowDataPacket[]>((resolve, reject) => {
-      connection.query<RowDataPacket[]>('SELECT @test_var as var_value', (err, rows) =>
-        err ? reject(err) : resolve(rows)
+      connection.query<RowDataPacket[]>(
+        'SELECT @test_var as var_value',
+        (err, rows) => (err ? reject(err) : resolve(rows))
       );
     });
     strict.equal(rowsBefore[0].var_value, 'before_reset');
@@ -46,8 +47,9 @@ await describe('Reset Connection', async () => {
 
     // Verify variable is cleared (should be NULL)
     const rowsAfter = await new Promise<RowDataPacket[]>((resolve, reject) => {
-      connection.query<RowDataPacket[]>('SELECT @test_var as var_value', (err, rows) =>
-        err ? reject(err) : resolve(rows)
+      connection.query<RowDataPacket[]>(
+        'SELECT @test_var as var_value',
+        (err, rows) => (err ? reject(err) : resolve(rows))
       );
     });
     strict.equal(rowsAfter[0].var_value, null);
@@ -60,9 +62,8 @@ await describe('Reset Connection', async () => {
 
     // Create a temporary table
     await new Promise<void>((resolve, reject) => {
-      connection.query(
-        'CREATE TEMPORARY TABLE test_temp (id INT)',
-        (err) => (err ? reject(err) : resolve())
+      connection.query('CREATE TEMPORARY TABLE test_temp (id INT)', (err) =>
+        err ? reject(err) : resolve()
       );
     });
 
@@ -103,7 +104,10 @@ await describe('Reset Connection', async () => {
     });
 
     // Check that statement is cached
-    const statementsBefore = connection._statements ? connection._statements.size : 0;
+    const statementsBefore = (connection as { _statements?: { size: number } })
+      ._statements
+      ? (connection as { _statements: { size: number } })._statements.size
+      : 0;
     strict.ok(statementsBefore > 0, 'Statement should be cached');
 
     // Reset connection
@@ -112,13 +116,18 @@ await describe('Reset Connection', async () => {
     });
 
     // Check that cache is cleared
-    const statementsAfter = connection._statements ? connection._statements.size : 0;
+    const statementsAfter = (connection as { _statements?: { size: number } })
+      ._statements
+      ? (connection as { _statements: { size: number } })._statements.size
+      : 0;
     strict.equal(statementsAfter, 0, 'Statement cache should be cleared');
 
     // Connection should still work with new prepared statements
     const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
-      connection.execute<RowDataPacket[]>('SELECT ? as value', [42], (err, rows) =>
-        err ? reject(err) : resolve(rows)
+      connection.execute<RowDataPacket[]>(
+        'SELECT ? as value',
+        [42],
+        (err, rows) => (err ? reject(err) : resolve(rows))
       );
     });
     strict.equal(rows[0].value, 42);
@@ -131,9 +140,8 @@ await describe('Reset Connection', async () => {
 
     // Create test table
     await new Promise<void>((resolve, reject) => {
-      connection.query(
-        'CREATE TEMPORARY TABLE test_txn (id INT)',
-        (err) => (err ? reject(err) : resolve())
+      connection.query('CREATE TEMPORARY TABLE test_txn (id INT)', (err) =>
+        err ? reject(err) : resolve()
       );
     });
 

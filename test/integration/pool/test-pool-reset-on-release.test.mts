@@ -1,4 +1,4 @@
-import type { RowDataPacket } from '../../../index.js';
+import type { PoolConnection, RowDataPacket } from '../../../index.js';
 import { describe, it, strict } from 'poku';
 import { createPool } from '../../common.test.mjs';
 
@@ -7,7 +7,7 @@ await describe('Pool Reset On Release', async () => {
     const pool = createPool({ connectionLimit: 1 });
 
     // Get connection and set user variable
-    const conn1 = await new Promise((resolve, reject) => {
+    const conn1 = await new Promise<PoolConnection>((resolve, reject) => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
@@ -32,7 +32,7 @@ await describe('Pool Reset On Release', async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Get same connection again (pool only has 1)
-    const conn2 = await new Promise((resolve, reject) => {
+    const conn2 = await new Promise<PoolConnection>((resolve, reject) => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
@@ -42,7 +42,11 @@ await describe('Pool Reset On Release', async () => {
         err ? reject(err) : resolve(rows)
       );
     });
-    strict.equal(rows2[0].val, null, 'User variable should be cleared after reset');
+    strict.equal(
+      rows2[0].val,
+      null,
+      'User variable should be cleared after reset'
+    );
 
     conn2.release();
     await pool.end();
@@ -52,7 +56,7 @@ await describe('Pool Reset On Release', async () => {
     const pool = createPool({ connectionLimit: 1, resetOnRelease: false });
 
     // Get connection and set user variable
-    const conn1 = await new Promise((resolve, reject) => {
+    const conn1 = await new Promise<PoolConnection>((resolve, reject) => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
@@ -65,17 +69,22 @@ await describe('Pool Reset On Release', async () => {
     conn1.release();
 
     // Get same connection again
-    const conn2 = await new Promise((resolve, reject) => {
+    const conn2 = await new Promise<PoolConnection>((resolve, reject) => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
     // Variable should still be set
     const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
-      conn2.query<RowDataPacket[]>('SELECT @pool_no_reset as val', (err, rows) =>
-        err ? reject(err) : resolve(rows)
+      conn2.query<RowDataPacket[]>(
+        'SELECT @pool_no_reset as val',
+        (err, rows) => (err ? reject(err) : resolve(rows))
       );
     });
-    strict.equal(rows[0].val, 'persistent', 'User variable should persist when resetOnRelease is false');
+    strict.equal(
+      rows[0].val,
+      'persistent',
+      'User variable should persist when resetOnRelease is false'
+    );
 
     conn2.release();
     await pool.end();
@@ -84,13 +93,12 @@ await describe('Pool Reset On Release', async () => {
   await it('should handle reset errors gracefully', async () => {
     const pool = createPool({ connectionLimit: 2, resetOnRelease: true });
 
-    const conn1 = await new Promise((resolve, reject) => {
+    const conn1 = await new Promise<PoolConnection>((resolve, reject) => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
     // Simulate a connection that will fail reset by destroying it
-    const originalReset = conn1.reset;
-    conn1.reset = function(cb) {
+    conn1.reset = function (cb: (err?: Error) => void) {
       // Force an error
       process.nextTick(() => cb(new Error('Reset failed')));
     };
@@ -102,7 +110,7 @@ await describe('Pool Reset On Release', async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Pool should still be able to create new connections
-    const conn2 = await new Promise((resolve, reject) => {
+    const conn2 = await new Promise<PoolConnection>((resolve, reject) => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
@@ -121,7 +129,7 @@ await describe('Pool Reset On Release', async () => {
     const pool = createPool({ connectionLimit: 1, resetOnRelease: true });
 
     // Get connection and execute prepared statement
-    const conn1 = await new Promise((resolve, reject) => {
+    const conn1 = await new Promise<PoolConnection>((resolve, reject) => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
@@ -131,7 +139,10 @@ await describe('Pool Reset On Release', async () => {
       );
     });
 
-    const stmtsBefore = conn1._statements ? conn1._statements.size : 0;
+    const stmtsBefore = (conn1 as { _statements?: { size: number } })
+      ._statements
+      ? (conn1 as { _statements: { size: number } })._statements.size
+      : 0;
     strict.ok(stmtsBefore > 0, 'Should have cached statements');
 
     conn1.release();
@@ -140,11 +151,14 @@ await describe('Pool Reset On Release', async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Get same connection
-    const conn2 = await new Promise((resolve, reject) => {
+    const conn2 = await new Promise<PoolConnection>((resolve, reject) => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
-    const stmtsAfter = conn2._statements ? conn2._statements.size : 0;
+    const stmtsAfter = (conn2 as { _statements?: { size: number } })
+      ._statements
+      ? (conn2 as { _statements: { size: number } })._statements.size
+      : 0;
     strict.equal(stmtsAfter, 0, 'Statement cache should be cleared');
 
     // New statements should work fine
@@ -199,7 +213,7 @@ await describe('Pool Reset On Release', async () => {
     const pool = createPool({ connectionLimit: 1, resetOnRelease: true });
 
     // Get the only connection
-    const conn1 = await new Promise((resolve, reject) => {
+    const conn1 = await new Promise<PoolConnection>((resolve, reject) => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
@@ -211,7 +225,7 @@ await describe('Pool Reset On Release', async () => {
     });
 
     // Queue a second request while first is active
-    const conn2Promise = new Promise((resolve, reject) => {
+    const conn2Promise = new Promise<PoolConnection>((resolve, reject) => {
       pool.getConnection((err, conn) => (err ? reject(err) : resolve(conn)));
     });
 
