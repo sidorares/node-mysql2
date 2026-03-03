@@ -102,9 +102,10 @@ await describe('Pool Reset On Release', async () => {
     });
 
     // Simulate a connection that will fail reset by destroying it
-    conn1.reset = function (cb?: (err: QueryError | null) => any): void {
+    conn1.reset = function (cb?: (err: QueryError | null) => void): void {
       // Force an error
-      if (cb) process.nextTick(() => cb(new Error('Reset failed') as QueryError));
+      if (cb)
+        process.nextTick(() => cb(new Error('Reset failed') as QueryError));
     };
 
     // Release should handle the error
