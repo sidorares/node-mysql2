@@ -177,6 +177,7 @@ export const getConfig = function (input?: ConnectionOptions) {
     connectionLimit: args && args.connectionLimit,
     maxIdle: args && args.maxIdle,
     idleTimeout: args && args.idleTimeout,
+    resetOnRelease: args && args.resetOnRelease,
     jsonStrings: args && args.jsonStrings,
     disableEval,
     gracefulEnd: args && args.gracefulEnd,
