@@ -154,7 +154,7 @@ export const waitDatabaseReady = function (callback: () => void) {
   tryConnect();
 };
 
-export const getConfig = function (input?: ConnectionOptions) {
+export const getConfig = function (input?: ConnectionOptions | PoolOptions) {
   const args = input || {};
   const params = {
     host: args.host || config.host,
@@ -177,7 +177,7 @@ export const getConfig = function (input?: ConnectionOptions) {
     connectionLimit: args && args.connectionLimit,
     maxIdle: args && args.maxIdle,
     idleTimeout: args && args.idleTimeout,
-    resetOnRelease: args && args.resetOnRelease,
+    resetOnRelease: args && (args as PoolOptions).resetOnRelease,
     jsonStrings: args && args.jsonStrings,
     disableEval,
     gracefulEnd: args && args.gracefulEnd,
