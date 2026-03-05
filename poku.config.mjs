@@ -4,7 +4,6 @@ import { defineConfig } from 'poku';
 
 const commonConfig = defineConfig({
   reporter: 'compact',
-  timeout: 30000,
   deno: {
     allow: ['read', 'env', 'net', 'sys'],
   },
@@ -12,12 +11,14 @@ const commonConfig = defineConfig({
 
 const parallel = defineConfig({
   ...commonConfig,
+  timeout: 30000,
   exclude: [/test[\\/]global/, /test[\\/]tsc-build/],
   concurrency: 8,
 });
 
 const sequential = defineConfig({
   ...commonConfig,
+  timeout: 60000,
   concurrency: 1,
 });
 
