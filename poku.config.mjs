@@ -4,6 +4,7 @@ import { defineConfig } from 'poku';
 
 const commonConfig = defineConfig({
   reporter: 'compact',
+  timeout: 30000,
   deno: {
     allow: ['read', 'env', 'net', 'sys'],
   },

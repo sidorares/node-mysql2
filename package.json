@@ -87,7 +87,7 @@
     "eslint-plugin-async-await": "^0.0.0",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.3.0",
-    "poku": "^3.0.3-canary.8f374795",
+    "poku": "^4.0.0",
     "portfinder": "^1.0.38",
     "prettier": "^3.8.1",
     "tsx": "^4.21.0",
