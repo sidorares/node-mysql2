@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.19.0](https://github.com/sidorares/node-mysql2/compare/v3.18.2...v3.19.0) (2026-03-05)
+
+
+### Features
+
+* use server's preferred auth method to eliminate auth switch roundtrip ([#4140](https://github.com/sidorares/node-mysql2/issues/4140)) ([b57c671](https://github.com/sidorares/node-mysql2/commit/b57c671c36ec5ce393ae84f821ead823913d730f))
+
+
+### Bug Fixes
+
+* fix precision loss for large decimal values ([#4135](https://github.com/sidorares/node-mysql2/issues/4135)) ([099beea](https://github.com/sidorares/node-mysql2/commit/099beeae0b9300a75162dde004c3e4e79eef99f0))
+
 ## [3.18.2](https://github.com/sidorares/node-mysql2/compare/v3.18.1...v3.18.2) (2026-02-26)
 
 
