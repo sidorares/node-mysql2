@@ -5,7 +5,7 @@ import { createPool } from '../../common.test.mjs';
 type TestRow = RowDataPacket & { str: string };
 
 await describe('Parameters Questionmark', async () => {
-  const pool: Pool = createPool();
+  const pool: Pool = createPool({ resetOnRelease: false });
   pool.config.connectionLimit = 1;
 
   pool.query(

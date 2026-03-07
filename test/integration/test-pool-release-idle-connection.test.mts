@@ -7,6 +7,7 @@ await describe('Pool Release Idle Connection', async () => {
     connectionLimit: 5,
     maxIdle: 1,
     idleTimeout: 5000,
+    resetOnRelease: false, // Disable for timing-sensitive idle timeout test
   });
 
   let connection1!: PoolConnection;
