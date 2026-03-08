@@ -81,6 +81,17 @@ const buildWKBMultiPoint = (
   return Buffer.concat([srid, byteOrder, wkbType, numBuf, geometriesData]);
 };
 
+/* [4-byte SRID] [1-byte byteOrder] [4-byte wkbType] (no type-specific data) */
+const buildWKBHeaderOnly = (wkbTypeId: number): Buffer => {
+  const srid = Buffer.alloc(4, 0);
+  const byteOrder = Buffer.from([0x01]);
+
+  const wkbType = Buffer.alloc(4);
+  wkbType.writeUInt32LE(wkbTypeId);
+
+  return Buffer.concat([srid, byteOrder, wkbType]);
+};
+
 describe('parseGeometryValue: Malformed Payload Handling', () => {
   it('should return null for truncated WKB header', () => {
     const payload = Buffer.alloc(4, 0);
@@ -151,6 +162,30 @@ describe('parseGeometryValue: Malformed Payload Handling', () => {
     strict.doesNotThrow(() => {
       packet.parseGeometryValue();
     });
+  });
+
+  it('should return null for WKBLineString with no count bytes', () => {
+    const payload = buildWKBHeaderOnly(2);
+    const { buffer, start, end } = buildGeometryPacket(payload);
+    const packet = new Packet(0, buffer, start, end);
+
+    strict.strictEqual(packet.parseGeometryValue(), null);
+  });
+
+  it('should return null for WKBPolygon with no count bytes', () => {
+    const payload = buildWKBHeaderOnly(3);
+    const { buffer, start, end } = buildGeometryPacket(payload);
+    const packet = new Packet(0, buffer, start, end);
+
+    strict.strictEqual(packet.parseGeometryValue(), null);
+  });
+
+  it('should return null for WKBMultiPoint with no count bytes', () => {
+    const payload = buildWKBHeaderOnly(4);
+    const { buffer, start, end } = buildGeometryPacket(payload);
+    const packet = new Packet(0, buffer, start, end);
+
+    strict.strictEqual(packet.parseGeometryValue(), null);
   });
 
   it('should return valid result for well-formed WKBLineString', () => {
