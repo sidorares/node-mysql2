@@ -13,7 +13,7 @@ const parallel = defineConfig({
   ...commonConfig,
   timeout: 30000,
   exclude: [/test[\\/]global/, /test[\\/]tsc-build/],
-  concurrency: 64,
+  concurrency: 48,
 });
 
 const sequential = defineConfig({
