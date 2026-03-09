@@ -188,6 +188,30 @@ describe('parseGeometryValue: Malformed Payload Handling', () => {
     strict.strictEqual(packet.parseGeometryValue(), null);
   });
 
+  it('should return null for WKBMultiPoint with malformed count', () => {
+    const payload = buildWKBMultiPoint(0xffffffff, Buffer.alloc(0));
+    const { buffer, start, end } = buildGeometryPacket(payload);
+    const packet = new Packet(0, buffer, start, end);
+
+    strict.strictEqual(packet.parseGeometryValue(), null);
+  });
+
+  it('should return null for WKBLineString with malformed numPoints', () => {
+    const payload = buildWKBLineString(0xffffffff, Buffer.alloc(0));
+    const { buffer, start, end } = buildGeometryPacket(payload);
+    const packet = new Packet(0, buffer, start, end);
+
+    strict.strictEqual(packet.parseGeometryValue(), null);
+  });
+
+  it('should return null for WKBPolygon with malformed numRings', () => {
+    const payload = buildWKBPolygon(0xffffffff, Buffer.alloc(0));
+    const { buffer, start, end } = buildGeometryPacket(payload);
+    const packet = new Packet(0, buffer, start, end);
+
+    strict.strictEqual(packet.parseGeometryValue(), null);
+  });
+
   it('should return valid result for well-formed WKBLineString', () => {
     const pointData = Buffer.alloc(16);
     pointData.writeDoubleLE(1.0, 0);
