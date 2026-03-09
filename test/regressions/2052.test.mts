@@ -6,7 +6,7 @@ import packets from '../../lib/packets/index.js';
 import { createConnection, getMysqlVersion } from '../common.test.mjs';
 
 await describe(async () => {
-  await it('Unit Test - Prepare result with number of parameters incorrectly reported by the server', async () => {
+  await it('Unit Test: Prepare result with number of parameters incorrectly reported by the server', async () => {
     const connection = {
       sequenceId: 1,
       constructor: {
