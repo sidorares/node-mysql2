@@ -3,9 +3,9 @@ import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Regression #442', async () => {
-  await it('should correctly handle Chinese characters in table and field names', async () => {
-    const connection = createConnection();
+  const connection = createConnection();
 
+  await it('should correctly handle Chinese characters in table and field names', async () => {
     const tableName = '商城';
     const testFields = ['商品类型', '商品说明', '价格', '剩余'];
     const testRows = [
@@ -38,7 +38,7 @@ await describe('Regression #442', async () => {
                 `SELECT * FROM \`${tableName}\``,
                 (err, rows) => {
                   if (err) return reject(err);
-                  connection.end(() => resolve(rows));
+                  resolve(rows);
                 }
               );
             }
@@ -56,4 +56,6 @@ await describe('Regression #442', async () => {
       strict.equal(aRow[cols[3]], tRow[3]);
     });
   });
+
+  connection.end();
 });

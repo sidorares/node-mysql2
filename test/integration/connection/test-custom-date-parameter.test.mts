@@ -29,9 +29,7 @@ await describe('Custom Date Parameter', async () => {
         (err, _rows) => {
           if (err) return reject(err);
           rows = _rows;
-          connection.end(() => {
-            resolve();
-          });
+          resolve();
         }
       );
     });
@@ -39,4 +37,6 @@ await describe('Custom Date Parameter', async () => {
     const expected = major < 8 ? 650073600 : '650073600.000000';
     strict.equal(rows?.[0].t, expected);
   });
+
+  connection.end();
 });

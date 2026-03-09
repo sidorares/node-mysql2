@@ -3,12 +3,12 @@ import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Regression #629', async () => {
-  await it('should correctly handle TIMESTAMP(3) and DATETIME(3) with timezone Z', async () => {
-    const connection = createConnection({
-      dateStrings: false,
-      timezone: 'Z',
-    });
+  const connection = createConnection({
+    dateStrings: false,
+    timezone: 'Z',
+  });
 
+  await it('should correctly handle TIMESTAMP(3) and DATETIME(3) with timezone Z', async () => {
     const tableName = 'dates';
     const testFields = ['id', 'date1', 'date2', 'name'];
     const testRows = [
@@ -54,7 +54,7 @@ await describe('Regression #629', async () => {
                 `SELECT * FROM \`${tableName}\``,
                 (err, rows) => {
                   if (err) return reject(err);
-                  connection.end(() => resolve(rows));
+                  resolve(rows);
                 }
               );
             }
@@ -74,4 +74,6 @@ await describe('Regression #629', async () => {
       });
     });
   });
+
+  connection.end();
 });

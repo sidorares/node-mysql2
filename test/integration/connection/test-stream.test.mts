@@ -3,9 +3,9 @@ import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Stream', async () => {
-  await it('should stream query and execute results correctly', async () => {
-    const connection = createConnection();
+  const connection = createConnection();
 
+  await it('should stream query and execute results correctly', async () => {
     let rows: RowDataPacket[];
     const rows1: RowDataPacket[] = [];
     const rows2: RowDataPacket[] = [];
@@ -66,9 +66,6 @@ await describe('Stream', async () => {
             s2.on('data', (row: RowDataPacket) => {
               rows2.push(row);
             });
-            s2.on('end', () => {
-              connection.end();
-            });
           });
           const s3 = connection.query('SELECT * FROM announcements').stream();
           for await (const row of s3) {
@@ -92,4 +89,6 @@ await describe('Stream', async () => {
     strict.deepEqual(rows!, rows3);
     strict.deepEqual(rows!, rows4);
   });
+
+  connection.end();
 });
