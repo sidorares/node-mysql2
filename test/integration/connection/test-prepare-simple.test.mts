@@ -26,7 +26,6 @@ await describe('Prepare Simple', async () => {
           if (err3) return reject(err3);
           stmt2.close();
           stmt3.close();
-          connection.end();
           resolve();
         });
       });
@@ -42,4 +41,6 @@ await describe('Prepare Simple', async () => {
     // @ts-expect-error: TODO: implement typings
     strict.equal(stmt1.parameters.length, 2);
   });
+
+  connection.end();
 });

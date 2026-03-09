@@ -3,9 +3,9 @@ import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Select UTF8', async () => {
-  await it('should select multibyte UTF8 text correctly', async () => {
-    const connection = createConnection();
+  const connection = createConnection();
 
+  await it('should select multibyte UTF8 text correctly', async () => {
     let rows: RowDataPacket[];
     const multibyteText = '本日は晴天なり';
 
@@ -15,7 +15,6 @@ await describe('Select UTF8', async () => {
         (err, _rows) => {
           if (err) return reject(err);
           rows = _rows;
-          connection.end();
           resolve();
         }
       );
@@ -23,4 +22,6 @@ await describe('Select UTF8', async () => {
 
     strict.equal(rows![0].result, multibyteText);
   });
+
+  connection.end();
 });
