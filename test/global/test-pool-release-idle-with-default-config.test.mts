@@ -1,6 +1,6 @@
-import type { PoolConnection } from '../../../index.js';
+import type { PoolConnection } from '../../index.js';
 import { describe, it, strict } from 'poku';
-import { createPool } from '../../common.test.mjs';
+import { createPool } from '../common.test.mjs';
 
 /**
  * This test case tests that the pool releases connections gracefully after the idle timeout has passed.
