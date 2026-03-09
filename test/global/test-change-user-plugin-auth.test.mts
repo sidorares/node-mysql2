@@ -20,8 +20,8 @@ await describe('Change User Plugin Auth', async () => {
   connection.query(
     "CREATE USER IF NOT EXISTS 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
   );
-  connection.query("GRANT ALL ON *.* TO 'changeuser1'@'%'");
-  connection.query("GRANT ALL ON *.* TO 'changeuser2'@'%'");
+  connection.query("GRANT SELECT ON *.* TO 'changeuser1'@'%'");
+  connection.query("GRANT SELECT ON *.* TO 'changeuser2'@'%'");
   connection.query('FLUSH PRIVILEGES');
 
   await it('should switch users and verify current_user()', async () => {
@@ -76,22 +76,11 @@ await describe('Change User Plugin Auth', async () => {
     strict.deepEqual(onlyUsername(rows3[0]['current_user()']), 'changeuser1');
   });
 
-  await new Promise<void>((resolve, reject) => {
-    connection.changeUser({ user: 'root', password: '' }, (err) =>
-      err ? reject(err) : resolve()
-    );
-  });
-
-  await new Promise<void>((resolve, reject) => {
-    connection.query("DROP USER IF EXISTS 'changeuser1'@'%'", (err) =>
-      err ? reject(err) : resolve()
-    );
-  });
-  await new Promise<void>((resolve, reject) => {
-    connection.query("DROP USER IF EXISTS 'changeuser2'@'%'", (err) =>
-      err ? reject(err) : resolve()
-    );
-  });
-
   connection.end();
+
+  // Use a fresh root connection to cleanup
+  const cleanup = createConnection().promise();
+  await cleanup.query("DROP USER IF EXISTS 'changeuser1'@'%'");
+  await cleanup.query("DROP USER IF EXISTS 'changeuser2'@'%'");
+  await cleanup.end();
 });

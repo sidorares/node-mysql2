@@ -11,21 +11,22 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 }
 
 await describe('Promise Wrappers: Change User', async () => {
+  const conn = await createConnection(config);
+
+  await conn.query(
+    "CREATE USER IF NOT EXISTS 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
+  );
+  await conn.query(
+    "CREATE USER IF NOT EXISTS 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
+  );
+  await conn.query("GRANT SELECT ON *.* TO 'changeuser1'@'%'");
+  await conn.query("GRANT SELECT ON *.* TO 'changeuser2'@'%'");
+  await conn.query('FLUSH PRIVILEGES');
+
   await it('testChangeUser', async () => {
     const onlyUsername = function (name: string) {
       return name.substring(0, name.indexOf('@'));
     };
-
-    const conn = await createConnection(config);
-    await conn.query(
-      "CREATE USER IF NOT EXISTS 'changeuser1'@'%' IDENTIFIED BY 'changeuser1pass'"
-    );
-    await conn.query(
-      "CREATE USER IF NOT EXISTS 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
-    );
-    await conn.query("GRANT ALL ON *.* TO 'changeuser1'@'%'");
-    await conn.query("GRANT ALL ON *.* TO 'changeuser2'@'%'");
-    await conn.query('FLUSH PRIVILEGES');
 
     await conn.changeUser({
       user: 'changeuser1',
@@ -56,15 +57,13 @@ await describe('Promise Wrappers: Change User', async () => {
       onlyUsername(result3[0][0]['current_user()']),
       'changeuser1'
     );
-
-    await conn.changeUser({
-      user: config.user,
-      password: config.password,
-    });
-
-    await conn.query("DROP USER IF EXISTS 'changeuser1'@'%'");
-    await conn.query("DROP USER IF EXISTS 'changeuser2'@'%'");
-
-    await conn.end();
   });
+
+  await conn.end();
+
+  // Use a fresh connection to cleanup
+  const cleanup = await createConnection(config);
+  await cleanup.query("DROP USER IF EXISTS 'changeuser1'@'%'");
+  await cleanup.query("DROP USER IF EXISTS 'changeuser2'@'%'");
+  await cleanup.end();
 });
