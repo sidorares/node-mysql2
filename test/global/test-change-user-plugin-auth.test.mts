@@ -1,8 +1,8 @@
-import type { RowDataPacket } from '../../../index.js';
+import type { RowDataPacket } from '../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { describe, it, skip, strict } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection } from '../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   skip('Skipping test for PlanetScale');
@@ -74,6 +74,23 @@ await describe('Change User Plugin Auth', async () => {
       );
     });
     strict.deepEqual(onlyUsername(rows3[0]['current_user()']), 'changeuser1');
+  });
+
+  await new Promise<void>((resolve, reject) => {
+    connection.changeUser({ user: 'root', password: '' }, (err) =>
+      err ? reject(err) : resolve()
+    );
+  });
+
+  await new Promise<void>((resolve, reject) => {
+    connection.query("DROP USER IF EXISTS 'changeuser1'@'%'", (err) =>
+      err ? reject(err) : resolve()
+    );
+  });
+  await new Promise<void>((resolve, reject) => {
+    connection.query("DROP USER IF EXISTS 'changeuser2'@'%'", (err) =>
+      err ? reject(err) : resolve()
+    );
   });
 
   connection.end();
