@@ -5,16 +5,17 @@ if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 
 await describe('Connect Timeout', async () => {
   await it('should emit ETIMEDOUT error on connection timeout', async () => {
+    let clientErrorCode: string | undefined;
+    let serverErrorCode: string | undefined;
+    let serverErrorMessage: string | undefined;
+
     await new Promise<void>((resolve) => {
       // @ts-expect-error: TODO: implement typings
       const server = mysql.createServer();
       server.on('connection', (conn) => {
         conn.on('error', (err: NodeJS.ErrnoException) => {
-          strict.equal(
-            err.message,
-            'Connection lost: The server closed the connection.'
-          );
-          strict.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+          serverErrorMessage = err.message;
+          serverErrorCode = err.code;
         });
       });
 
@@ -30,7 +31,7 @@ await describe('Connect Timeout', async () => {
         });
 
         connection.on('error', (err) => {
-          strict.equal(err.code, 'ETIMEDOUT');
+          clientErrorCode = err.code;
           connection.destroy();
           // @ts-expect-error: internal access
           server._server.close(() => {
@@ -39,5 +40,14 @@ await describe('Connect Timeout', async () => {
         });
       });
     });
+
+    strict.equal(clientErrorCode, 'ETIMEDOUT');
+    if (serverErrorCode !== undefined) {
+      strict.equal(
+        serverErrorMessage,
+        'Connection lost: The server closed the connection.'
+      );
+      strict.equal(serverErrorCode, 'PROTOCOL_CONNECTION_LOST');
+    }
   });
 });

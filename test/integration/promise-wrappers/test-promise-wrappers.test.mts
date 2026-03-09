@@ -15,10 +15,10 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   skip('Skipping test for PlanetScale');
 }
 
-await describe('Promise Wrappers', async () => {
-  const createConnection = promiseCreateConnection;
-  const createPool = createPoolPromise;
+const createConnection = promiseCreateConnection;
+const createPool = createPoolPromise;
 
+await describe('Promise Wrappers', async () => {
   // it's lazy exported from main index.js as well. Test that it's same function
   const mainModule = await import('../../../index.js');
 
@@ -27,32 +27,43 @@ await describe('Promise Wrappers', async () => {
     const mainExport = mainModule.default.createConnectionPromise;
     strict.equal(mainExport, createConnection);
   });
+});
 
-  await it('testBasic', async () => {
-    const conn = await createConnection(config);
+await describe('testBasic', async () => {
+  const conn = await createConnection(config);
+
+  await it(async () => {
     const result1 = await conn.query<TttRow[]>('select 1+2 as ttt');
     strict.equal(result1[0][0].ttt, 3);
     const result2 = await conn.query<QqqRow[]>('select 2+2 as qqq');
     strict.equal(result2[0][0].qqq, 4);
-    await conn.end();
   });
 
-  await it('testErrors', async () => {
-    const conn = await createConnection(config);
+  await conn.end();
+});
+
+await describe('testErrors', async () => {
+  const conn = await createConnection(config);
+
+  await it(async () => {
     const result1 = await conn.query<TttRow[]>('select 1+2 as ttt');
     strict.equal(result1[0][0].ttt, 3);
+    let threw = false;
     try {
       await conn.query<TttRow[]>('bad sql');
-      strict.fail('Expected query to fail');
     } catch {
-      // expected
-    } finally {
-      await conn.end();
+      threw = true;
     }
+    strict(threw, 'Expected query to fail');
   });
 
-  await it('testObjParams', async () => {
-    const conn = await createConnection(config);
+  await conn.end();
+});
+
+await describe('testObjParams', async () => {
+  const conn = await createConnection(config);
+
+  await it(async () => {
     const result1 = await conn.query<TttRow[]>({
       sql: 'select ?-? as ttt',
       values: [5, 2],
@@ -63,21 +74,29 @@ await describe('Promise Wrappers', async () => {
       values: [8, 5],
     });
     strict.equal(result2[0][0].ttt, 3);
-    await conn.end();
   });
 
-  await it('testPrepared', async () => {
-    const conn = await createConnection(config);
+  await conn.end();
+});
+
+await describe('testPrepared', async () => {
+  const conn = await createConnection(config);
+
+  await it(async () => {
     const statement = await conn.prepare('select ?-? as ttt, ? as uuu');
     const result = await statement.execute([11, 3, 'test']);
     const rows = result[0] as TttUuuRow[];
     strict.equal(rows[0].ttt, 8);
     strict.equal(rows[0].uuu, 'test');
-    await conn.end();
   });
 
-  await it('testEventsConnect', async () => {
-    const conn = await createConnection(config);
+  await conn.end();
+});
+
+await describe('testEventsConnect', async () => {
+  const conn = await createConnection(config);
+
+  await it(async () => {
     let events = 0;
 
     const expectedListeners: Record<string, number> = {
@@ -155,37 +174,48 @@ await describe('Promise Wrappers', async () => {
         eventName
       );
     }
-
-    await conn.end();
   });
 
-  await it('testBasicPool', async () => {
-    const pool = createPool(config);
+  await conn.end();
+});
+
+await describe('testBasicPool', async () => {
+  const pool = createPool(config);
+
+  await it(async () => {
     const connResolved = await pool.getConnection();
     pool.releaseConnection(connResolved);
     const result1 = await pool.query<TttRow[]>('select 1+2 as ttt');
     strict.equal(result1[0][0].ttt, 3);
     const result2 = await pool.query<QqqRow[]>('select 2+2 as qqq');
     strict.equal(result2[0][0].qqq, 4);
-    await pool.end();
   });
 
-  await it('testErrorsPool', async () => {
-    const pool = createPool(config);
+  await pool.end();
+});
+
+await describe('testErrorsPool', async () => {
+  const pool = createPool(config);
+
+  await it(async () => {
     const result1 = await pool.query<TttRow[]>('select 1+2 as ttt');
     strict.equal(result1[0][0].ttt, 3);
+    let threw = false;
     try {
       await pool.query<TttRow[]>('bad sql');
-      strict.fail('Expected query to fail');
     } catch {
-      // expected
-    } finally {
-      await pool.end();
+      threw = true;
     }
+    strict(threw, 'Expected query to fail');
   });
 
-  await it('testObjParamsPool', async () => {
-    const pool = createPool(config);
+  await pool.end();
+});
+
+await describe('testObjParamsPool', async () => {
+  const pool = createPool(config);
+
+  await it(async () => {
     const result1 = await pool.query<TttRow[]>({
       sql: 'select ?-? as ttt',
       values: [5, 2],
@@ -196,11 +226,15 @@ await describe('Promise Wrappers', async () => {
       values: [8, 5],
     });
     strict.equal(result2[0][0].ttt, 3);
-    await pool.end();
   });
 
-  await it('testPromiseLibrary', async () => {
-    const pool = createPool(config);
+  await pool.end();
+});
+
+await describe('testPromiseLibrary', async () => {
+  const pool = createPool(config);
+
+  await it(async () => {
     const promise = pool.execute<TttRow[]>({
       sql: 'select ?-? as ttt',
       values: [8, 5],
@@ -213,9 +247,12 @@ await describe('Promise Wrappers', async () => {
     strict.ok(endPromise instanceof pool.Promise);
     await endPromise;
   });
+});
 
-  await it('testEventsPool', async () => {
-    const pool = createPool(config);
+await describe('testEventsPool', async () => {
+  const pool = createPool(config);
+
+  await it(async () => {
     let events = 0;
 
     const expectedListeners: Record<string, number> = {
@@ -278,18 +315,26 @@ await describe('Promise Wrappers', async () => {
     }
   });
 
-  await it('testConnectionProperties', async () => {
-    const conn = await createConnection(config);
+  await pool.end();
+});
+
+await describe('testConnectionProperties', async () => {
+  const conn = await createConnection(config);
+
+  await it(async () => {
     strict.equal(typeof conn.config, 'object');
     strict.ok('queryFormat' in conn.config);
     strict.equal(typeof conn.threadId, 'number');
-    await conn.end();
   });
 
-  await it('testPoolConnectionDestroy', async () => {
-    const options = Object.assign({ connectionLimit: 1 }, config);
-    const pool = createPool(options);
+  await conn.end();
+});
 
+await describe('testPoolConnectionDestroy', async () => {
+  const options = Object.assign({ connectionLimit: 1 }, config);
+  const pool = createPool(options);
+
+  await it(async () => {
     const connection = await pool.getConnection();
     connection.destroy();
 
@@ -299,6 +344,7 @@ await describe('Promise Wrappers', async () => {
 
     await pool.getConnection();
     clearTimeout(bomb);
-    await pool.end();
   });
+
+  await pool.end();
 });

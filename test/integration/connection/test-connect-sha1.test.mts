@@ -33,6 +33,7 @@ await describe('Connect SHA1', async () => {
     let queryError1Code: string | undefined;
     let queryError2Code: string | undefined;
     let queryError3Code: string | undefined;
+    let connectionErrorCode: string | undefined;
 
     await new Promise<void>((resolve) => {
       // @ts-expect-error: TODO: implement typings
@@ -73,7 +74,7 @@ await describe('Connect SHA1', async () => {
         });
 
         connection.on('error', (err: QueryError) => {
-          strict.equal(err.code, 'PROTOCOL_CONNECTION_LOST');
+          connectionErrorCode = err.code;
         });
 
         connection.query('select 1+1', (err: QueryError | null) => {
@@ -95,6 +96,9 @@ await describe('Connect SHA1', async () => {
       });
     });
 
+    if (connectionErrorCode !== undefined) {
+      strict.equal(connectionErrorCode, 'PROTOCOL_CONNECTION_LOST');
+    }
     strict.equal(queryReceived, 'select 1+1');
     strict.equal(queryError1Code, 'PROTOCOL_CONNECTION_LOST');
     strict.equal(queryError2Code, 'PROTOCOL_CONNECTION_LOST');
