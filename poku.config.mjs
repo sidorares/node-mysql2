@@ -1,24 +1,9 @@
 // @ts-check
 
-import { createRequire } from 'node:module';
 import { exit } from 'node:process';
 import { defineConfig } from 'poku';
-import { definePlugin } from 'poku/plugins';
-
-const require = createRequire(import.meta.url);
-const { hasPrivileges } = require('./tools/common.js');
-
-const setup = {
-  sequential: definePlugin({
-    name: 'setup',
-    async setup() {
-      if (!(await hasPrivileges())) {
-        console.log('❌ Skipping global tests: insufficient privileges');
-        exit(0);
-      }
-    },
-  }),
-};
+import { multiSuite } from 'poku/plugins/multi-suite';
+import { hasPrivileges } from './tools/common.js';
 
 const commonConfig = defineConfig({
   reporter: 'compact',
@@ -29,18 +14,28 @@ const commonConfig = defineConfig({
 
 const parallel = defineConfig({
   ...commonConfig,
+  include: ['test/unit', 'test/integration'],
   timeout: 30000,
-  exclude: [/test[\\/]global/, /test[\\/]tsc-build/],
-  concurrency: 8,
+  concurrency: 0,
 });
 
 const sequential = defineConfig({
   ...commonConfig,
+  include: ['test/global'],
   timeout: 60000,
-  concurrency: 1,
-  plugins: [setup.sequential],
+  sequential: true,
+  plugins: [
+    {
+      async setup() {
+        if (!(await hasPrivileges())) {
+          console.log('❌ Skipping global tests: insufficient privileges');
+          exit(0);
+        }
+      },
+    },
+  ],
 });
 
-const suite = process.env.SUITE === 'global' ? sequential : parallel;
-
-export default suite;
+export default defineConfig({
+  plugins: [multiSuite([parallel, sequential])],
+});
