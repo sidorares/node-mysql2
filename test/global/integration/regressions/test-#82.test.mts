@@ -1,6 +1,6 @@
-import type { QueryError, RowDataPacket } from '../../index.js';
+import type { QueryError, RowDataPacket } from '../../../../index.js';
 import { describe, it, strict } from 'poku';
-import { createConnection } from '../common.test.mjs';
+import { createConnection } from '../../../common.test.mjs';
 
 await describe('Regression #82', async () => {
   const connection = createConnection();

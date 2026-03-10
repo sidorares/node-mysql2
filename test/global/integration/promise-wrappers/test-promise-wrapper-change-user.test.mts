@@ -1,8 +1,8 @@
-import type { RowDataPacket } from '../../index.js';
+import type { RowDataPacket } from '../../../../index.js';
 import process from 'node:process';
 import { describe, it, skip, strict } from 'poku';
-import { createConnection } from '../../promise.js';
-import { config } from '../common.test.mjs';
+import { createConnection } from '../../../../promise.js';
+import { config } from '../../../common.test.mjs';
 
 type CurrentUserRow = RowDataPacket & { 'current_user()': string };
 

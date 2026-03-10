@@ -24,7 +24,7 @@ await describe('Check for invalid file types found in restricted directories', a
   };
 
   await checkExtensions(
-    ['test/unit', 'test/integration', 'test/regressions', 'test/global'],
+    ['test/unit', 'test/integration', 'test/global'],
     /\.test\.mts$/
   );
   await checkExtensions(['test/tsc-build'], /(\.test\.ts|tsconfig\.json)$/);

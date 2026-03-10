@@ -1,7 +1,7 @@
-import type { ResultSetHeader } from '../../index.js';
+import type { ResultSetHeader } from '../../../../index.js';
 import process from 'node:process';
 import { describe, it, skip, strict } from 'poku';
-import { createConnection } from '../common.test.mjs';
+import { createConnection } from '../../../common.test.mjs';
 
 type CharsetStateChangeResult = ResultSetHeader & {
   stateChanges: {

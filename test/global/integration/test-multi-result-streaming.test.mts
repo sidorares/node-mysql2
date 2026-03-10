@@ -1,6 +1,6 @@
-import type { RowDataPacket } from '../../index.js';
+import type { RowDataPacket } from '../../../index.js';
 import { describe, it, strict } from 'poku';
-import { createConnection } from '../common.test.mjs';
+import { createConnection } from '../../common.test.mjs';
 
 await describe('Multi Result Streaming', async () => {
   const conn = createConnection({ multipleStatements: true });
