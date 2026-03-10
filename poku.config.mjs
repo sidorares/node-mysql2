@@ -14,7 +14,7 @@ const hasPrivileges = async () => {
   });
 
   try {
-    await conn.query('SET GLOBAL offline_mode = @@GLOBAL.offline_mode');
+    await conn.query('SET GLOBAL wait_timeout = @@GLOBAL.wait_timeout');
     return true;
   } catch (err) {
     if (err instanceof Error && 'errno' in err && err.errno === 1227) {
@@ -41,7 +41,7 @@ const setup = {
 const commonConfig = defineConfig({
   reporter: 'compact',
   deno: {
-    allow: ['read', 'env', 'net', 'sys'],
+    allow: ['all'],
   },
 });
 
