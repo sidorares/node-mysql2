@@ -314,21 +314,3 @@ export const localDate = (date: Date): string => {
 
   return `${year}-${month}-${day} ${hour}:${minute}:${second}.${millisecond}`;
 };
-
-/** @see https://github.com/sidorares/node-mysql2/issues/3918 */
-export const hasPrivileges = async function (): Promise<boolean> {
-  const conn = createConnection().promise();
-
-  try {
-    await conn.query('SET GLOBAL offline_mode = @@GLOBAL.offline_mode');
-    return true;
-  } catch (err) {
-    if (err instanceof Error && 'errno' in err && err.errno === 1227) {
-      return false;
-    }
-
-    throw err;
-  } finally {
-    await conn.end().catch(() => {});
-  }
-};

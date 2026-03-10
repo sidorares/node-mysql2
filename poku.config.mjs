@@ -1,9 +1,30 @@
 // @ts-check
 
 import { exit } from 'node:process';
+import { createConnection } from 'mysql2/promise';
 import { defineConfig } from 'poku';
 import { definePlugin } from 'poku/plugins';
-import { hasPrivileges } from './test/common.test.mts';
+
+const hasPrivileges = async () => {
+  const conn = await createConnection({
+    host: process.env.MYSQL_HOST || 'localhost',
+    user: process.env.MYSQL_USER || 'root',
+    password: (process.env.CI ? process.env.MYSQL_PASSWORD : '') || '',
+    port: Number(process.env.MYSQL_PORT) || 3306,
+  });
+
+  try {
+    await conn.query('SET GLOBAL offline_mode = @@GLOBAL.offline_mode');
+    return true;
+  } catch (err) {
+    if (err instanceof Error && 'errno' in err && err.errno === 1227) {
+      return false;
+    }
+    throw err;
+  } finally {
+    await conn.end().catch(() => {});
+  }
+};
 
 const setup = {
   sequential: definePlugin({
