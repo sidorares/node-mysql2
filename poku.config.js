@@ -1,5 +1,7 @@
 // @ts-check
 
+'use strict';
+
 const { multiSuite } = require('@pokujs/multi-suite');
 const { defineConfig, listFiles } = require('poku');
 const { hasPrivileges } = require('./tools/common.js');
