@@ -1,6 +1,5 @@
 // @ts-check
 
-import { exit } from 'node:process';
 import { defineConfig } from 'poku';
 import { multiSuite } from 'poku/plugins/multi-suite';
 import { hasPrivileges } from './tools/common.js';
@@ -26,11 +25,13 @@ const sequential = defineConfig({
   sequential: true,
   plugins: [
     {
-      async setup() {
+      async discoverFiles(paths) {
         if (!(await hasPrivileges())) {
-          console.log('❌ Skipping global tests: insufficient privileges');
-          exit(0);
+          console.log('\n› Skipping global tests: insufficient privileges');
+          return [];
         }
+
+        return paths;
       },
     },
   ],
