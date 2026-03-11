@@ -1,6 +1,6 @@
 // @ts-check
 
-import { defineConfig } from 'poku';
+import { defineConfig, listFiles } from 'poku';
 import { multiSuite } from 'poku/plugins/multi-suite';
 import { hasPrivileges } from './tools/common.js';
 
@@ -20,18 +20,17 @@ const parallel = defineConfig({
 
 const sequential = defineConfig({
   ...commonConfig,
-  include: ['test/global'],
   timeout: 60000,
   sequential: true,
   plugins: [
     {
-      async discoverFiles(paths) {
+      async discoverFiles() {
         if (!(await hasPrivileges())) {
           console.log('\n› Skipping global tests: insufficient privileges');
           return [];
         }
 
-        return paths;
+        return listFiles('test/global');
       },
     },
   ],
