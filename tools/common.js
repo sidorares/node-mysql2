@@ -71,3 +71,26 @@ exports.createConnection = function (args) {
   const conn = driver.createConnection({ ...config, ...args });
   return conn;
 };
+
+/** @see https://github.com/sidorares/node-mysql2/issues/3918 */
+exports.hasPrivileges = async function () {
+  const { createConnection } = require('../promise.js');
+  const conn = await createConnection({
+    host: config.host,
+    user: config.user,
+    password: config.password,
+    port: config.port,
+  });
+
+  try {
+    await conn.query('SET GLOBAL wait_timeout = @@GLOBAL.wait_timeout');
+    return true;
+  } catch (err) {
+    if (err instanceof Error && 'errno' in err && err.errno === 1227) {
+      return false;
+    }
+    throw err;
+  } finally {
+    await conn.end().catch(() => {});
+  }
+};

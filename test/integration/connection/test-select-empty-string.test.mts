@@ -3,8 +3,9 @@ import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Select Empty String', async () => {
+  const connection = createConnection();
+
   await it('should return empty string from SELECT', async () => {
-    const connection = createConnection();
     let rows: RowDataPacket[];
     let fields: FieldPacket[];
 
@@ -13,11 +14,12 @@ await describe('Select Empty String', async () => {
         if (err) return reject(err);
         rows = _rows;
         fields = _fields;
-        connection.end();
         resolve();
       });
     });
 
     strict.deepEqual(rows!, [{ [fields![0].name]: '' }]);
   });
+
+  connection.end();
 });

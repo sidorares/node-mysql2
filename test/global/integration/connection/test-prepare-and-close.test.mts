@@ -1,7 +1,7 @@
-import type { RowDataPacket } from '../../index.js';
+import type { RowDataPacket } from '../../../../index.js';
 import process from 'node:process';
 import { describe, it } from 'poku';
-import { createConnection } from '../common.test.mjs';
+import { createConnection } from '../../../common.test.mjs';
 
 await describe('Prepare and Close', async () => {
   const connection = createConnection();

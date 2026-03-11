@@ -32,7 +32,6 @@ await describe('Buffer Params', async () => {
         (err: QueryError | null, _rows) => {
           if (err) return reject(err);
           rows1 = _rows;
-          connection.end();
           resolve();
         }
       );
@@ -41,4 +40,6 @@ await describe('Buffer Params', async () => {
     strict.deepEqual(rows, [{ buf: buf.toString('hex').toUpperCase() }]);
     strict.deepEqual(rows1, [{ buf: buf.toString('hex').toUpperCase() }]);
   });
+
+  connection.end();
 });

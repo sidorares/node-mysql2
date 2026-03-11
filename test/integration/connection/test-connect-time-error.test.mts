@@ -8,6 +8,9 @@ await describe('Connect Time Error', async () => {
   const ERROR_TEXT = 'test error';
 
   await it('should return error from server', async () => {
+    let error1Message: string | undefined;
+    let error2Message: string | undefined;
+
     await new Promise<void>((resolve) => {
       // @ts-expect-error: TODO: implement typings
       const server = mysql.createServer();
@@ -30,11 +33,11 @@ await describe('Connect Time Error', async () => {
         });
 
         connection.query('select 1+1', (err) => {
-          strict.equal(err?.message, ERROR_TEXT);
+          error1Message = err?.message;
         });
 
         connection.query('select 1+2', (err) => {
-          strict.equal(err?.message, ERROR_TEXT);
+          error2Message = err?.message;
           // @ts-expect-error: TODO: implement typings
           connection.close();
           // @ts-expect-error: internal access
@@ -44,5 +47,8 @@ await describe('Connect Time Error', async () => {
         });
       });
     });
+
+    strict.equal(error1Message, ERROR_TEXT);
+    strict.equal(error2Message, ERROR_TEXT);
   });
 });

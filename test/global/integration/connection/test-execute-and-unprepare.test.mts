@@ -1,6 +1,6 @@
-import type { RowDataPacket } from '../../index.js';
+import type { RowDataPacket } from '../../../../index.js';
 import { describe, it } from 'poku';
-import { createConnection } from '../common.test.mjs';
+import { createConnection } from '../../../common.test.mjs';
 
 await describe('Execute and Unprepare', async () => {
   const connection = createConnection();

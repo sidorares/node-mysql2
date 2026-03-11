@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.19.1](https://github.com/sidorares/node-mysql2/compare/v3.19.0...v3.19.1) (2026-03-09)
+
+
+### Bug Fixes
+
+* bound `null`-terminated string read to packet end (fixes a potential OOB read reported by Doruk Tan Ozturk (peaktwilight)) ([#4161](https://github.com/sidorares/node-mysql2/issues/4161)) ([91c5229](https://github.com/sidorares/node-mysql2/commit/91c5229dff2293953635b93f753b45bff31deac4))
+* handle malformed geometry payloads (fixes a potential DoS vulnerability reported by Doruk Tan Ozturk (peaktwilight)) ([#4164](https://github.com/sidorares/node-mysql2/issues/4164)) ([1869215](https://github.com/sidorares/node-mysql2/commit/186921573096f5b9feccef93cf61f335e5372080))
+* prevent query param override of `URL`-defined connection options (fixes a potential config injection vulnerability reported by Doruk Tan Ozturk (peaktwilight)) ([#4162](https://github.com/sidorares/node-mysql2/issues/4162)) ([3123b4e](https://github.com/sidorares/node-mysql2/commit/3123b4e686e4e7c3893b20773376aff2c31840f7))
+* validate buffer bounds in geometry parser (fixes a potential DoS vulnerability reported by Doruk Tan Ozturk (peaktwilight)) ([#4159](https://github.com/sidorares/node-mysql2/issues/4159)) ([7c2ae00](https://github.com/sidorares/node-mysql2/commit/7c2ae002a5e1708d0a0a757bedd00c7e16ae2eee))
+
 ## [3.19.0](https://github.com/sidorares/node-mysql2/compare/v3.18.2...v3.19.0) (2026-03-05)
 
 

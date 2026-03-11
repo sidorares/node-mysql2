@@ -1,12 +1,12 @@
-import type { PrepareStatementInfo, QueryError } from '../../index.js';
+import type { PrepareStatementInfo, QueryError } from '../../../../index.js';
 import { Buffer } from 'node:buffer';
 import { describe, it, strict } from 'poku';
-import PrepareCommand from '../../lib/commands/prepare.js';
-import packets from '../../lib/packets/index.js';
-import { createConnection, getMysqlVersion } from '../common.test.mjs';
+import PrepareCommand from '../../../../lib/commands/prepare.js';
+import packets from '../../../../lib/packets/index.js';
+import { createConnection, getMysqlVersion } from '../../../common.test.mjs';
 
 await describe(async () => {
-  await it('Unit Test - Prepare result with number of parameters incorrectly reported by the server', async () => {
+  await it('Unit Test: Prepare result with number of parameters incorrectly reported by the server', async () => {
     const connection = {
       sequenceId: 1,
       constructor: {

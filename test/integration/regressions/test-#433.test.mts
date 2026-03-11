@@ -8,9 +8,9 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 }
 
 await describe('Regression #433', async () => {
-  await it('should correctly handle KOI8R charset in table names and error messages', async () => {
-    const connection = createConnection({ charset: 'KOI8R_GENERAL_CI' });
+  const connection = createConnection({ charset: 'KOI8R_GENERAL_CI' });
 
+  await it('should correctly handle KOI8R charset in table names and error messages', async () => {
     const tableName = 'МояТаблица';
     const testFields = ['поле1', 'поле2', 'поле3', 'поле4'];
     const testRows = [
@@ -50,9 +50,7 @@ await describe('Regression #433', async () => {
                     if (!err) {
                       return reject(new Error('Expected query to fail'));
                     }
-                    connection.end(() =>
-                      resolve({ actualRows: rows, actualError: err.message })
-                    );
+                    resolve({ actualRows: rows, actualError: err.message });
                   });
                 }
               );
@@ -85,4 +83,6 @@ await describe('Regression #433', async () => {
       strict.equal(actualError, expectedErrorMysql);
     }
   });
+
+  connection.end();
 });

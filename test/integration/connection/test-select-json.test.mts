@@ -7,17 +7,17 @@ import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Select JSON', async () => {
+  const connection = createConnection();
+
+  let textFetchedRows: RowDataPacket[];
+  let binaryFetchedRows: RowDataPacket[];
+
+  const face = '\uD83D\uDE02';
+
+  connection.query('CREATE TEMPORARY TABLE json_test (json_test JSON)');
+  connection.query('INSERT INTO json_test VALUES (?)', JSON.stringify(face));
+
   await it('should select JSON values correctly via text and binary protocol', async () => {
-    const connection = createConnection();
-
-    let textFetchedRows: RowDataPacket[];
-    let binaryFetchedRows: RowDataPacket[];
-
-    const face = '\uD83D\uDE02';
-
-    connection.query('CREATE TEMPORARY TABLE json_test (json_test JSON)');
-    connection.query('INSERT INTO json_test VALUES (?)', JSON.stringify(face));
-
     await new Promise<void>((resolve, reject) => {
       connection.query<RowDataPacket[]>(
         'SELECT * FROM json_test',
@@ -29,7 +29,6 @@ await describe('Select JSON', async () => {
             (err, _rows) => {
               if (err) return reject(err);
               binaryFetchedRows = _rows;
-              connection.end();
               resolve();
             }
           );
@@ -40,4 +39,6 @@ await describe('Select JSON', async () => {
     strict.equal(textFetchedRows![0].json_test, face);
     strict.equal(binaryFetchedRows![0].json_test, face);
   });
+
+  connection.end();
 });

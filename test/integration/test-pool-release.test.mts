@@ -2,10 +2,14 @@ import { describe, it, strict } from 'poku';
 import { createPool } from '../common.test.mjs';
 
 await describe('Pool Release', async () => {
+  const pool = createPool({
+    idleTimeout: 15000,
+  });
+
   await it('should release connections back to the pool', async () => {
-    const pool = createPool({
-      idleTimeout: 15000,
-    });
+    let allConnectionsLength!: number;
+    let freeConnectionsLength!: number;
+    let connectionQueueLength!: number;
 
     await new Promise<void>((resolve) => {
       pool.query('test sql', () => {
@@ -22,14 +26,16 @@ await describe('Pool Release', async () => {
                             pool.execute('test sql', () => {
                               // TODO change order events are fires so that connection is released before callback
                               // that way this number will be more deterministic
-                              // @ts-expect-error: internal access
-                              strict(pool._allConnections.length < 3);
+                              allConnectionsLength =
+                                // @ts-expect-error: internal access
+                                pool._allConnections.length;
                               // on some setups with small CLIENT_INTERACTION_TIMEOUT value connection might be closed by the time we get here, hence "one or zero"
-                              // @ts-expect-error: internal access
-                              strict(pool._freeConnections.length <= 1);
-                              // @ts-expect-error: internal access
-                              strict(pool._connectionQueue.length === 0);
-                              pool.end();
+                              freeConnectionsLength =
+                                // @ts-expect-error: internal access
+                                pool._freeConnections.length;
+                              connectionQueueLength =
+                                // @ts-expect-error: internal access
+                                pool._connectionQueue.length;
                               resolve();
                             });
                           });
@@ -44,5 +50,11 @@ await describe('Pool Release', async () => {
         });
       });
     });
+
+    strict(allConnectionsLength < 3);
+    strict(freeConnectionsLength <= 1);
+    strict(connectionQueueLength === 0);
   });
+
+  pool.end();
 });

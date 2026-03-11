@@ -8,9 +8,9 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 }
 
 await describe('Regression #617', async () => {
-  await it('should correctly handle TIMESTAMP(3) with dateStrings', async () => {
-    const connection = createConnection({ dateStrings: true });
+  const connection = createConnection({ dateStrings: true });
 
+  await it('should correctly handle TIMESTAMP(3) with dateStrings', async () => {
     const tableName = 'dates';
     const testFields = ['id', 'date', 'name'];
     const testRows = [
@@ -53,7 +53,7 @@ await describe('Regression #617', async () => {
                 `SELECT * FROM \`${tableName}\``,
                 (err, rows) => {
                   if (err) return reject(err);
-                  connection.end(() => resolve(rows));
+                  resolve(rows);
                 }
               );
             }
@@ -70,4 +70,6 @@ await describe('Regression #617', async () => {
       });
     });
   });
+
+  connection.end();
 });

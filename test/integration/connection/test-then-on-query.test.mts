@@ -2,9 +2,9 @@ import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Then on Query', async () => {
-  await it('should not have .then on query object', async () => {
-    const connection = createConnection();
+  const connection = createConnection();
 
+  await it('should not have .then on query object', async () => {
     let error = true;
 
     const q = connection.query('SELECT 1');
@@ -17,11 +17,12 @@ await describe('Then on Query', async () => {
 
     await new Promise<void>((resolve) => {
       q.on('end', () => {
-        connection.end();
         resolve();
       });
     });
 
     strict.equal(error, false);
   });
+
+  connection.end();
 });

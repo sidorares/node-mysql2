@@ -1,7 +1,7 @@
-import type { ResultSetHeader } from '../../../index.js';
+import type { ResultSetHeader } from '../../../../index.js';
 import process from 'node:process';
 import { describe, it, skip, strict } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection } from '../../../common.test.mjs';
 
 type CharsetStateChangeResult = ResultSetHeader & {
   stateChanges: {
@@ -42,7 +42,6 @@ await describe('Track State Change', async () => {
       connection.query<SchemaStateChangeResult>('USE mysql', (err, _ok) => {
         if (err) return reject(err);
         result2 = _ok;
-        connection.end();
         resolve();
       });
     });
@@ -54,4 +53,6 @@ await describe('Track State Change', async () => {
     });
     strict.deepEqual(result2.stateChanges.schema, 'mysql');
   });
+
+  connection.end();
 });

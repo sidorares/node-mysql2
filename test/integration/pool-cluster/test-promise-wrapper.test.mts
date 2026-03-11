@@ -5,9 +5,9 @@ import { config } from '../../common.test.mjs';
 
 type TestRow = RowDataPacket & { a: number };
 
-await describe('Test pool cluster', async () => {
-  const { createPoolCluster } = promiseDriver;
+const { createPoolCluster } = promiseDriver;
 
+await describe('Pool cluster: warn event', async () => {
   await it(async () => {
     const poolCluster = createPoolCluster();
 
@@ -26,7 +26,9 @@ await describe('Test pool cluster', async () => {
     // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('warn', new Error());
   });
+});
 
+await describe('Pool cluster: remove event', async () => {
   await it(async () => {
     const poolCluster = createPoolCluster();
 
@@ -45,7 +47,9 @@ await describe('Test pool cluster', async () => {
     // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('remove');
   });
+});
 
+await describe('Pool cluster: offline event', async () => {
   await it(async () => {
     const poolCluster = createPoolCluster();
 
@@ -64,7 +68,9 @@ await describe('Test pool cluster', async () => {
     // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('offline');
   });
+});
 
+await describe('Pool cluster: online event', async () => {
   await it(async () => {
     const poolCluster = createPoolCluster();
 
@@ -83,11 +89,13 @@ await describe('Test pool cluster', async () => {
     // @ts-expect-error: TODO: implement typings
     poolCluster.poolCluster.emit('online');
   });
+});
+
+await describe('Pool cluster: namespace query and execute', async () => {
+  const poolCluster = createPoolCluster();
+  poolCluster.add('MASTER', config);
 
   await it(async () => {
-    const poolCluster = createPoolCluster();
-    poolCluster.add('MASTER', config);
-
     const poolNamespace = poolCluster.of('MASTER');
 
     strict.equal(
@@ -113,45 +121,51 @@ await describe('Test pool cluster', async () => {
       [1]
     );
     strict.equal(result2[0]['a'], 1, 'should execute successfully');
-
-    poolCluster.end();
   });
 
+  poolCluster.end();
+});
+
+await describe('Pool cluster: POOL_NOEXIST error', async () => {
+  const poolCluster = createPoolCluster();
+  poolCluster.add('SLAVE', config);
+
   await it(async () => {
-    const poolCluster = createPoolCluster();
-    poolCluster.add('SLAVE', config);
+    let threw = false;
+    let errorCode: string | undefined;
 
     try {
       await poolCluster.getConnection('SLAVE1');
-      strict.fail('An error was expected');
     } catch (error: unknown) {
-      strict.equal(
-        (error as QueryError).code,
-        'POOL_NOEXIST',
-        'should throw when PoolNamespace does not exist'
-      );
-    } finally {
-      poolCluster.end();
+      threw = true;
+      errorCode = (error as QueryError).code;
     }
+
+    strict(threw, 'An error was expected');
+    strict.equal(
+      errorCode,
+      'POOL_NOEXIST',
+      'should throw when PoolNamespace does not exist'
+    );
   });
+
+  poolCluster.end();
+});
+
+await describe('Pool cluster: regex pattern matching', async () => {
+  const poolCluster = createPoolCluster();
+  poolCluster.add('SLAVE1', config);
 
   await it(async () => {
-    const poolCluster = createPoolCluster();
-    poolCluster.add('SLAVE1', config);
-
-    try {
+    // @ts-expect-error: TODO: implement typings
+    const connection = await poolCluster.getConnection(/SLAVE[12]/);
+    strict.equal(
       // @ts-expect-error: TODO: implement typings
-      const connection = await poolCluster.getConnection(/SLAVE[12]/);
-      strict.equal(
-        // @ts-expect-error: TODO: implement typings
-        connection.connection._clusterId,
-        'SLAVE1',
-        'should match regex pattern'
-      );
-    } catch {
-      strict.fail('should not throw');
-    } finally {
-      poolCluster.end();
-    }
+      connection.connection._clusterId,
+      'SLAVE1',
+      'should match regex pattern'
+    );
   });
+
+  poolCluster.end();
 });

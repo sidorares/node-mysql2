@@ -21,7 +21,6 @@ await describe('Connect With URI', async () => {
         if (err) return reject(err);
         rows = _rows;
         fields = _fields;
-        connection.end();
         resolve();
       });
     });
@@ -29,4 +28,6 @@ await describe('Connect With URI', async () => {
     strict.deepEqual(rows, [{ 1: 1 }]);
     strict.equal(fields?.[0].name, '1');
   });
+
+  connection.end();
 });

@@ -2,5 +2,5 @@
   "imports": {
     "poku": "npm:poku"
   },
-  "unstable": ["sloppy-imports"]
+  "unstable": ["sloppy-imports", "detect-cjs"]
 }
