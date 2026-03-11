@@ -1,8 +1,8 @@
 // @ts-check
 
-import { defineConfig, listFiles } from 'poku';
-import { multiSuite } from 'poku/plugins/multi-suite';
-import { hasPrivileges } from './tools/common.js';
+const { multiSuite } = require('@pokujs/multi-suite');
+const { defineConfig, listFiles } = require('poku');
+const { hasPrivileges } = require('./tools/common.js');
 
 const commonConfig = defineConfig({
   reporter: 'compact',
@@ -36,6 +36,6 @@ const sequential = defineConfig({
   ],
 });
 
-export default defineConfig({
+module.exports = defineConfig({
   plugins: [multiSuite([parallel, sequential])],
 });
