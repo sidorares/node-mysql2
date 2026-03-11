@@ -143,7 +143,7 @@ async function testReadOnlyError(
   });
 }
 
-await describe('Aurora MySQL Failover - Read-Only Error Handling', async () => {
+await describe('Aurora MySQL Failover: Read-Only Error Handling', async () => {
   for (const errorConfig of readOnlyErrors) {
     await it(`should discard connection on pool.query() when error ${errorConfig.code} occurs`, async () => {
       const result = await testReadOnlyError(errorConfig, 'query');

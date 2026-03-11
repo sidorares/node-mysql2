@@ -3,9 +3,9 @@ import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Select Negative', async () => {
-  await it('should select negative values via execute and query', async () => {
-    const connection = createConnection();
+  const connection = createConnection();
 
+  await it('should select negative values via execute and query', async () => {
     let rows: RowDataPacket[];
     let rows1: RowDataPacket[];
 
@@ -18,7 +18,6 @@ await describe('Select Negative', async () => {
       connection.query<RowDataPacket[]>('SELECT -1 v', (err, _rows) => {
         if (err) return reject(err);
         rows1 = _rows;
-        connection.end();
         resolve();
       });
     });
@@ -26,4 +25,6 @@ await describe('Select Negative', async () => {
     strict.deepEqual(rows!, [{ v: -1 }]);
     strict.deepEqual(rows1!, [{ v: -1 }]);
   });
+
+  connection.end();
 });

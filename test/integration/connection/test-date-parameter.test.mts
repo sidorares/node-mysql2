@@ -18,9 +18,7 @@ await describe('Date Parameter', async () => {
         (err, _rows) => {
           if (err) return reject(err);
           rows = _rows;
-          connection.end(() => {
-            resolve();
-          });
+          resolve();
         }
       );
     });
@@ -28,4 +26,6 @@ await describe('Date Parameter', async () => {
     const expected = major < 8 ? 631152000 : '631152000.000000';
     strict.deepEqual(rows, [{ t: expected }]);
   });
+
+  connection.end();
 });

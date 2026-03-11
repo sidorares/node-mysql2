@@ -8,11 +8,11 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 }
 
 await describe('Pool Disconnect', async () => {
-  await it('should handle pool connection kills', async () => {
-    const pool = createPool();
-    const conn = createConnection({ multipleStatements: true });
-    pool.config.connectionLimit = 5;
+  const pool = createPool();
+  const conn = createConnection({ multipleStatements: true });
+  pool.config.connectionLimit = 5;
 
+  await it('should handle pool connection kills', async () => {
     const numSelectToPerform = 10;
     const tids: number[] = [];
     let numSelects = 0;
@@ -36,16 +36,13 @@ await describe('Pool Disconnect', async () => {
                 resolve();
               }
             });
-          } else {
-            conn.end();
-            pool.end();
           }
         }, 5);
       };
 
-      pool.on('connection', (conn: PoolConnection) => {
-        tids.push(conn.threadId);
-        conn.on('error', () => {
+      pool.on('connection', (poolConn: PoolConnection) => {
+        tids.push(poolConn.threadId);
+        poolConn.on('error', () => {
           setTimeout(kill, 5);
         });
       });
@@ -70,4 +67,7 @@ await describe('Pool Disconnect', async () => {
     strict.equal(numSelects, numSelectToPerform);
     strict.equal(killCount, pool.config.connectionLimit);
   });
+
+  conn.end();
+  pool.end();
 });

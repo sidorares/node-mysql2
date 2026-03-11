@@ -24,17 +24,22 @@ await describe('Parameters Questionmark', async () => {
   ]);
 
   await it('should preserve questionmarks in values', async () => {
+    let rows!: TestRow[];
+
     await new Promise<void>((resolve, reject) => {
       pool.query<TestRow[]>(
         'SELECT str FROM test_table WHERE id = ?',
         [1],
-        (err, rows) => {
-          pool.end();
+        (err, _rows) => {
           if (err) return reject(err);
-          strict.deepEqual(rows, [{ str: 'should not change ?' }]);
+          rows = _rows;
           resolve();
         }
       );
     });
+
+    strict.deepEqual(rows, [{ str: 'should not change ?' }]);
   });
+
+  pool.end();
 });

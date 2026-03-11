@@ -1,11 +1,11 @@
-import type { QueryError, RowDataPacket } from '../../../index.js';
+import type { QueryError, RowDataPacket } from '../../../../index.js';
 import { describe, it, strict } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection } from '../../../common.test.mjs';
 
 await describe('Regression #82', async () => {
-  await it('should correctly query views built on views', async () => {
-    const connection = createConnection();
+  const connection = createConnection();
 
+  await it('should correctly query views built on views', async () => {
     const config = {
       table1: 'test82t1',
       table2: 'test82t2',
@@ -46,7 +46,7 @@ await describe('Regression #82', async () => {
           `select * from ${config.view2} order by name2 desc`,
           (err, rows) => {
             if (err) return reject(err);
-            connection.end(() => resolve(rows));
+            resolve(rows);
           }
         );
       });
@@ -61,4 +61,6 @@ await describe('Regression #82', async () => {
     strict.equal(results[2].name2, 'BB');
     strict.equal(results[3].name2, 'AA');
   });
+
+  connection.end();
 });

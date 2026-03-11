@@ -15,7 +15,6 @@ await describe('Connect After Connection', async () => {
           (err: QueryError | null, _connection: Connection) => {
             if (err) return reject(err);
             connection2 = _connection;
-            connection.end();
             resolve();
           }
         );
@@ -24,4 +23,6 @@ await describe('Connect After Connection', async () => {
 
     strict.equal(connection, connection2);
   });
+
+  connection.end();
 });

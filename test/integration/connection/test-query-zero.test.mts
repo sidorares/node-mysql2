@@ -3,8 +3,9 @@ import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
 await describe('Query Zero', async () => {
+  const connection = createConnection();
+
   await it('should return 0 as query parameter result', async () => {
-    const connection = createConnection();
     let rows: RowDataPacket[];
 
     await new Promise<void>((resolve, reject) => {
@@ -14,7 +15,6 @@ await describe('Query Zero', async () => {
         (err, _rows) => {
           if (err) return reject(err);
           rows = _rows;
-          connection.end();
           resolve();
         }
       );
@@ -22,4 +22,6 @@ await describe('Query Zero', async () => {
 
     strict.deepEqual(rows!, [{ result: 0 }]);
   });
+
+  connection.end();
 });

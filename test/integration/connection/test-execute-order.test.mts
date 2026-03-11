@@ -19,11 +19,12 @@ await describe('Execute Order', async () => {
       connection.query('select 1+1', (err) => {
         if (err) return reject(err);
         order.push(2);
-        connection.end();
         resolve();
       });
     });
 
     strict.deepEqual(order, [0, 1, 2]);
   });
+
+  connection.end();
 });

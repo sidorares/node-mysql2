@@ -121,11 +121,11 @@ await describe('Named Placeholders', async () => {
     );
   });
 
-  await it('should handle named placeholders in pool', async () => {
-    const pool: Pool = createPool();
-    // @ts-expect-error: TODO: implement typings
-    pool.config.connectionConfig.namedPlaceholders = true;
+  const pool: Pool = createPool();
+  // @ts-expect-error: TODO: implement typings
+  pool.config.connectionConfig.namedPlaceholders = true;
 
+  await it('should handle named placeholders in pool', async () => {
     const rows = await new Promise<SumRow[]>((resolve, reject) => {
       pool.query<SumRow[]>('SELECT :a + :a as sum', { a: 2 }, (err, _rows) => {
         if (err) return reject(err);
@@ -134,8 +134,8 @@ await describe('Named Placeholders', async () => {
     });
 
     strict.deepEqual(rows, [{ sum: 4 }]);
-    pool.end();
   });
 
+  pool.end();
   connection.end();
 });

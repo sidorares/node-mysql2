@@ -41,7 +41,6 @@ await describe('Timestamp', async () => {
         (err, _rows) => {
           if (err) return reject(err);
           rows2 = _rows;
-          connection.end();
           resolve();
         }
       );
@@ -63,4 +62,6 @@ await describe('Timestamp', async () => {
 
     strict(rows2[0].t11 instanceof Date);
   });
+
+  connection.end();
 });

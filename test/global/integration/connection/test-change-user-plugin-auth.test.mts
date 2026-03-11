@@ -1,8 +1,8 @@
-import type { RowDataPacket } from '../../../index.js';
+import type { RowDataPacket } from '../../../../index.js';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { describe, it, skip, strict } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection } from '../../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   skip('Skipping test for PlanetScale');
@@ -20,8 +20,8 @@ await describe('Change User Plugin Auth', async () => {
   connection.query(
     "CREATE USER IF NOT EXISTS 'changeuser2'@'%' IDENTIFIED BY 'changeuser2pass'"
   );
-  connection.query("GRANT ALL ON *.* TO 'changeuser1'@'%'");
-  connection.query("GRANT ALL ON *.* TO 'changeuser2'@'%'");
+  connection.query("GRANT SELECT ON *.* TO 'changeuser1'@'%'");
+  connection.query("GRANT SELECT ON *.* TO 'changeuser2'@'%'");
   connection.query('FLUSH PRIVILEGES');
 
   await it('should switch users and verify current_user()', async () => {
@@ -77,4 +77,10 @@ await describe('Change User Plugin Auth', async () => {
   });
 
   connection.end();
+
+  // Use a fresh root connection to cleanup
+  const cleanup = createConnection().promise();
+  await cleanup.query("DROP USER IF EXISTS 'changeuser1'@'%'");
+  await cleanup.query("DROP USER IF EXISTS 'changeuser2'@'%'");
+  await cleanup.end();
 });

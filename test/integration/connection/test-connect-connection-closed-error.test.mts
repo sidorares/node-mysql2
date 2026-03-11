@@ -8,6 +8,8 @@ await describe('Connect Connection Closed Error', async () => {
   const ERROR_TEXT = 'Connection lost: The server closed the connection.';
 
   await it('should return error when server closes connection', async () => {
+    let errorMessage: string | undefined;
+
     await new Promise<void>((resolve) => {
       // @ts-expect-error: TODO: implement typings
       const server = mysql.createServer();
@@ -29,7 +31,7 @@ await describe('Connect Connection Closed Error', async () => {
         });
 
         connection.query('select 1', (err) => {
-          strict.equal(err?.message, ERROR_TEXT);
+          errorMessage = err?.message;
           // @ts-expect-error: internal access
           server._server.close(() => {
             resolve();
@@ -37,5 +39,7 @@ await describe('Connect Connection Closed Error', async () => {
         });
       });
     });
+
+    strict.equal(errorMessage, ERROR_TEXT);
   });
 });

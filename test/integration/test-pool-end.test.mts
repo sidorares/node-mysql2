@@ -2,9 +2,9 @@ import { describe, it, strict } from 'poku';
 import { createPool } from '../common.test.mjs';
 
 await describe('Pool End', async () => {
-  await it('should handle pool end correctly', async () => {
-    const pool = createPool();
+  const pool = createPool();
 
+  await it('should handle pool end correctly', async () => {
     await new Promise<void>((resolve, reject) => {
       pool.getConnection((err, conn) => {
         if (err) return reject(err);
@@ -29,4 +29,6 @@ await describe('Pool End', async () => {
       });
     });
   });
+
+  pool.end();
 });

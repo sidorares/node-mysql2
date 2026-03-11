@@ -42,7 +42,6 @@ await describe('Charset Encoding', async () => {
             (err, results) => {
               if (err) return reject(err);
               resultData = results;
-              connection.end();
               resolve();
             }
           );
@@ -54,4 +53,6 @@ await describe('Charset Encoding', async () => {
       strict.equal(data.field, testData[index]);
     });
   });
+
+  connection.end();
 });

@@ -117,7 +117,7 @@ await describe('Binary Multiple Results', async () => {
     ], //  select 3 rows + insert
   ];
 
-  const spName = `_as_sp_call_${process.pid}`;
+  const spName = `_as_sp_call_${process.pid}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
   function procedurise(sql: string) {
     return [
