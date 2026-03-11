@@ -16,7 +16,7 @@ const parallel = defineConfig({
   ...commonConfig,
   include: ['test/unit', 'test/integration'],
   timeout: 30000,
-  concurrency: 0,
+  concurrency: 12,
 });
 
 const sequential = defineConfig({
