@@ -69,7 +69,7 @@
     "@eslint/js": "^9.39.2",
     "@eslint/markdown": "^7.5.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-    "@pokujs/multi-suite": "^0.1.1",
+    "@pokujs/multi-suite": "^1.0.0",
     "@types/node": "^25.3.0",
     "@typescript-eslint/eslint-plugin": "^8.56.0",
     "@typescript-eslint/parser": "^8.56.0",
