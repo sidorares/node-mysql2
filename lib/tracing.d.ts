@@ -29,6 +29,9 @@ export interface PoolConnectTraceContext {
   serverPort: number | undefined;
 }
 
+export declare const dc: typeof import('node:diagnostics_channel') | undefined;
+export declare const hasTracingChannel: boolean;
+
 export declare const queryChannel:
   | TracingChannel<QueryTraceContext>
   | undefined;

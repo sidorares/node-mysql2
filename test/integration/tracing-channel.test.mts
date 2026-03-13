@@ -6,15 +6,14 @@ import type {
 } from '../../lib/tracing.js';
 import type { RowDataPacket } from '../../promise.js';
 import diagnostics_channel from 'node:diagnostics_channel';
-import { assert, describe, it } from 'poku';
+import { assert, describe, it, skip } from 'poku';
 import { config, createConnection, createPool } from '../common.test.mjs';
 
 const hasTracingChannel =
   typeof diagnostics_channel.tracingChannel === 'function';
 
 if (!hasTracingChannel) {
-  // TracingChannel requires Node 19.9+ / 20+
-  process.exit(0);
+  skip('TracingChannel requires Node 19.9+ / 20+');
 }
 
 interface TraceEvent<T> {
