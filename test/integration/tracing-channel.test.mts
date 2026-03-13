@@ -12,6 +12,11 @@ import { config, createConnection, createPool } from '../common.test.mjs';
 const hasTracingChannel =
   typeof diagnostics_channel.tracingChannel === 'function';
 
+if (!hasTracingChannel) {
+  // TracingChannel requires Node 19.9+ / 20+
+  process.exit(0);
+}
+
 interface TraceEvent<T> {
   type: string;
   ctx: T;
@@ -45,7 +50,7 @@ function assertEvent<T>(events: TraceEvent<T>[], type: string): TraceEvent<T> {
   return event;
 }
 
-(hasTracingChannel ? describe : describe.skip)('TracingChannel', () => {
+describe('TracingChannel', () => {
   describe('mysql2:query', () => {
     it('should trace a successful query with callback', async () => {
       const events: TraceEvent<QueryTraceContext>[] = [];
