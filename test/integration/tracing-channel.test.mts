@@ -49,9 +49,9 @@ function assertEvent<T>(events: TraceEvent<T>[], type: string): TraceEvent<T> {
   return event;
 }
 
-describe('TracingChannel', () => {
-  describe('mysql2:query', () => {
-    it('should trace a successful query with callback', async () => {
+await describe('TracingChannel', async () => {
+  await describe('mysql2:query', async () => {
+    await it('should trace a successful query with callback', async () => {
       const events: TraceEvent<QueryTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -87,7 +87,7 @@ describe('TracingChannel', () => {
       }
     });
 
-    it('should trace a failed query', async () => {
+    await it('should trace a failed query', async () => {
       const events: TraceEvent<QueryTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -113,7 +113,7 @@ describe('TracingChannel', () => {
       }
     });
 
-    it('should trace query in event-emitter mode', async () => {
+    await it('should trace query in event-emitter mode', async () => {
       const events: TraceEvent<QueryTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -136,7 +136,7 @@ describe('TracingChannel', () => {
       }
     });
 
-    it('should trace a failed query in event-emitter mode', async () => {
+    await it('should trace a failed query in event-emitter mode', async () => {
       const events: TraceEvent<QueryTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -159,8 +159,8 @@ describe('TracingChannel', () => {
     });
   });
 
-  describe('mysql2:execute', () => {
-    it('should trace a successful prepared statement execution', async () => {
+  await describe('mysql2:execute', async () => {
+    await it('should trace a successful prepared statement execution', async () => {
       const events: TraceEvent<ExecuteTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -195,7 +195,7 @@ describe('TracingChannel', () => {
       }
     });
 
-    it('should trace execute in event-emitter mode', async () => {
+    await it('should trace execute in event-emitter mode', async () => {
       const events: TraceEvent<ExecuteTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -222,7 +222,7 @@ describe('TracingChannel', () => {
       }
     });
 
-    it('should trace a failed execute in event-emitter mode', async () => {
+    await it('should trace a failed execute in event-emitter mode', async () => {
       const events: TraceEvent<ExecuteTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -246,7 +246,7 @@ describe('TracingChannel', () => {
       }
     });
 
-    it('should trace a failed prepared statement', async () => {
+    await it('should trace a failed prepared statement', async () => {
       const events: TraceEvent<ExecuteTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -275,8 +275,8 @@ describe('TracingChannel', () => {
     });
   });
 
-  describe('mysql2:connect', () => {
-    it('should trace a successful connection', async () => {
+  await describe('mysql2:connect', async () => {
+    await it('should trace a successful connection', async () => {
       const events: TraceEvent<ConnectTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -307,7 +307,7 @@ describe('TracingChannel', () => {
       }
     });
 
-    it('should trace a failed connection', async () => {
+    await it('should trace a failed connection', async () => {
       const events: TraceEvent<ConnectTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -331,8 +331,8 @@ describe('TracingChannel', () => {
     });
   });
 
-  describe('mysql2:pool:connect', () => {
-    it('should trace pool getConnection', async () => {
+  await describe('mysql2:pool:connect', async () => {
+    await it('should trace pool getConnection', async () => {
       const events: TraceEvent<PoolConnectTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -362,7 +362,7 @@ describe('TracingChannel', () => {
       }
     });
 
-    it('should trace pool.query() implicitly', async () => {
+    await it('should trace pool.query() implicitly', async () => {
       const events: TraceEvent<PoolConnectTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
@@ -388,8 +388,8 @@ describe('TracingChannel', () => {
     });
   });
 
-  describe('no subscribers', () => {
-    it('should work normally without any tracing subscribers', async () => {
+  await describe('no subscribers', async () => {
+    await it('should work normally without any tracing subscribers', async () => {
       const conn = createConnection();
       await new Promise<void>((resolve, reject) => {
         conn.query(
