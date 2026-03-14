@@ -9,7 +9,11 @@ if (!('asyncDispose' in Symbol)) {
 }
 
 await describe('PromisePoolConnection should implement Symbol.asyncDispose', async () => {
-  await using pool = createPool({ ...config, connectionLimit: 1 });
+  await using pool = createPool({
+    ...config,
+    connectionLimit: 1,
+    resetOnRelease: false,
+  });
   await using conn: PoolConnection = await pool.getConnection();
 
   it('should be a function', () => {
@@ -18,7 +22,11 @@ await describe('PromisePoolConnection should implement Symbol.asyncDispose', asy
 });
 
 await describe('PromisePool should implement Symbol.asyncDispose', async () => {
-  await using pool = createPool({ ...config, connectionLimit: 1 });
+  await using pool = createPool({
+    ...config,
+    connectionLimit: 1,
+    resetOnRelease: false,
+  });
 
   it('should be a function', () => {
     strict.strictEqual(typeof pool[Symbol.asyncDispose], 'function');
@@ -26,7 +34,11 @@ await describe('PromisePool should implement Symbol.asyncDispose', async () => {
 });
 
 await describe('await using should release the connection back to the pool', async () => {
-  await using pool = createPool({ ...config, connectionLimit: 1 });
+  await using pool = createPool({
+    ...config,
+    connectionLimit: 1,
+    resetOnRelease: false,
+  });
 
   await it('should use and dispose the connection', async () => {
     await using conn: PoolConnection = await pool.getConnection();
@@ -43,7 +55,11 @@ await describe('await using should release the connection back to the pool', asy
 });
 
 await describe('Pool should serve a new connection after await using releases the previous one', async () => {
-  await using pool = createPool({ ...config, connectionLimit: 1 });
+  await using pool = createPool({
+    ...config,
+    connectionLimit: 1,
+    resetOnRelease: false,
+  });
 
   await it('should use and dispose the first connection', async () => {
     await using conn: PoolConnection = await pool.getConnection();
@@ -68,7 +84,11 @@ await describe('Pool should serve a new connection after await using releases th
 });
 
 await describe('asyncDispose should end the pool', async () => {
-  await using pool = createPool({ ...config, connectionLimit: 1 });
+  await using pool = createPool({
+    ...config,
+    connectionLimit: 1,
+    resetOnRelease: false,
+  });
   const [rows] = await pool.query<RowDataPacket[]>('SELECT 1');
 
   await pool[Symbol.asyncDispose]();
@@ -84,7 +104,11 @@ await describe('asyncDispose should end the pool', async () => {
 });
 
 await describe('asyncDispose should handle manual end before asyncDispose on pool', async () => {
-  await using pool = createPool({ ...config, connectionLimit: 1 });
+  await using pool = createPool({
+    ...config,
+    connectionLimit: 1,
+    resetOnRelease: false,
+  });
 
   await pool.end();
   await pool[Symbol.asyncDispose]();
@@ -96,7 +120,11 @@ await describe('asyncDispose should handle manual end before asyncDispose on poo
 });
 
 await describe('await using should handle manual `destroy` before automatic dispose on pool connection', async () => {
-  await using pool = createPool({ ...config, connectionLimit: 1 });
+  await using pool = createPool({
+    ...config,
+    connectionLimit: 1,
+    resetOnRelease: false,
+  });
 
   await it('should not error when connection is destroyed within await using', async () => {
     await using conn: PoolConnection = await pool.getConnection();
