@@ -373,7 +373,7 @@ await describe('TracingChannel', async () => {
         assertEvent(events, 'asyncEnd');
       });
 
-      await new Promise<void>((resolve) => pool.end(() => resolve()));
+      await pool.promise().end();
 
       diagnostics_channel
         .tracingChannel('mysql2:pool:connect')
@@ -400,7 +400,7 @@ await describe('TracingChannel', async () => {
         assertEvent(events, 'start');
       });
 
-      await new Promise<void>((resolve) => pool.end(() => resolve()));
+      await pool.promise().end();
 
       diagnostics_channel
         .tracingChannel('mysql2:pool:connect')
