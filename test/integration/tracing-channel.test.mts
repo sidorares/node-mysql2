@@ -51,13 +51,14 @@ function assertEvent<T>(events: TraceEvent<T>[], type: string): TraceEvent<T> {
 
 await describe('TracingChannel', async () => {
   await describe('mysql2:query', async () => {
-    await it('should trace a successful query with callback', async () => {
+    await describe('successful query with callback', async () => {
       const events: TraceEvent<QueryTraceContext>[] = [];
       const subscribers = collectEvents(events);
+      const conn = createConnection();
 
       diagnostics_channel.tracingChannel('mysql2:query').subscribe(subscribers);
-      try {
-        const conn = createConnection();
+
+      await it('should trace a successful query with callback', async () => {
         await new Promise<void>((resolve, reject) => {
           conn.query(
             'SELECT 1 + 1 AS result',
@@ -68,9 +69,9 @@ await describe('TracingChannel', async () => {
             }
           );
         });
-        conn.end();
 
         const start = assertEvent(events, 'start');
+
         assert(
           start.ctx.query.includes('SELECT 1 + 1'),
           'should have query text'
@@ -78,22 +79,23 @@ await describe('TracingChannel', async () => {
         assert.strictEqual(start.ctx.database, config.database);
         assert.strictEqual(start.ctx.serverAddress, config.host || 'localhost');
         assert.strictEqual(start.ctx.serverPort, config.port || 3306);
-
         assertEvent(events, 'asyncEnd');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:query')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      conn.end();
+      diagnostics_channel
+        .tracingChannel('mysql2:query')
+        .unsubscribe(subscribers);
     });
 
-    await it('should trace a failed query', async () => {
+    await describe('failed query', async () => {
       const events: TraceEvent<QueryTraceContext>[] = [];
       const subscribers = collectEvents(events);
+      const conn = createConnection();
 
       diagnostics_channel.tracingChannel('mysql2:query').subscribe(subscribers);
-      try {
-        const conn = createConnection();
+
+      await it('should trace a failed query', async () => {
         await new Promise<void>((resolve) => {
           conn.query(
             'SELECT * FROM nonexistent_table_xyz',
@@ -103,72 +105,76 @@ await describe('TracingChannel', async () => {
             }
           );
         });
-        conn.end();
 
         assertEvent(events, 'error');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:query')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      conn.end();
+      diagnostics_channel
+        .tracingChannel('mysql2:query')
+        .unsubscribe(subscribers);
     });
 
-    await it('should trace query in event-emitter mode', async () => {
+    await describe('query in event-emitter mode', async () => {
       const events: TraceEvent<QueryTraceContext>[] = [];
       const subscribers = collectEvents(events);
+      const conn = createConnection();
 
       diagnostics_channel.tracingChannel('mysql2:query').subscribe(subscribers);
-      try {
-        const conn = createConnection();
+
+      await it('should trace query in event-emitter mode', async () => {
         await new Promise<void>((resolve, reject) => {
           const query = conn.query('SELECT 1 AS val');
           query.on('error', reject);
           query.on('end', () => resolve());
         });
-        conn.end();
 
         const start = assertEvent(events, 'start');
+
         assert(start.ctx.query.includes('SELECT 1'), 'should have query text');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:query')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      conn.end();
+      diagnostics_channel
+        .tracingChannel('mysql2:query')
+        .unsubscribe(subscribers);
     });
 
-    await it('should trace a failed query in event-emitter mode', async () => {
+    await describe('failed query in event-emitter mode', async () => {
       const events: TraceEvent<QueryTraceContext>[] = [];
       const subscribers = collectEvents(events);
+      const conn = createConnection();
 
       diagnostics_channel.tracingChannel('mysql2:query').subscribe(subscribers);
-      try {
-        const conn = createConnection();
+
+      await it('should trace a failed query in event-emitter mode', async () => {
         await new Promise<void>((resolve) => {
           const query = conn.query('SELECT * FROM nonexistent_table_xyz');
           query.on('error', () => resolve());
         });
-        conn.end();
 
         assertEvent(events, 'start');
         assertEvent(events, 'error');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:query')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      conn.end();
+      diagnostics_channel
+        .tracingChannel('mysql2:query')
+        .unsubscribe(subscribers);
     });
   });
 
   await describe('mysql2:execute', async () => {
-    await it('should trace a successful prepared statement execution', async () => {
+    await describe('successful prepared statement', async () => {
       const events: TraceEvent<ExecuteTraceContext>[] = [];
       const subscribers = collectEvents(events);
+      const conn = createConnection();
 
       diagnostics_channel
         .tracingChannel('mysql2:execute')
         .subscribe(subscribers);
-      try {
-        const conn = createConnection();
+
+      await it('should trace a successful prepared statement execution', async () => {
         await new Promise<void>((resolve, reject) => {
           conn.execute(
             'SELECT ? + ? AS result',
@@ -180,81 +186,86 @@ await describe('TracingChannel', async () => {
             }
           );
         });
-        conn.end();
 
         const start = assertEvent(events, 'start');
+
         assert.strictEqual(start.ctx.query, 'SELECT ? + ? AS result');
         assert.deepStrictEqual(start.ctx.values, [1, 2]);
         assert.strictEqual(start.ctx.database, config.database);
 
         assertEvent(events, 'asyncEnd');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:execute')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      conn.end();
+      diagnostics_channel
+        .tracingChannel('mysql2:execute')
+        .unsubscribe(subscribers);
     });
 
-    await it('should trace execute in event-emitter mode', async () => {
+    await describe('execute in event-emitter mode', async () => {
       const events: TraceEvent<ExecuteTraceContext>[] = [];
       const subscribers = collectEvents(events);
+      const conn = createConnection();
 
       diagnostics_channel
         .tracingChannel('mysql2:execute')
         .subscribe(subscribers);
-      try {
-        const conn = createConnection();
+
+      await it('should trace execute in event-emitter mode', async () => {
         await new Promise<void>((resolve, reject) => {
           const cmd = conn.execute('SELECT ? + ? AS result', [1, 2]);
           cmd.on('error', reject);
           cmd.on('end', () => resolve());
         });
-        conn.end();
 
         const start = assertEvent(events, 'start');
+
         assert.strictEqual(start.ctx.query, 'SELECT ? + ? AS result');
         assert.deepStrictEqual(start.ctx.values, [1, 2]);
         assertEvent(events, 'asyncEnd');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:execute')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      conn.end();
+      diagnostics_channel
+        .tracingChannel('mysql2:execute')
+        .unsubscribe(subscribers);
     });
 
-    await it('should trace a failed execute in event-emitter mode', async () => {
+    await describe('failed execute in event-emitter mode', async () => {
       const events: TraceEvent<ExecuteTraceContext>[] = [];
       const subscribers = collectEvents(events);
+      const conn = createConnection();
 
       diagnostics_channel
         .tracingChannel('mysql2:execute')
         .subscribe(subscribers);
-      try {
-        const conn = createConnection();
+
+      await it('should trace a failed execute in event-emitter mode', async () => {
         await new Promise<void>((resolve) => {
           const cmd = conn.execute('SELECT * FROM nonexistent_table_xyz');
           cmd.on('error', () => resolve());
         });
-        conn.end();
 
         assertEvent(events, 'start');
         assertEvent(events, 'error');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:execute')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      conn.end();
+      diagnostics_channel
+        .tracingChannel('mysql2:execute')
+        .unsubscribe(subscribers);
     });
 
-    await it('should trace a failed prepared statement', async () => {
+    await describe('failed prepared statement', async () => {
       const events: TraceEvent<ExecuteTraceContext>[] = [];
       const subscribers = collectEvents(events);
+      const conn = createConnection();
 
       diagnostics_channel
         .tracingChannel('mysql2:execute')
         .subscribe(subscribers);
-      try {
-        const conn = createConnection();
+
+      await it('should trace a failed prepared statement', async () => {
         await new Promise<void>((resolve) => {
           conn.execute(
             'SELECT * FROM nonexistent_table_xyz',
@@ -264,58 +275,63 @@ await describe('TracingChannel', async () => {
             }
           );
         });
-        conn.end();
 
         assertEvent(events, 'error');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:execute')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      conn.end();
+      diagnostics_channel
+        .tracingChannel('mysql2:execute')
+        .unsubscribe(subscribers);
     });
   });
 
   await describe('mysql2:connect', async () => {
-    await it('should trace a successful connection', async () => {
+    await describe('successful connection', async () => {
       const events: TraceEvent<ConnectTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
       diagnostics_channel
         .tracingChannel('mysql2:connect')
         .subscribe(subscribers);
-      try {
-        const conn = createConnection();
+
+      const conn = createConnection();
+
+      await it('should trace a successful connection', async () => {
         await new Promise<void>((resolve, reject) => {
           conn.connect((err: Error | null) => {
             if (err) return reject(err);
             resolve();
           });
         });
-        conn.end();
 
         const start = assertEvent(events, 'start');
+
         assert.strictEqual(start.ctx.database, config.database);
         assert.strictEqual(start.ctx.serverAddress, config.host || 'localhost');
         assert.strictEqual(start.ctx.serverPort, config.port || 3306);
         assert(typeof start.ctx.user === 'string', 'should have user field');
 
         assertEvent(events, 'asyncEnd');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:connect')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      conn.end();
+      diagnostics_channel
+        .tracingChannel('mysql2:connect')
+        .unsubscribe(subscribers);
     });
 
-    await it('should trace a failed connection', async () => {
+    await describe('failed connection', async () => {
       const events: TraceEvent<ConnectTraceContext>[] = [];
       const subscribers = collectEvents(events);
 
       diagnostics_channel
         .tracingChannel('mysql2:connect')
         .subscribe(subscribers);
-      try {
-        const conn = createConnection({ port: 1, connectTimeout: 1000 });
+
+      const conn = createConnection({ port: 1, connectTimeout: 1000 });
+
+      await it('should trace a failed connection', async () => {
         await new Promise<void>((resolve) => {
           conn.on('error', () => {
             resolve();
@@ -323,24 +339,25 @@ await describe('TracingChannel', async () => {
         });
 
         assertEvent(events, 'error');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:connect')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      diagnostics_channel
+        .tracingChannel('mysql2:connect')
+        .unsubscribe(subscribers);
     });
   });
 
   await describe('mysql2:pool:connect', async () => {
-    await it('should trace pool getConnection', async () => {
+    await describe('pool getConnection', async () => {
       const events: TraceEvent<PoolConnectTraceContext>[] = [];
       const subscribers = collectEvents(events);
+      const pool = createPool({ connectionLimit: 1 });
 
       diagnostics_channel
         .tracingChannel('mysql2:pool:connect')
         .subscribe(subscribers);
-      try {
-        const pool = createPool({ connectionLimit: 1 });
+
+      await it('should trace pool getConnection', async () => {
         await new Promise<void>((resolve, reject) => {
           pool.getConnection((err, conn) => {
             if (err) return reject(err);
@@ -348,49 +365,53 @@ await describe('TracingChannel', async () => {
             resolve();
           });
         });
-        await new Promise<void>((resolve) => pool.end(() => resolve()));
 
         const start = assertEvent(events, 'start');
         assert.strictEqual(start.ctx.database, config.database);
         assert.strictEqual(start.ctx.serverAddress, config.host || 'localhost');
 
         assertEvent(events, 'asyncEnd');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:pool:connect')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      await new Promise<void>((resolve) => pool.end(() => resolve()));
+
+      diagnostics_channel
+        .tracingChannel('mysql2:pool:connect')
+        .unsubscribe(subscribers);
     });
 
-    await it('should trace pool.query() implicitly', async () => {
+    await describe('pool.query() implicitly', async () => {
       const events: TraceEvent<PoolConnectTraceContext>[] = [];
       const subscribers = collectEvents(events);
+      const pool = createPool({ connectionLimit: 1 });
 
       diagnostics_channel
         .tracingChannel('mysql2:pool:connect')
         .subscribe(subscribers);
-      try {
-        const pool = createPool({ connectionLimit: 1 });
+
+      await it('should trace pool.query() implicitly', async () => {
         await new Promise<void>((resolve, reject) => {
           pool.query('SELECT 1', (err: Error | null) => {
             if (err) return reject(err);
             resolve();
           });
         });
-        await new Promise<void>((resolve) => pool.end(() => resolve()));
 
         assertEvent(events, 'start');
-      } finally {
-        diagnostics_channel
-          .tracingChannel('mysql2:pool:connect')
-          .unsubscribe(subscribers);
-      }
+      });
+
+      await new Promise<void>((resolve) => pool.end(() => resolve()));
+
+      diagnostics_channel
+        .tracingChannel('mysql2:pool:connect')
+        .unsubscribe(subscribers);
     });
   });
 
   await describe('no subscribers', async () => {
+    const conn = createConnection();
+
     await it('should work normally without any tracing subscribers', async () => {
-      const conn = createConnection();
       await new Promise<void>((resolve, reject) => {
         conn.query(
           'SELECT 1 + 1 AS result',
@@ -401,7 +422,8 @@ await describe('TracingChannel', async () => {
           }
         );
       });
-      conn.end();
     });
+
+    conn.end();
   });
 });
