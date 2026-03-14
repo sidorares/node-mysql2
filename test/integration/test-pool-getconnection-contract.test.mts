@@ -1,8 +1,9 @@
 import type { RowDataPacket } from '../../promise.js';
 import { assert, describe, it } from 'poku';
+import driver from '../../index.js';
 import BasePool from '../../lib/base/pool.js';
 import Pool from '../../lib/pool.js';
-import { createPool } from '../common.test.mjs';
+import { config, createPool } from '../common.test.mjs';
 
 await describe('Pool getConnection contract', async () => {
   const pool = createPool({ connectionLimit: 2 });
@@ -106,4 +107,87 @@ await describe('Pool getConnection contract', async () => {
   });
 
   await pool.promise().end();
+});
+
+await describe('Pool getConnection edge cases', async () => {
+  await describe('waitForConnections disabled', async () => {
+    // createPool helper from common.test.mjs does not forward waitForConnections
+    const pool = driver.createPool({
+      ...config,
+      connectionLimit: 1,
+      waitForConnections: false,
+    });
+
+    await it('should return error when no connections available', async () => {
+      const conn = await pool.promise().getConnection();
+      const err = await new Promise<Error | null>((resolve) => {
+        pool.getConnection((err2) => {
+          resolve(err2 || null);
+        });
+      });
+
+      conn.release();
+
+      assert.ok(err instanceof Error, 'should receive an error');
+      assert.ok(
+        (err as Error).message.includes('No connections available'),
+        'should indicate no connections available'
+      );
+    });
+
+    await pool.promise().end();
+  });
+});
+
+await describe('Pool query error paths', async () => {
+  await it('should emit error in event-emitter mode when pool is closed', async () => {
+    const closedPool = createPool({ connectionLimit: 1 });
+    await closedPool.promise().end();
+
+    const err = await new Promise<Error>((resolve) => {
+      const query = closedPool.query('SELECT 1');
+      query.on('error', (err: Error) => resolve(err));
+    });
+
+    assert.ok(err instanceof Error, 'should receive an error');
+    assert.ok(
+      err.message.includes('Pool is closed'),
+      'should indicate pool is closed'
+    );
+  });
+});
+
+await describe('Pool execute error paths', async () => {
+  await it('should return error when pool is closed', async () => {
+    const closedPool = createPool({ connectionLimit: 1 });
+    await closedPool.promise().end();
+
+    const err = await new Promise<Error | null>((resolve) => {
+      closedPool.execute('SELECT 1', (err: Error | null) => {
+        resolve(err);
+      });
+    });
+
+    assert.ok(err instanceof Error, 'should receive an error');
+    assert.ok(
+      (err as Error).message.includes('Pool is closed'),
+      'should indicate pool is closed'
+    );
+  });
+
+  await describe('synchronous execute error', async () => {
+    const pool = createPool({ connectionLimit: 1 });
+
+    await it('should catch synchronous errors from conn.execute()', async () => {
+      const err = await new Promise<Error | null>((resolve) => {
+        pool.execute('SELECT ?', { invalid: 'object' }, (err: Error | null) => {
+          resolve(err);
+        });
+      });
+
+      assert.ok(err instanceof TypeError, 'should receive a TypeError');
+    });
+
+    await pool.promise().end();
+  });
 });
