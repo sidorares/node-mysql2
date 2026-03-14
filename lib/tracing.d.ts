@@ -36,6 +36,21 @@ export declare function shouldTrace(
   channel: TracingChannel<object> | undefined | null
 ): boolean;
 
+export declare function traceCallback<T extends object>(
+  channel: TracingChannel<T> | undefined | null,
+  fn: (...args: any[]) => any,
+  position: number,
+  contextFactory: () => T,
+  thisArg: any,
+  ...args: any[]
+): any;
+
+export declare function tracePromise<T extends object, R>(
+  channel: TracingChannel<T> | undefined | null,
+  fn: () => Promise<R>,
+  contextFactory: () => T
+): Promise<R>;
+
 export declare const queryChannel:
   | TracingChannel<QueryTraceContext>
   | undefined;
@@ -54,23 +69,3 @@ export declare function getServerContext(config: {
   host?: string;
   port?: number;
 }): { serverAddress: string; serverPort: number | undefined };
-
-export declare function traceQuery<T>(
-  fn: () => Promise<T>,
-  contextFactory: () => QueryTraceContext
-): Promise<T>;
-
-export declare function traceExecute<T>(
-  fn: () => Promise<T>,
-  contextFactory: () => ExecuteTraceContext
-): Promise<T>;
-
-export declare function traceConnect<T>(
-  fn: () => Promise<T>,
-  contextFactory: () => ConnectTraceContext
-): Promise<T>;
-
-export declare function tracePoolConnect<T>(
-  fn: () => Promise<T>,
-  contextFactory: () => PoolConnectTraceContext
-): Promise<T>;
