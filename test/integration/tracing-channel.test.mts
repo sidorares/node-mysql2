@@ -135,6 +135,28 @@ describe('TracingChannel', () => {
           .unsubscribe(subscribers);
       }
     });
+
+    it('should trace a failed query in event-emitter mode', async () => {
+      const events: TraceEvent<QueryTraceContext>[] = [];
+      const subscribers = collectEvents(events);
+
+      diagnostics_channel.tracingChannel('mysql2:query').subscribe(subscribers);
+      try {
+        const conn = createConnection();
+        await new Promise<void>((resolve) => {
+          const query = conn.query('SELECT * FROM nonexistent_table_xyz');
+          query.on('error', () => resolve());
+        });
+        conn.end();
+
+        assertEvent(events, 'start');
+        assertEvent(events, 'error');
+      } finally {
+        diagnostics_channel
+          .tracingChannel('mysql2:query')
+          .unsubscribe(subscribers);
+      }
+    });
   });
 
   describe('mysql2:execute', () => {
@@ -166,6 +188,57 @@ describe('TracingChannel', () => {
         assert.strictEqual(start.ctx.database, config.database);
 
         assertEvent(events, 'asyncEnd');
+      } finally {
+        diagnostics_channel
+          .tracingChannel('mysql2:execute')
+          .unsubscribe(subscribers);
+      }
+    });
+
+    it('should trace execute in event-emitter mode', async () => {
+      const events: TraceEvent<ExecuteTraceContext>[] = [];
+      const subscribers = collectEvents(events);
+
+      diagnostics_channel
+        .tracingChannel('mysql2:execute')
+        .subscribe(subscribers);
+      try {
+        const conn = createConnection();
+        await new Promise<void>((resolve, reject) => {
+          const cmd = conn.execute('SELECT ? + ? AS result', [1, 2]);
+          cmd.on('error', reject);
+          cmd.on('end', () => resolve());
+        });
+        conn.end();
+
+        const start = assertEvent(events, 'start');
+        assert.strictEqual(start.ctx.query, 'SELECT ? + ? AS result');
+        assert.deepStrictEqual(start.ctx.values, [1, 2]);
+        assertEvent(events, 'asyncEnd');
+      } finally {
+        diagnostics_channel
+          .tracingChannel('mysql2:execute')
+          .unsubscribe(subscribers);
+      }
+    });
+
+    it('should trace a failed execute in event-emitter mode', async () => {
+      const events: TraceEvent<ExecuteTraceContext>[] = [];
+      const subscribers = collectEvents(events);
+
+      diagnostics_channel
+        .tracingChannel('mysql2:execute')
+        .subscribe(subscribers);
+      try {
+        const conn = createConnection();
+        await new Promise<void>((resolve) => {
+          const cmd = conn.execute('SELECT * FROM nonexistent_table_xyz');
+          cmd.on('error', () => resolve());
+        });
+        conn.end();
+
+        assertEvent(events, 'start');
+        assertEvent(events, 'error');
       } finally {
         diagnostics_channel
           .tracingChannel('mysql2:execute')
