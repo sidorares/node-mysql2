@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  tests-tsc-build:
+  tests-build:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -36,3 +36,6 @@ jobs:
 
       - name: Testing TypeScript build
         run: npm run typecheck
+
+      - name: Testing Circular Imports
+        run: npm run test:build

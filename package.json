@@ -18,6 +18,7 @@
     "test:docker:deno": "npm run test:docker:up -- deno && npm run test:docker:down",
     "test:docker:coverage": "npm run test:docker:up -- coverage && npm run test:docker:down",
     "test:coverage": "c8 npm test",
+    "test:build": "rollup -c",
     "typecheck": "cd \"test/tsc-build\" && tsc -p \"tsconfig.json\" && cd .. && tsc -p \"tsconfig.json\" --noEmit",
     "benchmark": "node ./benchmarks/benchmark.js",
     "wait-port": "wait-on"
@@ -70,6 +71,9 @@
     "@eslint/markdown": "^7.5.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@pokujs/multi-suite": "^1.0.0",
+    "@rollup/plugin-commonjs": "^29.0.2",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/node": "^25.3.0",
     "@typescript-eslint/eslint-plugin": "^8.56.0",
     "@typescript-eslint/parser": "^8.56.0",
@@ -84,6 +88,7 @@
     "poku": "^4.1.0",
     "portfinder": "^1.0.38",
     "prettier": "^3.8.1",
+    "rollup": "^4.59.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }

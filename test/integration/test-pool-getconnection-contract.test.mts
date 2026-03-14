@@ -1,7 +1,13 @@
-import type { RowDataPacket } from '../../promise.js';
+import type {
+  PoolConnection as PoolConnectionContract,
+  RowDataPacket,
+} from '../../index.js';
 import { assert, describe, it } from 'poku';
 import driver from '../../index.js';
+import BaseConnection from '../../lib/base/connection.js';
 import BasePool from '../../lib/base/pool.js';
+import Connection from '../../lib/connection.js';
+import PoolConnection from '../../lib/pool_connection.js';
 import Pool from '../../lib/pool.js';
 import { config, createPool } from '../common.test.mjs';
 
@@ -38,6 +44,58 @@ await describe('Pool getConnection contract', async () => {
       BasePool.prototype.getConnection,
       'pool.getConnection should reference BasePool.prototype.getConnection'
     );
+  });
+
+  it('PoolConnection should derive from Connection (issue #3273)', () => {
+    assert.ok(
+      PoolConnection.prototype instanceof Connection,
+      'PoolConnection.prototype should be instanceof Connection'
+    );
+    assert.ok(
+      PoolConnection.prototype instanceof BaseConnection,
+      'PoolConnection.prototype should be instanceof BaseConnection'
+    );
+  });
+
+  it('should export Connection and PoolConnection as constructors', () => {
+    assert.strictEqual(
+      typeof driver.Connection,
+      'function',
+      'driver.Connection should be a constructor'
+    );
+    assert.strictEqual(
+      typeof driver.PoolConnection,
+      'function',
+      'driver.PoolConnection should be a constructor'
+    );
+  });
+
+  it('exported PoolConnection should derive from exported Connection (issue #3273)', () => {
+    assert.ok(
+      driver.PoolConnection.prototype instanceof driver.Connection,
+      'driver.PoolConnection.prototype should be instanceof driver.Connection'
+    );
+  });
+
+  await it('pool connection instance should be instanceof Connection', async () => {
+    const conn = await new Promise<PoolConnectionContract>(
+      (resolve, reject) => {
+        pool.getConnection((err, conn) => {
+          if (err) return reject(err);
+          resolve(conn);
+        });
+      }
+    );
+
+    assert.ok(
+      conn instanceof Connection,
+      'conn should be instanceof Connection'
+    );
+    assert.ok(
+      conn instanceof PoolConnection,
+      'conn should be instanceof PoolConnection'
+    );
+    conn.release();
   });
 
   await it('should acquire and release a connection', async () => {
