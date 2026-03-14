@@ -16,12 +16,12 @@ mysql2 provides built-in instrumentation via Node.js [`TracingChannel`](https://
 
 mysql2 emits events on four tracing channels:
 
-| Channel | Fires when | Context type |
-|---|---|---|
-| `mysql2:query` | `connection.query()` is called | `QueryTraceContext` |
-| `mysql2:execute` | `connection.execute()` is called (prepared statements) | `ExecuteTraceContext` |
-| `mysql2:connect` | A new connection handshake completes (or fails) | `ConnectTraceContext` |
-| `mysql2:pool:connect` | `pool.getConnection()` is called | `PoolConnectTraceContext` |
+| Channel               | Fires when                                             | Context type              |
+| --------------------- | ------------------------------------------------------ | ------------------------- |
+| `mysql2:query`        | `connection.query()` is called                         | `QueryTraceContext`       |
+| `mysql2:execute`      | `connection.execute()` is called (prepared statements) | `ExecuteTraceContext`     |
+| `mysql2:connect`      | A new connection handshake completes (or fails)        | `ConnectTraceContext`     |
+| `mysql2:pool:connect` | `pool.getConnection()` is called                       | `PoolConnectTraceContext` |
 
 Each channel emits the standard `TracingChannel` lifecycle events: `start`, `end`, `asyncStart`, `asyncEnd`, and `error`.
 
@@ -33,10 +33,10 @@ All context types are exported from the `mysql2` package for TypeScript consumer
 
 ```ts
 interface QueryTraceContext {
-  query: string;              // The SQL query text
-  values: any;                // Bind parameter values
-  database: string;           // Target database name
-  serverAddress: string;      // Server host or socket path
+  query: string; // The SQL query text
+  values: any; // Bind parameter values
+  database: string; // Target database name
+  serverAddress: string; // Server host or socket path
   serverPort: number | undefined; // Server port (undefined for unix sockets)
 }
 ```
@@ -45,10 +45,10 @@ interface QueryTraceContext {
 
 ```ts
 interface ExecuteTraceContext {
-  query: string;              // The prepared statement SQL
-  values: any;                // Bind parameter values
-  database: string;           // Target database name
-  serverAddress: string;      // Server host or socket path
+  query: string; // The prepared statement SQL
+  values: any; // Bind parameter values
+  database: string; // Target database name
+  serverAddress: string; // Server host or socket path
   serverPort: number | undefined; // Server port (undefined for unix sockets)
 }
 ```
@@ -57,10 +57,10 @@ interface ExecuteTraceContext {
 
 ```ts
 interface ConnectTraceContext {
-  database: string;           // Target database name
-  serverAddress: string;      // Server host or socket path
+  database: string; // Target database name
+  serverAddress: string; // Server host or socket path
   serverPort: number | undefined; // Server port (undefined for unix sockets)
-  user: string;               // MySQL user
+  user: string; // MySQL user
 }
 ```
 
@@ -68,8 +68,8 @@ interface ConnectTraceContext {
 
 ```ts
 interface PoolConnectTraceContext {
-  database: string;           // Target database name
-  serverAddress: string;      // Server host or socket path
+  database: string; // Target database name
+  serverAddress: string; // Server host or socket path
   serverPort: number | undefined; // Server port (undefined for unix sockets)
 }
 ```
@@ -169,7 +169,9 @@ const connectChannel = diagnostics_channel.tracingChannel('mysql2:connect');
 
 connectChannel.subscribe({
   start(ctx) {
-    console.log(`Connecting to ${ctx.serverAddress}:${ctx.serverPort} as ${ctx.user}`);
+    console.log(
+      `Connecting to ${ctx.serverAddress}:${ctx.serverPort} as ${ctx.user}`
+    );
   },
   end() {},
   asyncStart() {},
@@ -191,7 +193,9 @@ const poolChannel = diagnostics_channel.tracingChannel('mysql2:pool:connect');
 
 poolChannel.subscribe({
   start(ctx) {
-    console.log(`Pool acquiring connection to ${ctx.serverAddress}:${ctx.serverPort}`);
+    console.log(
+      `Pool acquiring connection to ${ctx.serverAddress}:${ctx.serverPort}`
+    );
   },
   end() {},
   asyncStart() {},
@@ -234,7 +238,9 @@ function subscribeChannel(name) {
       const span = activeSpans.get(ctx);
       if (span) {
         const duration = Number(process.hrtime.bigint() - span.startTime) / 1e6;
-        console.log(`[${span.channel}] ${span.query || 'connect'} - ${duration.toFixed(1)}ms`);
+        console.log(
+          `[${span.channel}] ${span.query || 'connect'} - ${duration.toFixed(1)}ms`
+        );
         activeSpans.delete(ctx);
       }
     },
@@ -242,7 +248,9 @@ function subscribeChannel(name) {
       const span = activeSpans.get(ctx);
       if (span) {
         const duration = Number(process.hrtime.bigint() - span.startTime) / 1e6;
-        console.error(`[${span.channel}] FAILED ${span.query || 'connect'} - ${duration.toFixed(1)}ms: ${ctx.error.message}`);
+        console.error(
+          `[${span.channel}] FAILED ${span.query || 'connect'} - ${duration.toFixed(1)}ms: ${ctx.error.message}`
+        );
         activeSpans.delete(ctx);
       }
     },
@@ -279,11 +287,17 @@ Always unsubscribe when you're done to prevent memory leaks:
 
 ```js
 const subscribers = {
-  start(ctx) { /* ... */ },
+  start(ctx) {
+    /* ... */
+  },
   end() {},
   asyncStart() {},
-  asyncEnd(ctx) { /* ... */ },
-  error(ctx) { /* ... */ },
+  asyncEnd(ctx) {
+    /* ... */
+  },
+  error(ctx) {
+    /* ... */
+  },
 };
 
 const channel = diagnostics_channel.tracingChannel('mysql2:query');
