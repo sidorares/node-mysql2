@@ -7,33 +7,23 @@ on:
 
   workflow_dispatch:
 
-env:
-  MYSQL_PORT: 3306
-  MYSQL_USER: root
-  MYSQL_DATABASE: test
-
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [22]
-        mysql-version: ['mysql:8.0.18']
-        use-compression: [0]
-        use-tls: [0]
 
-    name: Performance regression check
+    name: Performance benchmark
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history is needed so we can check out the base branch for
+          # ratio-based comparison on pull requests.
+          fetch-depth: 0
 
-      # - name: Set up MySQL
-      #   run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=${{ env.MYSQL_PASSWORD }} -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/test/fixtures/custom-conf:/etc/mysql/conf.d -v $PWD/test/fixtures/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
-      - name: Set up Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22
 
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -42,16 +32,45 @@ jobs:
           key: npm-linux-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-linux-
 
-      - name: Install npm dependencies
+      - name: Install dependencies
         run: npm ci
 
-      # - name: Wait mysql server is ready
-      #   run: node tools/wait-up.js
+      # ── Current branch / commit ──────────────────────────────────────────
+      - name: Run benchmark (current)
+        run: node benchmarks/benchmark.js | tee current.txt
 
-      - name: Run benchmark
-        run: node benchmarks/benchmark.js | tee output.txt
+      # ── Baseline: base branch (PRs only) ────────────────────────────────
+      # Both baseline and current run on the same runner so the ratio is
+      # stable regardless of how busy the GitHub-hosted runner pool is.
+      - name: Check out base branch for baseline measurement
+        if: github.event_name == 'pull_request'
+        run: git checkout ${{ github.event.pull_request.base.sha }}
 
+      - name: Install base-branch dependencies
+        if: github.event_name == 'pull_request'
+        run: npm ci --prefer-offline
+
+      - name: Run benchmark (baseline)
+        if: github.event_name == 'pull_request'
+        run: node benchmarks/benchmark.js | tee baseline.txt
+
+      - name: Restore PR branch
+        if: github.event_name == 'pull_request'
+        run: git checkout ${{ github.sha }}
+
+      # ── Ratio comparison (PRs only) ──────────────────────────────────────
+      # Writes a Markdown table to the job summary – no GitHub token write
+      # permissions required, so this works for PRs from forks as well.
+      - name: Compare benchmarks and write job summary
+        if: github.event_name == 'pull_request'
+        run: node benchmarks/compare.js baseline.txt current.txt | tee -a "$GITHUB_STEP_SUMMARY"
+        # compare.js exits 1 on regression > 15 %; do NOT fail the CI job on
+        # that – the summary already highlights the problem clearly.
+        continue-on-error: true
+
+      # ── Historical trend tracking (push to master only) ──────────────────
       - name: Download previous benchmark data
+        if: github.event_name != 'pull_request'
         uses: actions/cache@v4
         with:
           path: ./cache
@@ -60,13 +79,14 @@ jobs:
             ${{ runner.os }}-benchmark-
 
       - name: Store benchmark result
+        if: github.event_name != 'pull_request'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: 'benchmarkjs'
-          output-file-path: output.txt
+          output-file-path: current.txt
           external-data-json-path: ./cache/benchmark-data.json
           fail-on-alert: false
           auto-push: false
           alert-threshold: '115%'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          comment-on-alert: true
+          comment-on-alert: false
