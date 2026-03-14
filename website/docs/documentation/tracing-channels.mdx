@@ -1,0 +1,333 @@
+---
+tags: [Tracing, Diagnostics, TracingChannel, APM, Observability]
+---
+
+# Tracing Channels
+
+mysql2 provides built-in instrumentation via Node.js [`TracingChannel`](https://nodejs.org/api/diagnostics_channel.html#class-tracingchannel) from the `node:diagnostics_channel` module. This allows APM tools and custom instrumentation to subscribe to query, execute, connect, and pool lifecycle events natively.
+
+:::info Requires Node.js 19.9+ or 20+
+
+`TracingChannel` is available in Node.js 19.9+, 20+, and was backported to later Node.js 18.x releases. On older versions where `TracingChannel` is not available, tracing is silently disabled with no overhead.
+
+:::
+
+## Channels
+
+mysql2 emits events on four tracing channels:
+
+| Channel               | Fires when                                             | Context type              |
+| --------------------- | ------------------------------------------------------ | ------------------------- |
+| `mysql2:query`        | `connection.query()` is called                         | `QueryTraceContext`       |
+| `mysql2:execute`      | `connection.execute()` is called (prepared statements) | `ExecuteTraceContext`     |
+| `mysql2:connect`      | A new connection handshake completes (or fails)        | `ConnectTraceContext`     |
+| `mysql2:pool:connect` | `pool.getConnection()` is called                       | `PoolConnectTraceContext` |
+
+Each channel emits the standard `TracingChannel` lifecycle events: `start`, `end`, `asyncStart`, `asyncEnd`, and `error`.
+
+## Context Types
+
+All context types are exported from the `mysql2` package for TypeScript consumers.
+
+### QueryTraceContext
+
+```ts
+interface QueryTraceContext {
+  query: string; // The SQL query text
+  values: any; // Bind parameter values
+  database: string; // Target database name
+  serverAddress: string; // Server host or socket path
+  serverPort: number | undefined; // Server port (undefined for unix sockets)
+}
+```
+
+### ExecuteTraceContext
+
+```ts
+interface ExecuteTraceContext {
+  query: string; // The prepared statement SQL
+  values: any; // Bind parameter values
+  database: string; // Target database name
+  serverAddress: string; // Server host or socket path
+  serverPort: number | undefined; // Server port (undefined for unix sockets)
+}
+```
+
+### ConnectTraceContext
+
+```ts
+interface ConnectTraceContext {
+  database: string; // Target database name
+  serverAddress: string; // Server host or socket path
+  serverPort: number | undefined; // Server port (undefined for unix sockets)
+  user: string; // MySQL user
+}
+```
+
+### PoolConnectTraceContext
+
+```ts
+interface PoolConnectTraceContext {
+  database: string; // Target database name
+  serverAddress: string; // Server host or socket path
+  serverPort: number | undefined; // Server port (undefined for unix sockets)
+}
+```
+
+## Basic Usage
+
+Subscribe to a channel using the standard `node:diagnostics_channel` API:
+
+```js
+const diagnostics_channel = require('node:diagnostics_channel');
+
+const queryChannel = diagnostics_channel.tracingChannel('mysql2:query');
+
+queryChannel.subscribe({
+  start(ctx) {
+    console.log(`Query started: ${ctx.query}`);
+    console.log(`  database: ${ctx.database}`);
+    console.log(`  server: ${ctx.serverAddress}:${ctx.serverPort}`);
+  },
+  end() {},
+  asyncStart() {},
+  asyncEnd(ctx) {
+    console.log(`Query completed: ${ctx.query}`);
+  },
+  error(ctx) {
+    console.log(`Query failed: ${ctx.query}`, ctx.error.message);
+  },
+});
+```
+
+## Tracing Queries
+
+```js
+const diagnostics_channel = require('node:diagnostics_channel');
+const mysql = require('mysql2');
+
+// Subscribe to query events
+const queryChannel = diagnostics_channel.tracingChannel('mysql2:query');
+
+queryChannel.subscribe({
+  start(ctx) {
+    // Called synchronously when query() is invoked
+    // ctx.query  - SQL text
+    // ctx.values - bind parameters
+    ctx.startTime = Date.now();
+  },
+  end() {},
+  asyncStart() {},
+  asyncEnd(ctx) {
+    // Called when the query callback fires successfully
+    const duration = Date.now() - ctx.startTime;
+    console.log(`[${duration}ms] ${ctx.query}`);
+  },
+  error(ctx) {
+    // Called when the query fails
+    const duration = Date.now() - ctx.startTime;
+    console.error(`[${duration}ms] FAILED: ${ctx.query}`, ctx.error.message);
+  },
+});
+
+// Queries are now automatically traced
+const connection = mysql.createConnection({ host: 'localhost', user: 'root' });
+
+connection.query('SELECT 1 + 1 AS result', (err, rows) => {
+  // The subscriber above logs: "[2ms] SELECT 1 + 1 AS result"
+});
+```
+
+## Tracing Prepared Statements
+
+```js
+const diagnostics_channel = require('node:diagnostics_channel');
+
+const executeChannel = diagnostics_channel.tracingChannel('mysql2:execute');
+
+executeChannel.subscribe({
+  start(ctx) {
+    console.log(`Execute: ${ctx.query} values=${JSON.stringify(ctx.values)}`);
+  },
+  end() {},
+  asyncStart() {},
+  asyncEnd(ctx) {
+    console.log(`Execute completed: ${ctx.query}`);
+  },
+  error(ctx) {
+    console.error(`Execute failed: ${ctx.query}`, ctx.error.message);
+  },
+});
+```
+
+## Tracing Connections
+
+```js
+const diagnostics_channel = require('node:diagnostics_channel');
+
+const connectChannel = diagnostics_channel.tracingChannel('mysql2:connect');
+
+connectChannel.subscribe({
+  start(ctx) {
+    console.log(
+      `Connecting to ${ctx.serverAddress}:${ctx.serverPort} as ${ctx.user}`
+    );
+  },
+  end() {},
+  asyncStart() {},
+  asyncEnd(ctx) {
+    console.log(`Connected to ${ctx.serverAddress}:${ctx.serverPort}`);
+  },
+  error(ctx) {
+    console.error(`Connection failed:`, ctx.error.message);
+  },
+});
+```
+
+## Tracing Pool Connections
+
+```js
+const diagnostics_channel = require('node:diagnostics_channel');
+
+const poolChannel = diagnostics_channel.tracingChannel('mysql2:pool:connect');
+
+poolChannel.subscribe({
+  start(ctx) {
+    console.log(
+      `Pool acquiring connection to ${ctx.serverAddress}:${ctx.serverPort}`
+    );
+  },
+  end() {},
+  asyncStart() {},
+  asyncEnd(ctx) {
+    console.log(`Pool connection acquired`);
+  },
+  error(ctx) {
+    console.error(`Pool connection failed:`, ctx.error.message);
+  },
+});
+```
+
+## Building Custom Spans
+
+A common use case is creating spans for APM tools. Here's a complete example using only the `node:diagnostics_channel` API to build a simple query logger with timing:
+
+```js
+const diagnostics_channel = require('node:diagnostics_channel');
+const mysql = require('mysql2');
+
+// Track all active spans
+const activeSpans = new WeakMap();
+
+function subscribeChannel(name) {
+  const channel = diagnostics_channel.tracingChannel(name);
+
+  channel.subscribe({
+    start(ctx) {
+      activeSpans.set(ctx, {
+        channel: name,
+        query: ctx.query || null,
+        database: ctx.database,
+        server: `${ctx.serverAddress}:${ctx.serverPort}`,
+        startTime: process.hrtime.bigint(),
+      });
+    },
+    end() {},
+    asyncStart() {},
+    asyncEnd(ctx) {
+      const span = activeSpans.get(ctx);
+      if (span) {
+        const duration = Number(process.hrtime.bigint() - span.startTime) / 1e6;
+        console.log(
+          `[${span.channel}] ${span.query || 'connect'} - ${duration.toFixed(1)}ms`
+        );
+        activeSpans.delete(ctx);
+      }
+    },
+    error(ctx) {
+      const span = activeSpans.get(ctx);
+      if (span) {
+        const duration = Number(process.hrtime.bigint() - span.startTime) / 1e6;
+        console.error(
+          `[${span.channel}] FAILED ${span.query || 'connect'} - ${duration.toFixed(1)}ms: ${ctx.error.message}`
+        );
+        activeSpans.delete(ctx);
+      }
+    },
+  });
+}
+
+// Subscribe to all channels
+subscribeChannel('mysql2:query');
+subscribeChannel('mysql2:execute');
+subscribeChannel('mysql2:connect');
+subscribeChannel('mysql2:pool:connect');
+
+// All mysql2 operations are now traced
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+connection.query('SELECT * FROM users WHERE id = ?', [1], (err, rows) => {
+  // Logs: [mysql2:query] SELECT * FROM users WHERE id = ? - 3.2ms
+});
+```
+
+## Zero-Cost When Unused
+
+When no subscribers are attached to a channel, mysql2 skips the tracing code path entirely. There is no performance overhead for applications that don't use tracing.
+
+On Node.js 20+, the `hasSubscribers` check on `TracingChannel` enables this zero-cost optimization. On Node.js 18.x, tracing channels are supported but the optimization is not available — operations go through the tracing path unconditionally (with negligible overhead when no subscribers are listening).
+
+## Cleanup
+
+Always unsubscribe when you're done to prevent memory leaks:
+
+```js
+const subscribers = {
+  start(ctx) {
+    /* ... */
+  },
+  end() {},
+  asyncStart() {},
+  asyncEnd(ctx) {
+    /* ... */
+  },
+  error(ctx) {
+    /* ... */
+  },
+};
+
+const channel = diagnostics_channel.tracingChannel('mysql2:query');
+channel.subscribe(subscribers);
+
+// Later, when done:
+channel.unsubscribe(subscribers);
+```
+
+## TypeScript
+
+Context types are exported from the `mysql2` package:
+
+```ts
+import type {
+  QueryTraceContext,
+  ExecuteTraceContext,
+  ConnectTraceContext,
+  PoolConnectTraceContext,
+} from 'mysql2';
+import diagnostics_channel from 'node:diagnostics_channel';
+
+const channel = diagnostics_channel.tracingChannel('mysql2:query');
+channel.subscribe({
+  start(ctx: QueryTraceContext) {
+    console.log(ctx.query, ctx.database);
+  },
+  end() {},
+  asyncStart() {},
+  asyncEnd() {},
+  error() {},
+});
+```

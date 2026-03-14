@@ -82,3 +82,10 @@ export interface ConnectionConfig extends ConnectionOptions {
 }
 
 export function createServer(handler: (conn: BaseConnection) => any): Server;
+
+export type {
+  QueryTraceContext,
+  ExecuteTraceContext,
+  ConnectTraceContext,
+  PoolConnectTraceContext,
+} from '../../lib/tracing.js';
