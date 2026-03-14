@@ -9,6 +9,8 @@ import BasePool from '../../lib/base/pool.js';
 import Connection from '../../lib/connection.js';
 import PoolConnection from '../../lib/pool_connection.js';
 import Pool from '../../lib/pool.js';
+import PromiseConnection from '../../lib/promise/connection.js';
+import PromisePoolConnection from '../../lib/promise/pool_connection.js';
 import { config, createPool } from '../common.test.mjs';
 
 await describe('Pool getConnection contract', async () => {
@@ -165,6 +167,34 @@ await describe('Pool getConnection contract', async () => {
   });
 
   await pool.promise().end();
+});
+
+await describe('Promise Pool getConnection contract', async () => {
+  const pool = createPool({ connectionLimit: 1 });
+  const promisePool = pool.promise();
+
+  it('PromisePoolConnection should derive from PromiseConnection', () => {
+    assert.ok(
+      PromisePoolConnection.prototype instanceof PromiseConnection,
+      'PromisePoolConnection.prototype should be instanceof PromiseConnection'
+    );
+  });
+
+  await it('promise pool connection instance should be instanceof PromiseConnection', async () => {
+    const conn = await promisePool.getConnection();
+
+    assert.ok(
+      conn instanceof PromiseConnection,
+      'conn should be instanceof PromiseConnection'
+    );
+    assert.ok(
+      conn instanceof PromisePoolConnection,
+      'conn should be instanceof PromisePoolConnection'
+    );
+    conn.release();
+  });
+
+  await promisePool.end();
 });
 
 await describe('Pool getConnection edge cases', async () => {
