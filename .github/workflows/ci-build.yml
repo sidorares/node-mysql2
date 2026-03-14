@@ -1,4 +1,4 @@
-name: CI - TypeScript Build
+name: CI - Build
 
 on:
   pull_request:
