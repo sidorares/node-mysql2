@@ -59,16 +59,19 @@ await describe('TracingChannel', async () => {
       diagnostics_channel.tracingChannel('mysql2:query').subscribe(subscribers);
 
       await it('should trace a successful query with callback', async () => {
-        await new Promise<void>((resolve, reject) => {
-          conn.query(
-            'SELECT 1 + 1 AS result',
-            (err: Error | null, results: RowDataPacket[]) => {
-              if (err) return reject(err);
-              assert.strictEqual(results[0].result, 2);
-              resolve();
-            }
-          );
-        });
+        const results = await new Promise<RowDataPacket[]>(
+          (resolve, reject) => {
+            conn.query(
+              'SELECT 1 + 1 AS result',
+              (err: Error | null, results: RowDataPacket[]) => {
+                if (err) return reject(err);
+                resolve(results);
+              }
+            );
+          }
+        );
+
+        assert.strictEqual(results[0].result, 2);
 
         const start = assertEvent(events, 'start');
 
@@ -96,15 +99,16 @@ await describe('TracingChannel', async () => {
       diagnostics_channel.tracingChannel('mysql2:query').subscribe(subscribers);
 
       await it('should trace a failed query', async () => {
-        await new Promise<void>((resolve) => {
+        const err = await new Promise<Error | null>((resolve) => {
           conn.query(
             'SELECT * FROM nonexistent_table_xyz',
             (err: Error | null) => {
-              assert(err, 'should receive an error');
-              resolve();
+              resolve(err);
             }
           );
         });
+
+        assert(err, 'should receive an error');
 
         assertEvent(events, 'error');
       });
@@ -175,17 +179,20 @@ await describe('TracingChannel', async () => {
         .subscribe(subscribers);
 
       await it('should trace a successful prepared statement execution', async () => {
-        await new Promise<void>((resolve, reject) => {
-          conn.execute(
-            'SELECT ? + ? AS result',
-            [1, 2],
-            (err: Error | null, results: RowDataPacket[]) => {
-              if (err) return reject(err);
-              assert.strictEqual(results[0].result, 3);
-              resolve();
-            }
-          );
-        });
+        const results = await new Promise<RowDataPacket[]>(
+          (resolve, reject) => {
+            conn.execute(
+              'SELECT ? + ? AS result',
+              [1, 2],
+              (err: Error | null, results: RowDataPacket[]) => {
+                if (err) return reject(err);
+                resolve(results);
+              }
+            );
+          }
+        );
+
+        assert.strictEqual(results[0].result, 3);
 
         const start = assertEvent(events, 'start');
 
@@ -266,15 +273,16 @@ await describe('TracingChannel', async () => {
         .subscribe(subscribers);
 
       await it('should trace a failed prepared statement', async () => {
-        await new Promise<void>((resolve) => {
+        const err = await new Promise<Error | null>((resolve) => {
           conn.execute(
             'SELECT * FROM nonexistent_table_xyz',
             (err: Error | null) => {
-              assert(err, 'should receive an error');
-              resolve();
+              resolve(err);
             }
           );
         });
+
+        assert(err, 'should receive an error');
 
         assertEvent(events, 'error');
       });
@@ -412,16 +420,17 @@ await describe('TracingChannel', async () => {
     const conn = createConnection();
 
     await it('should work normally without any tracing subscribers', async () => {
-      await new Promise<void>((resolve, reject) => {
+      const results = await new Promise<RowDataPacket[]>((resolve, reject) => {
         conn.query(
           'SELECT 1 + 1 AS result',
           (err: Error | null, results: RowDataPacket[]) => {
             if (err) return reject(err);
-            assert.strictEqual(results[0].result, 2);
-            resolve();
+            resolve(results);
           }
         );
       });
+
+      assert.strictEqual(results[0].result, 2);
     });
 
     conn.end();
