@@ -86,4 +86,4 @@ export type {
   ExecuteTraceContext,
   ConnectTraceContext,
   PoolConnectTraceContext,
-} from '../../lib/tracing.js';
+} from './lib/Tracing.js';

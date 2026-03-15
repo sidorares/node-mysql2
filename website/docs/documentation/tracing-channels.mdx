@@ -1,16 +1,25 @@
 ---
-tags: [Tracing, Diagnostics, TracingChannel, APM, Observability]
+tags: [Tracing, Diagnostics, TracingChannel, APM, Observability, OpenTelemetry]
 ---
+
+import { History } from '@site/src/components/History';
 
 # Tracing Channels
 
-mysql2 provides built-in instrumentation via Node.js [`TracingChannel`](https://nodejs.org/api/diagnostics_channel.html#class-tracingchannel) from the `node:diagnostics_channel` module. This allows APM tools and custom instrumentation to subscribe to query, execute, connect, and pool lifecycle events natively.
+mysql2 provides built-in instrumentation via Node.js [`TracingChannel`](https://nodejs.org/api/diagnostics_channel.html#class-tracingchannel) from the `node:diagnostics_channel` module. This allows APM tools (OpenTelemetry, Datadog, Sentry, etc.) and custom instrumentation to subscribe to query, execute, connect, and pool lifecycle events without monkey-patching.
 
-:::info Requires Node.js 19.9+ or 20+
-
-`TracingChannel` is available in Node.js 19.9+, 20+, and was backported to later Node.js 18.x releases. On older versions where `TracingChannel` is not available, tracing is silently disabled with no overhead.
-
+:::info Available in Node.js 20+
+`TracingChannel` is available in Node.js 20+. On older versions where `TracingChannel` is not available, tracing is silently disabled with no overhead.
 :::
+
+<History
+  records={[
+    {
+      version: '4.20.0',
+      changes: ['Added TracingChannel support for native APM instrumentation.'],
+    },
+  ]}
+/>
 
 ## Channels
 
@@ -277,9 +286,9 @@ connection.query('SELECT * FROM users WHERE id = ?', [1], (err, rows) => {
 
 ## Zero-Cost When Unused
 
-When no subscribers are attached to a channel, mysql2 skips the tracing code path entirely. There is no performance overhead for applications that don't use tracing.
+When no subscribers are attached to a channel, mysql2 skips the tracing code path entirely via `hasSubscribers` checks before any context objects are allocated. There is no performance overhead for applications that don't use tracing.
 
-On Node.js 20+, the `hasSubscribers` check on `TracingChannel` enables this zero-cost optimization. On Node.js 18.x, tracing channels are supported but the optimization is not available — operations go through the tracing path unconditionally (with negligible overhead when no subscribers are listening).
+On Node.js versions where `TracingChannel` is not available (e.g. Node 18), tracing is silently disabled with zero overhead.
 
 ## Cleanup
 
