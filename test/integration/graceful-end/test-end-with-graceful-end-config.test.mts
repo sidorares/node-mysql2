@@ -30,4 +30,26 @@ await describe('Pool end with gracefulEnd config', async () => {
     strict(!warningEmitted, 'Warning should not be emitted');
     strict(callbackInvoked, 'Callback should be invoked');
   });
+
+  await it('should remove connection from pool when gracefulEnd is true', async () => {
+    const pool = createPool({ gracefulEnd: true });
+
+    await new Promise<void>((resolve, reject) => {
+      pool.getConnection((err: Error | null, connection: PoolConnection) => {
+        if (err) return reject(err);
+
+        // @ts-expect-error: internal access
+        strict(pool._allConnections.length === 1, 'should have 1 connection');
+
+        connection.end(() => {
+          strict(
+            // @ts-expect-error: internal access
+            pool._allConnections.length === 0,
+            'connection should be removed from pool'
+          );
+          pool.end(() => resolve());
+        });
+      });
+    });
+  });
 });
