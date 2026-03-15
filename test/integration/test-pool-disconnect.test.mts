@@ -109,6 +109,6 @@ await describe('Pool recovery after disconnect', async () => {
     );
   });
 
-  killer.end();
-  pool.end();
+  await killer.promise().end();
+  await pool.promise().end();
 });

@@ -9,47 +9,67 @@ import { createPool } from '../../common.test.mjs';
  */
 
 await describe('Pool end with gracefulEnd config', async () => {
-  await it('should not emit deprecation warning when gracefulEnd is true', async () => {
+  await describe('should not emit deprecation warning when gracefulEnd is true', async () => {
     const pool = createPool({ gracefulEnd: true });
     let warningEmitted = false;
     let callbackInvoked = false;
 
-    await new Promise<void>((resolve) => {
-      pool.getConnection((_err1: Error | null, connection: PoolConnection) => {
-        connection.on('warn', () => {
-          warningEmitted = true;
-        });
-
-        connection.end(() => {
-          callbackInvoked = true;
-        });
-        pool.end(() => resolve());
+    const connection = await new Promise<PoolConnection>((resolve, reject) => {
+      pool.getConnection((err: Error | null, conn: PoolConnection) => {
+        if (err) return reject(err);
+        resolve(conn);
       });
     });
 
-    strict(!warningEmitted, 'Warning should not be emitted');
-    strict(callbackInvoked, 'Callback should be invoked');
+    connection.on('warn', () => {
+      warningEmitted = true;
+    });
+
+    await new Promise<void>((resolve) => {
+      connection.end(() => {
+        callbackInvoked = true;
+        resolve();
+      });
+    });
+
+    it('should not have emitted a warning', () => {
+      strict(!warningEmitted, 'Warning should not be emitted');
+    });
+
+    it('should have invoked the callback', () => {
+      strict(callbackInvoked, 'Callback should be invoked');
+    });
+
+    await pool.promise().end();
   });
 
-  await it('should remove connection from pool when gracefulEnd is true', async () => {
+  await describe('should remove connection from pool when gracefulEnd is true', async () => {
     const pool = createPool({ gracefulEnd: true });
 
-    await new Promise<void>((resolve, reject) => {
-      pool.getConnection((err: Error | null, connection: PoolConnection) => {
+    const connection = await new Promise<PoolConnection>((resolve, reject) => {
+      pool.getConnection((err: Error | null, conn: PoolConnection) => {
         if (err) return reject(err);
-
-        // @ts-expect-error: internal access
-        strict(pool._allConnections.length === 1, 'should have 1 connection');
-
-        connection.end(() => {
-          strict(
-            // @ts-expect-error: internal access
-            pool._allConnections.length === 0,
-            'connection should be removed from pool'
-          );
-          pool.end(() => resolve());
-        });
+        resolve(conn);
       });
     });
+
+    it('should have 1 connection in pool', () => {
+      // @ts-expect-error: internal access
+      strict(pool._allConnections.length === 1, 'should have 1 connection');
+    });
+
+    await new Promise<void>((resolve) => {
+      connection.end(() => resolve());
+    });
+
+    it('should have removed connection from pool', () => {
+      strict(
+        // @ts-expect-error: internal access
+        pool._allConnections.length === 0,
+        'connection should be removed from pool'
+      );
+    });
+
+    await pool.promise().end();
   });
 });

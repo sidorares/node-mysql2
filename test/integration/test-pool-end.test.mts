@@ -33,7 +33,7 @@ await describe('Pool End', async () => {
   pool.end();
 });
 
-await describe('Pool end via _realEnd', async () => {
+await describe('Pool end should close all connections and mark as closed', async () => {
   const pool = createPool();
 
   await it('should close all connections and mark pool as closed', async () => {
