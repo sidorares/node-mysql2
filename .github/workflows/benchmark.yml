@@ -9,6 +9,8 @@ on:
       - 'tools/**'
       - 'index.js'
       - 'promise.js'
+      - 'package.json'
+      - 'package-lock.json'
   push:
     branches: [master]
 

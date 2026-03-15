@@ -6,6 +6,7 @@ on:
       - '.github/workflows/ci-mysql.yml'
       - 'lib/**'
       - 'test/**'
+      - 'tools/**'
       - 'index.js'
       - 'promise.js'
       - 'poku.config.js'
