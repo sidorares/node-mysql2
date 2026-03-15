@@ -52,7 +52,7 @@ Separate creation/cleanup into an outer scope:
 ```ts
 // ❌ Wrong — end() in the same scope as the assertion
 await describe('test', async () => {
-  it('should do something', async () => {
+  await it('should do something', async () => {
     const connection = await createConnection();
     assert(false);
     await connection.end(); // never reached
@@ -62,7 +62,7 @@ await describe('test', async () => {
 
 // ❌ Wrong — try-finally is a workaround, not a fix
 await describe('test', async () => {
-  it('should do something', async () => {
+  await it('should do something', async () => {
     const connection = await createConnection();
     try {
       assert(false);
