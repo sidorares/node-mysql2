@@ -18,7 +18,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['website/'],
+    ignores: ['node_modules/', 'website/', 'test/circular/dist.mjs'],
   },
   ...compat.extends('eslint:recommended', 'plugin:prettier/recommended'),
   {

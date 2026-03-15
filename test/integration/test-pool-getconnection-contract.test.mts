@@ -1,8 +1,18 @@
-import type { RowDataPacket } from '../../promise.js';
+import type {
+  PoolConnection as PoolConnectionContract,
+  RowDataPacket,
+} from '../../index.js';
 import { assert, describe, it } from 'poku';
+import driver from '../../index.js';
+import BaseConnection from '../../lib/base/connection.js';
 import BasePool from '../../lib/base/pool.js';
+import Connection from '../../lib/connection.js';
+import PoolConnection from '../../lib/pool_connection.js';
 import Pool from '../../lib/pool.js';
-import { createPool } from '../common.test.mjs';
+import PromiseConnection from '../../lib/promise/connection.js';
+import PromisePoolConnection from '../../lib/promise/pool_connection.js';
+import promiseDriver from '../../promise.js';
+import { config, createPool } from '../common.test.mjs';
 
 await describe('Pool getConnection contract', async () => {
   const pool = createPool({ connectionLimit: 2 });
@@ -37,6 +47,58 @@ await describe('Pool getConnection contract', async () => {
       BasePool.prototype.getConnection,
       'pool.getConnection should reference BasePool.prototype.getConnection'
     );
+  });
+
+  it('PoolConnection should derive from Connection (issue #3273)', () => {
+    assert.ok(
+      PoolConnection.prototype instanceof Connection,
+      'PoolConnection.prototype should be instanceof Connection'
+    );
+    assert.ok(
+      PoolConnection.prototype instanceof BaseConnection,
+      'PoolConnection.prototype should be instanceof BaseConnection'
+    );
+  });
+
+  it('should export Connection and PoolConnection as constructors', () => {
+    assert.strictEqual(
+      typeof driver.Connection,
+      'function',
+      'driver.Connection should be a constructor'
+    );
+    assert.strictEqual(
+      typeof driver.PoolConnection,
+      'function',
+      'driver.PoolConnection should be a constructor'
+    );
+  });
+
+  it('exported PoolConnection should derive from exported Connection (issue #3273)', () => {
+    assert.ok(
+      driver.PoolConnection.prototype instanceof driver.Connection,
+      'driver.PoolConnection.prototype should be instanceof driver.Connection'
+    );
+  });
+
+  await it('pool connection instance should be instanceof Connection', async () => {
+    const conn = await new Promise<PoolConnectionContract>(
+      (resolve, reject) => {
+        pool.getConnection((err, conn) => {
+          if (err) return reject(err);
+          resolve(conn);
+        });
+      }
+    );
+
+    assert.ok(
+      conn instanceof Connection,
+      'conn should be instanceof Connection'
+    );
+    assert.ok(
+      conn instanceof PoolConnection,
+      'conn should be instanceof PoolConnection'
+    );
+    conn.release();
   });
 
   await it('should acquire and release a connection', async () => {
@@ -106,4 +168,136 @@ await describe('Pool getConnection contract', async () => {
   });
 
   await pool.promise().end();
+});
+
+await describe('Promise Pool getConnection contract', async () => {
+  const pool = createPool({ connectionLimit: 1 });
+  const promisePool = pool.promise();
+
+  it('PromisePoolConnection should derive from PromiseConnection', () => {
+    assert.ok(
+      PromisePoolConnection.prototype instanceof PromiseConnection,
+      'PromisePoolConnection.prototype should be instanceof PromiseConnection'
+    );
+  });
+
+  await it('promise pool connection instance should be instanceof PromiseConnection', async () => {
+    const conn = await promisePool.getConnection();
+
+    assert.ok(
+      conn instanceof PromiseConnection,
+      'conn should be instanceof PromiseConnection'
+    );
+    assert.ok(
+      conn instanceof PromisePoolConnection,
+      'conn should be instanceof PromisePoolConnection'
+    );
+    conn.release();
+  });
+
+  it('should export Connection and PoolConnection as constructors', () => {
+    assert.strictEqual(
+      typeof promiseDriver.Connection,
+      'function',
+      'promiseDriver.Connection should be a constructor'
+    );
+    assert.strictEqual(
+      typeof promiseDriver.PoolConnection,
+      'function',
+      'promiseDriver.PoolConnection should be a constructor'
+    );
+  });
+
+  it('exported PoolConnection should derive from exported Connection', () => {
+    assert.ok(
+      promiseDriver.PoolConnection.prototype instanceof
+        promiseDriver.Connection,
+      'promiseDriver.PoolConnection.prototype should be instanceof promiseDriver.Connection'
+    );
+  });
+
+  await promisePool.end();
+});
+
+await describe('Pool getConnection edge cases', async () => {
+  await describe('waitForConnections disabled', async () => {
+    // createPool helper from common.test.mjs does not forward waitForConnections
+    const pool = driver.createPool({
+      ...config,
+      connectionLimit: 1,
+      waitForConnections: false,
+    });
+
+    await it('should return error when no connections available', async () => {
+      const conn = await pool.promise().getConnection();
+      const err = await new Promise<Error | null>((resolve) => {
+        pool.getConnection((err2) => {
+          resolve(err2 || null);
+        });
+      });
+
+      conn.release();
+
+      assert.ok(err instanceof Error, 'should receive an error');
+      assert.ok(
+        (err as Error).message.includes('No connections available'),
+        'should indicate no connections available'
+      );
+    });
+
+    await pool.promise().end();
+  });
+});
+
+await describe('Pool query error paths', async () => {
+  await it('should emit error in event-emitter mode when pool is closed', async () => {
+    const closedPool = createPool({ connectionLimit: 1 });
+    await closedPool.promise().end();
+
+    const err = await new Promise<Error>((resolve) => {
+      const query = closedPool.query('SELECT 1');
+      query.on('error', (err: Error) => resolve(err));
+    });
+
+    assert.ok(err instanceof Error, 'should receive an error');
+    assert.ok(
+      err.message.includes('Pool is closed'),
+      'should indicate pool is closed'
+    );
+  });
+});
+
+await describe('Pool execute error paths', async () => {
+  await it('should return error when pool is closed', async () => {
+    const closedPool = createPool({ connectionLimit: 1 });
+    await closedPool.promise().end();
+
+    const err = await new Promise<Error | null>((resolve) => {
+      closedPool.execute('SELECT 1', (err: Error | null) => {
+        resolve(err);
+      });
+    });
+
+    assert.ok(err instanceof Error, 'should receive an error');
+    assert.ok(
+      (err as Error).message.includes('Pool is closed'),
+      'should indicate pool is closed'
+    );
+  });
+
+  await describe('synchronous execute error', async () => {
+    const pool = createPool({ connectionLimit: 1 });
+
+    await it('should catch synchronous errors from conn.execute()', async () => {
+      const err = await new Promise<Error | null>((resolve) => {
+        pool.execute('SELECT ?', { invalid: 'object' }, (err: Error | null) => {
+          resolve(err);
+        });
+      });
+
+      assert.ok(err instanceof TypeError, 'should receive a TypeError');
+    });
+
+    await pool.promise().end();
+  });
 });
