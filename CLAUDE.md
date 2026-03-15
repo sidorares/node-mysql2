@@ -174,8 +174,6 @@ When a type in `typings/` is wrong or missing and the contribution has no relati
 
 If the type error **is** related to the contribution, fix the type in `typings/` instead of suppressing it.
 
-Both comments must be written exactly as shown so they can be tracked project-wide.
-
 ---
 
 ## Pull Request Reviews
