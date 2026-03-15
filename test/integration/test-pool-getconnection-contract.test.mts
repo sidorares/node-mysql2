@@ -11,6 +11,7 @@ import PoolConnection from '../../lib/pool_connection.js';
 import Pool from '../../lib/pool.js';
 import PromiseConnection from '../../lib/promise/connection.js';
 import PromisePoolConnection from '../../lib/promise/pool_connection.js';
+import promiseDriver from '../../promise.js';
 import { config, createPool } from '../common.test.mjs';
 
 await describe('Pool getConnection contract', async () => {
@@ -192,6 +193,27 @@ await describe('Promise Pool getConnection contract', async () => {
       'conn should be instanceof PromisePoolConnection'
     );
     conn.release();
+  });
+
+  it('should export Connection and PoolConnection as constructors', () => {
+    assert.strictEqual(
+      typeof promiseDriver.Connection,
+      'function',
+      'promiseDriver.Connection should be a constructor'
+    );
+    assert.strictEqual(
+      typeof promiseDriver.PoolConnection,
+      'function',
+      'promiseDriver.PoolConnection should be a constructor'
+    );
+  });
+
+  it('exported PoolConnection should derive from exported Connection', () => {
+    assert.ok(
+      promiseDriver.PoolConnection.prototype instanceof
+        promiseDriver.Connection,
+      'promiseDriver.PoolConnection.prototype should be instanceof promiseDriver.Connection'
+    );
   });
 
   await promisePool.end();

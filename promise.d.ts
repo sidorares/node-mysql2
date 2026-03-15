@@ -40,7 +40,7 @@ export interface PreparedStatementInfo {
   >;
 }
 
-export interface Connection extends QueryableAndExecutableBase {
+export declare class Connection extends QueryableAndExecutableBase {
   config: ConnectionOptions;
 
   threadId: number;
@@ -81,7 +81,7 @@ export interface Connection extends QueryableAndExecutableBase {
   format(sql: string, values?: any | any[] | { [param: string]: any }): string;
 }
 
-export interface PoolConnection extends Connection {
+export declare class PoolConnection extends Connection {
   release(): void;
   connection: Connection;
   [Symbol.asyncDispose](): Promise<void>;
