@@ -10,6 +10,11 @@ on:
       - 'rollup.config.mjs'
       - 'index.js'
       - 'promise.js'
+      - 'index.d.ts'
+      - 'promise.d.ts'
+      - 'tsconfig.json'
+      - 'package.json'
+      - 'package-lock.json'
   push:
     branches: [main]
 
