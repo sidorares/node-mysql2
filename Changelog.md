@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.20.0](https://github.com/sidorares/node-mysql2/compare/v3.19.1...v3.20.0) (2026-03-15)
+
+
+### Features
+
+* add TracingChannel support for native APM instrumentation ([#4178](https://github.com/sidorares/node-mysql2/issues/4178)) ([c06afc2](https://github.com/sidorares/node-mysql2/commit/c06afc254d3201b65c644b6cfc03f54e1edc5114))
+
+
+### Bug Fixes
+
+* restore `PoolConnection` as subclass of `Connection` ([#4183](https://github.com/sidorares/node-mysql2/issues/4183)) ([97855a6](https://github.com/sidorares/node-mysql2/commit/97855a603d9e5472c292d732af68ca6aa8cc350d))
+
 ## [3.19.1](https://github.com/sidorares/node-mysql2/compare/v3.19.0...v3.19.1) (2026-03-09)
 
 
