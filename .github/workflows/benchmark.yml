@@ -2,6 +2,15 @@ name: Benchmark
 
 on:
   pull_request:
+    paths:
+      - '.github/workflows/benchmark.yml'
+      - 'benchmarks/**'
+      - 'lib/**'
+      - 'tools/**'
+      - 'index.js'
+      - 'promise.js'
+      - 'package.json'
+      - 'package-lock.json'
   push:
     branches: [master]
 

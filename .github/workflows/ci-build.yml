@@ -2,6 +2,19 @@ name: CI - Build
 
 on:
   pull_request:
+    paths:
+      - '.github/workflows/ci-build.yml'
+      - 'lib/**'
+      - 'test/**'
+      - 'typings/**'
+      - 'rollup.config.mjs'
+      - 'index.js'
+      - 'promise.js'
+      - 'index.d.ts'
+      - 'promise.d.ts'
+      - 'tsconfig.json'
+      - 'package.json'
+      - 'package-lock.json'
   push:
     branches: [main]
 
