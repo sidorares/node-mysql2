@@ -2,6 +2,15 @@ name: CI - OSX
 
 on:
   pull_request:
+    paths:
+      - '.github/workflows/ci-osx.yml'
+      - 'lib/**'
+      - 'test/**'
+      - 'index.js'
+      - 'promise.js'
+      - 'poku.config.js'
+      - 'package.json'
+      - 'package-lock.json'
   push:
     branches: [main]
 

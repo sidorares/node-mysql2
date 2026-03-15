@@ -2,6 +2,17 @@ name: CI - Coverage
 
 on:
   pull_request:
+    paths:
+      - '.github/workflows/ci-coverage.yml'
+      - 'lib/**'
+      - 'test/**'
+      - 'index.js'
+      - 'promise.js'
+      - 'poku.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'codecov.yml'
+      - '.nycrc'
   push:
     branches: [master]
 
