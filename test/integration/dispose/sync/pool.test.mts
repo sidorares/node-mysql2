@@ -104,6 +104,21 @@ await describe('using should handle manual `destroy` before automatic dispose', 
   });
 });
 
+await describe('destroy should close the underlying connection', async () => {
+  using pool = createPool({ connectionLimit: 1 });
+
+  await it('should mark the connection as closing after destroy', async () => {
+    const conn = await getConnection(pool);
+    conn.destroy();
+
+    strict.strictEqual(
+      conn.state,
+      'disconnected',
+      'connection should be disconnected'
+    );
+  });
+});
+
 await describe('Pool should implement Symbol.dispose', async () => {
   using pool = createPool({ connectionLimit: 1, resetOnRelease: false });
 

@@ -32,3 +32,24 @@ await describe('Pool End', async () => {
 
   pool.end();
 });
+
+await describe('Pool end should close all connections and mark as closed', async () => {
+  const pool = createPool();
+
+  await it('should close all connections and mark pool as closed', async () => {
+    await new Promise<void>((resolve, reject) => {
+      pool.getConnection((err, conn) => {
+        if (err) return reject(err);
+        conn.release();
+
+        pool.end((endErr) => {
+          if (endErr) return reject(endErr);
+          resolve();
+        });
+      });
+    });
+
+    // @ts-expect-error: internal access
+    strict(pool._closed === true, 'pool should be closed');
+  });
+});
