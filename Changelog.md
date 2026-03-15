@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.20.0](https://github.com/sidorares/node-mysql2/compare/v3.19.1...v3.20.0) (2026-03-15)
+
+
+### Features
+
+* add TracingChannel support for native APM instrumentation ([#4178](https://github.com/sidorares/node-mysql2/issues/4178)) ([c06afc2](https://github.com/sidorares/node-mysql2/commit/c06afc254d3201b65c644b6cfc03f54e1edc5114))
+
+
+### Bug Fixes
+
+* explicitly specify  in auth plugins ([#4175](https://github.com/sidorares/node-mysql2/issues/4175)) ([#4187](https://github.com/sidorares/node-mysql2/issues/4187)) ([5ac5563](https://github.com/sidorares/node-mysql2/commit/5ac5563c8c7d59da358e3f4ddbde2921eb5e0741))
+* prevent double release from corrupting the connection pool ([#4186](https://github.com/sidorares/node-mysql2/issues/4186)) ([7e57db6](https://github.com/sidorares/node-mysql2/commit/7e57db62f47b8bb968c15fb1ba0402927d47015a))
+* restore `PoolConnection` as subclass of `Connection` ([#4183](https://github.com/sidorares/node-mysql2/issues/4183)) ([97855a6](https://github.com/sidorares/node-mysql2/commit/97855a603d9e5472c292d732af68ca6aa8cc350d))
+
 ## [3.19.1](https://github.com/sidorares/node-mysql2/compare/v3.19.0...v3.19.1) (2026-03-09)
 
 
