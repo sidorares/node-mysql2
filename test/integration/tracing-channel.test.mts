@@ -1,10 +1,10 @@
+import type { RowDataPacket } from '../../promise.js';
 import type {
   ConnectTraceContext,
   ExecuteTraceContext,
   PoolConnectTraceContext,
   QueryTraceContext,
-} from '../../lib/tracing.js';
-import type { RowDataPacket } from '../../promise.js';
+} from '../../typings/mysql/lib/Tracing.js';
 import diagnostics_channel from 'node:diagnostics_channel';
 import { assert, describe, it, skip } from 'poku';
 import { config, createConnection, createPool } from '../common.test.mjs';
