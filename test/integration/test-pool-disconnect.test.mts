@@ -71,3 +71,44 @@ await describe('Pool Disconnect', async () => {
   conn.end();
   pool.end();
 });
+
+await describe('Pool recovery after disconnect', async () => {
+  const pool = createPool({ connectionLimit: 1 });
+  const killer = createConnection({ multipleStatements: true });
+
+  await it('should serve a new connection after the previous one is killed', async () => {
+    const tid = await new Promise<number>((resolve, reject) => {
+      pool.getConnection((err, conn) => {
+        if (err) return reject(err);
+        const id = conn.threadId;
+        conn.release();
+        resolve(id);
+      });
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      killer.query('kill ?; select sleep(0.05)', [tid], (err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+
+    const newTid = await new Promise<number>((resolve, reject) => {
+      pool.getConnection((err, conn) => {
+        if (err) return reject(err);
+        const id = conn.threadId;
+        conn.release();
+        resolve(id);
+      });
+    });
+
+    strict.notEqual(
+      newTid,
+      tid,
+      'should get a different connection after kill'
+    );
+  });
+
+  await killer.promise().end();
+  await pool.promise().end();
+});
