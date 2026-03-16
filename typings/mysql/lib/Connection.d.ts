@@ -279,7 +279,7 @@ export interface ConnectionOptions {
     | false
     | string
     | SslOptions
-    | ((config: ConnectionConfig) => SslOptions | Promise<SslOptions>);
+    | ((config: ConnectionConfig) => SslOptions | PromiseLike<SslOptions>);
 
   /**
    * Return each row as an array, not as an object.
