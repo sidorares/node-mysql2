@@ -1,5 +1,8 @@
+import type { RowDataPacket } from '../../../index.js';
 import { describe, it, strict } from 'poku';
 import { createConnection, createPool } from '../../common.test.mjs';
+
+type NRow = RowDataPacket & { n: number };
 
 type MysqlError = Error & {
   code?: string;
@@ -43,12 +46,12 @@ await describe('promise error propagation: PromisePool.execute with falsy args',
   await it('execute with empty array args should work correctly', async () => {
     // Previously `if (args)` would treat [] as falsy — but [] is truthy in JS,
     // the real risk was args=0 or args=null. Verify [] works fine.
-    const [rows] = await pool.execute<{ n: number }[]>('SELECT 1 AS n', []);
+    const [rows] = await pool.execute<NRow[]>('SELECT 1 AS n', []);
     strict.equal(rows[0].n, 1);
   });
 
   await it('execute without args should work correctly', async () => {
-    const [rows] = await pool.execute<{ n: number }[]>('SELECT 2 AS n');
+    const [rows] = await pool.execute<NRow[]>('SELECT 2 AS n');
     strict.equal(rows[0].n, 2);
   });
 
