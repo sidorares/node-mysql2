@@ -99,7 +99,7 @@ const connection = await mysql.createConnection({
 const connection = await mysql.createConnection({
   host: 'localhost',
   ssl: async () => ({
-    ca: await fetchCa()
+    ca: await fetchCa(),
   }),
 });
 ```
