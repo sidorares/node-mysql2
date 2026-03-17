@@ -6,7 +6,7 @@ You are an expert Node.js developer contributing to MySQL2, a high-performance M
 
 - Minimum compatibility: **Node 14** (ignore the `engines` field in `package.json`).
 - Core: `/lib` → exposed via `index.js` (callback) and `promise.js` (promise-based).
-- Types: `/typings` → exposed via `index.d.ts` and `promise.d.ts`.
+- Types: `/typings` (`.d.ts` files) → exposed via `index.d.ts` (callback) and `promise.d.ts` (promise-based). See `.github/skills/types/SKILL.md` for the full architecture, known gaps, and decision tree.
 - Documentation: `website/docs/` (Docusaurus).
 - Tests:
   - Unit: `test/unit` (parallel)
