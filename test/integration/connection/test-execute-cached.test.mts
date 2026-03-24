@@ -92,7 +92,7 @@ await describe('Execute Cached', async () => {
     strict.deepEqual(rows2, [{ test: 125 }]);
     strict.deepEqual(rows3, [{ test: 126 }]);
   });
-  
+
   await it('should discard cached prepared statements that no longer exist on the server and retry automatically (EventEmitter API)', async () => {
     // Remove on the server but leave it in the cache
     // @ts-expect-error: internal access
