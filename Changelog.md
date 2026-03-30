@@ -416,7 +416,7 @@
 
 ### Bug Fixes
 
-* add decodeuricomponent to parse uri encoded special characters in host, username, password and datbase keys ([#2277](https://github.com/sidorares/node-mysql2/issues/2277)) ([fe573ad](https://github.com/sidorares/node-mysql2/commit/fe573addffa64a842ae37994fcd8879cefa933f2))
+* add decodeuricomponent to parse uri encoded special characters in host, username, password and database keys ([#2277](https://github.com/sidorares/node-mysql2/issues/2277)) ([fe573ad](https://github.com/sidorares/node-mysql2/commit/fe573addffa64a842ae37994fcd8879cefa933f2))
 
 ## [3.6.4](https://github.com/sidorares/node-mysql2/compare/v3.6.3...v3.6.4) (2023-11-21)
 
@@ -792,7 +792,7 @@
   - Add table to parser cache key                  #1142, #1143
   - Fix Connection.connect callback may never      #1136, #1137
     be executed
-  - "cardinal" no longer is a requred dependency   #1135
+  - "cardinal" no longer is a required dependency   #1135
   - Fix incompatibility when zero parameter        #1129, #1130
 
 2.1.0
@@ -996,7 +996,7 @@
  - (fix) use correct encoding for JSON type (despite
    reported by server BINARY enc utf8 should be used
    instead)                                               #410, #409
- - (docs) refactor readmy to be more firendly for first
+ - (docs) refactor readmy to be more friendly for first
    time readers
 
 
@@ -1046,7 +1046,7 @@
 
 1.0.0-rc-10 ( 09/08/2016 )
  - ssl: do not use deprecated tls.createSecurePair
-   if TLSSocket is avaiable                                #367, 363
+   if TLSSocket is available                                #367, 363
 
  - use supportBigNumbers and bigNumberStrings flags in
    parser
@@ -1121,7 +1121,7 @@
 - return null date as null, not INVALID_DATE.                #244, #247
 - fix incorrect name for flag ( binary protocol )            #245, #246
 - completely refactored compression protocol support         #252, #173
-- server: add serailisation of NULL strings                  #232
+- server: add serialisation of NULL strings                  #232
 - security: SSL does not verify remote certificate           #103, #171
 - Allow parameters in query(options) object                  #216, #230
 - Pool query now returns query reference                     #183 #230
@@ -1209,7 +1209,7 @@
 0.12.4 - 17/07/2014
   - 'debug' connection option now result in lots of
      debug output                                            #112 #77
-  - send corectly compression flag if compression is on      #102
+  - send correctly compression flag if compression is on      #102
 
 
 0.12.3 - 11/07/2014
@@ -1231,7 +1231,7 @@
 
 0.12.0 - 29/04/2014
 
-  - route connection time errors from handshke command to
+  - route connection time errors from handshake command to
     connection                                               #96
 
   - support for nestTables and rowsAsArray options in query()
@@ -1250,7 +1250,7 @@
 
 
 0.11.7
-  - initial implementaion of binlog protocol            #83 #78      c8d45da6fc13a56d95ce6d57c3c8aa9524548770
+  - initial implementation of binlog protocol            #83 #78      c8d45da6fc13a56d95ce6d57c3c8aa9524548770
   - interpret null DOUBLE values as null instead 0 #85               4c03b23f30949be0608d9543d69243944d79bb4a
   - use srcEscape for null values (bunary parser)                    ef50bcafa452588eda4a40037b41f6b961085046
 
