@@ -327,7 +327,7 @@ const [rows] = await connection.query(options);
 
 ## Disabling Query Attributes
 
-The `CLIENT_QUERY_ATTRIBUTES` capability is enabled by default. If you need to disable it (for example, when connecting to a server that does not support it), exclude the flag:
+The `CLIENT_QUERY_ATTRIBUTES` capability is enabled by default. If the server does not support it, query attributes are automatically disabled — no manual configuration is needed. You can also explicitly exclude the flag:
 
 ```js
 const connection = mysql.createConnection({
@@ -337,11 +337,10 @@ const connection = mysql.createConnection({
 });
 ```
 
-When the flag is disabled, any `attributes` you pass are silently ignored and the standard (non-extended) packet format is used.
+When the flag is disabled (either automatically or explicitly), any `attributes` you pass are silently ignored and the standard (non-extended) packet format is used.
 
 ## Notes
 
 - Query attributes are **per-statement** — they are not stored on the connection or session.
 - Attributes are independent of bind parameters (`values`). You can use both simultaneously.
 - The server must have [`component_query_attributes`](https://dev.mysql.com/doc/refman/8.0/en/query-attributes.html) installed for `mysql_query_attribute_string()` to work. Without it, attribute functions are not available.
-- If the server does not support the `CLIENT_QUERY_ATTRIBUTES` capability, the flag is silently dropped during the handshake and attributes are not sent.
