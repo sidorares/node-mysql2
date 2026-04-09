@@ -82,7 +82,7 @@ await describe('Insert BigInt', async () => {
     strict.strictEqual(selectResult[1].id, 124);
     strict.strictEqual(selectResult[2].id, 123456789);
     strict.strictEqual(selectResult[3].id, 123456790);
-    strict.strictEqual(selectResult[4].id, 9007199254740992);
+    strict.strictEqual(selectResult[4].id, '9007199254740992');
     strict.strictEqual(selectResult[5].id, '9007199254740993');
     strict.strictEqual(selectResult[6].id, '90071992547409924');
     strict.strictEqual(selectResult[7].id, '90071992547409925');
