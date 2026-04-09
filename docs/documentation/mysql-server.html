@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">MySQL Server API | Quickstart</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://sidorares.github.io/node-mysql2/docs/documentation/mysql-server"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" property="og:locale:alternate" content="zh_CN"><meta data-rh="true" property="og:locale:alternate" content="pt_BR"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="MySQL Server API | Quickstart"><meta data-rh="true" name="description" content="Server"><meta data-rh="true" property="og:description" content="Server"><link data-rh="true" rel="icon" href="/node-mysql2/img/favicon.svg"><link data-rh="true" rel="canonical" href="https://sidorares.github.io/node-mysql2/docs/documentation/mysql-server"><link data-rh="true" rel="alternate" href="https://sidorares.github.io/node-mysql2/docs/documentation/mysql-server" hreflang="en"><link data-rh="true" rel="alternate" href="https://sidorares.github.io/node-mysql2/zh-CN/docs/documentation/mysql-server" hreflang="zh-CN"><link data-rh="true" rel="alternate" href="https://sidorares.github.io/node-mysql2/pt-BR/docs/documentation/mysql-server" hreflang="pt-BR"><link data-rh="true" rel="alternate" href="https://sidorares.github.io/node-mysql2/docs/documentation/mysql-server" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"MySQL Server API","item":"https://sidorares.github.io/node-mysql2/docs/documentation/mysql-server"}]}</script><link rel="stylesheet" href="/node-mysql2/assets/css/styles.e085c3cd.css">
-<script src="/node-mysql2/assets/js/runtime~main.959f424c.js" defer="defer"></script>
+<script src="/node-mysql2/assets/js/runtime~main.94fe38ff.js" defer="defer"></script>
 <script src="/node-mysql2/assets/js/main.534fc33b.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -31,6 +31,7 @@
 <li class=""><code>serverHandshake({ serverVersion, protocolVersion, connectionId, statusFlags, characterSet, capabilityFlags })</code>
 <ul>
 <li class="">send server handshake initialisation packet, wait handshake response and start listening for commands</li>
+<li class=""><code>capabilityFlags</code> controls which protocol features are advertised. Client flags are masked against these capabilities when parsing the handshake response, so the server only honors mutually-supported features.</li>
 </ul>
 </li>
 <li class=""><code>writeOk({ affectedRows: num, insertId: num })</code>
