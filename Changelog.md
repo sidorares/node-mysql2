@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.21.0](https://github.com/sidorares/node-mysql2/compare/v3.20.0...v3.21.0) (2026-04-09)
+
+
+### Features
+
+* add support for query attributes ([#4223](https://github.com/sidorares/node-mysql2/issues/4223)) ([d732f78](https://github.com/sidorares/node-mysql2/commit/d732f78088b6fbe1d7454224035f1533cdc103da))
+* **types:** export ExecuteValues and QueryValues from entry point ([9fafd6f](https://github.com/sidorares/node-mysql2/commit/9fafd6f7a84f057371bcc77663de224e1e8b82fc))
+
 ## [3.20.0](https://github.com/sidorares/node-mysql2/compare/v3.19.1...v3.20.0) (2026-03-15)
 
 
