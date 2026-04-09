@@ -8,6 +8,8 @@ import {
   Query as BaseQuery,
   QueryOptions,
   QueryError,
+  ExecuteValues,
+  QueryValues,
 } from './lib/protocol/sequences/Query.js';
 import {
   PoolCluster as BasePoolCluster,
@@ -35,6 +37,8 @@ export {
   PoolNamespace,
   QueryOptions,
   QueryError,
+  ExecuteValues,
+  QueryValues,
   PrepareStatementInfo,
 };
 
