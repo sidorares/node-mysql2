@@ -30,9 +30,7 @@ Query attributes let you attach metadata key-value pairs to individual SQL state
 Typical use cases include request tracing, audit context, tenant identifiers, and passing out-of-band hints to server-side components or plugins.
 
 :::info MySQL Server Requirements
-- **MySQL 8.0.25+** is required.
-- The [`component_query_attributes`](https://dev.mysql.com/doc/refman/8.0/en/query-attributes.html) server component must be installed for the server to expose attributes via SQL functions.
-- To install the component, run: `INSTALL COMPONENT "file://component_query_attributes"` as a privileged user.
+Requires **MySQL 8.0.25+**. The [`component_query_attributes`](https://dev.mysql.com/doc/refman/8.0/en/query-attributes.html) server component must be installed for the server to expose attributes via SQL functions such as `mysql_query_attribute_string()`. To install it, run `INSTALL COMPONENT "file://component_query_attributes"` as a privileged user.
 :::
 
 ## How It Works
@@ -290,14 +288,14 @@ pool.query(
 
 Attribute values are serialized from JavaScript to MySQL types using the same rules as bind parameters:
 
-| JavaScript Type | MySQL Wire Type | Notes |
-|-----------------|-----------------|-------|
-| `string` | `VAR_STRING` | |
-| `number` | `DOUBLE` | 64-bit floating point |
-| `boolean` | `TINY` | `true` → 1, `false` → 0 |
-| `null` | `NULL` | Server sees a NULL attribute |
-| `Date` | `DATETIME` | |
-| `Buffer` | `VAR_STRING` | Raw bytes |
+| JavaScript Type | MySQL Wire Type | Notes                        |
+| --------------- | --------------- | ---------------------------- |
+| `string`        | `VAR_STRING`    |                              |
+| `number`        | `DOUBLE`        | 64-bit floating point        |
+| `boolean`       | `TINY`          | `true` → 1, `false` → 0      |
+| `null`          | `NULL`          | Server sees a NULL attribute |
+| `Date`          | `DATETIME`      |                              |
+| `Buffer`        | `VAR_STRING`    | Raw bytes                    |
 
 Passing `undefined` as an attribute value will throw a `TypeError`.
 
