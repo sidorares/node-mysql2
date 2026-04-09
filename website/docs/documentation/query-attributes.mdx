@@ -1,0 +1,349 @@
+---
+tags: [Query Attributes, query, execute, COM_QUERY, COM_STMT_EXECUTE]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { History } from '@site/src/components/History';
+import { Stability } from '@site/src/components/Stability';
+
+# Query Attributes
+
+<Stability
+  level={1.2}
+  message='Query Attributes support is approaching stability.'
+/>
+
+<History
+  records={[
+    {
+      version: '3.14.0',
+      changes: [
+        'Added query attributes support for COM_QUERY and COM_STMT_EXECUTE.',
+      ],
+    },
+  ]}
+/>
+
+Query attributes let you attach metadata key-value pairs to individual SQL statements. The server can read these values using functions like `mysql_query_attribute_string()` — without any changes to the SQL text or session state.
+
+Typical use cases include request tracing, audit context, tenant identifiers, and passing out-of-band hints to server-side components or plugins.
+
+:::info MySQL Server Requirements
+- **MySQL 8.0.25+** is required.
+- The [`component_query_attributes`](https://dev.mysql.com/doc/refman/8.0/en/query-attributes.html) server component must be installed for the server to expose attributes via SQL functions.
+- To install the component, run: `INSTALL COMPONENT "file://component_query_attributes"` as a privileged user.
+:::
+
+## How It Works
+
+MySQL2 negotiates the `CLIENT_QUERY_ATTRIBUTES` capability flag during the handshake (enabled by default). When this capability is active, both `connection.query()` and `connection.execute()` encode any `attributes` you provide into the extended wire protocol for [`COM_QUERY`](https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_query.html) and [`COM_STMT_EXECUTE`](https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_com_stmt_execute.html) packets.
+
+On the server side, retrieve attribute values inside a query with:
+
+```sql
+SELECT mysql_query_attribute_string('attribute_name');
+```
+
+## Basic Usage
+
+Pass an `attributes` object in the query options. Each key becomes an attribute name and each value is sent alongside the SQL statement.
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+// highlight-start
+const [rows] = await connection.query({
+  sql: `SELECT mysql_query_attribute_string('request_id') AS request_id`,
+  attributes: {
+    request_id: 'abc-123',
+  },
+});
+// highlight-end
+
+console.log(rows); // [ { request_id: 'abc-123' } ]
+
+await connection.end();
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+// highlight-start
+connection.query(
+  {
+    sql: `SELECT mysql_query_attribute_string('request_id') AS request_id`,
+    attributes: {
+      request_id: 'abc-123',
+    },
+  },
+  (err, rows) => {
+    if (err) throw err;
+    console.log(rows); // [ { request_id: 'abc-123' } ]
+    connection.end();
+  }
+);
+// highlight-end
+```
+
+  </TabItem>
+</Tabs>
+
+## With Prepared Statements
+
+Query attributes also work with `connection.execute()` (prepared statements). Attributes and bind parameters are encoded together in the `COM_STMT_EXECUTE` packet.
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+// highlight-start
+const [rows] = await connection.execute({
+  sql: 'SELECT ? + ? AS sum, mysql_query_attribute_string(?) AS trace_id',
+  values: [1, 2, 'trace_id'],
+  attributes: {
+    trace_id: 'txn-456',
+  },
+});
+// highlight-end
+
+console.log(rows); // [ { sum: 3, trace_id: 'txn-456' } ]
+
+await connection.end();
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+// highlight-start
+connection.execute(
+  {
+    sql: 'SELECT ? + ? AS sum, mysql_query_attribute_string(?) AS trace_id',
+    values: [1, 2, 'trace_id'],
+    attributes: {
+      trace_id: 'txn-456',
+    },
+  },
+  (err, rows) => {
+    if (err) throw err;
+    console.log(rows); // [ { sum: 3, trace_id: 'txn-456' } ]
+    connection.end();
+  }
+);
+// highlight-end
+```
+
+  </TabItem>
+</Tabs>
+
+## Multiple Attributes
+
+You can send any number of attributes per query.
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+const [rows] = await connection.query({
+  sql: `
+    SELECT
+      mysql_query_attribute_string('user_id')     AS user_id,
+      mysql_query_attribute_string('tenant')       AS tenant,
+      mysql_query_attribute_string('request_time') AS request_time
+  `,
+  // highlight-start
+  attributes: {
+    user_id: 42,
+    tenant: 'acme-corp',
+    request_time: new Date(),
+  },
+  // highlight-end
+});
+
+console.log(rows);
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+connection.query(
+  {
+    sql: `
+      SELECT
+        mysql_query_attribute_string('user_id')     AS user_id,
+        mysql_query_attribute_string('tenant')       AS tenant,
+        mysql_query_attribute_string('request_time') AS request_time
+    `,
+    // highlight-start
+    attributes: {
+      user_id: 42,
+      tenant: 'acme-corp',
+      request_time: new Date(),
+    },
+    // highlight-end
+  },
+  (err, rows) => {
+    if (err) throw err;
+    console.log(rows);
+  }
+);
+```
+
+  </TabItem>
+</Tabs>
+
+## With Connection Pools
+
+Attributes are per-query, so they work identically with pools — no special configuration needed.
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+// highlight-start
+const [rows] = await pool.query({
+  sql: `SELECT mysql_query_attribute_string('source') AS source`,
+  attributes: { source: 'background-worker' },
+});
+// highlight-end
+
+console.log(rows); // [ { source: 'background-worker' } ]
+
+await pool.end();
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+const mysql = require('mysql2');
+
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+// highlight-start
+pool.query(
+  {
+    sql: `SELECT mysql_query_attribute_string('source') AS source`,
+    attributes: { source: 'background-worker' },
+  },
+  (err, rows) => {
+    if (err) throw err;
+    console.log(rows); // [ { source: 'background-worker' } ]
+    pool.end();
+  }
+);
+// highlight-end
+```
+
+  </TabItem>
+</Tabs>
+
+## Supported Attribute Types
+
+Attribute values are serialized from JavaScript to MySQL types using the same rules as bind parameters:
+
+| JavaScript Type | MySQL Wire Type | Notes |
+|-----------------|-----------------|-------|
+| `string` | `VAR_STRING` | |
+| `number` | `DOUBLE` | 64-bit floating point |
+| `boolean` | `TINY` | `true` → 1, `false` → 0 |
+| `null` | `NULL` | Server sees a NULL attribute |
+| `Date` | `DATETIME` | |
+| `Buffer` | `VAR_STRING` | Raw bytes |
+
+Passing `undefined` as an attribute value will throw a `TypeError`.
+
+## TypeScript
+
+The `attributes` option is fully typed in the `QueryOptions` interface:
+
+```ts
+import mysql, { QueryOptions } from 'mysql2/promise';
+
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+const options: QueryOptions = {
+  sql: `SELECT mysql_query_attribute_string('request_id') AS rid`,
+  attributes: {
+    request_id: 'abc-123',
+    priority: 1,
+    debug: true,
+    timestamp: new Date(),
+  },
+};
+
+const [rows] = await connection.query(options);
+```
+
+## Disabling Query Attributes
+
+The `CLIENT_QUERY_ATTRIBUTES` capability is enabled by default. If you need to disable it (for example, when connecting to a server that does not support it), exclude the flag:
+
+```js
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  flags: ['-CLIENT_QUERY_ATTRIBUTES'],
+});
+```
+
+When the flag is disabled, any `attributes` you pass are silently ignored and the standard (non-extended) packet format is used.
+
+## Notes
+
+- Query attributes are **per-statement** — they are not stored on the connection or session.
+- Attributes are independent of bind parameters (`values`). You can use both simultaneously.
+- The server must have [`component_query_attributes`](https://dev.mysql.com/doc/refman/8.0/en/query-attributes.html) installed for `mysql_query_attribute_string()` to work. Without it, attribute functions are not available.
+- If the server does not support the `CLIENT_QUERY_ATTRIBUTES` capability, the flag is silently dropped during the handshake and attributes are not sent.
