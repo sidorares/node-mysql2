@@ -29,15 +29,13 @@ const expectations: [keyof BoundaryRow, string][] = [
   ['MAX_SAFE + 2', 'string'],
 ];
 
-await describe(
-  'supportBigNumbers boundary — issue #3597',
-  async () => {
-    const connection = createConnection({
-      supportBigNumbers: true,
-    }).promise();
+await describe('supportBigNumbers boundary — issue #3597', async () => {
+  const connection = createConnection({
+    supportBigNumbers: true,
+  }).promise();
 
-    await it('text protocol (query) returns strings outside safe integer range', async () => {
-      const [rows] = await connection.query<BoundaryRow[]>(`
+  await it('text protocol (query) returns strings outside safe integer range', async () => {
+    const [rows] = await connection.query<BoundaryRow[]>(`
         SELECT
           -9007199254740993 AS \`MIN_SAFE - 2\`,
           -9007199254740992 AS \`MIN_SAFE - 1\`,
@@ -47,17 +45,17 @@ await describe(
            9007199254740993 AS \`MAX_SAFE + 2\`
       `);
 
-      for (const [col, expectedType] of expectations) {
-        strict.strictEqual(
-          typeof rows[0][col],
-          expectedType,
-          `query: ${String(col)} should be ${expectedType}`,
-        );
-      }
-    });
+    for (const [col, expectedType] of expectations) {
+      strict.strictEqual(
+        typeof rows[0][col],
+        expectedType,
+        `query: ${String(col)} should be ${expectedType}`
+      );
+    }
+  });
 
-    await it('binary protocol (execute) returns strings outside safe integer range', async () => {
-      const [rows] = await connection.execute<BoundaryRow[]>(`
+  await it('binary protocol (execute) returns strings outside safe integer range', async () => {
+    const [rows] = await connection.execute<BoundaryRow[]>(`
         SELECT
           CAST(-9007199254740993 AS SIGNED) AS \`MIN_SAFE - 2\`,
           CAST(-9007199254740992 AS SIGNED) AS \`MIN_SAFE - 1\`,
@@ -67,15 +65,14 @@ await describe(
           CAST( 9007199254740993 AS SIGNED) AS \`MAX_SAFE + 2\`
       `);
 
-      for (const [col, expectedType] of expectations) {
-        strict.strictEqual(
-          typeof rows[0][col],
-          expectedType,
-          `execute: ${String(col)} should be ${expectedType}`,
-        );
-      }
-    });
+    for (const [col, expectedType] of expectations) {
+      strict.strictEqual(
+        typeof rows[0][col],
+        expectedType,
+        `execute: ${String(col)} should be ${expectedType}`
+      );
+    }
+  });
 
-    await connection.end();
-  },
-);
+  await connection.end();
+});
