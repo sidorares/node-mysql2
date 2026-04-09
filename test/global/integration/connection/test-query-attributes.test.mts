@@ -1,7 +1,7 @@
 import type { RowDataPacket } from '../../../../index.js';
 import process from 'node:process';
 import { describe, it, skip, strict } from 'poku';
-import { createConnection } from '../../../common.test.mjs';
+import { createConnection, getMysqlVersion } from '../../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   skip('Skipping test for PlanetScale');
@@ -9,20 +9,32 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 
 await describe('Query Attributes', async () => {
   const connection = createConnection();
+  const promiseConn = connection.promise();
+  const mySqlVersion = await getMysqlVersion(promiseConn);
 
-  await it('should install query_attributes component', async () => {
-    await new Promise<void>((resolve, reject) => {
-      connection.query(
-        "INSTALL COMPONENT 'file://component_query_attributes'",
-        (err) => {
-          if (err && !`${err.message}`.includes('already installed')) {
-            return reject(err);
-          }
-          resolve();
-        }
+  if (mySqlVersion.major < 8) {
+    console.log(
+      `Skipping query attributes test: requires MySQL 8.0.25+, got ${mySqlVersion.major}.${mySqlVersion.minor}.${mySqlVersion.patch}`
+    );
+    connection.end();
+    return;
+  }
+
+  // component_query_attributes ships with MySQL 8.0.25+
+  try {
+    await promiseConn.query(
+      "INSTALL COMPONENT 'file://component_query_attributes'"
+    );
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (!msg.includes('already installed')) {
+      console.log(
+        `Skipping query attributes test: could not install component (${msg})`
       );
-    });
-  });
+      connection.end();
+      return;
+    }
+  }
 
   await it('should send string attributes via COM_QUERY', async () => {
     const rows = await new Promise<RowDataPacket[]>((resolve, reject) => {
