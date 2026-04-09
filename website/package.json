@@ -41,7 +41,7 @@
     "poku": "^4.1.0",
     "prettier": "^3.8.1",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "browserslist": {
     "production": [
