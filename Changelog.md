@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.22.0](https://github.com/sidorares/node-mysql2/compare/v3.21.1...v3.22.0) (2026-04-10)
+
+
+### Features
+
+* disable mysql_clear_password plugin by default ([#4236](https://github.com/sidorares/node-mysql2/issues/4236)) ([884bec5](https://github.com/sidorares/node-mysql2/commit/884bec56288d827939d0dd3f1f4ae476fbc8dbeb)), closes [#1617](https://github.com/sidorares/node-mysql2/issues/1617)
+* implement COM_RESET_CONNECTION with pool integration ([#4148](https://github.com/sidorares/node-mysql2/issues/4148)) ([49a64cc](https://github.com/sidorares/node-mysql2/commit/49a64cca26b32917ed671b3dbb4ac56d7316315b))
+
+
+### Performance Improvements
+
+* defer Error object creation to error handlers in promise wrappers ([#4257](https://github.com/sidorares/node-mysql2/issues/4257)) ([ab131de](https://github.com/sidorares/node-mysql2/commit/ab131de5611c70d7ef68b7c880ba693b47a687d2))
+
 ## [3.21.1](https://github.com/sidorares/node-mysql2/compare/v3.21.0...v3.21.1) (2026-04-09)
 
 
