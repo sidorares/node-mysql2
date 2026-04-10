@@ -1,0 +1,194 @@
+---
+tags: [reset, resetOnRelease, pool, COM_RESET_CONNECTION]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Reset Connection
+
+MySQL's `COM_RESET_CONNECTION` command (available since MySQL 5.7.3 and MariaDB 10.2.4) resets a connection's session state without closing the underlying TCP connection or re-authenticating. It is significantly faster than `changeUser()` for clearing session state.
+
+## What gets reset
+
+| State               | Cleared? | Details                                 |
+| ------------------- | -------- | --------------------------------------- |
+| User variables      | Yes      | All `@variable` values cleared          |
+| Temporary tables    | Yes      | All temp tables dropped                 |
+| Prepared statements | Yes      | Server invalidates, client clears cache |
+| Session variables   | Yes      | Reset to global defaults                |
+| Locks (GET_LOCK)    | Yes      | All named locks released                |
+| Active transaction  | Yes      | Rolled back if active                   |
+| User / Database     | No       | Unchanged (use `changeUser` for this)   |
+
+<hr />
+
+## connection.reset()
+
+> **reset(callback?: (err: Error | null) => void): void**
+
+Resets the connection session state. The connection remains open and authenticated.
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+await connection.query('SET @user_id = 123');
+
+// highlight-next-line
+await connection.reset();
+
+// @user_id is now NULL
+const [rows] = await connection.query('SELECT @user_id as val');
+console.log(rows[0].val); // null
+
+await connection.end();
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+connection.query('SET @user_id = 123', (err) => {
+  if (err) throw err;
+
+  // highlight-next-line
+  connection.reset((err) => {
+    if (err) throw err;
+
+    // @user_id is now NULL
+    connection.query('SELECT @user_id as val', (err, rows) => {
+      if (err) throw err;
+      console.log(rows[0].val); // null
+      connection.end();
+    });
+  });
+});
+```
+
+  </TabItem>
+</Tabs>
+
+:::tip
+`connection.reset()` is ~3-5x faster than `changeUser()` for clearing session state because it does not require re-authentication.
+:::
+
+:::caution
+Prepared statements are invalidated on the server after a reset. The client cache is cleared automatically, but any `PreparedStatementInfo` references you hold become invalid. Re-execute statements after resetting.
+:::
+
+<hr />
+
+## Pool: resetOnRelease
+
+> **resetOnRelease?: boolean** (Default: `false`)
+
+When set to `true` on a pool, every connection is automatically reset via `COM_RESET_CONNECTION` when it is released back to the pool. This ensures the next consumer receives a clean connection with no leftover session state.
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+// highlight-start
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  resetOnRelease: true,
+});
+// highlight-end
+
+const conn1 = await pool.getConnection();
+await conn1.query("SET @secret = 'sensitive_data'");
+conn1.release(); // triggers automatic reset
+
+const conn2 = await pool.getConnection();
+const [rows] = await conn2.query('SELECT @secret as val');
+console.log(rows[0].val); // null — state was cleared
+conn2.release();
+
+await pool.end();
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+// highlight-start
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  resetOnRelease: true,
+});
+// highlight-end
+
+pool.getConnection((err, conn1) => {
+  if (err) throw err;
+
+  conn1.query("SET @secret = 'sensitive_data'", (err) => {
+    if (err) throw err;
+    conn1.release(); // triggers automatic reset
+
+    pool.getConnection((err, conn2) => {
+      if (err) throw err;
+
+      conn2.query('SELECT @secret as val', (err, rows) => {
+        if (err) throw err;
+        console.log(rows[0].val); // null — state was cleared
+        conn2.release();
+        pool.end();
+      });
+    });
+  });
+});
+```
+
+  </TabItem>
+</Tabs>
+
+### Error handling
+
+If a reset fails (e.g., the MySQL server version does not support `COM_RESET_CONNECTION`), the pool automatically destroys the faulty connection and creates a fresh one for the next request. No manual intervention is required.
+
+### Why resetOnRelease defaults to false
+
+While `resetOnRelease: true` is the safer behavior for production applications, it defaults to `false` to avoid breaking existing applications that may rely on session state persisting across pool connection reuse. In a future major version, the default is expected to change to `true`.
+
+We recommend explicitly enabling it in new projects:
+
+```js
+const pool = mysql.createPool({
+  // ...
+  resetOnRelease: true,
+});
+```
+
+### MySQL version compatibility
+
+| Version             | Support       |
+| ------------------- | ------------- |
+| MySQL 5.7.3+        | Full support  |
+| MySQL 5.7.0–5.7.2   | Not available |
+| MySQL 5.6 and older | Not available |
+| MariaDB 10.2.4+     | Full support  |
