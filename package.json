@@ -67,8 +67,8 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^9.39.2",
-    "@eslint/markdown": "^7.5.1",
+    "@eslint/js": "^10.0.1",
+    "@eslint/markdown": "^8.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@pokujs/multi-suite": "^1.0.0",
     "@rollup/plugin-commonjs": "^29.0.2",
