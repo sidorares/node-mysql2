@@ -8,3 +8,8 @@ updates:
     directory: '/website'
     schedule:
       interval: 'daily'
+    groups:
+      react:
+        patterns:
+          - 'react'
+          - 'react-dom'
