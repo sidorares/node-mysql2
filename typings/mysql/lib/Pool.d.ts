@@ -37,6 +37,13 @@ export interface PoolOptions extends ConnectionOptions {
    * is no limit to the number of queued connection requests. (Default: 0)
    */
   queueLimit?: number;
+
+  /**
+   * Whether to reset the connection state (user variables, temporary tables, transactions, etc.) when
+   * releasing the connection back to the pool. This ensures each connection starts clean for the next user.
+   * Requires MySQL 5.7.3+. (Default: false)
+   */
+  resetOnRelease?: boolean;
 }
 
 declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {

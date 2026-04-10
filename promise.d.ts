@@ -51,6 +51,8 @@ export declare class Connection extends QueryableAndExecutableBase {
 
   ping(): Promise<void>;
 
+  reset(): Promise<void>;
+
   beginTransaction(): Promise<void>;
 
   commit(): Promise<void>;
