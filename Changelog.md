@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.21.1](https://github.com/sidorares/node-mysql2/compare/v3.21.0...v3.21.1) (2026-04-09)
+
+
+### Bug Fixes
+
+* limit client flags to server capabilities ([#4227](https://github.com/sidorares/node-mysql2/issues/4227)) ([e1930b8](https://github.com/sidorares/node-mysql2/commit/e1930b80d9c80d7a482758e37305db215098c71e))
+* use Number.isSafeInteger for supportBigNumbers boundary check ([#4225](https://github.com/sidorares/node-mysql2/issues/4225)) ([295264b](https://github.com/sidorares/node-mysql2/commit/295264b2df30ac4a378fd65d7d0e40911f70d184))
+
 ## [3.21.0](https://github.com/sidorares/node-mysql2/compare/v3.20.0...v3.21.0) (2026-04-09)
 
 
