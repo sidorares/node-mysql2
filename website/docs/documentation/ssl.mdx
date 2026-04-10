@@ -1,12 +1,16 @@
 # SSL
 
-As part of the connection options, you can specify the `ssl` object property or a string containing the SSL profile content (**deprecated**).
+As part of the connection options, you can specify the `ssl` object to configure the TLS sockets, or set the property to `false` to not use TLS for the connection.
 
 ```ts
-ssl?: string | SslOptions;
+ssl?:
+  | false
+  | string
+  | SslOptions
+  | ((config: ConnectionConfig) => SslOptions | Promise<SslOptions>);
 ```
 
-See full list of [SslOptions](https://github.com/sidorares/node-mysql2/blob/master/typings/mysql/lib/Connection.d.ts#L24-L80), which are in the same format as [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options).
+See full list of [SslOptions](https://github.com/sidorares/node-mysql2/blob/master/typings/mysql/lib/Connection.d.ts#L26-L82), which are in the same format as [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options).
 
 ## SSL Options
 
@@ -84,5 +88,18 @@ const connection = await mysql.createConnection({
     // Beware, set `rejectUnauthorized` as `false` is strongly discouraged for security reasons:
     rejectUnauthorized: false,
   },
+});
+```
+
+## Dynamic SSL Configuration
+
+`mysql2` supports providing the SSL configuration dynamically instead of only as a static object. This is particularly useful for environments that use short-lived client certificates, such as systems using SPIFFE, where certificates may need to be fetched or rotated dynamically. If a `Promise` is returned, the connection waits for it to resolve before upgrading to TLS.
+
+```ts
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  ssl: async () => ({
+    ca: await fetchCa(),
+  }),
 });
 ```
