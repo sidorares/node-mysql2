@@ -41,7 +41,7 @@ export interface PoolOptions extends ConnectionOptions {
   /**
    * Whether to reset the connection state (user variables, temporary tables, transactions, etc.) when
    * releasing the connection back to the pool. This ensures each connection starts clean for the next user.
-   * Requires MySQL 5.7.3+. (Default: true)
+   * Requires MySQL 5.7.3+. (Default: false)
    */
   resetOnRelease?: boolean;
 }

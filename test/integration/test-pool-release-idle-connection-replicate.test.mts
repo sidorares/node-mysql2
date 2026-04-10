@@ -18,7 +18,6 @@ await describe('Pool Release Idle Connection Replicate', async () => {
     connectionLimit: 3,
     maxIdle: 2,
     idleTimeout: 1000,
-    resetOnRelease: false, // Disable for timing-sensitive idle timeout test
   });
 
   let allConnsAfterTimeout = -1;

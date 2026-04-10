@@ -7,8 +7,8 @@ import { describe, it, strict } from 'poku';
 import { createPool } from '../../common.test.mjs';
 
 await describe('Pool Reset On Release', async () => {
-  await it('should reset connection when released to pool (default behavior)', async () => {
-    const pool = createPool({ connectionLimit: 1 });
+  await it('should reset connection when released to pool (resetOnRelease enabled)', async () => {
+    const pool = createPool({ connectionLimit: 1, resetOnRelease: true });
 
     // Get connection and set user variable
     const conn1 = await new Promise<PoolConnection>((resolve, reject) => {
