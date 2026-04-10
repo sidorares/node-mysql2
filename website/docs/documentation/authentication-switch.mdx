@@ -74,6 +74,50 @@ and no `authPlugins` function or the `authSwitchHandler` will be invoked.
 These MAY be called multiple times if the plugin algorithm requires multiple roundtrips of data
 exchange between client and server.
 
+## Cleartext Authentication
+
+The `mysql_clear_password` authentication plugin sends the password to the server in plaintext.
+This is required by some authentication schemes (e.g. PAM, LDAP, or AWS RDS IAM), but poses a
+security risk if the connection is not encrypted — a malicious server or man-in-the-middle could
+capture credentials.
+
+For this reason, `mysql_clear_password` is **disabled by default**. If the server requests it and
+the client has not explicitly opted in, the connection will fail with a
+`MYSQL_CLEAR_PASSWORD_NOT_ENABLED` error.
+
+### Enabling cleartext authentication
+
+Set `enableCleartextPlugin: true` in your connection options:
+
+```js
+const conn = mysql.createConnection({
+  host: 'example.com',
+  user: 'my_user',
+  password: 'my_password',
+  ssl: { rejectUnauthorized: true },
+  enableCleartextPlugin: true,
+});
+```
+
+:::caution
+Only enable this over a secure connection (TLS/SSL or a Unix domain socket). Never enable it over
+an unencrypted network connection.
+:::
+
+Alternatively, providing a custom `mysql_clear_password` function via the `authPlugins` option
+implicitly enables cleartext authentication without the `enableCleartextPlugin` flag:
+
+```js
+const conn = mysql.createConnection({
+  host: 'example.com',
+  user: 'my_user',
+  ssl: { rejectUnauthorized: true },
+  authPlugins: {
+    mysql_clear_password: () => () => Buffer.from(password + '\0'),
+  },
+});
+```
+
 ## Multi-factor authentication
 
 If the user requires multi-factor authentication in the server, the client will receive a `AuthNextFactor`
