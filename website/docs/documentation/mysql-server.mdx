@@ -16,6 +16,7 @@
 
 - `serverHandshake({ serverVersion, protocolVersion, connectionId, statusFlags, characterSet, capabilityFlags })`
   - send server handshake initialisation packet, wait handshake response and start listening for commands
+  - `capabilityFlags` controls which protocol features are advertised. Client flags are masked against these capabilities when parsing the handshake response, so the server only honors mutually-supported features.
 - `writeOk({ affectedRows: num, insertId: num })`
   - send [OK packet](https://dev.mysql.com/doc/internals/en/overview.html#packet-OK_Packet) to client
 - `writeEof(warnings, statusFlags)`

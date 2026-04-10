@@ -1,5 +1,35 @@
 # Changelog
 
+## [3.21.1](https://github.com/sidorares/node-mysql2/compare/v3.21.0...v3.21.1) (2026-04-09)
+
+
+### Bug Fixes
+
+* limit client flags to server capabilities ([#4227](https://github.com/sidorares/node-mysql2/issues/4227)) ([e1930b8](https://github.com/sidorares/node-mysql2/commit/e1930b80d9c80d7a482758e37305db215098c71e))
+* use Number.isSafeInteger for supportBigNumbers boundary check ([#4225](https://github.com/sidorares/node-mysql2/issues/4225)) ([295264b](https://github.com/sidorares/node-mysql2/commit/295264b2df30ac4a378fd65d7d0e40911f70d184))
+
+## [3.21.0](https://github.com/sidorares/node-mysql2/compare/v3.20.0...v3.21.0) (2026-04-09)
+
+
+### Features
+
+* add support for query attributes ([#4223](https://github.com/sidorares/node-mysql2/issues/4223)) ([d732f78](https://github.com/sidorares/node-mysql2/commit/d732f78088b6fbe1d7454224035f1533cdc103da))
+* **types:** export ExecuteValues and QueryValues from entry point ([9fafd6f](https://github.com/sidorares/node-mysql2/commit/9fafd6f7a84f057371bcc77663de224e1e8b82fc))
+
+## [3.20.0](https://github.com/sidorares/node-mysql2/compare/v3.19.1...v3.20.0) (2026-03-15)
+
+
+### Features
+
+* add TracingChannel support for native APM instrumentation ([#4178](https://github.com/sidorares/node-mysql2/issues/4178)) ([c06afc2](https://github.com/sidorares/node-mysql2/commit/c06afc254d3201b65c644b6cfc03f54e1edc5114))
+
+
+### Bug Fixes
+
+* explicitly specify  in auth plugins ([#4175](https://github.com/sidorares/node-mysql2/issues/4175)) ([#4187](https://github.com/sidorares/node-mysql2/issues/4187)) ([5ac5563](https://github.com/sidorares/node-mysql2/commit/5ac5563c8c7d59da358e3f4ddbde2921eb5e0741))
+* prevent double release from corrupting the connection pool ([#4186](https://github.com/sidorares/node-mysql2/issues/4186)) ([7e57db6](https://github.com/sidorares/node-mysql2/commit/7e57db62f47b8bb968c15fb1ba0402927d47015a))
+* restore `PoolConnection` as subclass of `Connection` ([#4183](https://github.com/sidorares/node-mysql2/issues/4183)) ([97855a6](https://github.com/sidorares/node-mysql2/commit/97855a603d9e5472c292d732af68ca6aa8cc350d))
+
 ## [3.19.1](https://github.com/sidorares/node-mysql2/compare/v3.19.0...v3.19.1) (2026-03-09)
 
 
@@ -402,7 +432,7 @@
 
 ### Bug Fixes
 
-* add decodeuricomponent to parse uri encoded special characters in host, username, password and datbase keys ([#2277](https://github.com/sidorares/node-mysql2/issues/2277)) ([fe573ad](https://github.com/sidorares/node-mysql2/commit/fe573addffa64a842ae37994fcd8879cefa933f2))
+* add decodeuricomponent to parse uri encoded special characters in host, username, password and database keys ([#2277](https://github.com/sidorares/node-mysql2/issues/2277)) ([fe573ad](https://github.com/sidorares/node-mysql2/commit/fe573addffa64a842ae37994fcd8879cefa933f2))
 
 ## [3.6.4](https://github.com/sidorares/node-mysql2/compare/v3.6.3...v3.6.4) (2023-11-21)
 
@@ -778,7 +808,7 @@
   - Add table to parser cache key                  #1142, #1143
   - Fix Connection.connect callback may never      #1136, #1137
     be executed
-  - "cardinal" no longer is a requred dependency   #1135
+  - "cardinal" no longer is a required dependency   #1135
   - Fix incompatibility when zero parameter        #1129, #1130
 
 2.1.0
@@ -982,7 +1012,7 @@
  - (fix) use correct encoding for JSON type (despite
    reported by server BINARY enc utf8 should be used
    instead)                                               #410, #409
- - (docs) refactor readmy to be more firendly for first
+ - (docs) refactor readmy to be more friendly for first
    time readers
 
 
@@ -1032,7 +1062,7 @@
 
 1.0.0-rc-10 ( 09/08/2016 )
  - ssl: do not use deprecated tls.createSecurePair
-   if TLSSocket is avaiable                                #367, 363
+   if TLSSocket is available                                #367, 363
 
  - use supportBigNumbers and bigNumberStrings flags in
    parser
@@ -1107,7 +1137,7 @@
 - return null date as null, not INVALID_DATE.                #244, #247
 - fix incorrect name for flag ( binary protocol )            #245, #246
 - completely refactored compression protocol support         #252, #173
-- server: add serailisation of NULL strings                  #232
+- server: add serialisation of NULL strings                  #232
 - security: SSL does not verify remote certificate           #103, #171
 - Allow parameters in query(options) object                  #216, #230
 - Pool query now returns query reference                     #183 #230
@@ -1195,7 +1225,7 @@
 0.12.4 - 17/07/2014
   - 'debug' connection option now result in lots of
      debug output                                            #112 #77
-  - send corectly compression flag if compression is on      #102
+  - send correctly compression flag if compression is on      #102
 
 
 0.12.3 - 11/07/2014
@@ -1217,7 +1247,7 @@
 
 0.12.0 - 29/04/2014
 
-  - route connection time errors from handshke command to
+  - route connection time errors from handshake command to
     connection                                               #96
 
   - support for nestTables and rowsAsArray options in query()
@@ -1236,7 +1266,7 @@
 
 
 0.11.7
-  - initial implementaion of binlog protocol            #83 #78      c8d45da6fc13a56d95ce6d57c3c8aa9524548770
+  - initial implementation of binlog protocol            #83 #78      c8d45da6fc13a56d95ce6d57c3c8aa9524548770
   - interpret null DOUBLE values as null instead 0 #85               4c03b23f30949be0608d9543d69243944d79bb4a
   - use srcEscape for null values (bunary parser)                    ef50bcafa452588eda4a40037b41f6b961085046
 

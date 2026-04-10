@@ -326,6 +326,18 @@ export interface ConnectionOptions {
 
   disableEval?: boolean;
 
+  /**
+   * Enable the `mysql_clear_password` authentication plugin, which sends the
+   * password in plaintext. Disabled by default for security — only enable
+   * over secure connections (TLS/SSL).
+   *
+   * Providing a custom `mysql_clear_password` function via `authPlugins`
+   * implicitly enables cleartext authentication without this flag.
+   *
+   * (Default: false)
+   */
+  enableCleartextPlugin?: boolean;
+
   authPlugins?: {
     [key: string]: AuthPlugin;
   };

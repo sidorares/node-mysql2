@@ -44,6 +44,13 @@ export interface QueryOptions {
   values?: QueryValues;
 
   /**
+   * Query attributes sent alongside the query (MySQL 8.0.25+).
+   * Requires the `component_query_attributes` server component to be read via
+   * `mysql_query_attribute_string()`.
+   */
+  attributes?: Record<string, string | number | boolean | null | Buffer | Date>;
+
+  /**
    * This overrides the namedPlaceholders option set at the connection level.
    */
   namedPlaceholders?: boolean;
