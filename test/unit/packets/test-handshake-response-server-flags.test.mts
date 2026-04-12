@@ -14,11 +14,10 @@ const allFlags =
 const baseConfig = {
   user: 'testuser',
   database: 'testdb',
-  password: 'testpass',
   flags: allFlags,
   charsetNumber: 255,
-  authPluginData1: Buffer.alloc(8),
-  authPluginData2: Buffer.alloc(12),
+  authToken: Buffer.alloc(20),
+  authPluginName: 'mysql_native_password',
   connectAttributes: { _client_name: 'test', _pid: '1234' },
 };
 

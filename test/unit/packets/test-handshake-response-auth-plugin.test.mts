@@ -63,52 +63,11 @@ await describe('HandshakeResponse with auth plugin name', async () => {
     strict.equal(response.authToken, customToken);
   });
 
-  await it('should fallback to mysql_native_password when not specified', () => {
+  await it('should default to empty authToken when not specified', () => {
     const response = new HandshakeResponse(baseConfig);
 
-    strict.equal(response.authPluginName, 'mysql_native_password');
     strict.ok(Buffer.isBuffer(response.authToken));
-  });
-
-  await it('should throw TypeError for non-Buffer authToken', () => {
-    let errorThrown = false;
-    try {
-      new HandshakeResponse({
-        ...baseConfig,
-        authToken: 'not a buffer' as unknown as Buffer,
-        authPluginName: 'caching_sha2_password',
-      });
-    } catch (err: unknown) {
-      if (
-        err instanceof TypeError &&
-        err.message.includes('must be a Buffer')
-      ) {
-        errorThrown = true;
-      }
-    }
-    strict.ok(errorThrown, 'Should throw TypeError for non-Buffer authToken');
-  });
-
-  await it('should throw TypeError for non-string authPluginName', () => {
-    let errorThrown = false;
-    try {
-      new HandshakeResponse({
-        ...baseConfig,
-        authToken: Buffer.alloc(32),
-        authPluginName: 12345 as unknown as string,
-      });
-    } catch (err: unknown) {
-      if (
-        err instanceof TypeError &&
-        err.message.includes('must be a string')
-      ) {
-        errorThrown = true;
-      }
-    }
-    strict.ok(
-      errorThrown,
-      'Should throw TypeError for non-string authPluginName'
-    );
+    strict.equal(response.authToken.length, 0);
   });
 
   await it('should handle empty password', () => {

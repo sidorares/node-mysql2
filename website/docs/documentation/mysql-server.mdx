@@ -1,53 +1,278 @@
 # MySQL Server API
 
-## Server
+mysql2 can act as a MySQL server, handling connections from standard MySQL clients. There are three API styles depending on your needs.
 
-- `createServer()` - creates server instance
-- `Server.listen` - listen port / unix socket (same arguments as [net.Server.listen](https://nodejs.org/api/net.html#net_server_listen_port_host_backlog_callback))
+## Quick Start
 
-### Events
+The simplest way to create a server — define handler functions for the commands you want to support:
 
-- **connect**
-  - new incoming connection.
+```js
+const mysql = require('mysql2');
 
-<hr />
+const server = mysql.createServer({
+  async query(sql) {
+    if (sql === 'SELECT 1') {
+      return [{ '1': 1 }];
+    }
+    return { affectedRows: 0 };
+  },
+});
 
-## Connection
+server.listen(3307);
+```
 
-- `serverHandshake({ serverVersion, protocolVersion, connectionId, statusFlags, characterSet, capabilityFlags })`
-  - send server handshake initialisation packet, wait handshake response and start listening for commands
-  - `capabilityFlags` controls which protocol features are advertised. Client flags are masked against these capabilities when parsing the handshake response, so the server only honors mutually-supported features.
-- `writeOk({ affectedRows: num, insertId: num })`
-  - send [OK packet](https://dev.mysql.com/doc/internals/en/overview.html#packet-OK_Packet) to client
-- `writeEof(warnings, statusFlags)`
-  - send EOF packet
-- `writeTextResult(rows, fields)`
-  - write query result to client. Rows and fields are in the same format as in `connection.query` callback.
-- `writeColumns(fields)`
-  - write fields + EOF packets.
-- `writeTextRow(row)`
-  - write array (not hash!) of values as result row
-- **TODO:** binary protocol
+Connect with any MySQL client:
 
-### Events
+```bash
+mysql -h 127.0.0.1 -P 3307 -u any_user -e "SELECT 1"
+```
 
-Every command packet received by the server will be emitted as a **packet** event with the parameters:
+## Returning Results
 
-- **packet:** Packet
-  - The packet itself
-- **knownCommand:** boolean
-  - is this command known to the server
-- **\*commandCode:** number
-  - the parsed command code (first byte)
+Handler return values are automatically serialized into MySQL protocol packets:
 
-In addition special events are emitted for [commands](https://dev.mysql.com/doc/internals/en/text-protocol.html) received from the client. If no listener is present a fallback behavior will be invoked.
+### Rows (array of objects)
 
-- `quit()`
-  - Default: close the connection
-- `init_db(schemaName: string)`
-  - Default: return OK
-- `query(sql: string)`
-  - Please attach a listener to this. Default: return HA_ERR_INTERNAL_ERROR
-- `field_list(table: string, fields: string)`
-  - Default: return ER_WARN_DEPRECATED_SYNTAX
-- `ping()` - Default: return OK
+Column definitions are inferred from the first row's keys:
+
+```js
+createServer({
+  query(sql) {
+    return [
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+    ];
+  },
+});
+```
+
+### Explicit columns
+
+For full control over column metadata, return `{ rows, columns }`:
+
+```js
+createServer({
+  query(sql) {
+    return {
+      rows: [{ total: 42 }],
+      columns: [{ name: 'total', columnType: 8 /* LONGLONG */ }],
+    };
+  },
+});
+```
+
+### OK packet (INSERT/UPDATE/DELETE)
+
+Return an object with `affectedRows`:
+
+```js
+createServer({
+  query(sql) {
+    return { affectedRows: 3, insertId: 10 };
+  },
+});
+```
+
+### Void (implicit OK)
+
+Returning nothing sends an OK packet with zero affected rows:
+
+```js
+createServer({
+  ping() {
+    // no return needed — OK is sent automatically
+  },
+});
+```
+
+### Errors
+
+Throw an error to send an error packet to the client:
+
+```js
+createServer({
+  query(sql) {
+    throw new Error('Query not supported');
+  },
+});
+```
+
+## Handlers
+
+All handlers are optional. Unhandled commands get a sensible default response.
+
+| Handler | Arguments | Default behavior |
+|---------|-----------|-----------------|
+| `query(sql)` | SQL string | Error: "Command not supported" |
+| `ping()` | (none) | OK |
+| `quit()` | (none) | Close connection |
+| `init_db(schema)` | Schema name | OK |
+| `auth(params)` | `{ user, database, address, authToken, ... }` | Accept all |
+
+Handlers can be synchronous or `async`:
+
+```js
+createServer({
+  async query(sql) {
+    const rows = await database.query(sql);
+    return rows;
+  },
+});
+```
+
+## Authentication
+
+Provide an `auth` handler to control access. Throw to reject, return to accept:
+
+```js
+createServer({
+  auth({ user, authToken }) {
+    if (user !== 'admin') {
+      throw new Error('Access denied');
+    }
+  },
+  query(sql) {
+    return [];
+  },
+});
+```
+
+The `auth` handler receives:
+- `user` — client username
+- `database` — requested database
+- `address` — client IP address
+- `authPluginData1`, `authPluginData2` — server challenge data
+- `authToken` — client's authentication response
+
+## Per-Connection State (Factory Function)
+
+For servers that need per-connection state (upstream connections, session data), pass a factory function instead of a static object:
+
+```js
+const server = mysql.createServer((connection) => {
+  // This runs once per client connection.
+  // Variables here are scoped to this connection.
+  const upstream = mysql.createConnection({ host: 'real-mysql', user: 'root' });
+
+  return {
+    auth({ user }) {
+      if (user !== 'proxy_user') throw new Error('Denied');
+    },
+    async query(sql) {
+      const [rows] = await upstream.promise().query(sql);
+      return rows;
+    },
+    quit() {
+      upstream.end();
+    },
+  };
+});
+```
+
+The factory receives the raw `connection` object, available via closure in all handlers — but you rarely need it directly since return values handle serialization.
+
+## Low-Level API
+
+For full protocol control (custom commands, streaming, binary protocol), use the `handleCommand` option:
+
+```js
+const Command = require('mysql2/lib/commands/command');
+const CommandCode = require('mysql2/lib/constants/commands');
+const Packets = require('mysql2/lib/packets');
+
+const server = mysql.createServer({
+  onConnection(conn) {
+    conn.serverHandshake({
+      protocolVersion: 10,
+      serverVersion: '8.0.0',
+      connectionId: 1,
+      statusFlags: 2,
+      characterSet: 8,
+      capabilityFlags: 0xffffff,
+    });
+  },
+  handleCommand(commandCode) {
+    switch (commandCode) {
+      case CommandCode.QUERY:
+        return new MyQueryCommand();
+      case CommandCode.PING:
+        return new MyPingCommand();
+      default:
+        return new DefaultErrorCommand();
+    }
+  },
+});
+```
+
+Each command is a `Command` subclass — a packet-driven state machine:
+
+```js
+class MyQueryCommand extends Command {
+  start(packet, connection) {
+    const encoding = connection.clientHelloReply?.encoding || 'utf8';
+    const query = Packets.Query.fromPacket(packet, encoding);
+    connection.writeTextResult(
+      [{ result: 'hello' }],
+      [{ name: 'result', catalog: 'def', schema: '', table: '', orgTable: '',
+         orgName: 'result', characterSet: 33, columnLength: 255,
+         columnType: 253, flags: 0, decimals: 0 }]
+    );
+    connection.sequenceId = 0;
+    return null; // command done
+  }
+}
+```
+
+## Legacy API
+
+The original event-based API is still fully supported:
+
+```js
+const server = mysql.createServer((conn) => {
+  conn.serverHandshake({
+    protocolVersion: 10,
+    serverVersion: '5.7.0',
+    connectionId: 1234,
+    statusFlags: 2,
+    characterSet: 8,
+    capabilityFlags: 0xffffff,
+  });
+
+  conn.on('query', (sql) => {
+    conn.writeTextResult(rows, columns);
+  });
+
+  conn.on('ping', () => {
+    conn.writeOk();
+  });
+});
+```
+
+### Server write methods
+
+- `writeOk({ affectedRows, insertId })` — send OK packet
+- `writeError({ message, code })` — send Error packet
+- `writeEof(warnings, statusFlags)` — send EOF packet
+- `writeTextResult(rows, fields)` — write complete query result
+- `writeColumns(fields)` — write column definitions + EOF
+- `writeTextRow(row)` — write a single row (array of values)
+- `writePacket(packet)` — write a raw packet
+
+## Server Options
+
+- `Server.listen(port)` — listen on a TCP port (same args as `net.Server.listen`)
+- `Server.close(callback)` — close the server
+
+### `createServer` options
+
+| Option | Description |
+|--------|-------------|
+| `query(sql)` | Handle COM_QUERY |
+| `ping()` | Handle COM_PING |
+| `quit()` | Handle COM_QUIT |
+| `init_db(schema)` | Handle COM_INIT_DB |
+| `auth(params)` | Authentication handler |
+| `handleCommand(code)` | Low-level command factory |
+| `onConnection(conn)` | Raw connection handler |
+| `encoding` | Server encoding (default: `'cesu8'`) |
+| `serverVersion` | Version string sent to clients (default: `'mysql2-server'`) |
