@@ -1,6 +1,12 @@
 import { EventEmitter } from 'events';
 import { Connection } from './Connection.js';
 
+export interface ServerOptions {
+  onConnection?: (conn: Connection) => void;
+  handleCommand?: (commandCode: number) => any;
+  encoding?: string;
+}
+
 declare class Server extends EventEmitter {
   connections: Array<Connection>;
 
