@@ -27,9 +27,19 @@ exports.Pool = Pool;
 
 exports.PoolCluster = PoolCluster;
 
-exports.createServer = function (handler) {
+exports.createServer = function (opts = {}) {
+  let handler;
+  if (typeof opts === 'function') {
+    handler = opts;
+    opts = {};
+  } else {
+    handler = opts.onConnection;
+  }
   const Server = require('./lib/server.js');
-  const s = new Server();
+  const s = new Server({
+    handleCommand: opts.handleCommand,
+    encoding: opts.encoding || 'cesu8',
+  });
   if (handler) {
     s.on('connection', handler);
   }
