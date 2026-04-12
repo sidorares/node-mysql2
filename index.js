@@ -27,21 +27,84 @@ exports.Pool = Pool;
 
 exports.PoolCluster = PoolCluster;
 
-exports.createServer = function (opts = {}) {
-  let handler;
-  if (typeof opts === 'function') {
-    handler = opts;
-    opts = {};
-  } else {
-    handler = opts.onConnection;
+const _serverHandlerKeys = ['query', 'ping', 'quit', 'init_db', 'auth'];
+
+function _hasHandlerKeys(obj) {
+  return _serverHandlerKeys.some((k) => typeof obj[k] === 'function');
+}
+
+function _wrapAuth(authHandler) {
+  return function (params, cb) {
+    Promise.resolve()
+      .then(() => authHandler(params))
+      .then(() => cb(null))
+      .catch((err) =>
+        cb(null, { message: err.message, code: err.code || 1045 })
+      );
+  };
+}
+
+function _buildHandshakeArgs(handlers) {
+  const args = {
+    protocolVersion: 10,
+    serverVersion: handlers.serverVersion || 'mysql2-server',
+    connectionId: Math.floor(Math.random() * 1000000),
+    statusFlags: 2,
+    characterSet: 8,
+    capabilityFlags: 0xffffff,
+  };
+  if (handlers.auth) {
+    args.authCallback = _wrapAuth(handlers.auth);
   }
+  return args;
+}
+
+exports.createServer = function (opts = {}) {
   const Server = require('./lib/server.js');
+  const Commands = require('./lib/commands/index.js');
+  const { buildHandleCommand } = require('./lib/commands/server/index.js');
+
+  if (typeof opts === 'function') {
+    const fn = opts;
+    const s = new Server({ encoding: 'cesu8' });
+    s.on('connection', (conn) => {
+      conn.on('error', () => {});
+      const result = fn(conn);
+      if (!result || typeof result !== 'object' || !_hasHandlerKeys(result)) {
+        return;
+      }
+      const handlers = result;
+      const encoding = handlers.encoding || 'cesu8';
+      conn.serverConfig = { encoding };
+      conn.config.serverOptions = Object.assign({}, conn.config.serverOptions, {
+        handleCommand: buildHandleCommand(handlers),
+        encoding,
+      });
+      conn.addCommand(
+        new Commands.ServerHandshake(_buildHandshakeArgs(handlers))
+      );
+    });
+    return s;
+  }
+
+  if (_hasHandlerKeys(opts)) {
+    const handleCommand = buildHandleCommand(opts);
+    const encoding = opts.encoding || 'cesu8';
+    const s = new Server({ handleCommand, encoding });
+    s.on('connection', (conn) => {
+      conn.on('error', () => {});
+      conn.serverConfig = { encoding };
+      conn.addCommand(new Commands.ServerHandshake(_buildHandshakeArgs(opts)));
+    });
+    return s;
+  }
+
   const s = new Server({
     handleCommand: opts.handleCommand,
     encoding: opts.encoding || 'cesu8',
   });
-  if (handler) {
-    s.on('connection', handler);
+  if (opts.onConnection) {
+    s.on('connection', opts.onConnection);
   }
   return s;
 };
