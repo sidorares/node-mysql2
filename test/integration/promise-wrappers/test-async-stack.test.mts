@@ -1,5 +1,6 @@
 import type { ConnectionOptions } from '../../../index.js';
 import process from 'node:process';
+import ErrorStackParser from 'error-stack-parser';
 import { describe, it, skip, strict } from 'poku';
 import { createConnection as promiseCreateConnection } from '../../../promise.js';
 import { config } from '../../common.test.mjs';
@@ -14,27 +15,34 @@ await describe('Async stack traces', async () => {
     return promiseCreateConnection({ ...config, ...args });
   };
 
-  await it('should propagate connection error with code and message', async () => {
+  // TODO: investigate why connection is still open after ENETUNREACH
+  await it('should include caller stack in connection error', async () => {
+    let e1: Error;
     try {
+      e1 = new Error();
+      // expected not to connect
       await createConnection({ host: '127.0.0.1', port: 33066 });
-      strict(false, 'Expected connection to fail');
     } catch (err) {
-      strict(err instanceof Error);
-      strict((err as Error & { code?: string }).code === 'ECONNREFUSED');
-      strict(typeof (err as Error).stack === 'string');
+      const stack = ErrorStackParser.parse(err as Error);
+      const stackExpected = ErrorStackParser.parse(e1!);
+      strict(
+        stack[2].getLineNumber() === (stackExpected[0].getLineNumber() ?? 0) + 2
+      );
     }
   });
 
-  await it('should propagate query error with code and message', async () => {
+  await it('should include caller stack in query error', async () => {
     const conn = await createConnection();
+    let e2: Error;
     try {
-      await conn.query('syntax error');
-      strict(false, 'Expected query to fail');
+      e2 = new Error();
+      await Promise.all([conn.query('select 1+1'), conn.query('syntax error')]);
     } catch (err) {
-      strict(err instanceof Error);
-      strict((err as Error & { code?: string }).code === 'ER_PARSE_ERROR');
-      strict(typeof (err as Error).message === 'string');
-      strict(typeof (err as Error).stack === 'string');
+      const stack = ErrorStackParser.parse(err as Error);
+      const stackExpected = ErrorStackParser.parse(e2!);
+      strict(
+        stack[1].getLineNumber() === (stackExpected[0].getLineNumber() ?? 0) + 1
+      );
     } finally {
       await conn.end();
     }
