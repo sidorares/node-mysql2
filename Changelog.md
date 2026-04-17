@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.22.1](https://github.com/sidorares/node-mysql2/compare/v3.22.0...v3.22.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* async stack traces not pointing to correct source, regression introduced by [#4257](https://github.com/sidorares/node-mysql2/issues/4257) ([#4265](https://github.com/sidorares/node-mysql2/issues/4265)) ([5b6206c](https://github.com/sidorares/node-mysql2/commit/5b6206c8818647e4babe706778fc00dcbd9983bd))
+* **packet:** return INVALID_DATE for zero dates with numeric timezone offset ([#1019](https://github.com/sidorares/node-mysql2/issues/1019)) ([#4258](https://github.com/sidorares/node-mysql2/issues/4258)) ([cb5adcc](https://github.com/sidorares/node-mysql2/commit/cb5adccb3aed07ccb25a8f8e07c2cb3ffba90dd0))
+
 ## [3.22.0](https://github.com/sidorares/node-mysql2/compare/v3.21.1...v3.22.0) (2026-04-10)
 
 
