@@ -16,6 +16,7 @@ const PromisePoolNamespace = require('./lib/promise/pool_cluster');
 
 function createConnectionPromise(opts) {
   const coreConnection = createConnection(opts);
+  const createConnectionErr = new Error();
   const thePromise = opts.Promise || Promise;
   if (!thePromise) {
     throw new Error(
@@ -29,7 +30,6 @@ function createConnectionPromise(opts) {
       resolve(new PromiseConnection(coreConnection, thePromise));
     });
     coreConnection.once('error', (err) => {
-      const createConnectionErr = new Error();
       createConnectionErr.message = err.message;
       createConnectionErr.code = err.code;
       createConnectionErr.errno = err.errno;
@@ -83,26 +83,28 @@ class PromisePoolCluster extends EventEmitter {
 
   query(sql, args) {
     const corePoolCluster = this.poolCluster;
+    const localErr = new Error();
     if (typeof args === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject);
+      const done = makeDoneCb(resolve, reject, localErr);
       corePoolCluster.query(sql, args, done);
     });
   }
 
   execute(sql, args) {
     const corePoolCluster = this.poolCluster;
+    const localErr = new Error();
     if (typeof args === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject);
+      const done = makeDoneCb(resolve, reject, localErr);
       corePoolCluster.execute(sql, args, done);
     });
   }
@@ -116,10 +118,10 @@ class PromisePoolCluster extends EventEmitter {
 
   end() {
     const corePoolCluster = this.poolCluster;
+    const localErr = new Error();
     return new this.Promise((resolve, reject) => {
       corePoolCluster.end((err) => {
         if (err) {
-          const localErr = new Error();
           localErr.message = err.message;
           localErr.code = err.code;
           localErr.errno = err.errno;
