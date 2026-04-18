@@ -134,6 +134,12 @@ class PromisePoolCluster extends EventEmitter {
       });
     });
   }
+
+  async [Symbol.asyncDispose]() {
+    if (!this.poolCluster._closed) {
+      await this.end();
+    }
+  }
 }
 
 /**
@@ -179,6 +185,8 @@ exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
 exports.format = SqlString.format;
 exports.raw = SqlString.raw;
+exports.Connection = PromiseConnection;
+exports.PoolConnection = PromisePoolConnection;
 exports.PromisePool = PromisePool;
 exports.PromiseConnection = PromiseConnection;
 exports.PromisePoolConnection = PromisePoolConnection;

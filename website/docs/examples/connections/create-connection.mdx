@@ -30,6 +30,11 @@ try {
     'mysql://root:password@localhost:3306/test'
   );
   // highlight-end
+
+  // ... some query
+
+  // Close the connection
+  await connection.end();
 } catch (err) {
   console.log(err);
 }
@@ -41,14 +46,65 @@ try {
 ```js
 const mysql = require('mysql2');
 
+// highlight-start
 const connection = mysql.createConnection(
   'mysql://root:password@localhost:3306/test'
 );
+// highlight-end
 
 connection.addListener('error', (err) => {
   console.log(err);
 });
+
+// ... some query
+
+// Close the connection
+connection.end();
 ```
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  await using connection = await mysql.createConnection(
+    'mysql://root:password@localhost:3306/test'
+  );
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  using connection = mysql.createConnection(
+    'mysql://root:password@localhost:3306/test'
+  );
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
 
   </TabItem>
 </Tabs>
@@ -75,6 +131,11 @@ try {
     // password: '',
   });
   // highlight-end
+
+  // ... some query
+
+  // Close the connection
+  await connection.end();
 } catch (err) {
   console.log(err);
 }
@@ -86,6 +147,7 @@ try {
 ```js
 const mysql = require('mysql2');
 
+// highlight-start
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -93,11 +155,69 @@ const connection = mysql.createConnection({
   // port: 3306,
   // password: '',
 });
+// highlight-end
 
 connection.addListener('error', (err) => {
   console.log(err);
 });
+
+// ... some query
+
+// Close the connection
+connection.end();
 ```
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  await using connection = await mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+    // port: 3306,
+    // password: '',
+  });
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  using connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+    // port: 3306,
+    // password: '',
+  });
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
 
   </TabItem>
 </Tabs>
@@ -124,6 +244,11 @@ try {
     ),
   });
   // highlight-end
+
+  // ... some query
+
+  // Close the connection
+  await connection.end();
 } catch (err) {
   console.log(err);
 }
@@ -135,15 +260,74 @@ try {
 ```js
 const mysql = require('mysql2');
 
+// highlight-start
 const connection = mysql.createConnection({
   // ...
   passwordSha1: Buffer.from('8bb6118f8fd6935ad0876a3be34a717d32708ffd', 'hex'),
 });
+// highlight-end
 
 connection.addListener('error', (err) => {
   console.log(err);
 });
+
+// ... some query
+
+// Close the connection
+connection.end();
 ```
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  await using connection = await mysql.createConnection({
+    // ...
+    passwordSha1: Buffer.from(
+      '8bb6118f8fd6935ad0876a3be34a717d32708ffd',
+      'hex'
+    ),
+  });
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  using connection = mysql.createConnection({
+    // ...
+    passwordSha1: Buffer.from(
+      '8bb6118f8fd6935ad0876a3be34a717d32708ffd',
+      'hex'
+    ),
+  });
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
 
   </TabItem>
 </Tabs>
@@ -167,6 +351,11 @@ try {
     ssl: {},
   });
   // highlight-end
+
+  // ... some query
+
+  // Close the connection
+  await connection.end();
 } catch (err) {
   console.log(err);
 }
@@ -178,15 +367,68 @@ try {
 ```js
 const mysql = require('mysql2');
 
+// highlight-start
 const connection = mysql.createConnection({
   // ...
   ssl: {},
 });
+// highlight-end
 
 connection.addListener('error', (err) => {
   console.log(err);
 });
+
+// ... some query
+
+// Close the connection
+connection.end();
 ```
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  await using connection = await mysql.createConnection({
+    // ...
+    ssl: {},
+  });
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  using connection = mysql.createConnection({
+    // ...
+    ssl: {},
+  });
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
 
   </TabItem>
 </Tabs>
@@ -214,6 +456,11 @@ try {
     },
   });
   // highlight-end
+
+  // ... some query
+
+  // Close the connection
+  await connection.end();
 } catch (err) {
   console.log(err);
 }
@@ -225,6 +472,7 @@ try {
 ```js
 const mysql = require('mysql2');
 
+// highlight-start
 const connection = mysql.createConnection({
   // ...
   ssl: {
@@ -233,11 +481,71 @@ const connection = mysql.createConnection({
     ca: fs.readFileSync('./certs/ca-cert.pem'),
   },
 });
+// highlight-end
 
 connection.addListener('error', (err) => {
   console.log(err);
 });
+
+// ... some query
+
+// Close the connection
+connection.end();
 ```
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  await using connection = await mysql.createConnection({
+    // ...
+    ssl: {
+      // key: fs.readFileSync('./certs/client-key.pem'),
+      // cert: fs.readFileSync('./certs/client-cert.pem')
+      ca: fs.readFileSync('./certs/ca-cert.pem'),
+    },
+  });
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  using connection = mysql.createConnection({
+    // ...
+    ssl: {
+      // key: fs.readFileSync('./certs/client-key.pem'),
+      // cert: fs.readFileSync('./certs/client-cert.pem')
+      ca: fs.readFileSync('./certs/ca-cert.pem'),
+    },
+  });
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
 
   </TabItem>
   <TabItem value='certs/ca-cert.pem'>
@@ -280,6 +588,11 @@ try {
     ssl: awsCaBundle,
   });
   // highlight-end
+
+  // ... some query
+
+  // Close the connection
+  await connection.end();
 } catch (err) {
   console.log(err);
 }
@@ -311,15 +624,22 @@ try {
 const mysql = require('mysql2');
 const awsCaBundle = require('aws-ssl-profiles');
 
+// highlight-start
 const connection = mysql.createConnection({
   // ...
   host: 'db.id.ap-southeast-2.rds.amazonaws.com',
   ssl: awsCaBundle,
 });
+// highlight-end
 
 connection.addListener('error', (err) => {
   console.log(err);
 });
+
+// ... some query
+
+// Close the connection
+connection.end();
 ```
 
 :::info
@@ -341,6 +661,64 @@ connectionquery('SHOW `status` LIKE "Ssl_cipher"', function (err, res) {
 });
 ```
 
+:::
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+import awsCaBundle from 'aws-ssl-profiles';
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  await using connection = await mysql.createConnection({
+    // ...
+    host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+    ssl: awsCaBundle,
+  });
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::info
+For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+const awsCaBundle = require('aws-ssl-profiles');
+
+{
+  // highlight-start
+  // .end() is called automatically when leaving the scope
+  using connection = mysql.createConnection({
+    // ...
+    host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+    ssl: awsCaBundle,
+  });
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::info
+For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
 :::
 
   </TabItem>
@@ -369,6 +747,11 @@ const connection = mysql.createConnection({
 connection.addListener('error', (err) => {
   console.log(err);
 });
+
+// ... some query
+
+// Close the connection
+connection.end();
 ```
 
   </TabItem>
@@ -390,6 +773,11 @@ const connection = mysql.createConnection({
 connection.addListener('error', (err) => {
   console.log(err);
 });
+
+// ... some query
+
+// Close the connection
+connection.end();
 ```
 
   </TabItem>

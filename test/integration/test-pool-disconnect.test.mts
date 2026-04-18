@@ -1,0 +1,114 @@
+import type { PoolConnection, QueryError, RowDataPacket } from '../../index.js';
+import process from 'node:process';
+import { describe, it, skip, strict } from 'poku';
+import { createConnection, createPool } from '../common.test.mjs';
+
+if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
+  skip('PlanetScale does not support KILL');
+}
+
+await describe('Pool Disconnect', async () => {
+  const pool = createPool();
+  const conn = createConnection({ multipleStatements: true });
+  pool.config.connectionLimit = 5;
+
+  await it('should handle pool connection kills', async () => {
+    const numSelectToPerform = 10;
+    const tids: number[] = [];
+    let numSelects = 0;
+    let killCount = 0;
+
+    await new Promise<void>((resolve) => {
+      const kill = () => {
+        setTimeout(() => {
+          const id = tids.shift();
+          if (typeof id !== 'undefined') {
+            // sleep required to give mysql time to close connection,
+            // and callback called after connection with id is really closed
+            conn.query('kill ?; select sleep(0.05)', [id], (err) => {
+              strict.ifError(err);
+              killCount++;
+              // TODO: this assertion needs to be fixed, after kill
+              // connection is removed from _allConnections but not at a point this callback is called
+              //
+              // strict.equal(pool._allConnections.length, tids.length);
+              if (killCount === pool.config.connectionLimit) {
+                resolve();
+              }
+            });
+          }
+        }, 5);
+      };
+
+      pool.on('connection', (poolConn: PoolConnection) => {
+        tids.push(poolConn.threadId);
+        poolConn.on('error', () => {
+          setTimeout(kill, 5);
+        });
+      });
+
+      for (let i = 0; i < numSelectToPerform; i++) {
+        pool.query(
+          'select 1 as value',
+          (err: QueryError | null, rows: RowDataPacket[]) => {
+            numSelects++;
+            strict.ifError(err);
+            strict.equal(rows[0].value, 1);
+
+            // after all queries complete start killing connections
+            if (numSelects === numSelectToPerform) {
+              kill();
+            }
+          }
+        );
+      }
+    });
+
+    strict.equal(numSelects, numSelectToPerform);
+    strict.equal(killCount, pool.config.connectionLimit);
+  });
+
+  conn.end();
+  pool.end();
+});
+
+await describe('Pool recovery after disconnect', async () => {
+  const pool = createPool({ connectionLimit: 1 });
+  const killer = createConnection({ multipleStatements: true });
+
+  await it('should serve a new connection after the previous one is killed', async () => {
+    const tid = await new Promise<number>((resolve, reject) => {
+      pool.getConnection((err, conn) => {
+        if (err) return reject(err);
+        const id = conn.threadId;
+        conn.release();
+        resolve(id);
+      });
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      killer.query('kill ?; select sleep(0.05)', [tid], (err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+
+    const newTid = await new Promise<number>((resolve, reject) => {
+      pool.getConnection((err, conn) => {
+        if (err) return reject(err);
+        const id = conn.threadId;
+        conn.release();
+        resolve(id);
+      });
+    });
+
+    strict.notEqual(
+      newTid,
+      tid,
+      'should get a different connection after kill'
+    );
+  });
+
+  await killer.promise().end();
+  await pool.promise().end();
+});

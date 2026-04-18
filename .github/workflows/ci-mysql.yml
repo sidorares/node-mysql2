@@ -2,6 +2,16 @@ name: CI - MySQL
 
 on:
   pull_request:
+    paths:
+      - '.github/workflows/ci-mysql.yml'
+      - 'lib/**'
+      - 'test/**'
+      - 'tools/**'
+      - 'index.js'
+      - 'promise.js'
+      - 'poku.config.js'
+      - 'package.json'
+      - 'package-lock.json'
   push:
     branches: [main]
   workflow_dispatch:
@@ -72,3 +82,4 @@ jobs:
 
       - name: Run tests
         run: FILTER=${{matrix.filter}} npm run test
+        timeout-minutes: 10

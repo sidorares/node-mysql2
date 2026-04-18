@@ -1,0 +1,9 @@
+name: 'CodeQL Config'
+
+paths:
+  - lib/
+  - typings/
+  - index.js
+  - promise.js
+  - index.d.ts
+  - promise.d.ts

@@ -4,7 +4,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { assert } from 'poku';
+import { strict } from 'poku';
 import {
   extractMethodContent,
   type MethodType,
@@ -22,7 +22,7 @@ const checkResult = (methodName: string, methodType: MethodType) => {
       'utf-8'
     ) !== extractMethodContent(resource, methodName, methodType)
   )
-    assert.fail(`${methodName} example failed`);
+    strict.fail(`${methodName} example failed`);
 };
 
 // Valid methods
@@ -35,7 +35,7 @@ checkResult('handler', 'function');
 
 // Invalid method
 if (resource !== extractMethodContent(resource, 'invalidMethod', 'function')) {
-  assert.fail(
+  strict.fail(
     "Invalid method example failed. It should return the original content when it didn't find the requested method."
   );
 }

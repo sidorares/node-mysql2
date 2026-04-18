@@ -41,7 +41,7 @@ connection.prepare('select ? + ? as tests', (err, statement) => {
 });
 ```
 
-Note that you should not use statement after connection reset (`changeUser()` or disconnect). Statement scope is connection, you need to prepare statement for each new connection in order to use it.
+Note that you should not use statement after connection reset (`changeUser()`, [`reset()`](/docs/documentation/reset-connection) or disconnect). Statement scope is connection, you need to prepare statement for each new connection in order to use it.
 
 ## Configuration
 

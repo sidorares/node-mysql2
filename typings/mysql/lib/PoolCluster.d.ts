@@ -56,6 +56,8 @@ declare class PoolCluster extends EventEmitter {
 
   end(callback?: (err: NodeJS.ErrnoException | null) => void): void;
 
+  [Symbol.dispose](): void;
+
   getConnection(
     callback: (
       err: NodeJS.ErrnoException | null,

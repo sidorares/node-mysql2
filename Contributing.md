@@ -128,7 +128,7 @@ FILTER='timeout' npm test
 ```
 
 > [!TIP]
-> You can also run a single test by performing `node ./test/path-to-test-file`.
+> You can also run a single test by performing `tsx ./test/path-to-test-file`.
 
 For testing **coverage**:
 

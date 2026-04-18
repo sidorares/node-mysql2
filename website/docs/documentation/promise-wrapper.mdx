@@ -55,6 +55,53 @@ async function example2() {
 }
 ```
 
+## Explicit Resource Management (`await using`)
+
+With [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management), connections and pools are automatically cleaned up when they go out of scope — no need to manually call `.end()` or `.release()`.
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  await using conn = await mysql.createConnection({ database: test });
+  const [rows, fields] = await conn.execute('select ?+? as sum', [2, 2]);
+  // conn.end() is called automatically when leaving the scope
+}
+```
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  await using pool = mysql.createPool({ database: test });
+
+  // execute in parallel, next console.log in 3 seconds
+  await Promise.all([
+    pool.query('select sleep(2)'),
+    pool.query('select sleep(3)'),
+  ]);
+  console.log('3 seconds after');
+  // pool.end() is called automatically when leaving the scope
+}
+```
+
+```ts
+import mysql from 'mysql2/promise';
+
+const pool = mysql.createPool({});
+
+{
+  await using conn = await pool.getConnection();
+  const res = await conn.query('select foo from bar');
+  console.log(res[0][0].foo);
+  // conn.release() is called automatically when leaving the scope
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
 ## With [CO](https://github.com/tj/co)
 
 ```js

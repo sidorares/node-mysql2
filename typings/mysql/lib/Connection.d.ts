@@ -5,6 +5,7 @@
 
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
+import { Timezone } from 'sql-escaper';
 import { Query, QueryError } from './protocol/sequences/Query.js';
 import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
 import {
@@ -150,7 +151,7 @@ export interface ConnectionOptions {
   /**
    * The timezone used to store local dates. (Default: 'local')
    */
-  timezone?: string | 'local';
+  timezone?: Timezone;
 
   /**
    * The milliseconds before a timeout occurs during the initial connection to the MySQL server. (Default: 10 seconds)
@@ -325,6 +326,18 @@ export interface ConnectionOptions {
 
   disableEval?: boolean;
 
+  /**
+   * Enable the `mysql_clear_password` authentication plugin, which sends the
+   * password in plaintext. Disabled by default for security — only enable
+   * over secure connections (TLS/SSL).
+   *
+   * Providing a custom `mysql_clear_password` function via `authPlugins`
+   * implicitly enables cleartext authentication without this flag.
+   *
+   * (Default: false)
+   */
+  enableCleartextPlugin?: boolean;
+
   authPlugins?: {
     [key: string]: AuthPlugin;
   };
@@ -393,6 +406,8 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
   end(callback?: (err: QueryError | null) => void): void;
   end(options: any, callback?: (err: QueryError | null) => void): void;
 
+  [Symbol.dispose](): void;
+
   destroy(): void;
 
   pause(): void;
@@ -422,6 +437,8 @@ declare class Connection extends QueryableBase(ExecutableBase(EventEmitter)) {
   promise(promiseImpl?: PromiseConstructor): PromiseConnection;
 
   ping(callback?: (err: QueryError | null) => any): void;
+
+  reset(callback?: (err: QueryError | null) => any): void;
 
   writeOk(args?: OkPacketParams): void;
 

@@ -33,33 +33,13 @@ try {
 
   // highlight-next-line
   connection.release();
+
+  // Close the pool
+  await pool.end();
 } catch (err) {
   console.log(err);
 }
 ```
-
-  </TabItem>
-  <TabItem value='callback.js'>
-
-```js
-const mysql = require('mysql2');
-
-const pool = mysql.createPool('mysql://root:password@localhost:3306/test');
-
-pool.getConnection(function (err, connection) {
-  if (err instanceof Error) {
-    console.log(err);
-    return;
-  }
-
-  // ... some query
-
-  connection.release();
-});
-```
-
-  </TabItem>
-</Tabs>
 
 :::warning
 
@@ -69,6 +49,97 @@ Don't forget to release the connection when finished by using:
 - `connection.release()`
 
 :::
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+// highlight-start
+const pool = mysql.createPool('mysql://root:password@localhost:3306/test');
+// highlight-end
+
+pool.getConnection(function (err, connection) {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  // ... some query
+
+  // highlight-next-line
+  connection.release();
+
+  // Close the pool
+  pool.end();
+});
+```
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
+:::
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // highlight-start
+  await using pool = mysql.createPool(
+    'mysql://root:password@localhost:3306/test'
+  );
+  // .release() is called automatically when leaving the scope
+  await using connection = await pool.getConnection();
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+
+{
+  // highlight-next-line
+  using pool = mysql.createPool('mysql://root:password@localhost:3306/test');
+
+  pool.getConnection(function (err, _connection) {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    // highlight-start
+    // .release() is called automatically when leaving the scope
+    using connection = _connection;
+    // highlight-end
+
+    // ... some query
+  });
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+</Tabs>
 
 <hr />
 
@@ -97,39 +168,13 @@ try {
 
   // highlight-next-line
   connection.release();
+
+  // Close the pool
+  await pool.end();
 } catch (err) {
   console.log(err);
 }
 ```
-
-  </TabItem>
-  <TabItem value='callback.js'>
-
-```js
-const mysql = require('mysql2');
-
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  database: 'test',
-  // port: 3306,
-  // password: '',
-});
-
-pool.getConnection(function (err, connection) {
-  if (err instanceof Error) {
-    console.log(err);
-    return;
-  }
-
-  // ... some query
-
-  connection.release();
-});
-```
-
-  </TabItem>
-</Tabs>
 
 :::warning
 
@@ -139,6 +184,113 @@ Don't forget to release the connection when finished by using:
 - `connection.release()`
 
 :::
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+// highlight-start
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  // port: 3306,
+  // password: '',
+});
+// highlight-end
+
+pool.getConnection(function (err, connection) {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  // ... some query
+
+  // highlight-next-line
+  connection.release();
+
+  // Close the pool
+  pool.end();
+});
+```
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
+:::
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // highlight-start
+  await using pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+    // port: 3306,
+    // password: '',
+  });
+  // .release() is called automatically when leaving the scope
+  await using connection = await pool.getConnection();
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+
+{
+  // highlight-next-line
+  using pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    database: 'test',
+    // port: 3306,
+    // password: '',
+  });
+
+  pool.getConnection(function (err, _connection) {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    // highlight-start
+    // .release() is called automatically when leaving the scope
+    using connection = _connection;
+    // highlight-end
+
+    // ... some query
+  });
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+</Tabs>
 
 <hr />
 
@@ -167,36 +319,13 @@ try {
 
   // highlight-next-line
   connection.release();
+
+  // Close the pool
+  await pool.end();
 } catch (err) {
   console.log(err);
 }
 ```
-
-  </TabItem>
-  <TabItem value='callback.js'>
-
-```js
-const mysql = require('mysql2');
-
-const pool = mysql.createPool({
-  // ...
-  passwordSha1: Buffer.from('8bb6118f8fd6935ad0876a3be34a717d32708ffd', 'hex'),
-});
-
-pool.getConnection(function (err, connection) {
-  if (err instanceof Error) {
-    console.log(err);
-    return;
-  }
-
-  // ... some query
-
-  connection.release();
-});
-```
-
-  </TabItem>
-</Tabs>
 
 :::warning
 
@@ -206,6 +335,110 @@ Don't forget to release the connection when finished by using:
 - `connection.release()`
 
 :::
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+// highlight-start
+const pool = mysql.createPool({
+  // ...
+  passwordSha1: Buffer.from('8bb6118f8fd6935ad0876a3be34a717d32708ffd', 'hex'),
+});
+// highlight-end
+
+pool.getConnection(function (err, connection) {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  // ... some query
+
+  // highlight-next-line
+  connection.release();
+
+  // Close the pool
+  pool.end();
+});
+```
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
+:::
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // highlight-start
+  await using pool = mysql.createPool({
+    // ...
+    passwordSha1: Buffer.from(
+      '8bb6118f8fd6935ad0876a3be34a717d32708ffd',
+      'hex'
+    ),
+  });
+  // .release() is called automatically when leaving the scope
+  await using connection = await pool.getConnection();
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+
+{
+  // highlight-next-line
+  using pool = mysql.createPool({
+    // ...
+    passwordSha1: Buffer.from(
+      '8bb6118f8fd6935ad0876a3be34a717d32708ffd',
+      'hex'
+    ),
+  });
+
+  pool.getConnection(function (err, _connection) {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    // highlight-start
+    // .release() is called automatically when leaving the scope
+    using connection = _connection;
+    // highlight-end
+
+    // ... some query
+  });
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+</Tabs>
 
 <hr />
 
@@ -235,10 +468,22 @@ try {
 
   // highlight-next-line
   connection.release();
+
+  // Close the pool
+  await pool.end();
 } catch (err) {
   console.log(err);
 }
 ```
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
+:::
 
   </TabItem>
   <TabItem value='callback.js'>
@@ -246,6 +491,7 @@ try {
 ```js
 const mysql = require('mysql2');
 
+// highlight-start
 const pool = mysql.createPool({
   // ...
   ssl: {
@@ -254,6 +500,7 @@ const pool = mysql.createPool({
     ca: fs.readFileSync('./certs/ca-cert.pem'),
   },
 });
+// highlight-end
 
 pool.getConnection(function (err, connection) {
   if (err instanceof Error) {
@@ -263,9 +510,87 @@ pool.getConnection(function (err, connection) {
 
   // ... some query
 
+  // highlight-next-line
   connection.release();
+
+  // Close the pool
+  pool.end();
 });
 ```
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
+:::
+
+  </TabItem>
+  <TabItem value='await using'>
+
+```ts
+import mysql from 'mysql2/promise';
+
+{
+  // highlight-start
+  await using pool = mysql.createPool({
+    // ...
+    ssl: {
+      // key: fs.readFileSync('./certs/client-key.pem'),
+      // cert: fs.readFileSync('./certs/client-cert.pem')
+      ca: fs.readFileSync('./certs/ca-cert.pem'),
+    },
+  });
+  // .release() is called automatically when leaving the scope
+  await using connection = await pool.getConnection();
+  // highlight-end
+
+  // ... some query
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+
+{
+  // highlight-next-line
+  using pool = mysql.createPool({
+    // ...
+    ssl: {
+      // key: fs.readFileSync('./certs/client-key.pem'),
+      // cert: fs.readFileSync('./certs/client-cert.pem')
+      ca: fs.readFileSync('./certs/ca-cert.pem'),
+    },
+  });
+
+  pool.getConnection(function (err, _connection) {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    // highlight-start
+    // .release() is called automatically when leaving the scope
+    using connection = _connection;
+    // highlight-end
+
+    // ... some query
+  });
+}
+```
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
 
   </TabItem>
     <TabItem value='certs/ca-cert.pem'>
@@ -278,15 +603,6 @@ pool.getConnection(function (err, connection) {
 
   </TabItem>
 </Tabs>
-
-:::warning
-
-Don't forget to release the connection when finished by using:
-
-- `pool.releaseConnection(connection)`
-- `connection.release()`
-
-:::
 
 <hr />
 
@@ -322,6 +638,9 @@ try {
 
   // highlight-next-line
   connection.release();
+
+  // Close the pool
+  await pool.end();
 } catch (err) {
   console.log(err);
 }
@@ -329,6 +648,15 @@ try {
 
 :::info
 For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
 :::
 
 :::tip Testing
@@ -353,11 +681,13 @@ try {
 const mysql = require('mysql2');
 const awsCaBundle = require('aws-ssl-profiles');
 
+// highlight-start
 const pool = mysql.createPool({
   // ...
   host: 'db.id.ap-southeast-2.rds.amazonaws.com',
   ssl: awsCaBundle,
 });
+// highlight-end
 
 pool.getConnection(function (err, connection) {
   if (err instanceof Error) {
@@ -367,12 +697,25 @@ pool.getConnection(function (err, connection) {
 
   // ... some query
 
+  // highlight-next-line
   connection.release();
+
+  // Close the pool
+  pool.end();
 });
 ```
 
 :::info
 For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
+
+:::warning
+
+Don't forget to release the connection when finished by using:
+
+- `pool.releaseConnection(connection)`
+- `connection.release()`
+
 :::
 
 :::tip Testing
@@ -393,16 +736,76 @@ connectionquery('SHOW `status` LIKE "Ssl_cipher"', function (err, res) {
 :::
 
   </TabItem>
-</Tabs>
+  <TabItem value='await using'>
 
-:::warning
+```ts
+import mysql from 'mysql2/promise';
+import awsCaBundle from 'aws-ssl-profiles';
 
-Don't forget to release the connection when finished by using:
+{
+  // highlight-start
+  await using pool = mysql.createPool({
+    // ...
+    host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+    ssl: awsCaBundle,
+  });
+  // .release() is called automatically when leaving the scope
+  await using connection = await pool.getConnection();
+  // highlight-end
 
-- `pool.releaseConnection(connection)`
-- `connection.release()`
+  // ... some query
+}
+```
 
+:::info
+For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
 :::
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+  <TabItem value='using'>
+
+```ts
+const mysql = require('mysql2');
+const awsCaBundle = require('aws-ssl-profiles');
+
+{
+  // highlight-next-line
+  using pool = mysql.createPool({
+    // ...
+    host: 'db.id.ap-southeast-2.rds.amazonaws.com',
+    ssl: awsCaBundle,
+  });
+
+  pool.getConnection(function (err, _connection) {
+    if (err instanceof Error) {
+      console.log(err);
+      return;
+    }
+
+    // highlight-start
+    // .release() is called automatically when leaving the scope
+    using connection = _connection;
+    // highlight-end
+
+    // ... some query
+  });
+}
+```
+
+:::info
+For detailed instructions, please follow the [**AWS SSL Profiles documentation**](https://github.com/mysqljs/aws-ssl-profiles?tab=readme-ov-file#readme).
+:::
+
+:::tip
+`await using` and `using` leverage [Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management) to automatically call `.end()` or `.release()` when the variable goes out of scope, so you never forget to clean up connections.
+:::
+
+  </TabItem>
+</Tabs>
 
 <hr />
 
@@ -423,6 +826,9 @@ const pool = mysql.createPool({
   stream: socksProxy,
 });
 // highlight-end
+
+// Close the pool
+pool.end();
 ```
 
   </TabItem>
@@ -440,6 +846,9 @@ const pool = mysql.createPool({
   },
 });
 // highlight-end
+
+// Close the pool
+pool.end();
 ```
 
   </TabItem>

@@ -4,7 +4,21 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
+    groups:
+      dev-dependencies:
+        dependency-type: 'development'
   - package-ecosystem: 'npm'
     directory: '/website'
     schedule:
       interval: 'daily'
+    groups:
+      docusaurus:
+        patterns:
+          - '@docusaurus/*'
+          - 'docusaurus-*'
+      react:
+        patterns:
+          - 'react'
+          - 'react-dom'
+      website-dev-dependencies:
+        dependency-type: 'development'

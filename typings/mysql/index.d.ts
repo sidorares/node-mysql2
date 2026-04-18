@@ -8,13 +8,14 @@ import {
   Query as BaseQuery,
   QueryOptions,
   QueryError,
+  ExecuteValues,
+  QueryValues,
 } from './lib/protocol/sequences/Query.js';
 import {
   PoolCluster as BasePoolCluster,
   PoolClusterOptions,
   PoolNamespace,
 } from './lib/PoolCluster.js';
-import { PoolConnection as BasePoolConnection } from './lib/PoolConnection.js';
 import {
   Prepare as BasePrepare,
   PrepareStatementInfo,
@@ -36,6 +37,8 @@ export {
   PoolNamespace,
   QueryOptions,
   QueryError,
+  ExecuteValues,
+  QueryValues,
   PrepareStatementInfo,
 };
 
@@ -44,11 +47,10 @@ export * from './lib/Auth.js';
 export * from './lib/constants/index.js';
 export * from './lib/parsers/index.js';
 export * from './lib/Connection.js';
+export * from './lib/PoolConnection.js';
 
 // Expose class interfaces
-export interface Connection extends BaseConnection {}
 export interface Pool extends BasePool {}
-export interface PoolConnection extends BasePoolConnection {}
 export interface PoolCluster extends BasePoolCluster {}
 export interface Query extends BaseQuery {}
 export interface Prepare extends BasePrepare {}
@@ -82,3 +84,10 @@ export interface ConnectionConfig extends ConnectionOptions {
 }
 
 export function createServer(handler: (conn: BaseConnection) => any): Server;
+
+export type {
+  QueryTraceContext,
+  ExecuteTraceContext,
+  ConnectTraceContext,
+  PoolConnectTraceContext,
+} from './lib/Tracing.js';

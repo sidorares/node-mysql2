@@ -40,7 +40,7 @@ export interface PreparedStatementInfo {
   >;
 }
 
-export interface Connection extends QueryableAndExecutableBase {
+export declare class Connection extends QueryableAndExecutableBase {
   config: ConnectionOptions;
 
   threadId: number;
@@ -50,6 +50,8 @@ export interface Connection extends QueryableAndExecutableBase {
   connect(): Promise<void>;
 
   ping(): Promise<void>;
+
+  reset(): Promise<void>;
 
   beginTransaction(): Promise<void>;
 
@@ -65,6 +67,8 @@ export interface Connection extends QueryableAndExecutableBase {
 
   end(options?: any): Promise<void>;
 
+  [Symbol.asyncDispose](): Promise<void>;
+
   destroy(): void;
 
   pause(): void;
@@ -79,9 +83,10 @@ export interface Connection extends QueryableAndExecutableBase {
   format(sql: string, values?: any | any[] | { [param: string]: any }): string;
 }
 
-export interface PoolConnection extends Connection {
+export declare class PoolConnection extends Connection {
   release(): void;
   connection: Connection;
+  [Symbol.asyncDispose](): Promise<void>;
 }
 
 export interface Pool extends Connection {
@@ -111,6 +116,8 @@ export interface PoolCluster extends EventEmitter {
   add(group: string, config: PoolOptions): void;
 
   end(): Promise<void>;
+
+  [Symbol.asyncDispose](): Promise<void>;
 
   getConnection(): Promise<PoolConnection>;
   getConnection(group: string): Promise<PoolConnection>;

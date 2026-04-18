@@ -1,5 +1,5 @@
 import { EOL } from 'node:os';
-import { listFiles, test, assert } from 'poku';
+import { listFiles, test, strict } from 'poku';
 
 const invalidFiles: string[] = [];
 const message = [
@@ -31,7 +31,7 @@ test(async () => {
   await checkExtensions(['src/components', 'src/pages'], /\.tsx$/);
   await checkExtensions(['src/css'], /\.scss$/);
 
-  assert.deepStrictEqual(
+  strict.deepStrictEqual(
     invalidFiles.length,
     0,
     Array.from(new Set(message)).join(EOL)

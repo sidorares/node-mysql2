@@ -1,5 +1,5 @@
 'use strict';
 
-require('../test/common.test.cjs').waitDatabaseReady(() => {
+require('./common.js').waitDatabaseReady(() => {
   console.log('ready!');
 });

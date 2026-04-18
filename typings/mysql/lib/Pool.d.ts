@@ -37,6 +37,13 @@ export interface PoolOptions extends ConnectionOptions {
    * is no limit to the number of queued connection requests. (Default: 0)
    */
   queueLimit?: number;
+
+  /**
+   * Whether to reset the connection state (user variables, temporary tables, transactions, etc.) when
+   * releasing the connection back to the pool. This ensures each connection starts clean for the next user.
+   * Requires MySQL 5.7.3+. (Default: false)
+   */
+  resetOnRelease?: boolean;
 }
 
 /**
@@ -76,6 +83,7 @@ declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
     callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any
   ): void;
 
+<<<<<<< HEAD
   /**
    * Returns a snapshot of the pool's current state for monitoring and diagnostics.
    *
@@ -84,6 +92,9 @@ declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
    * console.log(`${stats.free}/${stats.all} connections free, ${stats.queued} queued`);
    */
   getStats(): PoolStats;
+=======
+  [Symbol.dispose](): void;
+>>>>>>> upstream/master
 
   on(event: string, listener: (...args: any[]) => void): this;
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;

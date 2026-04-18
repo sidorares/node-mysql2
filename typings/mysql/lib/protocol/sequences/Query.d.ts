@@ -1,7 +1,36 @@
 import { Sequence } from './Sequence.js';
 import { OkPacket, RowDataPacket, FieldPacket } from '../packets/index.js';
 import { Readable } from 'stream';
+import { Raw, Timezone } from 'sql-escaper';
 import { TypeCast } from '../../parsers/typeCast.js';
+
+export type ExecuteValues =
+  | string
+  | number
+  | bigint
+  | boolean
+  | Date
+  | null
+  | Blob
+  | Buffer
+  | Uint8Array
+  | ExecuteValues[]
+  | { [key: string]: ExecuteValues };
+
+export type QueryValues =
+  | string
+  | number
+  | bigint
+  | boolean
+  | Date
+  | null
+  | undefined
+  | Blob
+  | Buffer
+  | Uint8Array
+  | Raw
+  | ({} | null | undefined)[]
+  | { [key: string]: QueryValues };
 
 export interface QueryOptions {
   /**
@@ -12,7 +41,14 @@ export interface QueryOptions {
   /**
    * The values for the query
    */
-  values?: any | any[] | { [param: string]: any };
+  values?: QueryValues;
+
+  /**
+   * Query attributes sent alongside the query (MySQL 8.0.25+).
+   * Requires the `component_query_attributes` server component to be read via
+   * `mysql_query_attribute_string()`.
+   */
+  attributes?: Record<string, string | number | boolean | null | Buffer | Date>;
 
   /**
    * This overrides the namedPlaceholders option set at the connection level.
@@ -83,6 +119,35 @@ export interface QueryOptions {
    * By specifying a function that returns a readable stream, an arbitrary stream can be sent when sending a local fs file.
    */
   infileStreamFactory?: (path: string) => Readable;
+
+  /**
+   * When dealing with big numbers (BIGINT and DECIMAL columns) in the database, you should enable this option
+   * (Default: false)
+   */
+  supportBigNumbers?: boolean;
+
+  /**
+   * Enabling both supportBigNumbers and bigNumberStrings forces big numbers (BIGINT and DECIMAL columns) to be
+   * always returned as JavaScript String objects (Default: false). Enabling supportBigNumbers but leaving
+   * bigNumberStrings disabled will return big numbers as String objects only when they cannot be accurately
+   * represented with JavaScript Number objects (which happens when they exceed the [-2^53, +2^53] range),
+   * otherwise they will be returned as Number objects.
+   * This option is ignored if supportBigNumbers is disabled.
+   */
+  bigNumberStrings?: boolean;
+
+  /**
+   * Force date types (TIMESTAMP, DATETIME, DATE) to be returned as strings rather then inflated into JavaScript Date
+   * objects. Can be true/false or an array of type names to keep as strings.
+   *
+   * (Default: false)
+   */
+  dateStrings?: boolean | Array<'TIMESTAMP' | 'DATETIME' | 'DATE'>;
+
+  /**
+   * The timezone used to store local dates. (Default: 'local')
+   */
+  timezone?: Timezone;
 }
 
 export interface StreamOptions {

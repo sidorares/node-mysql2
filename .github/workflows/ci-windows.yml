@@ -2,6 +2,16 @@ name: CI - Windows
 
 on:
   pull_request:
+    paths:
+      - '.github/workflows/ci-windows.yml'
+      - 'lib/**'
+      - 'test/**'
+      - 'tools/**'
+      - 'index.js'
+      - 'promise.js'
+      - 'poku.config.js'
+      - 'package.json'
+      - 'package-lock.json'
   push:
     branches: [main]
 
@@ -45,6 +55,7 @@ jobs:
       - run: node tools/create-db.js
       - name: Run tests
         run: npm test
+        timeout-minutes: 10
         env:
           MYSQL_USE_TLS: ${{ matrix.use-tls }}
           MYSQL_USE_COMPRESSION: ${{ matrix.use-compression }}
