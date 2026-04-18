@@ -83,7 +83,6 @@ declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
     callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any
   ): void;
 
-<<<<<<< HEAD
   /**
    * Returns a snapshot of the pool's current state for monitoring and diagnostics.
    *
@@ -92,9 +91,7 @@ declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
    * console.log(`${stats.free}/${stats.all} connections free, ${stats.queued} queued`);
    */
   getStats(): PoolStats;
-=======
   [Symbol.dispose](): void;
->>>>>>> upstream/master
 
   on(event: string, listener: (...args: any[]) => void): this;
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;
