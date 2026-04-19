@@ -1,0 +1,9 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "changelog-path": "Changelog.md",
+      "package-name": "mysql2"
+    }
+  }
+}
