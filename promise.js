@@ -98,7 +98,9 @@ class PromisePoolCluster extends EventEmitter {
 
   execute(sql, args) {
     const corePoolCluster = this.poolCluster;
-    const stackHolder = captureStackHolder(PromisePoolCluster.prototype.execute);
+    const stackHolder = captureStackHolder(
+      PromisePoolCluster.prototype.execute
+    );
     if (typeof args === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
