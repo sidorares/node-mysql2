@@ -15,6 +15,10 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: .github/release/config.json
+          manifest-file: .github/release/manifest.json
 
       - uses: actions/checkout@v6
         if: ${{ steps.release.outputs.release_created }}
@@ -22,7 +26,8 @@ jobs:
       - uses: actions/setup-node@v6
         if: ${{ steps.release.outputs.release_created }}
         with:
-          node-version: 22
+          check-latest: true
+          node-version: lts/*
           registry-url: 'https://registry.npmjs.org'
           package-manager-cache: false
 
