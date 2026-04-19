@@ -35,17 +35,18 @@ jobs:
     name: Performance regression check
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # - name: Set up MySQL
       #   run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=${{ env.MYSQL_PASSWORD }} -e MYSQL_DATABASE=${{ env.MYSQL_DATABASE }} -v $PWD/mysqldata:/var/lib/mysql/ -v $PWD/test/fixtures/custom-conf:/etc/mysql/conf.d -v $PWD/test/fixtures/ssl/certs:/certs -p ${{ env.MYSQL_PORT }}:3306 ${{ matrix.mysql-version }}
       - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
+          package-manager-cache: false
 
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: npm-linux-${{ hashFiles('package-lock.json') }}
@@ -61,7 +62,7 @@ jobs:
         run: node benchmarks/benchmark.js | tee output.txt
 
       - name: Download previous benchmark data
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ./cache
           key: ${{ runner.os }}-benchmark-${{ github.sha }}
@@ -69,7 +70,7 @@ jobs:
             ${{ runner.os }}-benchmark-
 
       - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
+        uses: benchmark-action/github-action-benchmark@v1.22.0
         with:
           tool: 'benchmarkjs'
           output-file-path: output.txt
