@@ -26,7 +26,7 @@ await describe('Async stack traces', async () => {
       const stack = ErrorStackParser.parse(err as Error);
       const stackExpected = ErrorStackParser.parse(e1!);
       strict(
-        stack[2].getLineNumber() === (stackExpected[0].getLineNumber() ?? 0) + 2
+        stack[0].getLineNumber() === (stackExpected[0].getLineNumber() ?? 0) + 2
       );
     }
   });
@@ -41,7 +41,7 @@ await describe('Async stack traces', async () => {
       const stack = ErrorStackParser.parse(err as Error);
       const stackExpected = ErrorStackParser.parse(e2!);
       strict(
-        stack[1].getLineNumber() === (stackExpected[0].getLineNumber() ?? 0) + 1
+        stack[0].getLineNumber() === (stackExpected[0].getLineNumber() ?? 0) + 1
       );
     } finally {
       await conn.end();
