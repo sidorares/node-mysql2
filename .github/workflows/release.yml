@@ -6,30 +6,33 @@ on:
 name: release-please
 permissions:
   contents: write
+  issues: write
   pull-requests: write
   id-token: write
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v3
+      - uses: googleapis/release-please-action@v4
         id: release
         with:
-          release-type: node
-          package-name: mysql2
-          changelog-path: 'Changelog.md'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: .github/release/config.json
+          manifest-file: .github/release/manifest.json
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         if: ${{ steps.release.outputs.release_created }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         if: ${{ steps.release.outputs.release_created }}
         with:
-          node-version: 22
+          check-latest: true
+          node-version: lts/*
           registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
 
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: npm-linux-${{ hashFiles('package-lock.json') }}

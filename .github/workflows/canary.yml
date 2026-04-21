@@ -18,7 +18,7 @@ jobs:
     name: Canary
     steps:
       - name: Actions - Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -49,14 +49,15 @@ jobs:
 
       - name: Actions - Setup Node.js
         if: steps.check_commit.outputs.publish == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
 
       - name: Cache dependencies
         if: steps.check_commit.outputs.publish == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: npm-linux-${{ hashFiles('package-lock.json') }}
