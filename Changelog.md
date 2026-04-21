@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.2](https://github.com/sidorares/node-mysql2/compare/v3.22.1...v3.22.2) (2026-04-21)
+
+
+### Bug Fixes
+
+* **promise:** point rejection stacks at caller for promise API ([#4267](https://github.com/sidorares/node-mysql2/issues/4267)) ([c79a3f3](https://github.com/sidorares/node-mysql2/commit/c79a3f323f2919b33a11daa2177b818f37dc7996))
+
 ## [3.22.1](https://github.com/sidorares/node-mysql2/compare/v3.22.0...v3.22.1) (2026-04-17)
 
 
