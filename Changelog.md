@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.3](https://github.com/sidorares/node-mysql2/compare/v3.22.2...v3.22.3) (2026-04-24)
+
+
+### Bug Fixes
+
+* allow resetOnRelease in connection config validation ([#4278](https://github.com/sidorares/node-mysql2/issues/4278)) ([e72f923](https://github.com/sidorares/node-mysql2/commit/e72f923d20bcdf776ee4f29ed48c69ee47ebd483))
+
 ## [3.22.2](https://github.com/sidorares/node-mysql2/compare/v3.22.1...v3.22.2) (2026-04-21)
 
 
