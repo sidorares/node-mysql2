@@ -3,9 +3,9 @@ import ConnectionConfig from '../../../lib/connection_config.js';
 import SSLProfiles from '../../../lib/constants/ssl_profiles.js';
 
 describe('ConnectionConfig', () => {
-  it('should throw on boolean ssl', () => {
+  it('should throw on true', () => {
     const expectedMessage =
-      "SSL profile must be an object, instead it's a boolean";
+      "SSL configuration must be an object or a function, instead it's a boolean";
 
     strict.throws(
       () =>
@@ -15,6 +15,16 @@ describe('ConnectionConfig', () => {
       (err: unknown) =>
         err instanceof TypeError && err.message === expectedMessage,
       'Error, the constructor accepts a boolean without throwing the right exception'
+    );
+  });
+
+  it('should accept false', () => {
+    strict.doesNotThrow(
+      () =>
+        new ConnectionConfig({
+          ssl: false,
+        }),
+      'Error, the constructor accepts false but throws an exception'
     );
   });
 
@@ -35,6 +45,14 @@ describe('ConnectionConfig', () => {
         ssl: sslProfile,
       });
     }, 'Error, the constructor accepts a string but throws an exception');
+  });
+
+  it('should accept a function', () => {
+    strict.doesNotThrow(() => {
+      new ConnectionConfig({
+        ssl: () => ({}),
+      });
+    }, 'Error, the constructor accepts a function but throws an exception');
   });
 
   it('should accept flags string', () => {
