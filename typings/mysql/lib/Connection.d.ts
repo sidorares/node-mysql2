@@ -4,23 +4,24 @@
 // Modifications copyright (c) 2021, Oracle and/or its affiliates.
 
 import { EventEmitter } from 'events';
-import { Readable } from 'stream';
 import { Timezone } from 'sql-escaper';
-import { Query, QueryError } from './protocol/sequences/Query.js';
-import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
-import {
-  OkPacket,
-  FieldPacket,
-  RowDataPacket,
-  ResultSetHeader,
-  OkPacketParams,
-  ErrorPacketParams,
-} from './protocol/packets/index.js';
+import { Readable } from 'stream';
 import { Connection as PromiseConnection } from '../../../promise.js';
+import { ConnectionConfig } from '../index.js';
 import { AuthPlugin } from './Auth.js';
-import { QueryableBase } from './protocol/sequences/QueryableBase.js';
-import { ExecutableBase } from './protocol/sequences/ExecutableBase.js';
 import { TypeCast } from './parsers/typeCast.js';
+import {
+  ErrorPacketParams,
+  FieldPacket,
+  OkPacket,
+  OkPacketParams,
+  ResultSetHeader,
+  RowDataPacket,
+} from './protocol/packets/index.js';
+import { ExecutableBase } from './protocol/sequences/ExecutableBase.js';
+import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
+import { Query, QueryError } from './protocol/sequences/Query.js';
+import { QueryableBase } from './protocol/sequences/QueryableBase.js';
 
 export interface SslOptions {
   /**
@@ -267,9 +268,18 @@ export interface ConnectionOptions {
   flags?: Array<string>;
 
   /**
-   * object with ssl parameters or a string containing name of ssl profile
+   * - False to disable SSL, or
+   * - String with the name of the SSL profile to use (supported: 'Amazon RDS'; deprecated), or
+   * - SSL configuration object, or
+   * - A function that returns a SSL configuration object
+   *
+   * Default: false
    */
-  ssl?: string | SslOptions;
+  ssl?:
+    | false
+    | string
+    | SslOptions
+    | ((config: ConnectionConfig) => SslOptions | PromiseLike<SslOptions>);
 
   /**
    * Return each row as an array, not as an object.
