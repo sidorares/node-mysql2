@@ -29,7 +29,7 @@
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "sass": "^1.99.0"
+    "sass": "^1.100.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
