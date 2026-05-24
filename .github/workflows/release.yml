@@ -1,17 +1,22 @@
+name: Release
+
 on:
   push:
     branches:
       - master
   workflow_dispatch:
-name: release-please
+
 permissions:
   contents: write
   issues: write
   pull-requests: write
   id-token: write
+
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
@@ -20,11 +25,15 @@ jobs:
           config-file: .github/release/config.json
           manifest-file: .github/release/manifest.json
 
+  publish-stable:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
       - uses: actions/checkout@v6
-        if: ${{ steps.release.outputs.release_created }}
 
       - uses: actions/setup-node@v6
-        if: ${{ steps.release.outputs.release_created }}
         with:
           check-latest: true
           node-version: lts/*
@@ -39,9 +48,79 @@ jobs:
           restore-keys: npm-linux-
 
       - run: npm ci
-        if: ${{ steps.release.outputs.release_created }}
 
       - run: npm publish --provenance
-        if: ${{ steps.release.outputs.release_created }}
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-canary:
+    needs: release-please
+    if: needs.release-please.outputs.release_created != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check Commit Message
+        id: check_commit
+        run: |
+          MESSAGE=$(git log -1 --pretty=%s --no-merges)
+          echo "Commit message: $MESSAGE"
+
+          if [[ "$MESSAGE" =~ build\(deps-dev\) ]] ||
+             [[ "$MESSAGE" =~ build\(deps\) ]] ||
+             [[ "$MESSAGE" =~ chore\(master\) ]] ||
+             [[ "$MESSAGE" =~ chore\(deps\) ]] ||
+             [[ "$MESSAGE" =~ chore:\ update\ dependencies ]] ||
+             [[ "$MESSAGE" =~ docs: ]] ||
+             [[ "$MESSAGE" =~ ci: ]] ||
+             [[ "$MESSAGE" =~ cd: ]] ||
+             [[ "$MESSAGE" =~ docs\(.*\): ]] ||
+             [[ "$MESSAGE" =~ test\(.*\): ]] ||
+             [[ "$MESSAGE" =~ ci\(.*\): ]] ||
+             [[ "$MESSAGE" =~ cd\(.*\): ]] ||
+             [[ "$MESSAGE" =~ chore\(website\) ]]; then
+            echo "publish=false" >> $GITHUB_OUTPUT
+            echo "Skip publish"
+          else
+            echo "publish=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Actions - Setup Node.js
+        if: steps.check_commit.outputs.publish == 'true'
+        uses: actions/setup-node@v6
+        with:
+          check-latest: true
+          node-version: lts/*
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+
+      - name: Cache dependencies
+        if: steps.check_commit.outputs.publish == 'true'
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
+      - name: Installing Dependencies
+        if: steps.check_commit.outputs.publish == 'true'
+        run: npm ci
+
+      - name: Compute Canary Version
+        if: steps.check_commit.outputs.publish == 'true'
+        run: |
+          npm version patch --no-git-tag-version
+          VERSION=$(node -p "require('./package.json').version")
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "VERSION=${VERSION}-canary.${SHORT_SHA}" >> $GITHUB_ENV
+
+      - name: Set Canary Version
+        if: steps.check_commit.outputs.publish == 'true'
+        run: npm version $VERSION --no-git-tag-version
+
+      - name: Publishing Canary
+        if: steps.check_commit.outputs.publish == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag canary --provenance
