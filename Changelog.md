@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.4](https://github.com/sidorares/node-mysql2/compare/v3.22.3...v3.22.4) (2026-05-26)
+
+
+### Bug Fixes
+
+* **pool:** reject queued requests on end ([#4291](https://github.com/sidorares/node-mysql2/issues/4291)) ([fbff09c](https://github.com/sidorares/node-mysql2/commit/fbff09cb58eeae11179c05ef1ef6a07a78d53a29))
+
 ## [3.22.3](https://github.com/sidorares/node-mysql2/compare/v3.22.2...v3.22.3) (2026-04-24)
 
 
