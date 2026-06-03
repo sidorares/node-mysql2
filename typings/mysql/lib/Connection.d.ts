@@ -298,6 +298,8 @@ export interface ConnectionOptions {
 
   isServer?: boolean;
 
+  serverOptions?: import('./Server.js').ServerOptions;
+
   maxPreparedStatements?: number;
 
   namedPlaceholders?: boolean;

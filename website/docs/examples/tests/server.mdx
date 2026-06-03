@@ -4,17 +4,102 @@ import TabItem from '@theme/TabItem';
 # Server
 
 <Tabs>
-  <TabItem value='index.js' default>
+  <TabItem value='simple' label='Simple Query Server' default>
 
 ```js
 'use strict';
 
 const mysql = require('mysql2');
-const flags = require('mysql2/lib/constants/client.js');
+
+const server = mysql.createServer({
+  query(sql) {
+    return [
+      { greeting: 'Hello from mysql2 server!', query: sql },
+    ];
+  },
+});
+
+server.listen(3333);
+console.log('MySQL server listening on port 3333');
+```
+
+  </TabItem>
+  <TabItem value='proxy' label='MySQL Proxy'>
+
+```js
+'use strict';
+
+const mysql = require('mysql2');
+
+const server = mysql.createServer((connection) => {
+  const upstream = mysql.createConnection({
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+  });
+
+  return {
+    async query(sql) {
+      const [rows, fields] = await upstream.promise().query(sql);
+      return { rows, columns: fields };
+    },
+    quit() {
+      upstream.end();
+    },
+  };
+});
+
+server.listen(3334);
+console.log('MySQL proxy listening on port 3334');
+```
+
+  </TabItem>
+  <TabItem value='auth' label='With Authentication'>
+
+```js
+'use strict';
+
+const mysql = require('mysql2');
+const auth = require('mysql2/lib/auth_41.js');
+
+const VALID_USER = 'admin';
+const PASSWORD_DOUBLE_SHA = auth.doubleSha1('secret123');
+
+const server = mysql.createServer({
+  auth(params) {
+    if (params.user !== VALID_USER) {
+      throw new Error(`Unknown user: ${params.user}`);
+    }
+    const isValid = auth.verifyToken(
+      params.authPluginData1,
+      params.authPluginData2,
+      params.authToken,
+      PASSWORD_DOUBLE_SHA,
+    );
+    if (!isValid) {
+      throw new Error('Wrong password');
+    }
+  },
+  query(sql) {
+    return [{ message: `Hello ${VALID_USER}, you ran: ${sql}` }];
+  },
+});
+
+server.listen(3335);
+console.log('Authenticated MySQL server on port 3335');
+// Connect: mysql -h 127.0.0.1 -P 3335 -u admin -psecret123
+```
+
+  </TabItem>
+  <TabItem value='legacy' label='Legacy API'>
+
+```js
+'use strict';
+
+const mysql = require('mysql2');
 const auth = require('mysql2/lib/auth_41.js');
 
 function authenticate(params, cb) {
-  console.log(params);
   const doubleSha = auth.doubleSha1('pass123');
   const isValid = auth.verifyToken(
     params.authPluginData1,
@@ -25,32 +110,21 @@ function authenticate(params, cb) {
   if (isValid) {
     cb(null);
   } else {
-    // for list of codes lib/constants/errors.js
-    cb(null, { message: 'wrong password dude', code: 1045 });
+    cb(null, { message: 'wrong password', code: 1045 });
   }
 }
 
 const server = mysql.createServer();
 server.listen(3333);
 server.on('connection', (conn) => {
-  // we can deny connection here:
-  // conn.writeError({ message: 'secret', code: 123 });
-  // conn.close();
   conn.serverHandshake({
     protocolVersion: 10,
-    serverVersion: '5.6.10', // 'node.js rocks',
+    serverVersion: '5.6.10',
     connectionId: 1234,
     statusFlags: 2,
     characterSet: 8,
-    // capabilityFlags: 0xffffff,
-    // capabilityFlags: -2113931265,
     capabilityFlags: 2181036031,
     authCallback: authenticate,
-  });
-
-  conn.on('field_list', (table, fields) => {
-    console.log('FIELD LIST:', table, fields);
-    conn.writeEof();
   });
 
   conn.on('query', (query) => {
@@ -69,10 +143,8 @@ server.on('connection', (conn) => {
         decimals: 0,
       },
     ]);
-    conn.writeTextRow(['test тест テスト փորձարկում পরীক্ষা kiểm tra ']);
-    conn.writeTextRow(['ტესტი પરીક્ષણ  מבחן פּרובירן اختبار परीक्षण']);
+    conn.writeTextRow(['test row data']);
     conn.writeEof();
-    conn.close();
   });
 });
 ```

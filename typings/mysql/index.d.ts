@@ -20,7 +20,14 @@ import {
   Prepare as BasePrepare,
   PrepareStatementInfo,
 } from './lib/protocol/sequences/Prepare.js';
-import { Server } from './lib/Server.js';
+import {
+  Server,
+  ServerOptions,
+  ServerHandlers,
+  ServerFactory,
+  ServerResult,
+  AuthParams,
+} from './lib/Server.js';
 import {
   escape as SqlStringEscape,
   escapeId as SqlStringEscapeId,
@@ -40,6 +47,11 @@ export {
   ExecuteValues,
   QueryValues,
   PrepareStatementInfo,
+  ServerOptions,
+  ServerHandlers,
+  ServerFactory,
+  ServerResult,
+  AuthParams,
 };
 
 export * from './lib/protocol/packets/index.js';
@@ -83,7 +95,12 @@ export interface ConnectionConfig extends ConnectionOptions {
   };
 }
 
-export function createServer(handler: (conn: BaseConnection) => any): Server;
+export function createServer(
+  handler: (conn: BaseConnection) => any
+): Server;
+export function createServer(handlers: ServerHandlers): Server;
+export function createServer(factory: ServerFactory): Server;
+export function createServer(options: ServerOptions): Server;
 
 export type {
   QueryTraceContext,
