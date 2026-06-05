@@ -209,3 +209,51 @@ Before approving any PR, verify:
 10. **Typings structure** — Type definitions must follow the existing structure in `/typings`. Do not add types in arbitrary locations.
 
 Do not approve a PR that violates the items above without first alerting the author.
+
+## Cursor Cloud specific instructions
+
+MySQL2 is a **library**, not a long-running app. Development means installing Node deps, starting MySQL for integration tests, then running lint/typecheck/tests against the driver.
+
+### Services
+
+| Service | Required? | Notes |
+| --- | --- | --- |
+| **Node.js** (≥14; CI uses 22) | Yes | `npm ci` at repo root |
+| **MySQL** | Yes for full tests | Integration/global tests need a `test` database |
+| **Docker** | Recommended | Used to run MySQL the same way as CI |
+| **Docusaurus** (`website/`) | Optional | `cd website && npm ci && npm start` → http://localhost:3000 |
+
+### MySQL via Docker
+
+Docker is installed on the VM but may need a manual daemon start (systemd is not always active):
+
+```sh
+sudo dockerd > /tmp/dockerd.log 2>&1 &
+```
+
+Start MySQL (creates `test` DB, empty root password):
+
+```sh
+sudo docker compose -f test/docker-compose.yml up -d mysql
+node tools/wait-up.js
+```
+
+Use `sudo docker` if the socket permission error appears. CI pins **MySQL 8.3** (`mysql:8.3`); `test/docker-compose.yml` uses `mysql:lts` (currently 9.x). For full CI parity, run:
+
+```sh
+sudo docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 3306:3306 mysql:8.3
+```
+
+Without `CI=1`, tests use an empty root password (matches docker-compose). With `CI=1`, set `MYSQL_PASSWORD=root`.
+
+### Commands (see `package.json` / `Contributing.md`)
+
+| Task | Command |
+| --- | --- |
+| Lint | `npm run lint` |
+| Typecheck | `npm run typecheck` |
+| Tests | `npm test` (or `FILTER=path/to/test.mts npx poku`) |
+| Build check | `npm run test:build` |
+| Website | `cd website && npm ci && npm test` |
+
+`test/global` runs sequentially and needs elevated MySQL privileges; Poku skips those files when `hasPrivileges()` fails.
