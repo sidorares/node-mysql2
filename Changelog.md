@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.5](https://github.com/sidorares/node-mysql2/compare/v3.22.4...v3.22.5) (2026-06-06)
+
+
+### Bug Fixes
+
+* keep 00:00:00 time for TIMESTAMP in binary protocol with dateStrings ([#4327](https://github.com/sidorares/node-mysql2/issues/4327)) ([2af33a1](https://github.com/sidorares/node-mysql2/commit/2af33a117ac4fdee1f87537cb876df89a02ab2aa))
+
 ## [3.22.4](https://github.com/sidorares/node-mysql2/compare/v3.22.3...v3.22.4) (2026-05-26)
 
 
