@@ -216,12 +216,12 @@ MySQL2 is a **library**, not a long-running app. Development means installing No
 
 ### Services
 
-| Service | Required? | Notes |
-| --- | --- | --- |
-| **Node.js** (≥14; CI uses 22) | Yes | `npm ci` at repo root |
-| **MySQL** | Yes for full tests | Integration/global tests need a `test` database |
-| **Docker** | Recommended | Used to run MySQL the same way as CI |
-| **Docusaurus** (`website/`) | Optional | `cd website && npm ci && npm start` → http://localhost:3000 |
+| Service                       | Required?          | Notes                                                       |
+| ----------------------------- | ------------------ | ----------------------------------------------------------- |
+| **Node.js** (≥14; CI uses 22) | Yes                | `npm ci` at repo root                                       |
+| **MySQL**                     | Yes for full tests | Integration/global tests need a `test` database             |
+| **Docker**                    | Recommended        | Used to run MySQL the same way as CI                        |
+| **Docusaurus** (`website/`)   | Optional           | `cd website && npm ci && npm start` → http://localhost:3000 |
 
 ### MySQL via Docker
 
@@ -248,12 +248,12 @@ Without `CI=1`, tests use an empty root password (matches docker-compose). With 
 
 ### Commands (see `package.json` / `Contributing.md`)
 
-| Task | Command |
-| --- | --- |
-| Lint | `npm run lint` |
-| Typecheck | `npm run typecheck` |
-| Tests | `npm test` (or `FILTER=path/to/test.mts npx poku`) |
-| Build check | `npm run test:build` |
-| Website | `cd website && npm ci && npm test` |
+| Task        | Command                                            |
+| ----------- | -------------------------------------------------- |
+| Lint        | `npm run lint`                                     |
+| Typecheck   | `npm run typecheck`                                |
+| Tests       | `npm test` (or `FILTER=path/to/test.mts npx poku`) |
+| Build check | `npm run test:build`                               |
+| Website     | `cd website && npm ci && npm test`                 |
 
 `test/global` runs sequentially and needs elevated MySQL privileges; Poku skips those files when `hasPrivileges()` fails.
