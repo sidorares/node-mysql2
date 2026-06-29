@@ -269,7 +269,7 @@ export interface ConnectionOptions {
   /**
    * object with ssl parameters or a string containing name of ssl profile
    */
-  ssl?: string | SslOptions;
+  ssl?: string | boolean | SslOptions;
 
   /**
    * Return each row as an array, not as an object.
