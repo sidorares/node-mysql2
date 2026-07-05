@@ -3,8 +3,8 @@ import type {
   TypeCastField,
   TypeCastNext,
 } from '../../../index.js';
-import { describe, it, strict } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { describe, it, skip, strict } from 'poku';
+import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 const typeCastWrapper = function (
   ...args: [encoding?: BufferEncoding | string | undefined]
@@ -20,6 +20,15 @@ const typeCastWrapper = function (
 
 await describe('Text Parser: typeCast with JSON fields', async () => {
   const connection = createConnection();
+  const { isMariaDB } = await getMysqlVersion(connection);
+
+  if (isMariaDB) {
+    await connection.promise().end();
+    // MariaDB JSON columns are utf8mb4 LONGTEXT, so the MySQL-specific
+    // binary-charset footgun tested here does not exist there
+    skip('MariaDB does not report JSON columns with the BINARY charset');
+  }
+
   connection.query('CREATE TEMPORARY TABLE t (i JSON)');
   connection.query('INSERT INTO t values(\'{ "test": "😀" }\')');
 

@@ -4,7 +4,7 @@ import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 await describe('Custom Date Parameter', async () => {
   const connection = createConnection({ timezone: 'Z' });
-  const { major } = await getMysqlVersion(connection);
+  const { major, isMariaDB } = await getMysqlVersion(connection);
 
   // @ts-expect-error: intentionally replacing global Date for testing
   // eslint-disable-next-line no-global-assign
@@ -34,7 +34,9 @@ await describe('Custom Date Parameter', async () => {
       );
     });
 
-    const expected = major < 8 ? 650073600 : '650073600.000000';
+    // MariaDB returns an integer for UNIX_TIMESTAMP(<datetime param>);
+    // MySQL 8+ returns a DECIMAL with microseconds
+    const expected = major < 8 || isMariaDB ? 650073600 : '650073600.000000';
     strict.equal(rows?.[0].t, expected);
   });
 

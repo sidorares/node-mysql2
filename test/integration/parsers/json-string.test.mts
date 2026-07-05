@@ -1,6 +1,6 @@
 import type { RowDataPacket } from '../../../index.js';
 import { describe, it, strict } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 type JsonRow = RowDataPacket & { json_result: string };
 
@@ -8,10 +8,17 @@ await describe('JSON String', async () => {
   const connection = createConnection({
     jsonStrings: true,
   }).promise();
+  const { isMariaDB } = await getMysqlVersion(connection);
+
+  // MariaDB has no CAST(... AS JSON); JSON_EXTRACT also produces a
+  // JSON-typed result there
+  const jsonExpression = isMariaDB
+    ? `JSON_EXTRACT('{"test": true}', '$')`
+    : `CAST('{"test": true}' AS JSON)`;
 
   await it(async () => {
     const [result] = await connection.query<JsonRow[]>(
-      `SELECT CAST('{"test": true}' AS JSON) AS json_result`
+      `SELECT ${jsonExpression} AS json_result`
     );
 
     strict.deepStrictEqual(
@@ -23,7 +30,7 @@ await describe('JSON String', async () => {
 
   await it(async () => {
     const [result] = await connection.execute<JsonRow[]>(
-      `SELECT CAST('{"test": true}' AS JSON) AS json_result`
+      `SELECT ${jsonExpression} AS json_result`
     );
 
     strict.deepStrictEqual(

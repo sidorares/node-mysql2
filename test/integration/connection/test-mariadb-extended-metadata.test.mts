@@ -1,7 +1,7 @@
 import type { FieldPacket, RowDataPacket } from '../../../index.js';
 import { Buffer } from 'node:buffer';
 import { describe, it, skip, strict } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 type TypesRow = RowDataPacket & {
   u: string;
@@ -24,17 +24,11 @@ const table = 'mariadb_extended_metadata_test';
 
 const connection = createConnection().promise();
 
-const [versionRows] = await connection.query<
-  (RowDataPacket & { version: string })[]
->('SELECT VERSION() AS `version`');
-const version = versionRows[0].version;
-const match = version.match(/^(\d+)\.(\d+)/);
-const major = Number(match?.[1]);
-const minor = Number(match?.[2]);
+const { major, minor, version, isMariaDB } = await getMysqlVersion(connection);
 
 // VECTOR requires MariaDB 11.7+; UUID, INET4, INET6 and the extended
 // metadata capability are older (MariaDB 10.5–10.10)
-if (!/mariadb/i.test(version) || major < 11 || (major === 11 && minor < 7)) {
+if (!isMariaDB || major < 11 || (major === 11 && minor < 7)) {
   await connection.end();
   skip(
     `Skipping the test, required server is MariaDB 11.7 and above, actual server is ${version}`
