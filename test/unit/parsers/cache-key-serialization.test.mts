@@ -410,7 +410,7 @@ describe('Cache Key Serialization', () => {
     const result1 = keyFrom(test1);
     strict.deepStrictEqual(
       result1,
-      '[null,"undefined",null,false,false,false,"undefined",null,false,null,[null,null,null,null,null,null,null]]'
+      '[null,"undefined",null,false,false,false,"undefined",null,false,null,false,[null,null,null,null,null,null,null,null,null]]'
     );
     strict(JSON.parse(result1));
   });
@@ -419,7 +419,7 @@ describe('Cache Key Serialization', () => {
     const result2 = keyFrom(test2);
     strict.deepStrictEqual(
       result2,
-      '[null,"undefined",null,false,false,false,"undefined","local",false,null,[null,null,null,null,null,null,null]]'
+      '[null,"undefined",null,false,false,false,"undefined","local",false,null,false,[null,null,null,null,null,null,null,null,null]]'
     );
     strict(JSON.parse(result2));
   });
@@ -428,7 +428,7 @@ describe('Cache Key Serialization', () => {
     const result3 = keyFrom(test3);
     strict.deepStrictEqual(
       result3,
-      '[null,"string","",false,false,false,true,"local",false,false,[null,null,null,null,null,null,null]]'
+      '[null,"string","",false,false,false,true,"local",false,false,false,[null,null,null,null,null,null,null,null,null]]'
     );
     strict(JSON.parse(result3));
   });
@@ -437,7 +437,7 @@ describe('Cache Key Serialization', () => {
     const result4 = keyFrom(test4);
     strict.deepStrictEqual(
       result4,
-      '["binary","boolean",false,false,false,false,true,"local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
+      '["binary","boolean",false,false,false,false,true,"local",false,"DATETIME",false,["id","3",null,"test","test","16899","63",null,null],["value","246",null,"test","test","0","63",null,null]]'
     );
     strict(JSON.parse(result4));
   });
@@ -453,7 +453,7 @@ describe('Cache Key Serialization', () => {
     const result6 = keyFrom(test6);
     strict.deepStrictEqual(
       result6,
-      '["binary","boolean",false,true,true,true,true,"\\"\\"`\'",true,"#",[":","©",null,"/",",","_","❌"]]'
+      '["binary","boolean",false,true,true,true,true,"\\"\\"`\'",true,"#",false,[":","©",null,"/",",","_","❌",null,null]]'
     );
     // Ensuring that JSON is valid with invalid delimiters
     strict(JSON.parse(result6));
@@ -463,7 +463,7 @@ describe('Cache Key Serialization', () => {
     const result7 = keyFrom(test7);
     strict.deepStrictEqual(
       result7,
-      '["binary","boolean",true,true,true,true,true,"local",true,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
+      '["binary","boolean",true,true,true,true,true,"local",true,"DATETIME",false,["id","3",null,"test","test","16899","63",null,null],["value","246",null,"test","test","0","63",null,null]]'
     );
     strict(JSON.parse(result7));
   });
@@ -479,7 +479,7 @@ describe('Cache Key Serialization', () => {
     const result9 = keyFrom(test9);
     strict.deepStrictEqual(
       result9,
-      '["binary","boolean",false,false,false,true,"function","local",false,null,["id","3",null,"test","test","16899","63"]]'
+      '["binary","boolean",false,false,false,true,"function","local",false,null,false,["id","3",null,"test","test","16899","63",null,null]]'
     );
     strict(JSON.parse(result9));
     strict(JSON.parse(result9)[5] === true);
@@ -491,7 +491,7 @@ describe('Cache Key Serialization', () => {
     const result10 = keyFrom(test10);
     strict.deepStrictEqual(
       result10,
-      '["binary","boolean",false,false,false,false,false,"local",false,"DATETIME",["id","3",null,"test","test","16899","63"],["value","246",null,"test","test","0","63"]]'
+      '["binary","boolean",false,false,false,false,false,"local",false,"DATETIME",false,["id","3",null,"test","test","16899","63",null,null],["value","246",null,"test","test","0","63",null,null]]'
     );
     strict(JSON.parse(result10));
   });

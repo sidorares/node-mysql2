@@ -40,6 +40,17 @@ export type Type = {
 };
 
 export type Field = Type & {
+  /**
+   * MariaDB extended data type name (e.g. `uuid`, `inet4`, `inet6`, `point`),
+   * available when the server supports the MARIADB_CLIENT_EXTENDED_METADATA
+   * capability (MariaDB 10.5+)
+   */
+  extendedTypeName?: string;
+  /**
+   * MariaDB extended format name (e.g. `json`), available when the server
+   * supports the MARIADB_CLIENT_EXTENDED_METADATA capability (MariaDB 10.5+)
+   */
+  extendedFormat?: string;
   length: number;
   db: string;
   table: string;
