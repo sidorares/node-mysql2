@@ -106,7 +106,7 @@ describe('PacketParser', () => {
   });
 
   it('should parse packets larger than 65536 bytes', () => {
-    // test packet > 65536 lengt
+    // test packet > 65536 length
     // TODO combine with "execute" function
 
     const length = 123000;
