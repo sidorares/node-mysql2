@@ -26,7 +26,7 @@ await describe('Null', async () => {
     });
 
     strict.deepEqual(castRows, [{ cast_result: null }]);
-    // strict.equal(fields[0].columnType, 253); // depeding on the server type could be 253 or 3, disabling this check for now
+    // strict.equal(fields[0].columnType, 253); // depending on the server, the type could be 253 or 3, disabling this check for now
     strict.deepEqual(rows1, [{ i: null }]);
     strict.equal(fields1[0].columnType, 3);
   });
