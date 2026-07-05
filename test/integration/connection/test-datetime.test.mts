@@ -26,6 +26,16 @@ await describe('Datetime', async () => {
   const date = new Date('1990-01-01 08:15:11 UTC');
   const datetime = new Date('2010-12-10 14:12:09.019473');
 
+  // The "local TZ" assertions below compare FROM_UNIXTIME() results (built
+  // with the server's session time zone) against local Date getters, so the
+  // session time zone must match the client's local offset. CI containers run
+  // in UTC, but on developer machines the server and client zones can differ.
+  const offsetMinutes = -date.getTimezoneOffset();
+  const offsetAbs = Math.abs(offsetMinutes);
+  const localOffset = `${offsetMinutes < 0 ? '-' : '+'}${String(
+    Math.floor(offsetAbs / 60)
+  ).padStart(2, '0')}:${String(offsetAbs % 60).padStart(2, '0')}`;
+
   const date1 = new Date('2000-03-03 08:15:11 UTC');
   const date2 = '2010-12-10 14:12:09.019473';
   const date3 = null;
@@ -65,6 +75,7 @@ await describe('Datetime', async () => {
   connection.query(
     'CREATE TEMPORARY TABLE t (d1 DATE, d2 DATETIME(3), d3 DATETIME(6))'
   );
+  connection.query(`set time_zone = '${localOffset}'`);
   connection.query('INSERT INTO t set d1=?, d2=?, d3=?', [
     date,
     datetime,
