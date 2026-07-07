@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.6](https://github.com/sidorares/node-mysql2/compare/v3.22.5...v3.22.6) (2026-07-07)
+
+
+### Bug Fixes
+
+* **sql-escaper:** resolve multi statement and expand object regressions ([#4380](https://github.com/sidorares/node-mysql2/issues/4380)) ([1b927a9](https://github.com/sidorares/node-mysql2/commit/1b927a92c1c0e59b00d3552786215fe249ef550f))
+
 ## [3.22.5](https://github.com/sidorares/node-mysql2/compare/v3.22.4...v3.22.5) (2026-06-06)
 
 
