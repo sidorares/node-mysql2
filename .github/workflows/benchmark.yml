@@ -79,4 +79,4 @@ jobs:
           auto-push: false
           alert-threshold: '115%'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          comment-on-alert: true
+          comment-on-alert: false
