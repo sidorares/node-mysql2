@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.23.0](https://github.com/sidorares/node-mysql2/compare/v3.22.6...v3.23.0) (2026-07-13)
+
+
+### Features
+
+* return unsafe integers inside JSON columns as exact strings with supportBigNumbers ([#4388](https://github.com/sidorares/node-mysql2/issues/4388)) ([a26ff14](https://github.com/sidorares/node-mysql2/commit/a26ff14089c093d28522acf7bd8d7dbb827ae0cc))
+* **sql-escaper:** add Temporal support when escaping values ([#4392](https://github.com/sidorares/node-mysql2/issues/4392)) ([6b933f6](https://github.com/sidorares/node-mysql2/commit/6b933f6d248b8fb5f3004d85d9562e9f5abdd16f))
+* support MariaDB data types (UUID, INET4, INET6, VECTOR, JSON) via extended type metadata; run CI against MariaDB ([#4373](https://github.com/sidorares/node-mysql2/issues/4373)) ([5034e57](https://github.com/sidorares/node-mysql2/commit/5034e5771929ce7499f6257035600dc88a442c71))
+
 ## [3.22.6](https://github.com/sidorares/node-mysql2/compare/v3.22.5...v3.22.6) (2026-07-07)
 
 
