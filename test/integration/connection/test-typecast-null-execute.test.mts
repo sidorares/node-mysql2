@@ -10,53 +10,51 @@ import { createConnection } from '../../common.test.mjs';
 await describe('Typecast NULL Execute (#3368)', async () => {
   const connection = createConnection();
 
-  try {
-    await it('calls typeCast for a NULL column and lets it override the value', async () => {
-      const seen: Array<string | null> = [];
+  await it('calls typeCast for a NULL column and lets it override the value', async () => {
+    const seen: Array<string | null> = [];
 
-      const res = await new Promise<RowDataPacket[]>((resolve, reject) => {
-        connection.execute<RowDataPacket[]>(
-          {
-            sql: 'SELECT NULL AS foo',
-            typeCast(field, next) {
-              const value = field.string();
-              seen.push(value);
-              if (value === null) {
-                return '<was-null>';
-              }
-              return next();
-            },
+    const res = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.execute<RowDataPacket[]>(
+        {
+          sql: 'SELECT NULL AS foo',
+          typeCast(field, next) {
+            const value = field.string();
+            seen.push(value);
+            if (value === null) {
+              return '<was-null>';
+            }
+            return next();
           },
-          (err, rows) => (err ? reject(err) : resolve(rows))
-        );
-      });
-
-      strict.deepEqual(seen, [null]); // typeCast ran for the NULL column
-      strict.equal(res[0].foo, '<was-null>'); // and its return value was used
+        },
+        (err, rows) => (err ? reject(err) : resolve(rows))
+      );
     });
 
-    await it('a passthrough typeCast still yields null and preserves column alignment', async () => {
-      const names: string[] = [];
+    strict.deepEqual(seen, [null], 'typeCast ran for the NULL column');
+    strict.equal(res[0].foo, '<was-null>', 'and its return value was used');
+  });
 
-      const res = await new Promise<RowDataPacket[]>((resolve, reject) => {
-        connection.execute<RowDataPacket[]>(
-          {
-            sql: "SELECT 1 AS a, NULL AS b, 'z' AS c",
-            typeCast(field, next) {
-              names.push(field.name);
-              return next();
-            },
+  await it('a passthrough typeCast still yields null and preserves column alignment', async () => {
+    const names: string[] = [];
+
+    const res = await new Promise<RowDataPacket[]>((resolve, reject) => {
+      connection.execute<RowDataPacket[]>(
+        {
+          sql: "SELECT 1 AS a, NULL AS b, 'z' AS c",
+          typeCast(field, next) {
+            names.push(field.name);
+            return next();
           },
-          (err, rows) => (err ? reject(err) : resolve(rows))
-        );
-      });
-
-      strict.deepEqual(names, ['a', 'b', 'c']); // every column, NULL included
-      strict.equal(res[0].a, 1);
-      strict.equal(res[0].b, null); // passthrough of NULL stays null
-      strict.equal(res[0].c, 'z'); // column after the NULL is still aligned
+        },
+        (err, rows) => (err ? reject(err) : resolve(rows))
+      );
     });
-  } finally {
-    connection.end();
-  }
+
+    strict.deepEqual(names, ['a', 'b', 'c'], 'every column, NULL included');
+    strict.equal(res[0].a, 1);
+    strict.equal(res[0].b, null, 'passthrough of NULL stays null');
+    strict.equal(res[0].c, 'z', 'column after the NULL is still aligned');
+  });
+
+  connection.end();
 });
