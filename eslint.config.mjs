@@ -18,7 +18,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['node_modules/', 'website/', 'test/circular/dist.mjs'],
+    ignores: ['node_modules/', 'website/', 'test/circular/dist.mjs', '.lagune'],
   },
   ...compat.extends('eslint:recommended', 'plugin:prettier/recommended'),
   {

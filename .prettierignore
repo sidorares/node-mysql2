@@ -1,3 +1,4 @@
 website/
 Changelog.md
 test/circular/dist.mjs
+.lagune/

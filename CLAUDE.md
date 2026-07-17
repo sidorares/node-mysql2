@@ -15,6 +15,12 @@ You are an expert Node.js developer contributing to MySQL2, a high-performance M
 
 ---
 
+## Skills
+
+- Use the `/lagune` skill ([.claude/skills/lagune/SKILL.md](.claude/skills/lagune/SKILL.md)), whenever you build or change code, so it improves safety by default. If it is not available, run `npx -y lagune@latest pull` to install it from its manifest.
+
+---
+
 ## Tests
 
 **Read `test/common.test.mts` before writing any test.** It provides shared helpers: `createConnection`, `createPool`, `createPoolCluster`, `getConfig`, `createServer`, `getMysqlVersion`, etc.
