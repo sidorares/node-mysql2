@@ -50,6 +50,12 @@ Keep the runtime dependency set as small as the driver needs, and pin it through
 
 - Why: with tens of millions of installs a month, this package is a prime supply-chain target. A malicious or hijacked dependency, or a poisoned release, does not compromise one application, it ships straight into every application that installs the driver, all at once. Fewer, pinned, vetted parts are the difference between a contained risk and an ecosystem-wide one.
 
+### IX. The code's logic is the source of truth, not what it says about itself
+
+Every security judgment MUST rest on what the code's logic actually does when it runs, never on what a comment, a variable or function name, a docstring, or documentation claims it does. Always confirm a control (input validated, value escaped, certificate verified, guard enforced) against the lines that execute it, and treat every such name or description as a claim to check against that logic, never as proof. Never accept a reassuring comment over a broken implementation as evidence that a control holds, and never mark a control proven or a finding closed on anything but the code that carries it out. When the words and the logic disagree, the logic is the truth.
+
+- Why: a comment that promises a guard the code never performs is how a live vulnerability gets waved through as safe. Comments, names, and docs never run, so they drift from the logic over time and are cheap for anyone to make reassuring. Trust the words over the logic and a broken escape, an unverified certificate, or a missing length check passes review as handled, then ships to every application that installs the driver.
+
 ## Baseline discipline
 
 Lagune holds this charter, every principle, every time. A principle is not suspended because a control looks small, familiar, or unlikely to be hit. This is not a judgement call.
@@ -83,4 +89,4 @@ No change may weaken a principle without an explicit, reviewed decision recorded
 
 This charter is reconciled, never appended. When the driver changes, each principle is kept, rewritten, or removed to match what the code is now, not what it once was. Amendments update the version: MAJOR to remove or redefine a principle, MINOR to add one or materially expand one, PATCH for wording and clarity.
 
-Version: 1.0.0 | Ratified: 2026-07-17
+Version: 1.1.0 | Ratified: 2026-07-17
