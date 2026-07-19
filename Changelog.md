@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* **security:** fix unbounded decompression of server-supplied compressed packets, reported by alanturing881 ([01f1092](https://github.com/sidorares/node-mysql2/commit/7c48343c95ecc80d30d6ebfa67875947b7d848d2))
+* **security:** fix unbounded decompression of server-supplied compressed packets, reported by alanturing881 ([7c48343](https://github.com/sidorares/node-mysql2/commit/7c48343c95ecc80d30d6ebfa67875947b7d848d2))
 * **parser:** call typeCast for NULL values in the binary protocol ([#4394](https://github.com/sidorares/node-mysql2/issues/4394)) ([01f1092](https://github.com/sidorares/node-mysql2/commit/01f10926baec7dffd73629feebbb56e98e616782))
 
 ## [3.23.0](https://github.com/sidorares/node-mysql2/compare/v3.22.6...v3.23.0) (2026-07-13)
