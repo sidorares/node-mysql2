@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.23.1](https://github.com/sidorares/node-mysql2/compare/v3.23.0...v3.23.1) (2026-07-19)
+
+
+### Bug Fixes
+
+* **parser:** call typeCast for NULL values in the binary protocol ([#3368](https://github.com/sidorares/node-mysql2/issues/3368)) ([#4394](https://github.com/sidorares/node-mysql2/issues/4394)) ([01f1092](https://github.com/sidorares/node-mysql2/commit/01f10926baec7dffd73629feebbb56e98e616782))
+
 ## [3.23.0](https://github.com/sidorares/node-mysql2/compare/v3.22.6...v3.23.0) (2026-07-13)
 
 
