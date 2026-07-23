@@ -36,14 +36,10 @@ await describe('Bind Undefined', async () => {
       'INSERT INTO test_bind_undefined (name) VALUES (?)'
     );
 
-    await strict.rejects(
-      // @ts-expect-error: testing that undefined bind parameter throws TypeError
-      statement.execute([undefined]),
-      {
-        name: 'TypeError',
-        message: 'Bind parameters must not contain undefined',
-      }
-    );
+    await strict.rejects(statement.execute([undefined]), {
+      name: 'TypeError',
+      message: 'Bind parameters must not contain undefined',
+    });
 
     // Regression #3293: the failed execute used to stay the active command and
     // block the queue, so this rollback — and every command after it — hung forever.
