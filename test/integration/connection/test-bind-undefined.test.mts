@@ -1,4 +1,4 @@
-import type { RowDataPacket } from '../../../index.js';
+import type { ResultSetHeader, RowDataPacket } from '../../../index.js';
 import { describe, it, strict } from 'poku';
 import { createConnection } from '../../common.test.mjs';
 
@@ -36,13 +36,21 @@ await describe('Bind Undefined', async () => {
       'INSERT INTO test_bind_undefined (name) VALUES (?)'
     );
 
-    await strict.rejects(statement.execute([undefined]), {
-      name: 'TypeError',
-      message: 'Bind parameters must not contain undefined',
-    });
+    try {
+      await strict.rejects(statement.execute([undefined]), {
+        name: 'TypeError',
+        message: 'Bind parameters must not contain undefined',
+      });
 
-    // Regression #3293: the failed `execute` used to stay the active command blocks the queue indefinitely.
-    await connection.rollback();
+      // Regression #3293: the failed `execute` used to stay the active command blocks the queue indefinitely.
+      await connection.rollback();
+
+      // The statement stays usable after the failed execute.
+      const [result] = await statement.execute(['ok']);
+      strict.strictEqual((result as ResultSetHeader).affectedRows, 1);
+    } finally {
+      await statement.close();
+    }
 
     const [results] =
       await connection.query<RowDataPacket[]>('SELECT 1 AS result');
