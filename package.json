@@ -79,7 +79,7 @@
     "@typescript-eslint/parser": "^8.56.0",
     "assert-diff": "^3.0.4",
     "benchmark": "^2.1.4",
-    "c8": "^11.0.0",
+    "c8": "^12.0.0",
     "error-stack-parser": "^2.1.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-async-await": "^0.0.0",
@@ -90,6 +90,6 @@
     "prettier": "^3.8.1",
     "rollup": "^4.59.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }
