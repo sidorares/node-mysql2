@@ -26,6 +26,34 @@ await describe('Bind Undefined', async () => {
     strict.strictEqual(results[0].result, 1);
   });
 
+  await it('prepared statement: should reject undefined parameter without deadlocking the connection', async () => {
+    await connection.query(
+      'CREATE TEMPORARY TABLE test_bind_undefined (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50) NOT NULL)'
+    );
+    await connection.beginTransaction();
+
+    const statement = await connection.prepare(
+      'INSERT INTO test_bind_undefined (name) VALUES (?)'
+    );
+
+    await strict.rejects(
+      // @ts-expect-error: testing that undefined bind parameter throws TypeError
+      statement.execute([undefined]),
+      {
+        name: 'TypeError',
+        message: 'Bind parameters must not contain undefined',
+      }
+    );
+
+    // Regression #3293: the failed execute used to stay the active command and
+    // block the queue, so this rollback — and every command after it — hung forever.
+    await connection.rollback();
+
+    const [results] =
+      await connection.query<RowDataPacket[]>('SELECT 1 AS result');
+    strict.strictEqual(results[0].result, 1);
+  });
+
   await it('query: should accept undefined bind parameter as NULL', async () => {
     const [results] = await connection.query<RowDataPacket[]>(
       'SELECT ? AS result',
