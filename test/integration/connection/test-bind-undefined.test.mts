@@ -41,8 +41,7 @@ await describe('Bind Undefined', async () => {
       message: 'Bind parameters must not contain undefined',
     });
 
-    // Regression #3293: the failed execute used to stay the active command and
-    // block the queue, so this rollback — and every command after it — hung forever.
+    // Regression #3293: the failed `execute` used to stay the active command blocks the queue indefinitely.
     await connection.rollback();
 
     const [results] =
