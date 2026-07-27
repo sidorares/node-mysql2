@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.23.2](https://github.com/sidorares/node-mysql2/compare/v3.23.1...v3.23.2) (2026-07-27)
+
+
+### Bug Fixes
+
+* correct connectAttributes typo in ChangeUser packet ([#4423](https://github.com/sidorares/node-mysql2/issues/4423)) ([f64ce07](https://github.com/sidorares/node-mysql2/commit/f64ce07b5e143a50094b1be72faffea4a3baed28)), closes [#2140](https://github.com/sidorares/node-mysql2/issues/2140)
+* don't leave a failed `execute` as the active command ([#4425](https://github.com/sidorares/node-mysql2/issues/4425)) ([fbd64b6](https://github.com/sidorares/node-mysql2/commit/fbd64b6683a432c7d1c1e79cf1c3317f2916cd17))
+
 ## [3.23.1](https://github.com/sidorares/node-mysql2/compare/v3.23.0...v3.23.1) (2026-07-19)
 
 
