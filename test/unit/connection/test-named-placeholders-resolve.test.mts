@@ -81,21 +81,13 @@ describe('_resolveNamedPlaceholders query-level override', () => {
 
   it('format honors query-level namedPlaceholders false with config true', () => {
     const conn = createMockConnection(true);
-    const sql = conn.format(
-      'SELECT :name AS result',
-      { name: 1 },
-      false
-    );
+    const sql = conn.format('SELECT :name AS result', { name: 1 }, false);
     strict.ok(sql.includes(':name'), 'format should leave :name when disabled');
   });
 
   it('format converts when namedPlaceholders true overrides config false', () => {
     const conn = createMockConnection(false);
-    const sql = conn.format(
-      'SELECT :name AS result',
-      { name: 1 },
-      true
-    );
+    const sql = conn.format('SELECT :name AS result', { name: 1 }, true);
     strict.equal(sql, 'SELECT 1 AS result');
   });
 });

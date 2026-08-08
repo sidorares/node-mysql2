@@ -16,10 +16,14 @@ await describe('Test namedPlaceholder as command parameter in connection', async
     try {
       await c.query({ sql: query, namedPlaceholders: false }, values);
       strict.fail('Enabled in connection config, disabled in query command');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const sqlMessage =
+        err && typeof err === 'object' && 'sqlMessage' in err
+          ? String((err as { sqlMessage?: unknown }).sqlMessage)
+          : '';
       strict(
-        err?.sqlMessage?.match(/right syntax to use near ':named'/),
-        'Enabled in connection config, disabled in query command',
+        sqlMessage.match(/right syntax to use near ':named'/),
+        'Enabled in connection config, disabled in query command'
       );
     } finally {
       await c.end();
@@ -48,16 +52,16 @@ await describe('Test namedPlaceholder as command parameter in connection', async
     try {
       await c.execute({ sql: query, namedPlaceholders: false }, values);
       strict.fail('Enabled in connection config, disabled in execute command');
-    } catch (err: any) {
+    } catch (err: unknown) {
       // With namedPlaceholders disabled, object bind params are rejected.
       strict.equal(
         err instanceof TypeError,
         true,
-        'Enabled in connection config, disabled in execute command',
+        'Enabled in connection config, disabled in execute command'
       );
       strict.match(
-        err.message,
-        /Bind parameters must be array if namedPlaceholders parameter is not enabled/,
+        (err as TypeError).message,
+        /Bind parameters must be array if namedPlaceholders parameter is not enabled/
       );
     } finally {
       await c.end();
@@ -86,10 +90,14 @@ await describe('Test namedPlaceholder as command parameter in connection', async
     try {
       await c.query({ sql: query, namedPlaceholders: false }, values);
       strict.fail('Enabled in pool config, disabled in query command');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const sqlMessage =
+        err && typeof err === 'object' && 'sqlMessage' in err
+          ? String((err as { sqlMessage?: unknown }).sqlMessage)
+          : '';
       strict(
-        err?.sqlMessage?.match(/right syntax to use near ':named'/),
-        'Enabled in pool config, disabled in query command',
+        sqlMessage.match(/right syntax to use near ':named'/),
+        'Enabled in pool config, disabled in query command'
       );
     } finally {
       await c.end();
@@ -118,15 +126,15 @@ await describe('Test namedPlaceholder as command parameter in connection', async
     try {
       await c.execute({ sql: query, namedPlaceholders: false }, values);
       strict.fail('Enabled in pool config, disabled in execute command');
-    } catch (err: any) {
+    } catch (err: unknown) {
       strict.equal(
         err instanceof TypeError,
         true,
-        'Enabled in pool config, disabled in execute command',
+        'Enabled in pool config, disabled in execute command'
       );
       strict.match(
-        err.message,
-        /Bind parameters must be array if namedPlaceholders parameter is not enabled/,
+        (err as TypeError).message,
+        /Bind parameters must be array if namedPlaceholders parameter is not enabled/
       );
     } finally {
       await c.end();
