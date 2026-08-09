@@ -57,4 +57,3 @@ describe('pool connection config isolation', () => {
     strict.strictEqual(fresh.database, 'test');
   });
 });
-
