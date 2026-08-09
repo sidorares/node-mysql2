@@ -1,68 +1,79 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
   "files": {
-    "include": ["**/**"],
-    "ignore": ["build", ".docusaurus", ".cache-loader"]
+    "includes": [
+      "**",
+      "!**/build",
+      "!**/.docusaurus",
+      "!**/.cache-loader",
+      "!**/*.svg"
+    ]
   },
-  "organizeImports": {
-    "enabled": false
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "off"
+      }
+    }
   },
   "linter": {
     "enabled": true,
+    "domains": {
+      "qwik": "none",
+      "solid": "none"
+    },
     "rules": {
-      "all": true,
-      "a11y": {
-        "all": true
-      },
+      "preset": "all",
       "complexity": {
-        "noExcessiveCognitiveComplexity": "off"
+        "noExcessiveCognitiveComplexity": "off",
+        "noUselessFragments": "off"
       },
       "correctness": {
-        "all": true,
-        "useImportExtensions": "error",
         "noNodejsModules": "off",
-        "noUndeclaredDependencies": "off"
-      },
-      "nursery": {
-        "all": true,
-        "useImportRestrictions": "off",
-        "noProcessEnv": "off",
-        "noCommonJs": "off",
-        "noSecrets": "off",
-        "useExplicitType": "off"
+        "noPrivateImports": "off",
+        "noProcessGlobal": "off",
+        "noUndeclaredDependencies": "off",
+        "noUnresolvedImports": "off",
+        "useImportExtensions": "off"
       },
       "performance": {
-        "all": true,
         "noAccumulatingSpread": "error",
+        "noAwaitInLoops": "off",
         "noBarrelFile": "error",
         "noDelete": "error",
+        "noNamespaceImport": "off",
         "noReExportAll": "error",
         "useTopLevelRegex": "off"
       },
       "security": {
-        "all": true,
-        "noGlobalEval": "error"
-      },
-      "suspicious": {
-        "all": true,
-        "noAsyncPromiseExecutor": "error",
-        "useAwait": "error",
-        "useIsArray": "error",
-        "noEmptyBlockStatements": "off",
-        "noConsoleLog": "off",
-        "noMisplacedAssertion": "off",
-        "noConsole": "off",
-        "noReactSpecificProps": "off",
-        "noArrayIndexKey": "off"
+        "noGlobalEval": "error",
+        "noSecrets": "off"
       },
       "style": {
-        "all": true,
+        "noCommonJs": "off",
+        "noDefaultExport": "off",
+        "noIncrementDecrement": "off",
+        "noJsxLiterals": "off",
         "noNonNullAssertion": "off",
-        "useNamingConvention": "off",
-        "useNodeAssertStrict": "off",
-        "noNamespaceImport": "off",
+        "noProcessEnv": "off",
+        "noTernary": "off",
         "useBlockStatements": "off",
-        "noDefaultExport": "off"
+        "useConsistentArrowReturn": "off",
+        "useConsistentTypeDefinitions": "off",
+        "useDestructuring": "off",
+        "useNamingConvention": "off",
+        "useNodeAssertStrict": "off"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off",
+        "noAsyncPromiseExecutor": "error",
+        "noConsole": "off",
+        "noEmptyBlockStatements": "off",
+        "noMisplacedAssertion": "off",
+        "noReactSpecificProps": "off",
+        "noShadow": "off",
+        "useAwait": "error",
+        "useIsArray": "error"
       }
     }
   }
