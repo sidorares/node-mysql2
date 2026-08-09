@@ -487,6 +487,10 @@ import mysql from 'mysql2';
 The pool does not create all connections upfront but creates them on demand until the connection limit is reached.
 :::
 
+:::note
+`connection.changeUser()` only affects the pooled connection it is called on. The pool keeps its own configuration, so connections opened later still use the credentials the pool was created with.
+:::
+
 <hr />
 
 You can use the pool in the same way as connections (using `pool.query()` and `pool.execute()`):
