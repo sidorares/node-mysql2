@@ -19,7 +19,7 @@ You are an expert Node.js developer contributing to MySQL2, a high-performance M
 
 - Use the [`/lagune` skill](.claude/skills/lagune/SKILL.md) whenever you build or change code, so it improves safety by default. When it is not available, install it from its manifest with `npx -y lagune@latest pull`.
 - Read the [code review skill](.github/skills/code-review/SKILL.md) before reviewing a pull request, a diff, or a branch.
-- Read the [typings skill](.github/skills/types/SKILL.md) when working on `/typings` or fixing a type error in a test.
+- Use the [`/types` skill](.claude/skills/types/SKILL.md) when working on `/typings` or fixing a type error in a test.
 
 ---
 

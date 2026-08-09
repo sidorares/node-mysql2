@@ -1,21 +1,16 @@
 # MySQL2 — Type Architecture
 
-Internal structure of the `.d.ts` files in `/typings`. This document describes how the types are organized, connected, and composed.
+Internal structure of the `.d.ts` files in `/typings`: how the types are organized, connected, and composed.
+
+A ⚠️ marks a spot where the declarations do not match the runtime. This file records the symptom only. [`gaps.md`](gaps.md) owns what each hole is, which tests hit it, and how to close it.
 
 ---
 
 ## 1. Mixin Pattern
 
-The central pattern that powers the entire query/execute API. Both `Connection` and `Pool` get their `query()` and `execute()` methods from mixin functions, not direct declarations.
+`Connection` and `Pool` get `query()` and `execute()` from mixin functions rather than direct declarations, which is what makes the whole query and execute API work.
 
-### How it works
-
-`QueryableBase<T>(Base?)` and `ExecutableBase<T>(Base?)` are higher-order functions that take a base class constructor and return an extended class with query/execute method overloads.
-
-```
-QueryableBase<T>(Base?) → class with 4 overloads of query()
-ExecutableBase<T>(Base?) → class with 4 overloads of execute()
-```
+`QueryableBase<T>(Base?)` and `ExecutableBase<T>(Base?)` are higher-order functions: each takes a base class constructor and returns an extended class carrying the method overloads.
 
 ### Callback versions (return `Query`)
 
@@ -37,7 +32,7 @@ Each method has 2 overloads: `(sql, values?)`, `(options, values?)`.
 | -------------------------- | ---------------------------------------------------------------------------- |
 | `Connection` (callback)    | `extends QueryableBase(ExecutableBase(EventEmitter))`                        |
 | `Pool` (callback)          | `extends QueryableBase(ExecutableBase(EventEmitter))`                        |
-| `PoolCluster` (callback)   | `extends EventEmitter` directly — **does NOT use mixins**                    |
+| `PoolCluster` (callback)   | `extends EventEmitter` directly, with **no mixins**                          |
 | `PoolNamespace` (callback) | interface extends `QueryableAndExecutableBase`                               |
 | `Connection` (promise)     | `extends QueryableAndExecutableBase` (anonymous class composing both mixins) |
 | `Pool` (promise)           | interface extends `Connection` (inherits mixins transitively)                |
@@ -45,11 +40,11 @@ Each method has 2 overloads: `(sql, values?)`, `(options, values?)`.
 
 ### Helper type
 
+The constraint on every mixin base class parameter:
+
 ```ts
 type QueryableConstructor<T = object> = new (...args: any[]) => T;
 ```
-
-Used as the constraint for mixin base class parameters.
 
 ---
 
@@ -66,15 +61,15 @@ MySQL2 exposes two parallel APIs: callback-based and promise-based.
 
 ### How promise wraps callback
 
-1. `promise.d.ts` re-exports everything from `index.js` via `export * from './index.js'`
-2. It imports the promise-specific mixin functions from `typings/mysql/lib/protocol/sequences/promise/`
+1. `promise.d.ts` re-exports everything from `index.js`.
+2. It imports the promise-specific mixin functions from `typings/mysql/lib/protocol/sequences/promise/`.
 3. It composes an anonymous `QueryableAndExecutableBase` class:
    ```ts
    declare class QueryableAndExecutableBase extends QueryableBaseClass(
      ExecutableBaseClass(EventEmitter)
    ) {}
    ```
-4. Promise classes (`Connection`, `Pool`, etc.) extend or implement this base
+4. The promise classes extend or implement that base.
 
 ### Key differences
 
@@ -89,11 +84,11 @@ MySQL2 exposes two parallel APIs: callback-based and promise-based.
 
 ### Bridging
 
-Callback classes have a `.promise()` method that returns the promise-wrapped version:
+Callback classes carry a `.promise()` method returning the promise-wrapped version:
 
-- `Connection.promise()` → `PromiseConnection`
-- `Pool.promise()` → `PromisePool`
-- `PoolConnection.promise()` → ⚠️ Currently typed as `PromisePool` (bug — should be `PromisePoolConnection`)
+- `Connection.promise()` returns `PromiseConnection`.
+- `Pool.promise()` returns `PromisePool`.
+- `PoolConnection.promise()` returns `PromisePool`. ⚠️
 
 ---
 
@@ -116,30 +111,30 @@ EventEmitter
 │   ├── prepare(), unprepare(), ping()
 │   ├── serverHandshake(), writeOk(), writeError(), writeEof()
 │   ├── writeTextResult(), writePacket()
-│   ├── promise() → PromiseConnection
+│   ├── promise(): PromiseConnection
 │   └── Symbol.dispose
 │
 │   └── PoolConnection extends Connection
 │       ├── .connection: Connection
 │       ├── release(): void
-│       ├── promise() → PromisePool  ⚠️ (bug: should be PromisePoolConnection)
+│       ├── promise(): PromisePool  ⚠️
 │       └── Symbol.dispose
 │
 ├── Pool extends QueryableBase(ExecutableBase(EventEmitter))
 │   ├── .config: PoolOptions
 │   ├── getConnection(cb), releaseConnection(conn)
 │   ├── end(cb?), unprepare(sql)
-│   ├── promise() → PromisePool
+│   ├── promise(): PromisePool
 │   ├── on: 'connection' | 'acquire' | 'release' | 'enqueue'
 │   └── Symbol.dispose
-│   ⚠️ Missing: escape(), escapeId(), format() (exist at runtime)
+│   ⚠️ escape(), escapeId(), format() exist at runtime and are undeclared
 │
 ├── PoolCluster extends EventEmitter  (NO mixins)
 │   ├── .config: PoolClusterOptions
 │   ├── add(config), add(group, uri), add(group, config)
 │   ├── remove(pattern), end(cb?)
 │   ├── getConnection(cb), getConnection(group, cb), getConnection(group, selector, cb)
-│   ├── of(pattern, selector?) → PoolNamespace
+│   ├── of(pattern, selector?): PoolNamespace
 │   ├── on: 'online' | 'offline' | 'remove' | 'warn'
 │   └── Symbol.dispose
 │
@@ -147,7 +142,7 @@ EventEmitter
 │   ├── .connections: Connection[]
 │   ├── listen(port): Server
 │   ├── close(callback): void
-│   ⚠️ Missing: listen(port, cb) overload, close() without cb
+│   ⚠️ listen(port, cb) and close() without a callback are undeclared
 │
 └── Sequence extends EventEmitter
     ├── Query extends Sequence
@@ -185,31 +180,31 @@ EventEmitter
 │
 ├── Pool (interface extends Connection)
 │   ├── .pool: CorePool (callback Pool reference)
-│   ├── getConnection() → Promise<PoolConnection>
+│   ├── getConnection(): Promise<PoolConnection>
 │   ├── releaseConnection(conn)
-│   ├── end() → Promise<void>
+│   ├── end(): Promise<void>
 │   └── on: 'connection' | 'acquire' | 'release' | 'enqueue'
 │
 ├── PoolCluster (interface extends EventEmitter)
 │   ├── .config: PoolClusterOptions
 │   ├── add(config), add(group, uri), add(group, config)
-│   ├── end() → Promise<void>
+│   ├── end(): Promise<void>
 │   ├── getConnection(), getConnection(group), getConnection(group, selector)
-│   ├── of(pattern, selector?) → PoolNamespace
+│   ├── of(pattern, selector?): PoolNamespace
 │   ├── on: 'remove' | 'warn'
 │   ├── Symbol.asyncDispose
-│   ⚠️ Missing: on 'online' | 'offline' (exist in callback version)
-│   ⚠️ Missing: remove() method
+│   ⚠️ on 'online' and 'offline' are declared in the callback version only
+│   ⚠️ remove() is undeclared
 │
 └── PoolNamespace (interface extends QueryableAndExecutableBase)
-    └── getConnection() → Promise<PoolConnection>
+    └── getConnection(): Promise<PoolConnection>
 ```
 
 ---
 
 ## 4. File Map
 
-All type definition files, their purpose, and key exports.
+Every type definition file, its purpose, and its key exports.
 
 ### Root entry points
 
@@ -262,19 +257,19 @@ All type definition files, their purpose, and key exports.
 | `ResultSetHeader.d.ts`          | Result metadata                     | `ResultSetHeader`                                       |
 | `RowDataPacket.d.ts`            | Data row                            | `RowDataPacket`                                         |
 | `FieldPacket.d.ts`              | Column metadata                     | `FieldPacket`                                           |
-| `Field.d.ts`                    | TypeCast field _(deprecated alias)_ | `Field` → `TypeCastField`                               |
+| `Field.d.ts`                    | TypeCast field _(deprecated alias)_ | `Field`, an alias of `TypeCastField`                    |
 | `ProcedurePacket.d.ts`          | Stored procedure result             | `ProcedureCallPacket<T>`                                |
 | `params/OkPacketParams.d.ts`    | Server OK params                    | `OkPacketParams`                                        |
 | `params/ErrorPacketParams.d.ts` | Server error params                 | `ErrorPacketParams`                                     |
 
 ### Constants (`typings/mysql/lib/constants/`)
 
-| File                     | Purpose               | Key Exports                                                         |
-| ------------------------ | --------------------- | ------------------------------------------------------------------- |
-| `index.d.ts`             | Constants hub         | Re-exports Types, Charsets, CharsetToEncoding                       |
-| `Types.d.ts`             | MySQL column types    | `Types` (hex codes 0x00-0xff + named: DECIMAL, TINY, ..., GEOMETRY) |
-| `Charsets.d.ts`          | Charset/collation IDs | `Charsets` (270+ named entries)                                     |
-| `CharsetToEncoding.d.ts` | Charset→encoding map  | `CharsetToEncoding` (string[])                                      |
+| File                     | Purpose                 | Key Exports                                                         |
+| ------------------------ | ----------------------- | ------------------------------------------------------------------- |
+| `index.d.ts`             | Constants hub           | Re-exports Types, Charsets, CharsetToEncoding                       |
+| `Types.d.ts`             | MySQL column types      | `Types` (hex codes 0x00-0xff + named: DECIMAL, TINY, ..., GEOMETRY) |
+| `Charsets.d.ts`          | Charset/collation IDs   | `Charsets` (270+ named entries)                                     |
+| `CharsetToEncoding.d.ts` | Charset to encoding map | `CharsetToEncoding` (string[])                                      |
 
 ### Parsers (`typings/mysql/lib/parsers/`)
 
@@ -286,42 +281,42 @@ All type definition files, their purpose, and key exports.
 
 ---
 
-## 5. ConnectionOptions — Complete Property Map
+## 5. ConnectionOptions property map
 
-All properties declared in `typings/mysql/lib/Connection.d.ts`.
+Every property declared in `typings/mysql/lib/Connection.d.ts`.
 
 ### With JSDoc documentation
 
 | Property                | Type                                                    | Default             | Description                          |
 | ----------------------- | ------------------------------------------------------- | ------------------- | ------------------------------------ |
 | `decimalNumbers`        | `boolean`                                               | `false`             | Return DECIMAL/NEWDECIMAL as numbers |
-| `user`                  | `string`                                                | —                   | MySQL user                           |
-| `password`              | `string`                                                | —                   | MySQL password                       |
-| `password1`             | `string`                                                | —                   | Alias for password (MFA)             |
-| `password2`             | `string`                                                | —                   | 2nd factor auth password             |
-| `password3`             | `string`                                                | —                   | 3rd factor auth password             |
-| `database`              | `string`                                                | —                   | Database name                        |
+| `user`                  | `string`                                                | none                | MySQL user                           |
+| `password`              | `string`                                                | none                | MySQL password                       |
+| `password1`             | `string`                                                | none                | Alias for password (MFA)             |
+| `password2`             | `string`                                                | none                | 2nd factor auth password             |
+| `password3`             | `string`                                                | none                | 3rd factor auth password             |
+| `database`              | `string`                                                | none                | Database name                        |
 | `charset`               | `string`                                                | `'UTF8_GENERAL_CI'` | Connection charset/collation         |
 | `host`                  | `string`                                                | `'localhost'`       | Database hostname                    |
 | `port`                  | `number`                                                | `3306`              | Port number                          |
-| `localAddress`          | `string`                                                | —                   | Source IP for TCP                    |
-| `socketPath`            | `string`                                                | —                   | Unix socket path                     |
+| `localAddress`          | `string`                                                | none                | Source IP for TCP                    |
+| `socketPath`            | `string`                                                | none                | Unix socket path                     |
 | `timezone`              | `Timezone`                                              | `'local'`           | Timezone for dates                   |
 | `connectTimeout`        | `number`                                                | `10000`             | Connection timeout (ms)              |
 | `stringifyObjects`      | `boolean`                                               | `false`             | Stringify objects in queries         |
 | `insecureAuth`          | `boolean`                                               | `false`             | Allow old auth method                |
-| `infileStreamFactory`   | `(path: string) => Readable`                            | —                   | Custom stream for LOAD DATA INFILE   |
+| `infileStreamFactory`   | `(path: string) => Readable`                            | none                | Custom stream for LOAD DATA INFILE   |
 | `typeCast`              | `TypeCast`                                              | `true`              | Column value conversion              |
-| `queryFormat`           | `(query: string, values: any) => void`                  | —                   | Custom query format                  |
+| `queryFormat`           | `(query: string, values: any) => void`                  | none                | Custom query format                  |
 | `supportBigNumbers`     | `boolean`                                               | `false`             | Handle BIGINT/DECIMAL                |
 | `bigNumberStrings`      | `boolean`                                               | `false`             | Return big numbers as strings        |
 | `dateStrings`           | `boolean \| Array<'TIMESTAMP' \| 'DATETIME' \| 'DATE'>` | `false`             | Return dates as strings              |
 | `debug`                 | `any`                                                   | `false`             | Print packets to stdout              |
 | `trace`                 | `boolean`                                               | `true`              | Stack traces on errors               |
 | `multipleStatements`    | `boolean`                                               | `false`             | Allow multiple statements            |
-| `flags`                 | `Array<string>`                                         | —                   | Connection flags                     |
-| `ssl`                   | `string \| SslOptions`                                  | —                   | SSL configuration                    |
-| `rowsAsArray`           | `boolean`                                               | —                   | Return rows as arrays                |
+| `flags`                 | `Array<string>`                                         | none                | Connection flags                     |
+| `ssl`                   | `string \| SslOptions`                                  | none                | SSL configuration                    |
+| `rowsAsArray`           | `boolean`                                               | none                | Return rows as arrays                |
 | `enableKeepAlive`       | `boolean`                                               | `true`              | Socket keep-alive                    |
 | `keepAliveInitialDelay` | `number`                                                | `0`                 | Keep-alive initial delay             |
 
@@ -354,7 +349,7 @@ All properties declared in `typings/mysql/lib/Connection.d.ts`.
 
 ### PoolOptions (extends ConnectionOptions)
 
-Adds these properties with JSDoc (in `typings/mysql/lib/Pool.d.ts`):
+Adds these properties with JSDoc, in `typings/mysql/lib/Pool.d.ts`:
 
 | Property             | Type      | Default                   |
 | -------------------- | --------- | ------------------------- |
@@ -364,15 +359,13 @@ Adds these properties with JSDoc (in `typings/mysql/lib/Pool.d.ts`):
 | `idleTimeout`        | `number`  | `60000`                   |
 | `queueLimit`         | `number`  | `0`                       |
 
-**Issue:** These properties are duplicated in `ConnectionOptions` without JSDoc. They should only exist in `PoolOptions`.
-
 ---
 
 ## 6. QueryOptions vs ConnectionOptions
 
 ### Shared options (override per-query)
 
-These exist in both `ConnectionOptions` and `QueryOptions`, allowing per-query overrides:
+These exist in both `ConnectionOptions` and `QueryOptions`, so a query can override the connection:
 
 | Option                | ConnectionOptions        | QueryOptions  |
 | --------------------- | ------------------------ | ------------- |
