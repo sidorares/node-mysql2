@@ -10,9 +10,9 @@ await describe('Execute Null Bitmap', async () => {
   await it('should handle growing parameter lists', async () => {
     const [savedRows] = await connection
       .promise()
-      .query<
-        RowDataPacket[]
-      >('SELECT @@GLOBAL.max_prepared_stmt_count as backup');
+      .query<RowDataPacket[]>(
+        'SELECT @@GLOBAL.max_prepared_stmt_count as backup'
+      );
     const originalMaxPrepared = savedRows[0].backup;
 
     const results: { value: number; expected: number }[] = [];

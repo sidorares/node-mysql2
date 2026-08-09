@@ -52,17 +52,13 @@ export declare function tracePromise<T extends object, R>(
 ): Promise<R>;
 
 export declare const queryChannel:
-  | TracingChannel<QueryTraceContext>
-  | undefined;
+  TracingChannel<QueryTraceContext> | undefined;
 export declare const executeChannel:
-  | TracingChannel<ExecuteTraceContext>
-  | undefined;
+  TracingChannel<ExecuteTraceContext> | undefined;
 export declare const connectChannel:
-  | TracingChannel<ConnectTraceContext>
-  | undefined;
+  TracingChannel<ConnectTraceContext> | undefined;
 export declare const poolConnectChannel:
-  | TracingChannel<PoolConnectTraceContext>
-  | undefined;
+  TracingChannel<PoolConnectTraceContext> | undefined;
 
 export declare function getServerContext(config: {
   socketPath?: string;

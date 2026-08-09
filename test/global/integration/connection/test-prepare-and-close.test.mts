@@ -7,9 +7,9 @@ await describe('Prepare and Close', async () => {
   const connection = createConnection();
   const [savedRows] = await connection
     .promise()
-    .query<
-      RowDataPacket[]
-    >('SELECT @@GLOBAL.max_prepared_stmt_count as backup');
+    .query<RowDataPacket[]>(
+      'SELECT @@GLOBAL.max_prepared_stmt_count as backup'
+    );
   const originalMaxPrepared = savedRows[0].backup;
 
   await it('should prepare and close statements repeatedly', async () => {

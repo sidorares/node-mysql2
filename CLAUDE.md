@@ -156,19 +156,11 @@ New tests prefer the promise-based API through `.promise()`. Callbacks stay for 
 > A recommendation, not a strict rule.
 
 ```ts
-const connection = createConnection({
-  /* ... */
-}).promise();
-const pool = createPool({
-  /* ... */
-}).promise();
+const connection = createConnection({/* ... */}).promise();
+const pool = createPool({/* ... */}).promise();
 
-const cluster = createPoolCluster({
-  /* ... */
-});
-cluster.add('node1', {
-  /* ... */
-});
+const cluster = createPoolCluster({/* ... */});
+cluster.add('node1', {/* ... */});
 const clusterConnection = await cluster.promise().getConnection();
 ```
 

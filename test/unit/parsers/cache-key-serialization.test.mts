@@ -29,10 +29,7 @@ interface CacheKeyTestData {
     timezone: string | undefined;
     decimalNumbers: boolean | { a: null } | undefined;
     dateStrings:
-      | boolean
-      | string
-      | ((_: unknown, next: () => void) => void)
-      | undefined;
+      boolean | string | ((_: unknown, next: () => void) => void) | undefined;
   };
   config: {
     supportBigNumbers: boolean | undefined;
