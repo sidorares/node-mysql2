@@ -1,10 +1,20 @@
 {
   // This file is not used in compilation. It is here just for a nice editor experience.
-  "extends": "@docusaurus/tsconfig",
+  // Inlined from @docusaurus/tsconfig, which still sets baseUrl, an option removed in TypeScript 7.
   "compilerOptions": {
-    "baseUrl": ".",
-    "isolatedModules": true,
     "allowJs": false,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "paths": {
+      "@site/*": ["./*"]
+    },
+    "skipLibCheck": true,
+    "isolatedModules": true,
     "strict": true,
     "alwaysStrict": true,
     "strictFunctionTypes": true,

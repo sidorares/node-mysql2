@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.6",
-    "@eslint/js": "^9.39.5",
+    "@eslint/js": "^10.0.1",
     "@eslint/markdown": "^8.0.3",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@pokujs/multi-suite": "^1.0.2",
@@ -79,8 +79,9 @@
     "@typescript-eslint/parser": "^8.66.0",
     "assert-diff": "^3.0.4",
     "benchmark": "^2.1.4",
-    "c8": "^11.0.0",
+    "c8": "^12.0.0",
     "error-stack-parser": "^2.1.4",
+    "eslint": "^10.8.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-async-await": "^0.0.0",
     "eslint-plugin-prettier": "^5.5.6",
@@ -90,6 +91,6 @@
     "prettier": "^3.9.6",
     "rollup": "^4.62.4",
     "tsx": "^4.23.11",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   }
 }

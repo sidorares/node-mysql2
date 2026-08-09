@@ -4,21 +4,41 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
+    open-pull-requests-limit: 10
     groups:
-      dev-dependencies:
-        dependency-type: 'development'
+      eslint:
+        patterns:
+          - 'eslint'
+          - '@eslint/*'
+      typescript-eslint:
+        patterns:
+          - '@typescript-eslint/*'
+      prettier:
+        patterns:
+          - 'prettier'
+          - '@ianvs/prettier-plugin-sort-imports'
+          - 'eslint-config-prettier'
+          - 'eslint-plugin-prettier'
+      rollup:
+        patterns:
+          - 'rollup'
+          - '@rollup/*'
+      poku:
+        patterns:
+          - 'poku'
+          - '@pokujs/*'
   - package-ecosystem: 'npm'
     directory: '/website'
     schedule:
       interval: 'daily'
+    open-pull-requests-limit: 10
     groups:
       docusaurus:
         patterns:
           - '@docusaurus/*'
           - 'docusaurus-*'
+          - '@easyops-cn/docusaurus-search-local'
       react:
         patterns:
           - 'react'
           - 'react-dom'
-      website-dev-dependencies:
-        dependency-type: 'development'
