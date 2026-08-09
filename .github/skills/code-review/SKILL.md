@@ -29,7 +29,7 @@ Never approve a PR that violates an item below without first alerting the author
 
 ## Types
 
-15. **Typings structure:** types follow the existing structure in `/typings` and never land in an arbitrary location. See the [typings skill](../types/SKILL.md) for the architecture and the known gaps.
+15. **Typings structure:** types follow the existing structure in `/typings` and never land in an arbitrary location. See the [`/types` skill](../../../.claude/skills/types/SKILL.md) for the architecture and the known gaps.
 
 ## Connection scope
 
