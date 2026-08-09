@@ -56,10 +56,18 @@ export interface QueryOptions {
   namedPlaceholders?: boolean;
 
   /**
-   * Every operation takes an optional inactivity timeout option. This allows you to specify appropriate timeouts for
-   * operations. It is important to note that these timeouts are not part of the MySQL protocol, and rather timeout
-   * operations through the client. This means that when a timeout is reached, the connection it occurred on will be
-   * destroyed and no further operations can be performed.
+   * Client-side timeout for this operation, in milliseconds.
+   *
+   * The timer starts when the command is written to the socket and is cleared only when the
+   * operation finishes, so it limits the total duration of the operation. It is not an
+   * inactivity timeout: incoming rows do not reset it. For `execute()` the timer starts when
+   * the statement is executed, so it does not cover the `PREPARE` round-trip.
+   *
+   * Timeouts are not part of the MySQL protocol and are enforced by the client only. When the
+   * timer fires, the callback receives (or the promise rejects with) a
+   * `PROTOCOL_SEQUENCE_TIMEOUT` error and any result that arrives afterwards is discarded. The
+   * server keeps executing the statement - use `KILL QUERY` if you also need to stop it there.
+   * The connection itself is not destroyed and stays usable for further operations.
    */
   timeout?: number;
 
