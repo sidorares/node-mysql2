@@ -1,5 +1,5 @@
 import type { PoolConnection, RowDataPacket } from '../../../../index.js';
-import { describe, it, skip, strict } from 'poku';
+import { describe, it, strict } from 'poku';
 import { createPool } from '../../../common.test.mjs';
 
 await describe('Pool: changeUser() isolation', async () => {
