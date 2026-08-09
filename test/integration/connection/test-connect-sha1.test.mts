@@ -62,11 +62,11 @@ await describe('Connect SHA1', async () => {
         // @ts-expect-error: internal access
         const port = server._server.address().port;
 
-        // @ts-expect-error: TODO: implement typings
         const connection = mysql.createConnection({
           port: port,
           user: 'testuser',
           database: 'testdatabase',
+          // @ts-expect-error: TODO: implement typings
           passwordSha1: Buffer.from(
             '8bb6118f8fd6935ad0876a3be34a717d32708ffd',
             'hex'
