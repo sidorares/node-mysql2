@@ -8,8 +8,8 @@
   ],
   "compilerOptions": {
     "target": "ES2016",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -21,6 +21,7 @@
     "noEmit": true,
     "noUnusedParameters": false,
     "noUnusedLocals": false,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "types": ["node"]
   }
 }
