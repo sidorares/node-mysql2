@@ -35,6 +35,75 @@ const mulberry32 = (seed: number) => {
   };
 };
 
+const modelPeekAt = (items: number[], index: number) => {
+  if (index !== (index | 0)) return undefined;
+
+  const size = items.length;
+
+  if (index >= size || index < -size) return undefined;
+
+  return index < 0 ? items[index + size] : items[index];
+};
+
+const modelRemoveOne = (items: number[], index: number) => {
+  if (index !== (index | 0)) return undefined;
+
+  const size = items.length;
+
+  if (index >= size || index < -size) return undefined;
+  if (index < 0) index += size;
+
+  return items.splice(index, 1)[0];
+};
+
+const modelRemove = (items: number[], index: number, count?: number) => {
+  if (index !== (index | 0)) return undefined;
+  if (items.length === 0) return undefined;
+
+  const size = items.length;
+
+  if (index >= size || index < -size || (count !== undefined && count < 1))
+    return undefined;
+  if (index < 0) index += size;
+  if (count === 1 || !count) return [modelRemoveOne(items, index)];
+  if (count !== (count | 0)) return undefined;
+  if (index + count > size) count = size - index;
+
+  return items.splice(index, count);
+};
+
+const modelSplice = (
+  items: number[],
+  index: number,
+  count?: number,
+  newItems: number[] = []
+) => {
+  if (index !== (index | 0)) return undefined;
+
+  const size = items.length;
+
+  if (index < 0) index += size;
+  if (index > size) return undefined;
+  if (newItems.length === 0) return modelRemove(items, index, count);
+  if (index < 0) return undefined;
+
+  const removalCount = count === undefined ? 1 : count;
+
+  if (removalCount !== (removalCount | 0) || removalCount < 0) return undefined;
+
+  if (removalCount === 0) {
+    items.splice(index, 0, ...newItems);
+    return [];
+  }
+
+  if (index >= size) {
+    items.splice(index, 0, ...newItems);
+    return undefined;
+  }
+
+  return items.splice(index, removalCount, ...newItems);
+};
+
 describe('RingQueue', () => {
   it('shifts in FIFO order and returns undefined when empty', () => {
     const queue = new RingQueue();
@@ -64,26 +133,77 @@ describe('RingQueue', () => {
     strict.equal(queue.length, 0);
   });
 
-  it('returns the new length from push', () => {
+  it('returns the new length from push and unshift', () => {
     const queue = new RingQueue();
 
     strict.equal(queue.push('a'), 1);
     strict.equal(queue.push('b'), 2);
+    strict.equal(queue.unshift('z'), 3);
 
     queue.shift();
 
-    strict.equal(queue.push('c'), 2);
+    strict.equal(queue.push('c'), 3);
   });
 
-  it('gets items by index and rejects invalid indexes', () => {
+  it('treats push and unshift without arguments as a no-op', () => {
+    const queue = new RingQueue();
+
+    queue.push('a');
+
+    strict.equal(queue.push(), 1);
+    strict.equal(queue.unshift(), 1);
+    strict.equal(queue.length, 1);
+    strict.deepStrictEqual(queue.toArray(), ['a']);
+  });
+
+  it('unshifts to the front across wrap-around', () => {
+    const queue = buildWrapped();
+
+    queue.unshift(5);
+
+    strict.deepStrictEqual(queue.toArray(), [5, ...wrappedContent]);
+    strict.equal(queue.shift(), 5);
+  });
+
+  it('peeks at both ends without removing', () => {
+    const queue = buildWrapped();
+
+    strict.equal(queue.peek(), 6);
+    strict.equal(queue.peekFront(), 6);
+    strict.equal(queue.peekBack(), 12);
+    strict.equal(queue.length, wrappedContent.length);
+
+    const empty = new RingQueue();
+
+    strict.equal(empty.peek(), undefined);
+    strict.equal(empty.peekFront(), undefined);
+    strict.equal(empty.peekBack(), undefined);
+  });
+
+  it('reports size and emptiness', () => {
+    const queue = new RingQueue();
+
+    strict.equal(queue.size(), 0);
+    strict.equal(queue.isEmpty(), true);
+
+    queue.push(1);
+
+    strict.equal(queue.size(), 1);
+    strict.equal(queue.isEmpty(), false);
+  });
+
+  it('gets items by index, counting from the end on negatives', () => {
     const queue = buildWrapped();
 
     for (let i = 0; i < wrappedContent.length; i++) {
       strict.equal(queue.get(i), wrappedContent[i]);
+      strict.equal(queue.peekAt(i), wrappedContent[i]);
     }
 
+    strict.equal(queue.get(-1), 12);
+    strict.equal(queue.peekAt(-7), 6);
     strict.equal(queue.get(queue.length), undefined);
-    strict.equal(queue.get(-1), undefined);
+    strict.equal(queue.peekAt(-8), undefined);
     strict.equal(queue.get(1.5), undefined);
     strict.equal(queue.get(Number.NaN), undefined);
     strict.equal(queue.get(2 ** 31), undefined);
@@ -134,19 +254,68 @@ describe('RingQueue', () => {
     const queue = buildWrapped();
 
     strict.equal(queue.removeOne(queue.length), undefined);
-    strict.equal(queue.removeOne(-1), undefined);
     strict.equal(queue.removeOne(1.5), undefined);
     strict.equal(queue.length, wrappedContent.length);
+  });
+
+  it('removes by negative index without corrupting the queue', () => {
+    const queue = buildWrapped();
+
+    strict.equal(queue.removeOne(-1), 12);
+    strict.deepStrictEqual(queue.toArray(), [6, 7, 8, 9, 10, 11]);
+    strict.equal(queue.removeOne(-6), 6);
+    strict.deepStrictEqual(queue.toArray(), [7, 8, 9, 10, 11]);
+    strict.equal(queue.removeOne(-6), undefined);
+  });
+
+  it('removes ranges with denque-compatible validation and clamping', () => {
+    const queue = buildWrapped();
+
+    strict.deepStrictEqual(queue.remove(1, 2), [7, 8]);
+    strict.deepStrictEqual(queue.toArray(), [6, 9, 10, 11, 12]);
+    strict.deepStrictEqual(queue.remove(3), [11]);
+    strict.deepStrictEqual(queue.remove(-2, 5), [10, 12]);
+    strict.deepStrictEqual(queue.toArray(), [6, 9]);
+    strict.equal(queue.remove(0, 0), undefined);
+    strict.equal(queue.remove(5, 1), undefined);
+    strict.equal(new RingQueue().remove(0, 1), undefined);
+  });
+
+  it('splices like denque, delegating removals and inserting items', () => {
+    const queue = buildWrapped();
+
+    strict.deepStrictEqual(queue.splice(-1), [12]);
+    strict.deepStrictEqual(queue.splice(1, 2), [7, 8]);
+    strict.deepStrictEqual(queue.toArray(), [6, 9, 10, 11]);
+    strict.deepStrictEqual(queue.splice(2, 0, 97, 98), []);
+    strict.deepStrictEqual(queue.toArray(), [6, 9, 97, 98, 10, 11]);
+    strict.deepStrictEqual(queue.splice(1, 1, 55), [9]);
+    strict.deepStrictEqual(queue.toArray(), [6, 55, 97, 98, 10, 11]);
+    strict.equal(queue.splice(queue.length, 1, 77), undefined);
+    strict.deepStrictEqual(queue.toArray(), [6, 55, 97, 98, 10, 11, 77]);
+    strict.equal(queue.splice(99, 1), undefined);
+  });
+
+  it('clears in place and stays usable', () => {
+    const queue = buildWrapped();
+
+    queue.clear();
+
+    strict.equal(queue.length, 0);
+    strict.equal(queue.shift(), undefined);
+    strict.deepStrictEqual(queue.toArray(), []);
+
+    queue.push('again');
+
+    strict.deepStrictEqual(queue.toArray(), ['again']);
   });
 
   it('converts to array in empty, contiguous and wrapped states', () => {
     const queue = new RingQueue();
 
     strict.deepStrictEqual(queue.toArray(), []);
-
     queue.push(1);
     queue.push(2);
-
     strict.deepStrictEqual(queue.toArray(), [1, 2]);
     strict.deepStrictEqual(buildWrapped().toArray(), wrappedContent);
   });
@@ -251,32 +420,81 @@ describe('RingQueue', () => {
       const model: number[] = [];
       let nextValue = 0;
 
+      const anyIndex = () => {
+        const span = model.length + 4;
+        return Math.floor(random() * (2 * span + 1)) - span;
+      };
+
+      const anyCount = () => {
+        const roll = random();
+        if (roll < 0.2) return undefined;
+        if (roll < 0.3) return 0;
+        return 1 + Math.floor(random() * (model.length + 2));
+      };
+
       for (let op = 0; op < 12000; op++) {
         const roll = random();
 
-        if (roll < 0.4) {
+        if (roll < 0.2) {
           const burst = roll < 0.005 ? 1 + Math.floor(random() * 1200) : 1;
 
           for (let i = 0; i < burst; i++) {
             nextValue += 1;
             strict.equal(queue.push(nextValue), model.push(nextValue));
           }
-        } else if (roll < 0.7) {
+        } else if (roll < 0.26) {
+          nextValue += 1;
+          strict.equal(queue.unshift(nextValue), model.unshift(nextValue));
+        } else if (roll < 0.42) {
           strict.equal(queue.shift(), model.shift());
-        } else if (roll < 0.8) {
+        } else if (roll < 0.5) {
           strict.equal(queue.pop(), model.pop());
-        } else if (roll < 0.9) {
-          const index = Math.floor(random() * (model.length + 3)) - 1;
+        } else if (roll < 0.58) {
+          const index = anyIndex();
 
-          strict.equal(queue.get(index), model[index]);
-        } else if (roll < 0.97) {
-          const index = Math.floor(random() * (model.length + 3)) - 1;
+          strict.equal(queue.peekAt(index), modelPeekAt(model, index));
+          strict.equal(queue.get(index), modelPeekAt(model, index));
+        } else if (roll < 0.61) {
+          strict.equal(queue.peek(), model[0]);
+          strict.equal(queue.peekBack(), modelPeekAt(model, -1));
+          strict.equal(queue.size(), model.length);
+          strict.equal(queue.isEmpty(), model.length === 0);
+        } else if (roll < 0.69) {
+          const index = anyIndex();
 
-          if (index >= 0 && index < model.length) {
-            strict.equal(queue.removeOne(index), model.splice(index, 1)[0]);
-          } else {
-            strict.equal(queue.removeOne(index), undefined);
-          }
+          strict.equal(queue.removeOne(index), modelRemoveOne(model, index));
+        } else if (roll < 0.77) {
+          const index = anyIndex();
+          const count = anyCount();
+
+          strict.deepStrictEqual(
+            queue.remove(index, count),
+            modelRemove(model, index, count)
+          );
+        } else if (roll < 0.85) {
+          const index = anyIndex();
+          const count = anyCount();
+
+          strict.deepStrictEqual(
+            queue.splice(index, count),
+            modelSplice(model, index, count)
+          );
+        } else if (roll < 0.92) {
+          const index = anyIndex();
+          const count = anyCount();
+          const inserts = [nextValue + 1, nextValue + 2].slice(
+            0,
+            1 + Math.floor(random() * 2)
+          );
+          nextValue += inserts.length;
+
+          strict.deepStrictEqual(
+            queue.splice(index, count, ...inserts),
+            modelSplice(model, index, count, inserts)
+          );
+        } else if (roll < 0.93) {
+          queue.clear();
+          model.length = 0;
         } else {
           strict.deepStrictEqual(queue.toArray(), model);
         }
