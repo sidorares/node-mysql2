@@ -4,28 +4,38 @@ You are an expert Node.js developer contributing to MySQL2, a high-performance M
 
 ## Project
 
-- Minimum compatibility: **Node 14** (ignore the `engines` field in `package.json`).
-- Core: `/lib` → exposed via `index.js` (callback) and `promise.js` (promise-based).
-- Types: `/typings` (`.d.ts` files) → exposed via `index.d.ts` (callback) and `promise.d.ts` (promise-based). See `.github/skills/types/SKILL.md` for the full architecture, known gaps, and decision tree.
+- Minimum compatibility: **Node 14**, whatever the `engines` field in `package.json` declares.
+- Core: `/lib`, exposed through `index.js` (callback) and `promise.js` (promise-based).
+- Types: `/typings` (`.d.ts` files), exposed through `index.d.ts` (callback) and `promise.d.ts` (promise-based).
 - Documentation: `website/docs/` (Docusaurus).
 - Tests:
-  - Unit: `test/unit` (parallel)
-  - Integration: `test/integration` (parallel, runs alongside unit tests)
-  - Global: `test/global` (sequential — robust tests that affect MySQL Server global state with advanced cleanup)
+  - Unit: `test/unit`, parallel.
+  - Integration: `test/integration`, parallel, alongside the unit tests.
+  - Global: `test/global`, sequential, for tests that change MySQL Server global state and need careful cleanup.
 
 ---
 
 ## Skills
 
-- Use the `/lagune` skill ([.claude/skills/lagune/SKILL.md](.claude/skills/lagune/SKILL.md)), whenever you build or change code, so it improves safety by default. If it is not available, run `npx -y lagune@latest pull` to install it from its manifest.
+- Use the [`/lagune` skill](.claude/skills/lagune/SKILL.md) whenever you build or change code, so it improves safety by default. When it is not available, install it from its manifest with `npx -y lagune@latest pull`.
+- Read the [code review skill](.github/skills/code-review/SKILL.md) before reviewing a pull request, a diff, or a branch.
+- Read the [typings skill](.github/skills/types/SKILL.md) when working on `/typings` or fixing a type error in a test.
+
+---
+
+## Comments
+
+Never add an obvious comment nor narrate a statement: code that needs a comment to be understood is usually poorly implemented, and comment length measures how bad the code underneath it is.
+
+When code feels like it needs an explanation, improve the implementation instead: clear names, decoupled functions with a defined scope, and proper abstractions.
 
 ---
 
 ## Tests
 
-**Read `test/common.test.mts` before writing any test.** It provides shared helpers: `createConnection`, `createPool`, `createPoolCluster`, `getConfig`, `createServer`, `getMysqlVersion`, etc.
+**Read `test/common.test.mts` before writing any test.** It provides the shared helpers for creating connections, pools, clusters, and servers, and for reading the test configuration.
 
-The test runner is **Poku** ([docs](https://poku.io/docs) · [repo](https://github.com/wellwelwel/poku)). Test files use `.mts` (ESM TypeScript) and support top-level `await`.
+The test runner is **Poku** ([docs](https://poku.io/docs), [repo](https://github.com/wellwelwel/poku)). Test files use `.mts` (ESM TypeScript) and support top-level `await`.
 
 Assertions, utilities, and test structure come from Poku:
 
@@ -33,40 +43,40 @@ Assertions, utilities, and test structure come from Poku:
 import { describe, it, assert, skip, sleep, strict } from 'poku';
 ```
 
-- `skip` — Skips the entire test file and reports it (e.g., Deno-only tests, specific Node versions, etc.).
-- `sleep` — Waits for a given duration when needed: `await sleep(100)`.
+- `skip` skips the entire test file and reports it, for cases like a Deno-only test or a specific Node version.
+- `sleep` waits for a given duration: `await sleep(100)`.
 
 | File                      | Description                                                         |
 | ------------------------- | ------------------------------------------------------------------- |
-| `test/common.test.mts`    | Shared helpers — **read before writing new tests**                  |
+| `test/common.test.mts`    | Shared helpers                                                      |
 | `poku.config.js`          | Poku config: parallel/sequential suites, timeouts, test directories |
 | `test/docker-compose.yml` | Local environment with MySQL, Node, Deno, Bun, and coverage         |
 
 ```sh
-npm run typecheck                        # type-check the project
-npm run lint:fix                         # fix lint and formatting
-FILTER=test/unit/my-test.mts npx poku    # run a specific test via Poku
-npx tsx test/unit/my-test.mts            # run a test directly
+npm run typecheck
+npm run lint:fix
+FILTER=test/unit/my-test.mts npx poku    # run a single file through Poku
+npx tsx test/unit/my-test.mts            # run a single file directly
 ```
 
 ### Connection scope and resource cleanup
 
-Never close the connection in the same scope as an assertion that may fail. If the assertion throws, `end()` will never be reached and the process will hang indefinitely.
+Never close the connection in the same scope as an assertion that may fail. When the assertion throws, `end()` is never reached and the process hangs indefinitely.
 
-Separate creation/cleanup into an outer scope:
+Open and close the connection in an outer scope:
 
 ```ts
-// ❌ Wrong — end() in the same scope as the assertion
+// ❌ Wrong: end() sits in the same scope as the assertion
 await describe('test', async () => {
   await it('should do something', async () => {
-    const connection = await createConnection();
+    const connection = await createConnection(); // same for pool or cluster connections
     assert(false);
     await connection.end(); // never reached
   });
   // process hangs
 });
 
-// ❌ Wrong — try-finally is a workaround, not a fix
+// ❌ Wrong: try-finally is a workaround, not a fix
 await describe('test', async () => {
   await it('should do something', async () => {
     const connection = await createConnection();
@@ -79,7 +89,7 @@ await describe('test', async () => {
   // process hangs
 });
 
-// ✅ Correct — end() in an outer scope
+// ✅ Correct: end() in an outer scope
 await describe('test', async () => {
   const connection = await createConnection();
 
@@ -91,9 +101,9 @@ await describe('test', async () => {
 });
 ```
 
-- Applies to any teardown method (`close`, `end`, `destroy`, `release`) and any connection type (`Connection`, `Pool`, `PoolCluster`, etc.).
+- Every teardown method and every connection type is affected: `close`, `end`, `destroy`, `release`, on `Connection`, `Pool`, `PoolCluster`, and the rest.
 - Use nested or dedicated `describe` blocks to isolate each connection.
-- The same applies to callbacks — `end()` may be inside a nested callback that is never invoked if an assertion fails first.
+- Callbacks fail the same way, with the teardown buried in a nested callback that a failing assertion prevents from ever running.
 
 Prefer `await conn.promise().end()` instead of wrapping callbacks in `new Promise`:
 
@@ -107,11 +117,11 @@ await pool.promise().end();
 
 ### Avoid timer-dependent tests
 
-Avoid writing tests that depend on `setTimeout` or `sleep` to wait for internal timers (e.g., idle timeout cleanup). These can produce flaky results in CI environments like GitHub Actions, where execution timing is unpredictable. Instead, call the internal method directly or assert the state synchronously right after the action. If a timer-based behavior must be tested (e.g., a "timebomb"), isolate it in a way that does not depend on wall-clock timing.
+Never wait on an internal timer, such as idle connection cleanup, with `setTimeout` or `sleep`. Execution timing in CI is unpredictable and the test turns flaky. Call the internal method directly, or assert the state synchronously right after the action. When the timer behavior itself is what needs coverage, isolate it so no assertion depends on wall-clock timing.
 
 ### `async`/`await`
 
-Poku treats `async`/`await` just like standard JavaScript: use `await` on `describe`/`it`/`test` **only** when the callback is asynchronous. Otherwise, do not include `async` or `await`.
+Poku treats `async`/`await` just like standard JavaScript, so `describe`, `it`, and `test` are awaited **only** when the callback is asynchronous.
 
 **Asynchronous:**
 
@@ -141,9 +151,9 @@ describe('test', () => {
 
 ### Prefer promise-based API
 
-When writing new tests, prefer the promise-based API via `.promise()`. Use callbacks only for testing events, streams, features unavailable in the promise API, or when a feature genuinely needs coverage in both modes (callback + promise).
+New tests prefer the promise-based API through `.promise()`. Callbacks stay for events, streams, anything the promise API does not cover, and features that genuinely need coverage in both modes.
 
-> Recommendation, not a strict rule.
+> A recommendation, not a strict rule.
 
 ```ts
 const connection = createConnection({
@@ -166,7 +176,7 @@ const clusterConnection = await cluster.promise().getConnection();
 
 Never use `as unknown as` or `any` in test files.
 
-When accessing MySQL2 internals not exposed in the public typings (e.g., `server._server`, `pool._allConnections`), use exactly:
+When reaching for an internal that the public typings do not expose, use exactly:
 
 ```ts
 // @ts-expect-error: internal access
@@ -182,77 +192,45 @@ If the type error **is** related to the contribution, fix the type in `typings/`
 
 ---
 
-## Pull Request Reviews
-
-When reviewing a PR, alert the author in the following cases:
-
-- **Fix without tests** — Bug fix without tests covering the fixed scenario. Request tests that would fail without the fix.
-- **Feature without tests** — New feature without test coverage.
-- **Feature without docs** — New feature without documentation.
-- **Potential breaking change** — Flag any change that could break existing behavior, even in patches or minor features. Not an error, but crucial to avoid unintentional semver violations.
-
-### Required checklist
-
-Before approving any PR, verify:
-
-**General:**
-
-1. **Tests** — Does the bug fix or feature include tests?
-2. **Documentation** — Do new features include documentation?
-
-**Tests:**
-
-3. **Connection scope** — Is `end()`/`close()`/`destroy()`/`release()` in an outer scope, separate from assertions?
-4. **`process.exit`** — If used to skip a test conditionally, suggest using Poku's `skip` instead.
-5. **`new Promise` + `setTimeout`** — Suggest using Poku's `sleep` instead.
-6. **`node:assert` or `node:test`** — Suggest importing from `poku` instead. Require `strict` instead of `assert`.
-7. **`as unknown as` or `any`** — Never use in test files.
-8. **`@ts-expect-error`** — Must use exactly `// @ts-expect-error: internal access` or `// @ts-expect-error: TODO: implement typings`. If the type error is related to the contribution, fix the type instead.
-9. **Timer-dependent tests** — Tests that use `setTimeout` or `sleep` to wait for internal timers can be flaky in CI. Suggest asserting state synchronously or calling the internal method directly.
-
-**Types:**
-
-10. **Typings structure** — Type definitions must follow the existing structure in `/typings`. Do not add types in arbitrary locations.
-
-Do not approve a PR that violates the items above without first alerting the author.
-
 ## Cursor Cloud specific instructions
 
-MySQL2 is a **library**, not a long-running app. Development means installing Node deps, starting MySQL for integration tests, then running lint/typecheck/tests against the driver.
+MySQL2 is a **library**, not a long-running app. Development means installing the Node dependencies, starting MySQL for the integration tests, then running lint, typecheck, and tests against the driver.
 
 ### Services
 
-| Service                       | Required?          | Notes                                                       |
-| ----------------------------- | ------------------ | ----------------------------------------------------------- |
-| **Node.js** (≥14; CI uses 22) | Yes                | `npm ci` at repo root                                       |
-| **MySQL**                     | Yes for full tests | Integration/global tests need a `test` database             |
-| **Docker**                    | Recommended        | Used to run MySQL the same way as CI                        |
-| **Docusaurus** (`website/`)   | Optional           | `cd website && npm ci && npm start` → http://localhost:3000 |
+| Service                          | Required?          | Notes                                                         |
+| -------------------------------- | ------------------ | ------------------------------------------------------------- |
+| **Node.js** (14 or later, CI 22) | Yes                | `npm ci` at repo root                                         |
+| **MySQL**                        | Yes for full tests | Integration and global tests need a `test` database           |
+| **Docker**                       | Recommended        | Runs MySQL the same way as CI                                 |
+| **Docusaurus** (`website/`)      | Optional           | `cd website && npm ci && npm start`, on http://localhost:3000 |
 
 ### MySQL via Docker
 
-Docker is installed on the VM but may need a manual daemon start (systemd is not always active):
+Docker is installed on the VM, but the daemon may need a manual start when systemd is not active:
 
 ```sh
 sudo dockerd > /tmp/dockerd.log 2>&1 &
 ```
 
-Start MySQL (creates `test` DB, empty root password):
+Start MySQL, which creates the `test` database with an empty root password:
 
 ```sh
 sudo docker compose -f test/docker-compose.yml up -d mysql
 node tools/wait-up.js
 ```
 
-Use `sudo docker` if the socket permission error appears. CI pins **MySQL 8.3** (`mysql:8.3`); `test/docker-compose.yml` uses `mysql:lts` (currently 9.x). For full CI parity, run:
+Use `sudo docker` when the socket permission error appears. CI pins **MySQL 8.3** (`mysql:8.3`), while `test/docker-compose.yml` uses `mysql:lts`, currently 9.x. For full CI parity, run:
 
 ```sh
 sudo docker run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 3306:3306 mysql:8.3
 ```
 
-Without `CI=1`, tests use an empty root password (matches docker-compose). With `CI=1`, set `MYSQL_PASSWORD=root`.
+Without `CI=1`, tests use an empty root password, matching docker-compose. With `CI=1`, set `MYSQL_PASSWORD=root`.
 
-### Commands (see `package.json` / `Contributing.md`)
+### Commands
+
+See `package.json` and `Contributing.md` for the full set.
 
 | Task        | Command                                            |
 | ----------- | -------------------------------------------------- |
@@ -262,4 +240,4 @@ Without `CI=1`, tests use an empty root password (matches docker-compose). With 
 | Build check | `npm run test:build`                               |
 | Website     | `cd website && npm ci && npm test`                 |
 
-`test/global` runs sequentially and needs elevated MySQL privileges; Poku skips those files when `hasPrivileges()` fails.
+`test/global` runs sequentially and needs elevated MySQL privileges. Poku skips those files when `hasPrivileges()` fails, so a green local run does not prove they were exercised.
