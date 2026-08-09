@@ -1,6 +1,6 @@
 ---
 name: types
-description: Fix a TypeScript error in a `.mts` test file, remove an `any` or a `!`, decide between `@ts-expect-error: internal access` and `@ts-expect-error: TODO: implement typings`, or change a `.d.ts` file under `/typings`. Carries the public type inventory, the decision tree, the type architecture, and every known typing gap.
+description: 'Fix a TypeScript error in a `.mts` test file, remove an `any` or a `!`, decide between `@ts-expect-error: internal access` and `@ts-expect-error: TODO: implement typings`, or change a `.d.ts` file under `/typings`. Carries the public type inventory, the decision tree, the type architecture, and every known typing gap.'
 argument-hint: Optionally name the test file or the type to fix, or leave empty
 user-invocable: true
 ---
