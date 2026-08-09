@@ -61,4 +61,3 @@ await describe('Pool: changeUser() isolation', async () => {
   await admin.query("DROP USER IF EXISTS 'pooluser1'@'%'");
   await admin.end();
 });
-
