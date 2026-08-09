@@ -69,7 +69,6 @@ await describe('Regression #433', async () => {
       strict.equal(aRow[cols[3]], tRow[3]);
     });
 
-    /* eslint quotes: 0 */
     const expectedErrorMysql =
       "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`МояТаблица' at line 1";
 
