@@ -54,7 +54,6 @@
   "license": "MIT",
   "dependencies": {
     "aws-ssl-profiles": "^1.1.2",
-    "denque": "^2.1.0",
     "generate-function": "^2.3.1",
     "iconv-lite": "^0.7.3",
     "long": "^5.3.2",
