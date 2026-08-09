@@ -1,10 +1,11 @@
 import { describe, it, strict } from 'poku';
+import mysql from '../../../index.js';
 import ClientConstants from '../../../lib/constants/client.js';
 import CursorType from '../../../lib/constants/cursor.js';
-import Types from '../../../lib/constants/types.js';
 import Execute from '../../../lib/packets/execute.js';
 import Query from '../../../lib/packets/query.js';
 
+const { Types } = mysql;
 const CLIENT_QUERY_ATTRIBUTES = ClientConstants.CLIENT_QUERY_ATTRIBUTES;
 const UTF8_CHARSET = 33; // utf8_general_ci
 
