@@ -53,7 +53,6 @@ await describe('Test namedPlaceholder as command parameter in connection', async
       await c.execute({ sql: query, namedPlaceholders: false }, values);
       strict.fail('Enabled in connection config, disabled in execute command');
     } catch (err: unknown) {
-      // With namedPlaceholders disabled, object bind params are rejected.
       strict.equal(
         err instanceof TypeError,
         true,
