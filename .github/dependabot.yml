@@ -6,19 +6,10 @@ updates:
       interval: 'daily'
     open-pull-requests-limit: 10
     groups:
-      eslint:
-        patterns:
-          - 'eslint'
-          - '@eslint/*'
-      typescript-eslint:
-        patterns:
-          - '@typescript-eslint/*'
       prettier:
         patterns:
           - 'prettier'
           - '@ianvs/prettier-plugin-sort-imports'
-          - 'eslint-config-prettier'
-          - 'eslint-plugin-prettier'
       rollup:
         patterns:
           - 'rollup'

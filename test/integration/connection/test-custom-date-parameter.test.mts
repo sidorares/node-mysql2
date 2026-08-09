@@ -7,7 +7,7 @@ await describe('Custom Date Parameter', async () => {
   const { major, isMariaDB } = await getMysqlVersion(connection);
 
   // @ts-expect-error: intentionally replacing global Date for testing
-  // eslint-disable-next-line no-global-assign
+  // biome-ignore lint/suspicious/noGlobalAssign: intentionally replacing global Date for testing
   Date = (function () {
     const NativeDate = Date;
     function CustomDate(str: string) {

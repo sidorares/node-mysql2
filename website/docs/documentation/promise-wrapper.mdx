@@ -5,7 +5,6 @@ In addition to errback interface there is thin wrapper to expose Promise-based a
 ## Basic Promise
 
 ```js
-/* eslint-env es6 */
 const mysql = require('mysql2/promise'); // or require('mysql2').createConnectionPromise
 mysql
   .createConnection({/* same parameters as for non-promise createConnection */})

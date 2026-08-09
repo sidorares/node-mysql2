@@ -62,7 +62,6 @@ await describe('Auth Switch Plugin Async Error', async () => {
     let serverError: NodeJS.ErrnoException | undefined;
 
     await new Promise<void>((resolve) => {
-      // eslint-disable-next-line prefer-const
       let checkDone: () => void;
 
       const server = mysql.createServer((conn) => {

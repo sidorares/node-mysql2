@@ -27,7 +27,7 @@ jobs:
           key: npm-linux-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-linux-
 
-      - name: Install ESLint + ESLint configs/plugins
+      - name: Install Biome + Prettier
         run: npm install --only=dev
 
       - name: Lint

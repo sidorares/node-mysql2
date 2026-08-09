@@ -14,7 +14,6 @@ await describe('Pool cluster: warn event', async () => {
     poolCluster.once('warn', async function () {
       await new Promise((resolve) => {
         strict.equal(
-          // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
           'should propagate warn event to promise wrapper'
@@ -35,7 +34,6 @@ await describe('Pool cluster: remove event', async () => {
     poolCluster.once('remove', async function () {
       await new Promise((resolve) => {
         strict.equal(
-          // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
           'should propagate remove event to promise wrapper'
@@ -56,7 +54,6 @@ await describe('Pool cluster: offline event', async () => {
     poolCluster.once('offline', async function () {
       await new Promise((resolve) => {
         strict.equal(
-          // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
           'should propagate offline event to promise wrapper'
@@ -77,7 +74,6 @@ await describe('Pool cluster: online event', async () => {
     poolCluster.once('online', async function () {
       await new Promise((resolve) => {
         strict.equal(
-          // eslint-disable-next-line no-invalid-this
           this,
           poolCluster,
           'should propagate online event to promise wrapper'

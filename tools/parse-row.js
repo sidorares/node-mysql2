@@ -17,7 +17,8 @@ const SAParser = (function () {
     if (nullBitmaskByte0 & 16) this['shipping_fk_pickup_location'] = null;
     else this['shipping_fk_pickup_location'] = packet.readSInt32();
     // "billing_is_pickup_location": LONGLONG
-    debugger; // eslint-disable-line no-debugger
+    // biome-ignore lint/suspicious/noDebugger: intentional breakpoint in this row-parsing debug tool
+    debugger;
     this['billing_is_pickup_location'] = packet.readSInt64();
   };
 })();
