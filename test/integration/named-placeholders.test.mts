@@ -83,24 +83,26 @@ await describe('Test namedPlaceholder as command parameter in connection', async
     );
   });
 
-  await it(async () => {
+  await describe('pool query disables named placeholders', async () => {
     const c = createPool({ namedPlaceholders: true }).promise();
 
-    try {
-      await c.query({ sql: query, namedPlaceholders: false }, values);
-      strict.fail('Enabled in pool config, disabled in query command');
-    } catch (err: unknown) {
-      const sqlMessage =
-        err && typeof err === 'object' && 'sqlMessage' in err
-          ? String((err as { sqlMessage?: unknown }).sqlMessage)
-          : '';
-      strict(
-        sqlMessage.match(/right syntax to use near ':named'/),
-        'Enabled in pool config, disabled in query command'
-      );
-    } finally {
-      await c.end();
-    }
+    await it(async () => {
+      try {
+        await c.query({ sql: query, namedPlaceholders: false }, values);
+        strict.fail('Enabled in pool config, disabled in query command');
+      } catch (err: unknown) {
+        const sqlMessage =
+          err && typeof err === 'object' && 'sqlMessage' in err
+            ? String((err as { sqlMessage?: unknown }).sqlMessage)
+            : '';
+        strict(
+          sqlMessage.match(/right syntax to use near ':named'/),
+          'Enabled in pool config, disabled in query command'
+        );
+      }
+    });
+
+    await c.end();
   });
 
   await it(async () => {
