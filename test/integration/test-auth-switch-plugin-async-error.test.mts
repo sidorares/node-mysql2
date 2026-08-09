@@ -58,8 +58,7 @@ class TestAuthSwitchPluginError extends Command {
 await describe('Auth Switch Plugin Async Error', async () => {
   await it('should handle auth plugin async error', async () => {
     let clientError:
-      | { code?: string; message?: string; fatal?: boolean }
-      | undefined;
+      { code?: string; message?: string; fatal?: boolean } | undefined;
     let serverError: NodeJS.ErrnoException | undefined;
 
     await new Promise<void>((resolve) => {

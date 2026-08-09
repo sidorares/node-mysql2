@@ -87,7 +87,7 @@
     "globals": "^17.3.0",
     "poku": "^4.1.0",
     "portfinder": "^1.0.38",
-    "prettier": "^3.8.1",
+    "prettier": "^3.9.6",
     "rollup": "^4.59.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
