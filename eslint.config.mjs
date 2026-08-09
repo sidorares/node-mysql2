@@ -38,6 +38,7 @@ export default [
       'template-curly-spacing': ['error', 'never'],
       'prefer-template': 'error',
       'no-useless-call': 'error',
+      'no-useless-assignment': 'off',
       'no-lonely-if': 'error',
       'no-else-return': [
         'error',
