@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.23.3](https://github.com/sidorares/node-mysql2/compare/v3.23.2...v3.23.3) (2026-08-10)
+
+
+### Bug Fixes
+
+* honor query-level `namedPlaceholders` as `false` ([#4460](https://github.com/sidorares/node-mysql2/issues/4460)) ([20f732b](https://github.com/sidorares/node-mysql2/commit/20f732bbcb33b2e2d184130b94424b20c3745a50))
+* keep connectTimeout active until the handshake completes ([#4458](https://github.com/sidorares/node-mysql2/issues/4458)) ([508a731](https://github.com/sidorares/node-mysql2/commit/508a731eb077f6eba1a794a2e3506f04226a4f21))
+* **pool:** give each pooled connection its own config copy ([#4473](https://github.com/sidorares/node-mysql2/issues/4473)) ([361d232](https://github.com/sidorares/node-mysql2/commit/361d232c4b6bd3afd048427da0c4af012488d031))
+* **pool:** propagate query dispatch errors instead of throwing ([#4459](https://github.com/sidorares/node-mysql2/issues/4459)) ([7ce6943](https://github.com/sidorares/node-mysql2/commit/7ce69431a06ed8d36903f4dde94f8062367349ea))
+* replace `denque` with a local ring buffer queue ([#4472](https://github.com/sidorares/node-mysql2/issues/4472)) ([88f3d9e](https://github.com/sidorares/node-mysql2/commit/88f3d9e87dd60398ed9a82e97e66ad72a9810ae8))
+
 ## [3.23.2](https://github.com/sidorares/node-mysql2/compare/v3.23.1...v3.23.2) (2026-07-27)
 
 
