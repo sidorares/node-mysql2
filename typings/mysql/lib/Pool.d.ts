@@ -70,6 +70,16 @@ declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
 
   unprepare(sql: string): PrepareStatementInfo;
 
+  /**
+   * Escaping helpers, available on a `Pool` just like on a `Connection`.
+   */
+  escape(value: any): string;
+
+  escapeId(value: string): string;
+  escapeId(values: string[]): string;
+
+  format(sql: string, values?: any | any[] | { [param: string]: any }): string;
+
   promise(promiseImpl?: PromiseConstructor): PromisePool;
 
   config: PoolOptions;
