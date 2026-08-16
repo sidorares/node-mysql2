@@ -114,4 +114,37 @@ describe('Packet.parseDateTime', () => {
     packet.parseDateTime('local');
     strict.equal(packet.haveMoreData(), false);
   });
+
+  // Date is mutable (setFullYear on an Invalid Date makes it valid), so a
+  // shared invalid-date instance would let one caller corrupt every later
+  // zero-date result in the process
+  it('returns a fresh Date instance for each invalid date', () => {
+    const first = parseNonNull('0000-00-00 00:00:00', 'local');
+    const second = parseNonNull('0000-00-00 00:00:00', 'local');
+    strict.notEqual(first, second);
+    first.setFullYear(1999);
+    const third = parseNonNull('0000-00-00 00:00:00', 'local');
+    strict.ok(Number.isNaN(third.getTime()));
+  });
+});
+
+describe('Packet.readDateTime (binary protocol)', () => {
+  function readZeroDate(): Date {
+    // length 4: year int16 + month + day, all zero
+    const buf = Buffer.concat([Buffer.alloc(4), Buffer.from([4, 0, 0, 0, 0])]);
+    const parsed = new Packet(0, buf, 0, buf.length).readDateTime('local');
+    if (parsed === null) {
+      strict.fail('unexpected null for a zero binary date');
+    }
+    return parsed;
+  }
+
+  it('returns a fresh Date instance for each zero date', () => {
+    const first = readZeroDate();
+    const second = readZeroDate();
+    strict.ok(Number.isNaN(first.getTime()));
+    strict.notEqual(first, second);
+    first.setFullYear(1999);
+    strict.ok(Number.isNaN(readZeroDate().getTime()));
+  });
 });
