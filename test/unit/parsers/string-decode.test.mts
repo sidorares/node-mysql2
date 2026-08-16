@@ -15,6 +15,43 @@ describe('StringParser.decode', () => {
     }
   });
 
+  it('coerces every degenerate offset shape like buffer.toString', () => {
+    const offsets = [
+      undefined,
+      Number.NaN,
+      Number.NEGATIVE_INFINITY,
+      Number.POSITIVE_INFINITY,
+      -5,
+      -0.5,
+      0,
+      1,
+      2.7,
+      buf.length - 1,
+      buf.length,
+      buf.length + 5,
+    ];
+    for (const encoding of ['utf8', 'latin1', 'ascii'] as const) {
+      for (const start of offsets) {
+        for (const end of offsets) {
+          let expected: string | Error;
+          try {
+            expected = buf.toString(encoding, start, end);
+          } catch (err) {
+            expected = err as Error;
+          }
+          if (expected instanceof Error) {
+            continue; // decode only needs to match where toString succeeds
+          }
+          strict.equal(
+            StringParser.decode(buf, encoding, start, end),
+            expected,
+            `${encoding} decode(${start}, ${end})`
+          );
+        }
+      }
+    }
+  });
+
   it('clamps out-of-range offsets like buffer.toString', () => {
     // end past the buffer
     strict.equal(
