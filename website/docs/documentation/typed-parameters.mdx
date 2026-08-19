@@ -1,0 +1,157 @@
+---
+tags: [Prepared Statements, execute, TypedParameter, Data Types]
+---
+
+# Typed Parameters
+
+`connection.execute()` sends each bind parameter with a MySQL type. By default
+that type is inferred from the JavaScript value, which cannot express integer
+width, signedness, or whether a value is binary or text. `TypedParameter` lets
+you state the type yourself.
+
+```js
+const mysql = require('mysql2');
+const { TypedParameter: T } = mysql;
+
+const connection = await mysql.createConnection(opts).promise();
+
+await connection.execute('SELECT * FROM users LIMIT ?', [T.BIGINT(10)]);
+await connection.execute('INSERT INTO ledger (amount) VALUES (?)', [
+  T.BIGINT('9007199254740993'),
+]);
+```
+
+## Why it matters
+
+### Numbers larger than `Number.MAX_SAFE_INTEGER`
+
+Every JavaScript number is sent as `DOUBLE`. A cached prepared statement keeps
+the type of its first execution, so once a position has been bound to a number,
+an exact `BIGINT` string bound later is read back through that `DOUBLE` and
+rounded.
+
+```js
+await connection.execute('INSERT INTO t (big) VALUES (?)', [1]);
+await connection.execute('INSERT INTO t (big) VALUES (?)', ['9007199254740993']);
+// stored: 9007199254740992
+
+await connection.execute('INSERT INTO t (big) VALUES (?)', [
+  T.BIGINT('9007199254740993'),
+]);
+// stored: 9007199254740993
+```
+
+### Unsigned values
+
+Without a type the driver cannot set the unsigned flag, so the top half of
+`BIGINT UNSIGNED` is unreachable.
+
+```js
+await connection.execute('INSERT INTO t (big) VALUES (?)', [
+  T.BIGINT.unsigned('18446744073709551615'),
+]);
+```
+
+### Index lookups on string columns
+
+Comparing an indexed string column to a number makes MySQL compare the column
+numerically, which cannot use the index — and the cached statement keeps that
+shape for every later execution. Pinning the position to one type keeps the
+lookup on the index whatever the caller passes.
+
+```js
+await connection.execute('SELECT id FROM t WHERE code = ?', [
+  T.VARCHAR(userInput),
+]);
+```
+
+### Binary data
+
+A string parameter is converted from the connection charset. Sending binary as
+a `BLOB` keeps the bytes intact, which matters for `VARBINARY` and MariaDB
+`VECTOR` columns.
+
+```js
+await connection.execute('INSERT INTO t (raw) VALUES (?)', [T.BLOB(buffer)]);
+```
+
+## Available types
+
+Each factory takes the value and returns a parameter you pass in place of it.
+
+| Group    | Factories                                                                                   |
+| -------- | ------------------------------------------------------------------------------------------- |
+| Integer  | `TINYINT` `SMALLINT` `MEDIUMINT` `INT` `INTEGER` `BIGINT` `YEAR`, and the protocol names `TINY` `SHORT` `INT24` `LONG` `LONGLONG` |
+| Decimal  | `FLOAT` `DOUBLE` `REAL` `DECIMAL` `NEWDECIMAL`                                                |
+| Temporal | `DATE` `DATETIME` `TIMESTAMP` `TIME`                                                          |
+| Text     | `VARCHAR` `CHAR` `STRING` `VAR_STRING` `TEXT` `MEDIUMTEXT` `LONGTEXT` `ENUM` `SET`            |
+| Binary   | `BLOB` `TINY_BLOB` `MEDIUM_BLOB` `LONG_BLOB` `BINARY` `VARBINARY` `VECTOR`                    |
+| Other    | `JSON` `NULL`                                                                                 |
+
+Integer factories also expose `.unsigned`:
+
+```js
+T.INT.unsigned(4294967295);
+```
+
+`BIT` and `GEOMETRY` have no factory because neither server accepts them as a
+bind type. Send a bit mask as `T.BIGINT(mask)` and geometry as `T.BLOB(wkb)`.
+
+### Types the server will not bind
+
+Some declared types are not valid `COM_STMT_EXECUTE` bind types, so they travel
+as the nearest type both servers accept. The value is unchanged.
+
+| Declared     | Sent as  |
+| ------------ | -------- |
+| `MEDIUMINT`  | `LONG`   |
+| `YEAR`       | `SHORT`  |
+| `ENUM` `SET` | `STRING` |
+| `VECTOR`     | `BLOB`   |
+| `JSON`       | `VAR_STRING` on MariaDB, which has no JSON bind type |
+
+## Values are checked before they are sent
+
+Integer factories reject anything they cannot represent, at the call site rather
+than inside the driver.
+
+```js
+T.TINYINT(300);
+// RangeError: TINY parameter out of range: 300 is not within -128..127
+
+T.BIGINT(9007199254740993);
+// RangeError: LONGLONG parameter 9007199254740992 exceeds Number.MAX_SAFE_INTEGER
+// and has already lost precision; pass a string or BigInt instead
+
+T.INT('7abc');
+// TypeError: LONG parameter must be an integer, got "7abc"
+```
+
+Pass large integers as a string or `BigInt`, both of which stay exact.
+
+## Typed `NULL`
+
+`T.BIGINT(null)` sends SQL `NULL` while keeping the declared type, so a position
+does not change type between a null and a non-null execution. `T.NULL()` sends an
+untyped `NULL`, matching a plain `null`.
+
+## Integer types chosen for you
+
+For positions where the server reports an integer type, the driver adopts it
+automatically — no `TypedParameter` needed. This is what makes the most common
+failure work:
+
+```js
+await connection.execute('SELECT * FROM t LIMIT ?', [10]);
+```
+
+MySQL requires an integer for `LIMIT` and rejects a `DOUBLE` with
+`ER_WRONG_ARGUMENTS`. The server reports the placeholder as `LONGLONG`, so the
+driver sends `LONGLONG`.
+
+The type is adopted only when the reported type is an integer type **and** the
+value is already an integer that fits it. In every other case the type is
+inferred from the JavaScript value exactly as before, which keeps `SELECT ?`
+round-tripping a number as a number and leaves the server's own string
+coercions in place. MariaDB reports no parameter types at all, so nothing is
+adopted there and `TypedParameter` is the only way to state a type.

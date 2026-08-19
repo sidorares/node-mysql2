@@ -94,3 +94,10 @@ connection.execute(
 ## Examples
 
 For Prepared Statements examples, please see [here](/docs/examples/queries/prepared-statements).
+
+## Parameter types
+
+The MySQL type of each bind parameter is inferred from the JavaScript value.
+See [Typed Parameters](./typed-parameters.mdx) for how to state the type
+explicitly, and why it matters for large integers, unsigned values, binary data
+and index lookups.
