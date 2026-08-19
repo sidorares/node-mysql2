@@ -6,6 +6,8 @@ const { TypedParameter, Types } = mysql;
 const { toParameter } =
   await import('../../../lib/packets/encode_parameter.js');
 const { default: Packet } = await import('../../../lib/packets/packet.js');
+const { TypedParameter: Container } =
+  await import('../../../lib/packets/typed_parameter.js');
 
 const encode = (value: unknown) => toParameter(value, 'utf8', 'local', false);
 
@@ -114,6 +116,87 @@ describe('TypedParameter: integer encoding', () => {
   });
 });
 
+describe('TypedParameter: non-integer encoders', () => {
+  it('writes FLOAT as four little-endian bytes', () => {
+    strict.deepEqual(
+      wire(TypedParameter.FLOAT(1.5)),
+      Buffer.from([0x00, 0x00, 0xc0, 0x3f])
+    );
+  });
+
+  it('writes DOUBLE as eight little-endian bytes', () => {
+    strict.deepEqual(
+      wire(TypedParameter.DOUBLE(1.5)),
+      Buffer.from([0, 0, 0, 0, 0, 0, 0xf8, 0x3f])
+    );
+  });
+
+  it('writes a DATE as the binary date form', () => {
+    const bytes = wire(TypedParameter.DATE(new Date(2020, 0, 2, 3, 4, 5)));
+
+    strict.equal(bytes[0], 11);
+    strict.equal(bytes.readUInt16LE(1), 2020);
+    strict.equal(bytes[3], 1);
+    strict.equal(bytes[4], 2);
+  });
+
+  it('accepts a TIMESTAMP given as a parsable string', () => {
+    strict.equal(
+      encode(TypedParameter.TIMESTAMP('2020-01-02T03:04:05Z')).type,
+      Types.TIMESTAMP
+    );
+  });
+
+  it('writes a TIME from HH:MM:SS with microseconds', () => {
+    strict.deepEqual(
+      wire(TypedParameter.TIME('26:03:04.500000')),
+      Buffer.from([12, 0, 1, 0, 0, 0, 2, 3, 4, 0x20, 0xa1, 0x07, 0]).subarray(
+        0,
+        13
+      )
+    );
+  });
+
+  it('writes a negative TIME', () => {
+    const bytes = wire(TypedParameter.TIME('-01:02:03'));
+
+    strict.equal(bytes[0], 8);
+    strict.equal(bytes[1], 1);
+  });
+
+  it('writes a zero TIME as an empty value', () => {
+    strict.deepEqual(wire(TypedParameter.TIME('00:00:00')), Buffer.from([0]));
+  });
+
+  it('accepts a TIME given in milliseconds', () => {
+    const bytes = wire(TypedParameter.TIME(3723000));
+
+    strict.equal(bytes[1], 0);
+    strict.equal(bytes[6], 1);
+    strict.equal(bytes[7], 2);
+    strict.equal(bytes[8], 3);
+  });
+
+  it('writes a length coded string for the text types', () => {
+    strict.deepEqual(
+      wire(TypedParameter.VARCHAR('ab')),
+      Buffer.from([2, 0x61, 0x62])
+    );
+    strict.deepEqual(
+      wire(TypedParameter.DECIMAL('1.50')),
+      Buffer.from([4, 0x31, 0x2e, 0x35, 0x30])
+    );
+  });
+
+  it('stringifies a value the caller did not stringify', () => {
+    strict.equal(encode(TypedParameter.VARCHAR(42)).value, '42');
+  });
+
+  it('has no encoder for a type outside the supported set', () => {
+    strict.throws(() => encode(new Container(Types.BIT, 1, false)));
+  });
+});
+
 describe('TypedParameter: rejects values it cannot represent', () => {
   const invalid: [string, () => unknown][] = [
     ['TINY above range', () => encode(TypedParameter.TINY(128))],
@@ -130,6 +213,8 @@ describe('TypedParameter: rejects values it cannot represent', () => {
     ['BIGINT given a word', () => encode(TypedParameter.BIGINT('abc'))],
     ['DATETIME given a word', () => encode(TypedParameter.DATETIME('abc'))],
     ['TIME given a word', () => encode(TypedParameter.TIME('abc'))],
+    ['BIGINT given an object', () => encode(TypedParameter.BIGINT(new Date()))],
+    ['DATE given an invalid date', () => encode(TypedParameter.DATE('nope'))],
   ];
 
   for (const [name, run] of invalid) {

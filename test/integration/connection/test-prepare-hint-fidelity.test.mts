@@ -1,7 +1,7 @@
 import type { RowDataPacket } from '../../../promise.js';
 import { describe, it, strict } from 'poku';
 import mysql from '../../../index.js';
-import { createConnection, getMysqlVersion } from '../../common.test.mjs';
+import { createConnection } from '../../common.test.mjs';
 
 const { Types } = mysql;
 
@@ -22,7 +22,6 @@ const hintOf = async (
 
 await describe('PREPARE hints: what the server actually reports', async () => {
   const connection = createConnection().promise();
-  const { isMariaDB } = await getMysqlVersion(connection);
 
   await connection.query(
     `CREATE TEMPORARY TABLE hint_src (
@@ -33,13 +32,22 @@ await describe('PREPARE hints: what the server actually reports', async () => {
     )`
   );
 
-  await it('reports nothing usable on MariaDB, real types on MySQL', async () => {
-    const numeric = await hintOf(
-      connection,
-      'SELECT id FROM hint_src WHERE num = ?'
-    );
+  // Only MySQL 8.0 and later resolve parameter types. MySQL 5.7 answers
+  // VAR_STRING with a zero length for every parameter and MariaDB answers
+  // MYSQL_TYPE_NULL, both of which carry no information at all.
+  const numeric = await hintOf(
+    connection,
+    'SELECT id FROM hint_src WHERE num = ?'
+  );
+  const reportsTypes = numeric.columnType === Types.LONGLONG;
 
-    strict.equal(numeric.columnType, isMariaDB ? Types.NULL : Types.LONGLONG);
+  await it('either resolves a parameter type or reports a placeholder', () => {
+    strict.ok(
+      reportsTypes ||
+        numeric.columnType === Types.NULL ||
+        (numeric.columnType === Types.VAR_STRING && numeric.columnLength === 0),
+      `unexpected placeholder type ${numeric.columnType}`
+    );
   });
 
   await it('carries the unsigned flag MySQL2 cannot otherwise know', async () => {
@@ -48,7 +56,7 @@ await describe('PREPARE hints: what the server actually reports', async () => {
       'SELECT id FROM hint_src WHERE big = ?'
     );
 
-    strict.equal(Boolean(unsigned.flags & 32), !isMariaDB);
+    strict.equal(Boolean(unsigned.flags & 32), reportsTypes);
   });
 
   // The reason the hint cannot simply become the default for every parameter: a
