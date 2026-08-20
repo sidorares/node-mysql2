@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.23.4](https://github.com/sidorares/node-mysql2/compare/v3.23.3...v3.23.4) (2026-08-19)
+
+
+### Bug Fixes
+
+* keep leading zeros in TIME fractional seconds ([#4481](https://github.com/sidorares/node-mysql2/issues/4481)) ([3cccf4a](https://github.com/sidorares/node-mysql2/commit/3cccf4ab27218f4a16ccb256842a41e4bb3f03b6))
+* **typings:** align callback Pool and PoolConnection types with runtime ([#4478](https://github.com/sidorares/node-mysql2/issues/4478)) ([8b1f829](https://github.com/sidorares/node-mysql2/commit/8b1f829d3706404ab372cf97bd77ebcf86578d97))
+
 ## [3.23.3](https://github.com/sidorares/node-mysql2/compare/v3.23.2...v3.23.3) (2026-08-10)
 
 
