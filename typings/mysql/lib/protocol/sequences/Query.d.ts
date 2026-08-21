@@ -15,7 +15,7 @@ export type ExecuteValues =
   | Buffer
   | Uint8Array
   | ExecuteValues[]
-  | { [key: string]: ExecuteValues };
+  | { [key: string]: unknown };
 
 export type QueryValues =
   | string
@@ -30,7 +30,7 @@ export type QueryValues =
   | Uint8Array
   | Raw
   | ({} | null | undefined)[]
-  | { [key: string]: QueryValues };
+  | { [key: string]: unknown };
 
 export interface QueryOptions {
   /**
