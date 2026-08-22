@@ -1,0 +1,157 @@
+---
+sidebar_position: 3
+tags: [pool, getStats, diagnostics, monitoring]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { FAQ } from '@site/src/components/FAQ';
+import { ExternalCodeEmbed } from '@site/src/components/ExternalCodeEmbed';
+
+# pool.getStats
+
+Returns a point-in-time snapshot of the pool's internal state, useful for monitoring, health checks, and diagnosing connection exhaustion without accessing private properties.
+
+:::info
+`getStats()` returns a **static snapshot** — it reflects the pool state at the moment of the call and is not a live or reactive object.
+:::
+
+## pool.getStats()
+
+> **pool.getStats(): [PoolStats](#poolstats)**
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  connectionLimit: 10,
+});
+
+// highlight-next-line
+const stats = pool.getStats();
+
+console.log(`${stats.free}/${stats.all} connections free, ${stats.queued} queued`);
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  connectionLimit: 10,
+});
+
+// highlight-next-line
+const stats = pool.getStats();
+
+console.log(`${stats.free}/${stats.all} connections free, ${stats.queued} queued`);
+```
+
+  </TabItem>
+</Tabs>
+
+<hr />
+
+## Health Check Example
+
+A common use case is exposing pool stats in a health check endpoint:
+
+<Tabs>
+  <TabItem value='promise.js' default>
+
+```js
+import mysql from 'mysql2/promise';
+import http from 'http';
+
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  connectionLimit: 10,
+});
+
+const server = http.createServer((req, res) => {
+  if (req.url === '/health') {
+    // highlight-next-line
+    const stats = pool.getStats();
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(stats));
+  }
+});
+
+server.listen(3000);
+```
+
+  </TabItem>
+  <TabItem value='callback.js'>
+
+```js
+const mysql = require('mysql2');
+const http = require('http');
+
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  connectionLimit: 10,
+});
+
+const server = http.createServer((req, res) => {
+  if (req.url === '/health') {
+    // highlight-next-line
+    const stats = pool.getStats();
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(stats));
+  }
+});
+
+server.listen(3000);
+```
+
+  </TabItem>
+</Tabs>
+
+:::tip Example response
+
+```json
+{
+  "all": 4,
+  "free": 2,
+  "queued": 0,
+  "connectionLimit": 10,
+  "queueLimit": 0,
+  "closed": false
+}
+```
+
+> `queueLimit: 0` means the queue is unbounded — matching the pool config semantics.
+
+:::
+
+<hr />
+
+## Glossary
+
+### PoolStats
+
+<FAQ title='PoolStats Specification'>
+  <ExternalCodeEmbed
+    language='ts'
+    url='https://raw.githubusercontent.com/sidorares/node-mysql2/master/typings/mysql/lib/Pool.d.ts'
+    extractMethod='PoolStats'
+    methodType='interface'
+  />
+</FAQ>
