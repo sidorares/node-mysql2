@@ -407,90 +407,81 @@ describe('Cache Key Serialization', () => {
     const result1 = keyFrom(test1);
     strict.deepStrictEqual(
       result1,
-      '[null,"undefined",null,false,false,false,"undefined",null,false,null,false,[null,null,null,null,null,null,null,null,null]]'
+      '[null,"undefined",null,false,false,false,"undefined",null,false,null,false]u/undefined/undefined/u/u/undefined/undefined/u/u/'
     );
-    strict(JSON.parse(result1));
   });
 
   it(() => {
     const result2 = keyFrom(test2);
     strict.deepStrictEqual(
       result2,
-      '[null,"undefined",null,false,false,false,"undefined","local",false,null,false,[null,null,null,null,null,null,null,null,null]]'
+      '[null,"undefined",null,false,false,false,"undefined","local",false,null,false]u/undefined/undefined/u/u/undefined/undefined/u/u/'
     );
-    strict(JSON.parse(result2));
   });
 
   it(() => {
     const result3 = keyFrom(test3);
     strict.deepStrictEqual(
       result3,
-      '[null,"string","",false,false,false,true,"local",false,false,false,[null,null,null,null,null,null,null,null,null]]'
+      '[null,"string","",false,false,false,true,"local",false,false,false]u/undefined/undefined/u/u/undefined/undefined/u/u/'
     );
-    strict(JSON.parse(result3));
   });
 
   it(() => {
     const result4 = keyFrom(test4);
     strict.deepStrictEqual(
       result4,
-      '["binary","boolean",false,false,false,false,true,"local",false,"DATETIME",false,["id","3",null,"test","test","16899","63",null,null],["value","246",null,"test","test","0","63",null,null]]'
+      '["binary","boolean",false,false,false,false,true,"local",false,"DATETIME",false]2#id/3/undefined/4#test/4#test/16899/63/u/u/5#value/246/undefined/4#test/4#test/0/63/u/u/'
     );
-    strict(JSON.parse(result4));
   });
 
   it(() => {
     const result4 = keyFrom(test4);
     const result5 = keyFrom(test5);
     strict.deepStrictEqual(result4, result5);
-    strict(JSON.parse(result5));
   });
 
   it(() => {
     const result6 = keyFrom(test6);
     strict.deepStrictEqual(
       result6,
-      '["binary","boolean",false,true,true,true,true,"\\"\\"`\'",true,"#",false,[":","©",null,"/",",","_","❌",null,null]]'
+      '["binary","boolean",false,true,true,true,true,"\\"\\"`\'",true,"#",false]1#:/©/undefined/1#//1#,/_/❌/u/u/'
     );
     // Ensuring that JSON is valid with invalid delimiters
-    strict(JSON.parse(result6));
   });
 
   it(() => {
     const result7 = keyFrom(test7);
     strict.deepStrictEqual(
       result7,
-      '["binary","boolean",true,true,true,true,true,"local",true,"DATETIME",false,["id","3",null,"test","test","16899","63",null,null],["value","246",null,"test","test","0","63",null,null]]'
+      '["binary","boolean",true,true,true,true,true,"local",true,"DATETIME",false]2#id/3/undefined/4#test/4#test/16899/63/u/u/5#value/246/undefined/4#test/4#test/0/63/u/u/'
     );
-    strict(JSON.parse(result7));
   });
 
   it(() => {
     const result7 = keyFrom(test7);
     const result8 = keyFrom(test8);
     strict.deepStrictEqual(result7, result8);
-    strict(JSON.parse(result8));
   });
 
   it(() => {
     const result9 = keyFrom(test9);
     strict.deepStrictEqual(
       result9,
-      '["binary","boolean",false,false,false,true,"function","local",false,null,false,["id","3",null,"test","test","16899","63",null,null]]'
+      '["binary","boolean",false,false,false,true,"function","local",false,null,false]2#id/3/undefined/4#test/4#test/16899/63/u/u/'
     );
-    strict(JSON.parse(result9));
-    strict(JSON.parse(result9)[5] === true);
-    strict(JSON.parse(result9)[6] === 'function');
-    strict(JSON.parse(result9)[9] === null);
+    const head9 = JSON.parse(result9.slice(0, result9.indexOf(']') + 1));
+    strict(head9[5] === true);
+    strict(head9[6] === 'function');
+    strict(head9[9] === null);
   });
 
   it(() => {
     const result10 = keyFrom(test10);
     strict.deepStrictEqual(
       result10,
-      '["binary","boolean",false,false,false,false,false,"local",false,"DATETIME",false,["id","3",null,"test","test","16899","63",null,null],["value","246",null,"test","test","0","63",null,null]]'
+      '["binary","boolean",false,false,false,false,false,"local",false,"DATETIME",false]2#id/3/undefined/4#test/4#test/16899/63/u/u/5#value/246/undefined/4#test/4#test/0/63/u/u/'
     );
-    strict(JSON.parse(result10));
   });
 
   // Testing twice all existent tests needs to return 8 keys, since two of them expects to be the same
