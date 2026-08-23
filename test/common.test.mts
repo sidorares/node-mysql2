@@ -298,6 +298,8 @@ export const getMysqlVersion = async function (
     major,
     minor,
     patch,
+    version: serverVersion,
+    isMariaDB: /mariadb/i.test(serverVersion),
   };
 };
 

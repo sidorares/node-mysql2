@@ -889,6 +889,55 @@ pool.execute('SELECT SLEEP(1) AS `qqq`', (err, rows, fields) => {
 
 <hr />
 
+## Escaping in a Pool
+
+> **pool.escape(value)** · **pool.escapeId(identifier)** · **pool.format(sql, values)**
+
+A **Pool** exposes the same escaping helpers as a single **Connection**, so there is no need to acquire a connection just to escape a value or an identifier.
+
+```js
+import mysql from 'mysql2';
+
+const pool = mysql.createPool('mysql://root:password@localhost:3306/test');
+
+// highlight-start
+pool.escape(1); // 1
+pool.escapeId('users'); // `users`
+pool.format('SELECT * FROM ?? WHERE `id` = ?', ['users', 1]);
+// highlight-end
+```
+
+<hr />
+
+## Promise Wrapper in a Pool
+
+> **connection.promise()**
+
+Calling **.promise()** on a pooled connection returns a promise-based **pooled connection**, not a promise-based **Pool**. It keeps **release()**, so the connection still returns to the pool when you are done with it.
+
+```js
+import mysql from 'mysql2';
+
+const pool = mysql.createPool('mysql://root:password@localhost:3306/test');
+
+pool.getConnection(async (err, connection) => {
+  if (err instanceof Error) {
+    console.log(err);
+    return;
+  }
+
+  // highlight-next-line
+  const promiseConnection = connection.promise();
+  const [rows, fields] = await promiseConnection.query('SELECT 1');
+
+  console.log(rows, fields);
+  // highlight-next-line
+  promiseConnection.release();
+});
+```
+
+<hr />
+
 ## Glossary
 
 ### PoolOptions

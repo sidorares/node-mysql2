@@ -9,6 +9,10 @@ const createPool = require('./lib/create_pool.js');
 const createPoolCluster = require('./lib/create_pool_cluster.js');
 const PromiseConnection = require('./lib/promise/connection.js');
 const PromisePool = require('./lib/promise/pool.js');
+const {
+  captureStackHolder,
+  applyCapturedStack,
+} = require('./lib/promise/capture_local_err.js');
 const makeDoneCb = require('./lib/promise/make_done_cb.js');
 const PromisePoolConnection = require('./lib/promise/pool_connection.js');
 const inheritEvents = require('./lib/promise/inherit_events.js');
@@ -16,6 +20,7 @@ const PromisePoolNamespace = require('./lib/promise/pool_cluster');
 
 function createConnectionPromise(opts) {
   const coreConnection = createConnection(opts);
+  const stackHolder = captureStackHolder(createConnectionPromise);
   const thePromise = opts.Promise || Promise;
   if (!thePromise) {
     throw new Error(
@@ -29,12 +34,8 @@ function createConnectionPromise(opts) {
       resolve(new PromiseConnection(coreConnection, thePromise));
     });
     coreConnection.once('error', (err) => {
-      const createConnectionErr = new Error();
-      createConnectionErr.message = err.message;
-      createConnectionErr.code = err.code;
-      createConnectionErr.errno = err.errno;
-      createConnectionErr.sqlState = err.sqlState;
-      reject(createConnectionErr);
+      applyCapturedStack(err, stackHolder);
+      reject(err);
     });
   });
 }
@@ -83,26 +84,30 @@ class PromisePoolCluster extends EventEmitter {
 
   query(sql, args) {
     const corePoolCluster = this.poolCluster;
+    const stackHolder = captureStackHolder(PromisePoolCluster.prototype.query);
     if (typeof args === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject);
+      const done = makeDoneCb(resolve, reject, stackHolder);
       corePoolCluster.query(sql, args, done);
     });
   }
 
   execute(sql, args) {
     const corePoolCluster = this.poolCluster;
+    const stackHolder = captureStackHolder(
+      PromisePoolCluster.prototype.execute
+    );
     if (typeof args === 'function') {
       throw new Error(
         'Callback function is not available with promise clients.'
       );
     }
     return new this.Promise((resolve, reject) => {
-      const done = makeDoneCb(resolve, reject);
+      const done = makeDoneCb(resolve, reject, stackHolder);
       corePoolCluster.execute(sql, args, done);
     });
   }
@@ -116,16 +121,12 @@ class PromisePoolCluster extends EventEmitter {
 
   end() {
     const corePoolCluster = this.poolCluster;
+    const stackHolder = captureStackHolder(PromisePoolCluster.prototype.end);
     return new this.Promise((resolve, reject) => {
       corePoolCluster.end((err) => {
         if (err) {
-          const localErr = new Error();
-          localErr.message = err.message;
-          localErr.code = err.code;
-          localErr.errno = err.errno;
-          localErr.sqlState = err.sqlState;
-          localErr.sqlMessage = err.sqlMessage;
-          reject(localErr);
+          applyCapturedStack(err, stackHolder);
+          reject(err);
         } else {
           resolve();
         }
@@ -190,6 +191,11 @@ exports.PromiseConnection = PromiseConnection;
 exports.PromisePoolConnection = PromisePoolConnection;
 
 exports.__defineGetter__('Types', () => require('./lib/constants/types.js'));
+
+exports.__defineGetter__(
+  'TypedParameter',
+  () => require('./lib/packets/typed_parameter.js').types
+);
 
 exports.__defineGetter__('Charsets', () =>
   require('./lib/constants/charsets.js')

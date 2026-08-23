@@ -7,8 +7,10 @@ type PacketInstance = InstanceType<typeof Packet>;
 
 let pp: InstanceType<typeof PacketParser>;
 let packets: PacketInstance[] = [];
+// the parser reuses its packet instance between onPacket calls; consumers
+// that retain packets past the synchronous callback must clone them
 const handler = function (p: PacketInstance) {
-  packets.push(p);
+  packets.push(p.clone());
 };
 function reset() {
   pp = new PacketParser(handler);
@@ -53,7 +55,7 @@ function testBigPackets(
 ) {
   const packets: PacketInstance[] = [];
   const pp = new PacketParser((p: PacketInstance) => {
-    packets.push(p);
+    packets.push(p.clone());
   });
   chunks.forEach((ch) => {
     pp.execute(ch);
@@ -106,7 +108,7 @@ describe('PacketParser', () => {
   });
 
   it('should parse packets larger than 65536 bytes', () => {
-    // test packet > 65536 lengt
+    // test packet > 65536 length
     // TODO combine with "execute" function
 
     const length = 123000;

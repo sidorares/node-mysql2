@@ -108,8 +108,7 @@ await describe('Auth Switch', async () => {
     });
 
     let connectData:
-      | { serverVersion: string; connectionId: number }
-      | undefined;
+      { serverVersion: string; connectionId: number } | undefined;
 
     await new Promise<void>((resolve) => {
       // @ts-expect-error: TODO: implement typings

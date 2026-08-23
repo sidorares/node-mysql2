@@ -3,8 +3,10 @@ import { OkPacket, RowDataPacket, FieldPacket } from '../packets/index.js';
 import { Readable } from 'stream';
 import { Raw, Timezone } from 'sql-escaper';
 import { TypeCast } from '../../parsers/typeCast.js';
+import { TypedParameterValue } from '../../TypedParameter.js';
 
 export type ExecuteValues =
+  | TypedParameterValue
   | string
   | number
   | bigint
@@ -122,7 +124,13 @@ export interface QueryOptions {
 
   /**
    * When dealing with big numbers (BIGINT and DECIMAL columns) in the database, you should enable this option
-   * (Default: false)
+   * (Default: false).
+   *
+   * Also applies inside parsed JSON columns: integers that cannot be accurately represented with JavaScript
+   * Number objects (beyond the [-2^53, +2^53] range) are returned as exact String objects instead of being
+   * silently rounded by JSON.parse. Exactness inside JSON requires Node.js 22+ (JSON.parse source access);
+   * older runtimes fall back to plain JSON.parse behaviour. Has no effect when jsonStrings is enabled, where
+   * the raw JSON text (always exact) is returned instead.
    */
   supportBigNumbers?: boolean;
 

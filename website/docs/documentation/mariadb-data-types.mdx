@@ -1,0 +1,152 @@
+---
+tags: [MariaDB, UUID, INET4, INET6, VECTOR, JSON, extended metadata]
+---
+
+# MariaDB Data Types
+
+MariaDB has data types that do not exist in MySQL: `UUID`, `INET4`, `INET6` and
+`VECTOR`, plus a `JSON` type that is an alias for `LONGTEXT` rather than a
+native binary type. On the wire these columns are sent as standard string and
+blob types, so a client cannot distinguish, for example, a `UUID` column from a
+`CHAR` column, unless the server also sends its extended type metadata.
+
+When MySQL2 connects to a MariaDB server that supports it (MariaDB 10.5 and
+above), it automatically negotiates the `MARIADB_CLIENT_EXTENDED_METADATA`
+capability, and each column definition then carries the MariaDB type
+information. No configuration is needed.
+
+## Extended column metadata
+
+Every field object exposes two additional properties when the server provides
+them:
+
+- `extendedTypeName`: the MariaDB data type name, e.g. `uuid`, `inet4`,
+  `inet6`, or a geometry subtype such as `point`.
+- `extendedFormat`: the value format, e.g. `json` for JSON columns.
+
+```js
+const [rows, fields] = await connection.query(
+  'SELECT id, addr FROM hosts LIMIT 1'
+);
+
+console.log(fields[1].extendedTypeName);
+// 'inet6'
+```
+
+Both properties are also available on the field object passed to a custom
+[`typeCast`](/docs/api-and-configurations) function, which makes it possible to
+apply custom conversions to MariaDB-specific types:
+
+```js
+const [rows] = await connection.query({
+  sql: 'SELECT * FROM sessions',
+  typeCast: (field, next) => {
+    if (field.extendedTypeName === 'uuid') {
+      return field.string()?.toUpperCase();
+    }
+    return next();
+  },
+});
+```
+
+On MySQL servers (and MariaDB older than 10.5) both properties are
+`undefined`.
+
+## UUID, INET4 and INET6
+
+Values are returned as strings, exactly as MariaDB formats them:
+
+```js
+const [rows] = await connection.query('SELECT u, i4, i6 FROM t');
+// rows[0].u  === '123e4567-e89b-12d3-a456-426614174000'
+// rows[0].i4 === '203.0.113.7'
+// rows[0].i6 === '2001:db8::1'
+```
+
+To insert values, bind them as strings: MariaDB converts them to the compact
+internal representation on the server:
+
+```js
+await connection.execute('INSERT INTO t (u, i4, i6) VALUES (?, ?, ?)', [
+  '123e4567-e89b-12d3-a456-426614174000',
+  '203.0.113.7',
+  '2001:db8::1',
+]);
+```
+
+## JSON
+
+MariaDB `JSON` columns (and JSON function results such as `JSON_OBJECT()`) are
+identified through the extended metadata and parsed into objects by default,
+matching the behavior of MySQL's native `JSON` type:
+
+```js
+const [rows] = await connection.query('SELECT j FROM t');
+// rows[0].j is an object, e.g. { tag: 'x', nums: [1, 2, 3] }
+```
+
+To receive JSON values as raw strings instead, use the `jsonStrings`
+connection option:
+
+```js
+const connection = mysql.createConnection({
+  // ...
+  jsonStrings: true,
+});
+```
+
+Objects bound as parameters are automatically serialized with
+`JSON.stringify()`:
+
+```js
+await connection.execute('INSERT INTO t (j) VALUES (?)', [
+  { tag: 'x', nums: [1, 2, 3] },
+]);
+```
+
+:::note
+Before this feature, MariaDB JSON columns were returned as plain strings. If
+your application depends on the previous behavior, set `jsonStrings: true`.
+:::
+
+## VECTOR
+
+The MariaDB protocol does not tag `VECTOR` columns with extended metadata (as
+of MariaDB 11.8), so MySQL2 returns them as a `Buffer` containing the raw
+little-endian IEEE 754 float32 values, the same bytes MariaDB stores. This
+differs from MySQL 9 `VECTOR` columns, which have their own wire type and are
+returned as an array of numbers.
+
+Converting the returned `Buffer` to numbers:
+
+```js
+const [rows] = await connection.query('SELECT v FROM embeddings LIMIT 1');
+const buffer = rows[0].v;
+
+const floats = Array.from(
+  new Float32Array(
+    buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.length)
+  )
+);
+// [1.5, -2.25, 3.75]
+```
+
+Alternatively, select the text representation directly:
+
+```js
+const [rows] = await connection.query(
+  'SELECT VEC_ToText(v) AS v FROM embeddings LIMIT 1'
+);
+// rows[0].v === '[1.5,-2.25,3.75]'
+```
+
+To insert a vector, bind a `Buffer` with the packed float32 values (or use
+`VEC_FromText()` with a JSON-style string):
+
+```js
+const vector = [1.5, -2.25, 3.75];
+const buffer = Buffer.alloc(vector.length * 4);
+vector.forEach((value, i) => buffer.writeFloatLE(value, i * 4));
+
+await connection.execute('INSERT INTO embeddings (v) VALUES (?)', [buffer]);
+```

@@ -13,8 +13,7 @@ await describe('Regression #1019 — readDateTime zero date with numeric timezon
 
     const modeRows = await new Promise<SqlModeRow[]>((resolve, reject) => {
       connection.query<SqlModeRow[]>(
-        'SELECT variable_value as value FROM performance_schema.session_variables where variable_name = ?',
-        ['sql_mode'],
+        'SELECT @@sql_mode as value',
         (err, rows) => (err ? reject(err) : resolve(rows))
       );
     });
@@ -69,8 +68,7 @@ await describe('Regression #1019 — readDateTime zero date with numeric timezon
 
     const modeRows = await new Promise<SqlModeRow[]>((resolve, reject) => {
       connection.query<SqlModeRow[]>(
-        'SELECT variable_value as value FROM performance_schema.session_variables where variable_name = ?',
-        ['sql_mode'],
+        'SELECT @@sql_mode as value',
         (err, rows) => (err ? reject(err) : resolve(rows))
       );
     });

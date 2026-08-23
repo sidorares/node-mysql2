@@ -24,8 +24,7 @@ await describe('Invalid Date Result', async () => {
   await it('should handle invalid date values', async () => {
     const modeRows = await new Promise<SqlModeRow[]>((resolve, reject) => {
       connection.query<SqlModeRow[]>(
-        'SELECT variable_value as value FROM performance_schema.session_variables where variable_name = ?',
-        ['sql_mode'],
+        'SELECT @@sql_mode as value',
         (err, _rows) => (err ? reject(err) : resolve(_rows))
       );
     });

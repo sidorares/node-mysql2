@@ -7,9 +7,9 @@ await describe('Execute and Unprepare', async () => {
 
   const [savedRows] = await connection
     .promise()
-    .query<
-      RowDataPacket[]
-    >('SELECT @@GLOBAL.max_prepared_stmt_count as backup');
+    .query<RowDataPacket[]>(
+      'SELECT @@GLOBAL.max_prepared_stmt_count as backup'
+    );
 
   const originalMaxPrepared = savedRows[0].backup || 0;
 

@@ -21,3 +21,12 @@ npm-debug.log
 benchmarks/results.json
 !test/fixtures/data.csv
 test/circular/dist.mjs
+
+# Lagune
+/.lagune/templates/
+/.lagune/hooks/
+/.lagune/proofs/
+/.lagune/specializations.md
+/.lagune/skills/*
+/**/lagune.*
+/**/lagune/

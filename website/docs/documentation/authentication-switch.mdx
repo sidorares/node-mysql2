@@ -124,7 +124,7 @@ If the user requires multi-factor authentication in the server, the client will 
 request, which is similar in structure to the regular authentication switch request and contains the name
 and possible initial data for the additional authentication factor plugin (up to 3). Additional passwords
 can be provided using the connection config options - `password2` and `password3`. Again, for each
-authentication factor, multiple roundtrips of data exchange can be required by the plugin algoritm.
+authentication factor, multiple roundtrips of data exchange can be required by the plugin algorithm.
 
 ```js
 const conn = mysql.createConnection({

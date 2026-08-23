@@ -12,9 +12,14 @@ await test('result event backpressure with pause/resume', async () => {
     skip('MySQL >= 8.0 required to use CTE');
   }
 
+  // MariaDB names the CTE depth limit max_recursive_iterations
+  const recursionVariable = mySqlVersion.isMariaDB
+    ? 'max_recursive_iterations'
+    : 'cte_max_recursion_depth';
+
   // the full result set will be over 6 MB uncompressed; about 490 KB with compression
   const largeQuery = `
-    SET SESSION cte_max_recursion_depth = 100000;
+    SET SESSION ${recursionVariable} = 100000;
     WITH RECURSIVE cte (n, s) AS (
       SELECT 1, 'this is just to cause more bytes transferred for each row'
       UNION ALL

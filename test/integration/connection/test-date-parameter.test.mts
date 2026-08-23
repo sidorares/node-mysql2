@@ -4,7 +4,7 @@ import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 await describe('Date Parameter', async () => {
   const connection = createConnection({ timezone: 'Z' });
-  const { major } = await getMysqlVersion(connection);
+  const { major, isMariaDB } = await getMysqlVersion(connection);
 
   await it('should handle date parameter in execute', async () => {
     let rows: RowDataPacket[] | undefined;
@@ -23,7 +23,9 @@ await describe('Date Parameter', async () => {
       );
     });
 
-    const expected = major < 8 ? 631152000 : '631152000.000000';
+    // MariaDB returns an integer for UNIX_TIMESTAMP(<datetime param>);
+    // MySQL 8+ returns a DECIMAL with microseconds
+    const expected = major < 8 || isMariaDB ? 631152000 : '631152000.000000';
     strict.deepEqual(rows, [{ t: expected }]);
   });
 

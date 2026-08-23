@@ -1,5 +1,92 @@
 # Changelog
 
+## [3.23.4](https://github.com/sidorares/node-mysql2/compare/v3.23.3...v3.23.4) (2026-08-19)
+
+
+### Bug Fixes
+
+* keep leading zeros in TIME fractional seconds ([#4481](https://github.com/sidorares/node-mysql2/issues/4481)) ([3cccf4a](https://github.com/sidorares/node-mysql2/commit/3cccf4ab27218f4a16ccb256842a41e4bb3f03b6))
+* **typings:** align callback Pool and PoolConnection types with runtime ([#4478](https://github.com/sidorares/node-mysql2/issues/4478)) ([8b1f829](https://github.com/sidorares/node-mysql2/commit/8b1f829d3706404ab372cf97bd77ebcf86578d97))
+
+## [3.23.3](https://github.com/sidorares/node-mysql2/compare/v3.23.2...v3.23.3) (2026-08-10)
+
+
+### Bug Fixes
+
+* honor query-level `namedPlaceholders` as `false` ([#4460](https://github.com/sidorares/node-mysql2/issues/4460)) ([20f732b](https://github.com/sidorares/node-mysql2/commit/20f732bbcb33b2e2d184130b94424b20c3745a50))
+* keep connectTimeout active until the handshake completes ([#4458](https://github.com/sidorares/node-mysql2/issues/4458)) ([508a731](https://github.com/sidorares/node-mysql2/commit/508a731eb077f6eba1a794a2e3506f04226a4f21))
+* **pool:** give each pooled connection its own config copy ([#4473](https://github.com/sidorares/node-mysql2/issues/4473)) ([361d232](https://github.com/sidorares/node-mysql2/commit/361d232c4b6bd3afd048427da0c4af012488d031))
+* **pool:** propagate query dispatch errors instead of throwing ([#4459](https://github.com/sidorares/node-mysql2/issues/4459)) ([7ce6943](https://github.com/sidorares/node-mysql2/commit/7ce69431a06ed8d36903f4dde94f8062367349ea))
+* replace `denque` with a local ring buffer queue ([#4472](https://github.com/sidorares/node-mysql2/issues/4472)) ([88f3d9e](https://github.com/sidorares/node-mysql2/commit/88f3d9e87dd60398ed9a82e97e66ad72a9810ae8))
+
+## [3.23.2](https://github.com/sidorares/node-mysql2/compare/v3.23.1...v3.23.2) (2026-07-27)
+
+
+### Bug Fixes
+
+* correct connectAttributes typo in ChangeUser packet ([#4423](https://github.com/sidorares/node-mysql2/issues/4423)) ([f64ce07](https://github.com/sidorares/node-mysql2/commit/f64ce07b5e143a50094b1be72faffea4a3baed28)), closes [#2140](https://github.com/sidorares/node-mysql2/issues/2140)
+* don't leave a failed `execute` as the active command ([#4425](https://github.com/sidorares/node-mysql2/issues/4425)) ([fbd64b6](https://github.com/sidorares/node-mysql2/commit/fbd64b6683a432c7d1c1e79cf1c3317f2916cd17))
+
+## [3.23.1](https://github.com/sidorares/node-mysql2/compare/v3.23.0...v3.23.1) (2026-07-19)
+
+
+### Bug Fixes
+
+* **security:** fix unbounded decompression of server-supplied compressed packets, reported by alanturing881 ([7c48343](https://github.com/sidorares/node-mysql2/commit/7c48343c95ecc80d30d6ebfa67875947b7d848d2))
+* **parser:** call typeCast for NULL values in the binary protocol ([#4394](https://github.com/sidorares/node-mysql2/issues/4394)) ([01f1092](https://github.com/sidorares/node-mysql2/commit/01f10926baec7dffd73629feebbb56e98e616782))
+
+## [3.23.0](https://github.com/sidorares/node-mysql2/compare/v3.22.6...v3.23.0) (2026-07-13)
+
+
+### Features
+
+* return unsafe integers inside JSON columns as exact strings with supportBigNumbers ([#4388](https://github.com/sidorares/node-mysql2/issues/4388)) ([a26ff14](https://github.com/sidorares/node-mysql2/commit/a26ff14089c093d28522acf7bd8d7dbb827ae0cc))
+* **sql-escaper:** add Temporal support when escaping values ([#4392](https://github.com/sidorares/node-mysql2/issues/4392)) ([6b933f6](https://github.com/sidorares/node-mysql2/commit/6b933f6d248b8fb5f3004d85d9562e9f5abdd16f))
+* support MariaDB data types (UUID, INET4, INET6, VECTOR, JSON) via extended type metadata; run CI against MariaDB ([#4373](https://github.com/sidorares/node-mysql2/issues/4373)) ([5034e57](https://github.com/sidorares/node-mysql2/commit/5034e5771929ce7499f6257035600dc88a442c71))
+
+## [3.22.6](https://github.com/sidorares/node-mysql2/compare/v3.22.5...v3.22.6) (2026-07-07)
+
+
+### Bug Fixes
+
+* **sql-escaper:** resolve multi statement and expand object regressions ([#4380](https://github.com/sidorares/node-mysql2/issues/4380)) ([1b927a9](https://github.com/sidorares/node-mysql2/commit/1b927a92c1c0e59b00d3552786215fe249ef550f))
+
+## [3.22.5](https://github.com/sidorares/node-mysql2/compare/v3.22.4...v3.22.5) (2026-06-06)
+
+
+### Bug Fixes
+
+* keep 00:00:00 time for TIMESTAMP in binary protocol with dateStrings ([#4327](https://github.com/sidorares/node-mysql2/issues/4327)) ([2af33a1](https://github.com/sidorares/node-mysql2/commit/2af33a117ac4fdee1f87537cb876df89a02ab2aa))
+
+## [3.22.4](https://github.com/sidorares/node-mysql2/compare/v3.22.3...v3.22.4) (2026-05-26)
+
+
+### Bug Fixes
+
+* **pool:** reject queued requests on end ([#4291](https://github.com/sidorares/node-mysql2/issues/4291)) ([fbff09c](https://github.com/sidorares/node-mysql2/commit/fbff09cb58eeae11179c05ef1ef6a07a78d53a29))
+
+## [3.22.3](https://github.com/sidorares/node-mysql2/compare/v3.22.2...v3.22.3) (2026-04-24)
+
+
+### Bug Fixes
+
+* allow resetOnRelease in connection config validation ([#4278](https://github.com/sidorares/node-mysql2/issues/4278)) ([e72f923](https://github.com/sidorares/node-mysql2/commit/e72f923d20bcdf776ee4f29ed48c69ee47ebd483))
+
+## [3.22.2](https://github.com/sidorares/node-mysql2/compare/v3.22.1...v3.22.2) (2026-04-21)
+
+
+### Bug Fixes
+
+* **promise:** point rejection stacks at caller for promise API ([#4267](https://github.com/sidorares/node-mysql2/issues/4267)) ([c79a3f3](https://github.com/sidorares/node-mysql2/commit/c79a3f323f2919b33a11daa2177b818f37dc7996))
+
+## [3.22.1](https://github.com/sidorares/node-mysql2/compare/v3.22.0...v3.22.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* async stack traces not pointing to correct source, regression introduced by [#4257](https://github.com/sidorares/node-mysql2/issues/4257) ([#4265](https://github.com/sidorares/node-mysql2/issues/4265)) ([5b6206c](https://github.com/sidorares/node-mysql2/commit/5b6206c8818647e4babe706778fc00dcbd9983bd))
+* **packet:** return INVALID_DATE for zero dates with numeric timezone offset ([#1019](https://github.com/sidorares/node-mysql2/issues/1019)) ([#4258](https://github.com/sidorares/node-mysql2/issues/4258)) ([cb5adcc](https://github.com/sidorares/node-mysql2/commit/cb5adccb3aed07ccb25a8f8e07c2cb3ffba90dd0))
+
 ## [3.22.0](https://github.com/sidorares/node-mysql2/compare/v3.21.1...v3.22.0) (2026-04-10)
 
 

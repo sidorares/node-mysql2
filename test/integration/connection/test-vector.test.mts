@@ -17,9 +17,12 @@ await describe(async () => {
   const connection = createConnection().promise();
   const mySqlVersion = await getMysqlVersion(connection);
 
-  if (mySqlVersion.major < 9) {
+  // MariaDB vectors use a different wire representation and functions
+  // (VEC_FromText instead of TO_VECTOR); they are covered by
+  // test-mariadb-extended-metadata.test.mts
+  if (mySqlVersion.major < 9 || mySqlVersion.isMariaDB) {
     console.log(
-      `Skipping the test, required mysql version is 9 and above, actual version is ${mySqlVersion.major}`
+      `Skipping the test, required mysql version is 9 and above, actual version is ${mySqlVersion.version}`
     );
     await connection.end();
     return;

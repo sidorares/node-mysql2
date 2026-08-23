@@ -5,12 +5,13 @@
 
 import type { RowDataPacket } from '../../../index.js';
 import { describe, it, strict } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 type JsonRow = RowDataPacket & { data: { k: string } };
 
 await describe('Insert JSON', async () => {
   const connection = createConnection();
+  const { isMariaDB } = await getMysqlVersion(connection);
 
   connection.query('CREATE TEMPORARY TABLE json_test (data JSON)');
 
@@ -50,8 +51,16 @@ await describe('Insert JSON', async () => {
       );
     });
 
-    strict.equal(result.errorCode, 'ER_INVALID_JSON_TEXT');
-    strict.equal(result.errorNum, 3140);
+    if (isMariaDB) {
+      // MariaDB enforces JSON validity via a CHECK constraint and reports
+      // errno 4025 (its ER_CONSTRAINT_FAILED); mysql2's error-name table
+      // follows MySQL, where 4025 has a different meaning, so only the
+      // number is asserted here
+      strict.equal(result.errorNum, 4025);
+    } else {
+      strict.equal(result.errorCode, 'ER_INVALID_JSON_TEXT');
+      strict.equal(result.errorNum, 3140);
+    }
     strict.equal(result.res?.[0].data.k, 'v');
   });
 

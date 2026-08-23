@@ -1,0 +1,10 @@
+{
+  "packages": {
+    ".": {
+      "changelog-path": "Changelog.md",
+      "include-component-in-tag": false,
+      "package-name": "mysql2",
+      "release-type": "node"
+    }
+  }
+}

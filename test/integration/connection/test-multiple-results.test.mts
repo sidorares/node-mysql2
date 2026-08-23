@@ -7,7 +7,7 @@ import process from 'node:process';
 // @ts-expect-error: no typings available
 import strict from 'assert-diff';
 import { describe, it, skip } from 'poku';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection, getMysqlVersion } from '../../common.test.mjs';
 
 if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   skip('Skipping test for PlanetScale');
@@ -18,6 +18,7 @@ await describe('Multiple Results', async () => {
   const mysql = createConnection({
     multipleStatements: true,
   });
+  const { isMariaDB } = await getMysqlVersion(mysql);
   mysql.query('CREATE TEMPORARY TABLE no_rows (test int)');
   mysql.query('CREATE TEMPORARY TABLE some_rows (test int)');
   mysql.query('INSERT INTO some_rows values(0)');
@@ -48,7 +49,8 @@ await describe('Multiple Results', async () => {
       catalog: 'def',
       characterSet: 63,
       encoding: 'binary',
-      type: 8,
+      // MariaDB reports integer literals as LONG, MySQL as LONGLONG
+      type: isMariaDB ? 3 : 8,
       decimals: 0,
       flags: 129,
       name: '1',
