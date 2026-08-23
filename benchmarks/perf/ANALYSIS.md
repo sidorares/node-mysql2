@@ -108,7 +108,45 @@ Cheap, user-visible wins worth surfacing in the docs:
 - `trace: false` in production hot paths: ~10% less client CPU per promise-API query (now honored by the promise wrapper).
 - `.stream()` for 100k+-row results: bounds memory and avoids major-GC stalls from megabyte row arrays.
 
-## 7. Repro
+## 7. Follow-up: outgoing packet serialization (branch `packet-buffer-allocation`, Aug 2026)
+
+Write-path counterpart to the receive-path work above. Benchmarked with `serialize.js`, a synchronous `toPacket()` loop with no socket; run it interleaved against a baseline checkout and compare best-of-N, since run-to-run variance on a shared machine exceeds small deltas.
+
+**Baseline.** `Execute.toPacket()` serialized every `COM_STMT_EXECUTE` twice: a dry run against `Packet.MockBuffer()` to learn the length, then the real pass. Both passes called `toParameter` per parameter, and both `lengthCodedStringLength` and `writeLengthCodedString` encode the string, so one string parameter was UTF-8-encoded **four times** per execute. `Query.toPacket()` had the same shape on its attribute path (the no-attribute fast path was already single-pass, see §3.1).
+
+**Change.** Every parameter encoder already returns the exact wire length of its value, so the dry run is redundant: `toPacket` now encodes each parameter once, sums the exact packet length arithmetically, allocates once, and writes once. String-shaped values are encoded to bytes inside `toParameter`/`lengthCodedEncoder` and written with `writeLengthCodedBuffer`, so each string is encoded exactly once. `timeEncoder` previously declared `length: 13` while `writeTime` emits 1, 9, or 13 bytes; it now computes the exact length (`Packet.timeLength`, kept next to `writeTime`). Because a length/writer drift would otherwise send uninitialized `allocUnsafe` bytes to the server, both serializers end with an `offset === length` guard that throws instead of returning a short-filled packet, and a unit test pins `parameter.length` to the bytes each writer actually emits across the full type matrix. Byte-for-byte equivalence with the old serializer was verified over randomized packets (legacy, typed and hinted parameters, three charsets including an iconv one, both flag modes, attributes with multibyte names).
+
+Two pre-existing `COM_QUERY` attribute-path bugs fell out of the rewrite: a typed NULL attribute (e.g. `TypedParameter.INT(null)`) kept its declared type so the null bitmap was never set and the packet was malformed, and the unsigned flag of typed attributes was hardcoded to 0. Both now match the `COM_STMT_EXECUTE` path, with regression tests.
+
+### Measured results (`serialize.js`, interleaved best-of-3, M1 Pro)
+
+| Scenario                        | Baseline ops/s | Single-pass | Δ         |
+| ------------------------------- | -------------- | ----------- | --------- |
+| execute, 3 params (num/str/dbl) | 222k           | 1 454k      | **6.6×**  |
+| execute, same, no attr flag     | 328k           | 1 399k      | **4.3×**  |
+| execute, 10 short strings       | 46k            | 245k        | **5.3×**  |
+| execute, 3 dates                | 191k           | 750k        | **3.9×**  |
+| execute, typed mixed            | 174k           | 559k        | **3.2×**  |
+| execute, 3 params + attribute   | 163k           | 727k        | **4.5×**  |
+| execute, no params              | 1 950k         | 5 329k      | **2.7×**  |
+| execute, 16KB blob              | 166k           | 226k        | 1.4×      |
+| query, 2 attributes             | 211k           | 629k        | **3.0×**  |
+| query, no attributes (§3.1)     | 3 393k         | 3 687k      | unchanged |
+
+E2E deltas are not reportable: on this shared Docker setup the execute scenarios sit at 2–14% client CPU and swing ±50% between runs; the full test suite passes against MySQL 5.7/8.3/9 and MariaDB LTS.
+
+### Buffer pooling and size heuristics: measured, not adopted
+
+The classic alternatives — a pool of pre-allocated send buffers, or serializing into a growable scratch buffer sized by heuristic — were measured (`serialize.js --alloc`) and rejected for this path:
+
+- `Buffer.allocUnsafe` costs 76ns at 32B, 129ns at 256B, 286ns at 1KB (Node's internal 8KB slab already pools small allocations); a pooled-slab view (`subarray`) costs ~70ns flat. For the typical sub-1KB command packet a pool's _best case_ saves a few percent of the packet's build cost — before paying its real costs.
+- The real costs are structural: `stream.write()` retains the buffer until flushed, so pooled buffers could only be recycled from the write callback, and TLS, the compressed protocol (async zlib holds the input), and >16MB packet slicing all alias the buffer with their own lifetimes. A bug in that tracking sends another packet's bytes — a cross-connection data leak, not just corruption.
+- Real `malloc` only starts at ≥4KB (1.4µs at 4KB, 3µs at 16KB), but such packets are dominated by their payload memcpy and the server round trip; the 16KB-blob row above moved only 1.4× for this reason.
+- A size _heuristic_ is unnecessary: every parameter encoder knows its exact wire length, so exact computation replaces guessing, growth, and copy-out (a 64KB copy-out costs 12µs — worse than the allocation it would avoid).
+
+The receive path already avoids per-packet allocation (§3.8): complete packets are views over the socket chunk delivered through one reused `Packet`; only a packet spanning chunk boundaries allocates (~one per 64KB chunk), and pooling those buffers is off the table because BLOB values and column definitions alias them for arbitrarily long (§5.2c).
+
+## 8. Repro
 
 ```sh
 docker run -d --name mysql83-bench -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 3308:3306 mysql:8.3
@@ -117,4 +155,6 @@ MYSQL_PORT=3308 node benchmarks/perf/capture.js     # record wire fixtures
 ./benchmarks/perf/run-all.sh all 3308               # full matrix
 node --cpu-prof --cpu-prof-dir=profiles benchmarks/perf/replay.js select-1m-3cols captured
 node benchmarks/perf/profile-summary.js profiles/<file>.cpuprofile
+node benchmarks/perf/serialize.js                   # outgoing toPacket() scenarios
+node benchmarks/perf/serialize.js --alloc           # allocation-strategy micro
 ```
