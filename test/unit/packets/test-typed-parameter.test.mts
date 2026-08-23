@@ -189,7 +189,10 @@ describe('TypedParameter: non-integer encoders', () => {
   });
 
   it('stringifies a value the caller did not stringify', () => {
-    strict.equal(encode(TypedParameter.VARCHAR(42)).value, '42');
+    strict.deepEqual(
+      wire(TypedParameter.VARCHAR(42)),
+      Buffer.from([2, 0x34, 0x32])
+    );
   });
 
   it('has no encoder for a type outside the supported set', () => {

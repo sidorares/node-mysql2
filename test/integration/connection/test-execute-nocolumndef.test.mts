@@ -255,12 +255,18 @@ await describe('Execute No Column Definition', async () => {
   const { isMariaDB } = await getMysqlVersion(connection);
   const rowsExpectation = isMariaDB ? expectedRowsMariaDB : expectedRows;
   const fieldsExpectation = isMariaDB ? expectedFieldsMariaDB : expectedFields;
+  // MySQL 9.5 changed the default explain_format from TRADITIONAL to TREE,
+  // whose output is not deterministic; pin the tabular format the assertions
+  // expect. MariaDB has no explain_format and stays tabular by default.
+  const explainQuery = isMariaDB
+    ? 'explain SELECT 1'
+    : 'explain format=traditional SELECT 1';
 
   await it('should handle explain with no column definitions', async () => {
     const [rows, fields] = await new Promise<[RowDataPacket[], FieldPacket[]]>(
       (resolve, reject) => {
         connection.execute<RowDataPacket[]>(
-          'explain SELECT 1',
+          explainQuery,
           (err, _rows, _fields) =>
             err ? reject(err) : resolve([_rows, _fields])
         );
