@@ -5,7 +5,7 @@ import CursorType from '../../../lib/constants/cursor.js';
 import Execute from '../../../lib/packets/execute.js';
 import Query from '../../../lib/packets/query.js';
 
-const { Types } = mysql;
+const { Types, TypedParameter } = mysql;
 const CLIENT_QUERY_ATTRIBUTES = ClientConstants.CLIENT_QUERY_ATTRIBUTES;
 const UTF8_CHARSET = 33; // utf8_general_ci
 
@@ -120,6 +120,58 @@ describe('COM_QUERY with query attributes', () => {
     // no value bytes for NULL, remainder is SQL
     const sql = packet.readString(undefined, 'utf8');
     strict.strictEqual(sql, 'SELECT 1');
+  });
+
+  it('should set the null bitmap for a typed NULL attribute', () => {
+    const attrs = { gone: TypedParameter.INT(null) };
+    const q = new Query(
+      'SELECT 1',
+      UTF8_CHARSET,
+      attrs,
+      CLIENT_QUERY_ATTRIBUTES
+    );
+    const packet = q.toPacket();
+    packet.offset = 4;
+
+    strict.strictEqual(packet.readInt8(), 0x03);
+    strict.strictEqual(packet.readLengthCodedNumber(), 1);
+    strict.strictEqual(packet.readLengthCodedNumber(), 1);
+
+    // a typed NULL keeps its declared type, so only the bitmap marks it
+    strict.strictEqual(packet.readInt8(), 1);
+    strict.strictEqual(packet.readInt8(), 1); // new_params_bind_flag
+    strict.strictEqual(packet.readInt8(), Types.LONG);
+    packet.readInt8(); // unsigned flag
+    strict.strictEqual(packet.readLengthCodedString('utf8'), 'gone');
+
+    // no value bytes, remainder is SQL
+    strict.strictEqual(packet.readString(undefined, 'utf8'), 'SELECT 1');
+  });
+
+  it('should carry the unsigned flag of a typed attribute', () => {
+    const attrs = {
+      big: TypedParameter.BIGINT.unsigned(18446744073709551615n),
+    };
+    const q = new Query(
+      'SELECT 1',
+      UTF8_CHARSET,
+      attrs,
+      CLIENT_QUERY_ATTRIBUTES
+    );
+    const packet = q.toPacket();
+    packet.offset = 4;
+
+    strict.strictEqual(packet.readInt8(), 0x03);
+    strict.strictEqual(packet.readLengthCodedNumber(), 1);
+    strict.strictEqual(packet.readLengthCodedNumber(), 1);
+    strict.strictEqual(packet.readInt8(), 0); // null bitmap
+    strict.strictEqual(packet.readInt8(), 1); // new_params_bind_flag
+    strict.strictEqual(packet.readInt8(), Types.LONGLONG);
+    strict.strictEqual(packet.readInt8(), 0x80); // unsigned flag
+    strict.strictEqual(packet.readLengthCodedString('utf8'), 'big');
+
+    packet.skip(8); // the LONGLONG value
+    strict.strictEqual(packet.readString(undefined, 'utf8'), 'SELECT 1');
   });
 });
 
