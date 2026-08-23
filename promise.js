@@ -192,6 +192,11 @@ exports.PromisePoolConnection = PromisePoolConnection;
 
 exports.__defineGetter__('Types', () => require('./lib/constants/types.js'));
 
+exports.__defineGetter__(
+  'TypedParameter',
+  () => require('./lib/packets/typed_parameter.js').types
+);
+
 exports.__defineGetter__('Charsets', () =>
   require('./lib/constants/charsets.js')
 );
