@@ -66,9 +66,7 @@ describe('toParameter length matches the bytes its writer emits', () => {
         const buffer = Buffer.alloc(1024);
         const packet = new Packet(0, buffer, 0, buffer.length);
         packet.offset = 0;
-        if (!parameter.isNull) {
-          parameter.writer.call(packet, parameter.value);
-        }
+        parameter.writer.call(packet, parameter.value);
         strict.equal(
           packet.offset,
           parameter.isNull ? 0 : parameter.length,
@@ -167,5 +165,72 @@ describe('COM_QUERY with attributes fills the buffer exactly', () => {
       CLIENT_QUERY_ATTRIBUTES
     ).toPacket();
     strict.equal(packet.offset, packet.buffer.length);
+  });
+
+  it('nine attributes spill into a second null-bitmap byte', () => {
+    const attributes: Record<string, unknown> = {};
+    for (let i = 0; i < 9; i++) {
+      attributes[`a${i}`] = i === 0 || i === 8 ? null : i;
+    }
+    const packet = new Query(
+      'SELECT 1',
+      UTF8MB4_CHARSET,
+      attributes,
+      CLIENT_QUERY_ATTRIBUTES
+    ).toPacket();
+    strict.equal(packet.offset, packet.buffer.length);
+
+    packet.offset = 5;
+    strict.equal(packet.readLengthCodedNumber(), 9);
+    strict.equal(packet.readLengthCodedNumber(), 1);
+    strict.equal(packet.readInt8(), 1); // attributes 0-7: only a0 is null
+    strict.equal(packet.readInt8(), 1); // attribute 8 is null
+    strict.equal(packet.readInt8(), 1); // new_params_bind_flag
+  });
+});
+
+describe('a writer that drifts from its declared length throws', () => {
+  const originalWriteDouble = Packet.prototype.writeDouble;
+  const drift = function (this: typeof Packet.prototype, n: number) {
+    originalWriteDouble.call(this, n);
+    this.offset -= 1;
+  };
+
+  it('COM_STMT_EXECUTE', () => {
+    Packet.prototype.writeDouble = drift;
+    try {
+      strict.throws(
+        () =>
+          new Execute(
+            1,
+            [1.5],
+            UTF8MB4_CHARSET,
+            'local',
+            undefined,
+            0
+          ).toPacket(),
+        /Internal error: COM_STMT_EXECUTE serialized/
+      );
+    } finally {
+      Packet.prototype.writeDouble = originalWriteDouble;
+    }
+  });
+
+  it('COM_QUERY', () => {
+    Packet.prototype.writeDouble = drift;
+    try {
+      strict.throws(
+        () =>
+          new Query(
+            'SELECT 1',
+            UTF8MB4_CHARSET,
+            { a: 1.5 },
+            CLIENT_QUERY_ATTRIBUTES
+          ).toPacket(),
+        /Internal error: COM_QUERY serialized/
+      );
+    } finally {
+      Packet.prototype.writeDouble = originalWriteDouble;
+    }
   });
 });
