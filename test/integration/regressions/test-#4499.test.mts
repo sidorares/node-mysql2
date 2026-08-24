@@ -28,7 +28,9 @@ if (!supportsQueryAttributes) {
 
 await describe('Regression #4499 — parameter byte lengths at the 0xFD boundary', async () => {
   await describe('COM_STMT_EXECUTE', async () => {
-    const connection = createConnection().promise();
+    // MySQL 5.7 projects a bound JSON parameter as a JSON column, which the
+    // driver would parse back into an object; 8.0+ and MariaDB return text.
+    const connection = createConnection({ jsonStrings: true }).promise();
 
     await it('should bind a string of exactly 0xFFFF bytes', async () => {
       const value = 'x'.repeat(BOUNDARY);
