@@ -91,7 +91,7 @@ describe('COM_QUERY with query attributes', () => {
     strict.strictEqual(sql, 'SELECT 1');
   });
 
-  it('should serialize SQL around the single-pass length threshold exactly', () => {
+  it('should serialize multibyte SQL of varied lengths exactly', () => {
     const base = 'SELECT "é🚀"; -- ';
     for (const length of [8, 127, 128, 129, 130, 4000]) {
       const sql = base + 'x'.repeat(length);
