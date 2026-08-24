@@ -195,6 +195,24 @@ describe('TypedParameter: non-integer encoders', () => {
     );
   });
 
+  it('writes a length coded string for a non-utf8 encoding', () => {
+    const parameter = toParameter(
+      TypedParameter.VARCHAR('café'),
+      'latin1',
+      'local',
+      false
+    );
+    const buffer = Buffer.alloc(64);
+    const packet = new Packet(0, buffer, 0, buffer.length);
+    packet.offset = 0;
+    parameter.writer.call(packet, parameter.value);
+    strict.equal(packet.offset, parameter.length);
+    strict.deepEqual(
+      buffer.subarray(0, packet.offset),
+      Buffer.from([4, 0x63, 0x61, 0x66, 0xe9])
+    );
+  });
+
   it('has no encoder for a type outside the supported set', () => {
     strict.throws(() => encode(new Container(Types.BIT, 1, false)));
   });

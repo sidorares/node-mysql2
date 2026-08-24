@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.24.1](https://github.com/sidorares/node-mysql2/compare/v3.24.0...v3.24.1) (2026-08-24)
+
+
+### Performance Improvements
+
+* single-pass utf8 string encoding for outgoing packets ([#4495](https://github.com/sidorares/node-mysql2/issues/4495)) ([183e947](https://github.com/sidorares/node-mysql2/commit/183e947e753c6bdd1a0c1d2db84ed6ae2e3000af))
+
+## [3.24.0](https://github.com/sidorares/node-mysql2/compare/v3.23.4...v3.24.0) (2026-08-23)
+
+
+### Features
+
+* typed parameters, and adopt integer types the server reports ([#4488](https://github.com/sidorares/node-mysql2/issues/4488)) ([8ec20f1](https://github.com/sidorares/node-mysql2/commit/8ec20f1fa6348b2edd2402e9b7f301d99e2b9b98))
+
+
+### Bug Fixes
+
+* zero dates come back as "undefined 00:00:00" with dateStrings ([#4491](https://github.com/sidorares/node-mysql2/issues/4491)) ([5bf7bda](https://github.com/sidorares/node-mysql2/commit/5bf7bda73cca5bbea4cdcd27ad8223a10ae41ecf))
+
+
+### Performance Improvements
+
+* remove per-query and per-row allocation hotspots ([#4486](https://github.com/sidorares/node-mysql2/issues/4486)) ([c86fe5a](https://github.com/sidorares/node-mysql2/commit/c86fe5a721048a5419e775e3d6ce2defec14a774))
+* serialize COM_STMT_EXECUTE in a single exact-size pass ([#4494](https://github.com/sidorares/node-mysql2/issues/4494)) ([f3a60bc](https://github.com/sidorares/node-mysql2/commit/f3a60bca1f1b29634e8956116784bfd6e0ab2db6))
+
 ## [3.23.4](https://github.com/sidorares/node-mysql2/compare/v3.23.3...v3.23.4) (2026-08-19)
 
 
