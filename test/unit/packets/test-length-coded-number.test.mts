@@ -53,14 +53,14 @@ describe('lengthCodedNumberLength matches the bytes writeLengthCodedNumber emits
     strict.strictEqual(Packet.lengthCodedNumberLength(250), writtenBytes(250));
   });
 
-  it('3-byte range (0xFC tag)', () => {
+  it('0xFC tag', () => {
     strict.strictEqual(
       Packet.lengthCodedNumberLength(0xfffe),
       writtenBytes(0xfffe)
     );
   });
 
-  it('4-byte range (0xFD tag)', () => {
+  it('0xFD tag', () => {
     strict.strictEqual(
       Packet.lengthCodedNumberLength(0xffff),
       writtenBytes(0xffff)
@@ -71,7 +71,7 @@ describe('lengthCodedNumberLength matches the bytes writeLengthCodedNumber emits
     );
   });
 
-  it('9-byte range (0xFE tag)', () => {
+  it('0xFE tag', () => {
     strict.strictEqual(
       Packet.lengthCodedNumberLength(0xffffff),
       writtenBytes(0xffffff)
