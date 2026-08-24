@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.24.1](https://github.com/sidorares/node-mysql2/compare/v3.24.0...v3.24.1) (2026-08-24)
+
+
+### Performance Improvements
+
+* single-pass utf8 string encoding for outgoing packets ([#4495](https://github.com/sidorares/node-mysql2/issues/4495)) ([183e947](https://github.com/sidorares/node-mysql2/commit/183e947e753c6bdd1a0c1d2db84ed6ae2e3000af))
+
 ## [3.24.0](https://github.com/sidorares/node-mysql2/compare/v3.23.4...v3.24.0) (2026-08-23)
 
 
