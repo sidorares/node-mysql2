@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.24.2](https://github.com/sidorares/node-mysql2/compare/v3.24.1...v3.24.2) (2026-08-24)
+
+
+### Bug Fixes
+
+* correct length-coded number size for the 3-byte range ([#4500](https://github.com/sidorares/node-mysql2/issues/4500)) ([de56272](https://github.com/sidorares/node-mysql2/commit/de5627288bc76be4ec92a8f08796b2814d26e8aa))
+* **promise:** honour `trace: false` on every promise-API method ([#4502](https://github.com/sidorares/node-mysql2/issues/4502)) ([1dcd8ef](https://github.com/sidorares/node-mysql2/commit/1dcd8efe6c2a7079d3cc1db92e7a94008b7ed5b9)), closes [#4501](https://github.com/sidorares/node-mysql2/issues/4501)
+
 ## [3.24.1](https://github.com/sidorares/node-mysql2/compare/v3.24.0...v3.24.1) (2026-08-24)
 
 
