@@ -116,6 +116,28 @@ describe('COM_QUERY with query attributes', () => {
     }
   });
 
+  it('should serialize SQL for a non-utf8 Buffer encoding', () => {
+    const LATIN1_CHARSET = 8; // latin1_swedish_ci
+    const sql = 'SELECT "café"';
+    for (const flags of [0, CLIENT_QUERY_ATTRIBUTES]) {
+      const packet = new Query(
+        sql,
+        LATIN1_CHARSET,
+        undefined,
+        flags
+      ).toPacket();
+
+      strict.strictEqual(packet.end, packet.buffer.length);
+      packet.offset = 4;
+      strict.strictEqual(packet.readInt8(), 0x03);
+      if (flags) {
+        strict.strictEqual(packet.readLengthCodedNumber(), 0);
+        strict.strictEqual(packet.readLengthCodedNumber(), 1);
+      }
+      strict.strictEqual(packet.readString(undefined, 'latin1'), sql);
+    }
+  });
+
   it('should handle null attribute values', () => {
     const attrs = { gone: null };
     const q = new Query(
