@@ -6,7 +6,7 @@ const LATIN1_CHARSET = 8; // latin1_swedish_ci
 
 describe('COM_STMT_PREPARE serialization', () => {
   it('should serialize utf8 SQL of varied lengths exactly', () => {
-    for (const sql of ['SELECT ?', 'SELECT "é🚀" -- ' + 'x'.repeat(5000)]) {
+    for (const sql of ['SELECT ?', `SELECT "é🚀" -- ${'x'.repeat(5000)}`]) {
       const packet = new PrepareStatement(sql, UTF8MB4_CHARSET).toPacket();
 
       strict.strictEqual(packet.end, packet.buffer.length);
