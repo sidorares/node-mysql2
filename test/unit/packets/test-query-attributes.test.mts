@@ -8,6 +8,7 @@ import Query from '../../../lib/packets/query.js';
 const { Types, TypedParameter } = mysql;
 const CLIENT_QUERY_ATTRIBUTES = ClientConstants.CLIENT_QUERY_ATTRIBUTES;
 const UTF8_CHARSET = 33; // utf8_general_ci
+const UTF8MB4_CHARSET = 224; // utf8mb4_unicode_ci
 
 describe('COM_QUERY with query attributes', () => {
   it('should produce the legacy format when CLIENT_QUERY_ATTRIBUTES is not set', () => {
@@ -88,6 +89,31 @@ describe('COM_QUERY with query attributes', () => {
     strict.strictEqual(packet.readLengthCodedNumber(), 1); // parameter_set_count
     const sql = packet.readString(undefined, 'utf8');
     strict.strictEqual(sql, 'SELECT 1');
+  });
+
+  it('should serialize SQL around the single-pass length threshold exactly', () => {
+    const base = 'SELECT "é🚀"; -- ';
+    for (const length of [8, 127, 128, 129, 130, 4000]) {
+      const sql = base + 'x'.repeat(length);
+      for (const flags of [0, CLIENT_QUERY_ATTRIBUTES]) {
+        const packet = new Query(
+          sql,
+          UTF8MB4_CHARSET,
+          undefined,
+          flags
+        ).toPacket();
+
+        strict.strictEqual(packet.end, packet.buffer.length);
+        strict.strictEqual(packet.offset, packet.end);
+        packet.offset = 4;
+        strict.strictEqual(packet.readInt8(), 0x03);
+        if (flags) {
+          strict.strictEqual(packet.readLengthCodedNumber(), 0);
+          strict.strictEqual(packet.readLengthCodedNumber(), 1);
+        }
+        strict.strictEqual(packet.readString(undefined, 'utf8'), sql);
+      }
+    }
   });
 
   it('should handle null attribute values', () => {
