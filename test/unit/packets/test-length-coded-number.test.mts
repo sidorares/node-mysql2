@@ -39,3 +39,42 @@ describe('writeLengthCodedNumber / readLengthCodedNumber roundtrip', () => {
     strict.strictEqual(roundtrip(0x1ffffffffff), 2199023255551);
   });
 });
+
+describe('lengthCodedNumberLength matches the bytes writeLengthCodedNumber emits', () => {
+  const writtenBytes = (n: number): number => {
+    const buffer = Buffer.alloc(16);
+    const packet = new Packet(0, buffer, 0, buffer.length);
+    packet.offset = 0;
+    packet.writeLengthCodedNumber(n);
+    return packet.offset;
+  };
+
+  it('1-byte range', () => {
+    strict.strictEqual(Packet.lengthCodedNumberLength(250), writtenBytes(250));
+  });
+
+  it('0xFC tag', () => {
+    strict.strictEqual(
+      Packet.lengthCodedNumberLength(0xfffe),
+      writtenBytes(0xfffe)
+    );
+  });
+
+  it('0xFD tag', () => {
+    strict.strictEqual(
+      Packet.lengthCodedNumberLength(0xffff),
+      writtenBytes(0xffff)
+    );
+    strict.strictEqual(
+      Packet.lengthCodedNumberLength(0xfffffe),
+      writtenBytes(0xfffffe)
+    );
+  });
+
+  it('0xFE tag', () => {
+    strict.strictEqual(
+      Packet.lengthCodedNumberLength(0xffffff),
+      writtenBytes(0xffffff)
+    );
+  });
+});
