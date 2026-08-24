@@ -32,8 +32,9 @@ await describe('Pool acquireTimeout', async () => {
 
     const err = await new Promise<Error | null>((resolve) => {
       const fallback = setTimeout(() => resolve(null), 3000);
-      pool.getConnection((e) => {
+      pool.getConnection((e, conn) => {
         clearTimeout(fallback);
+        conn?.release();
         resolve(e || null);
       });
     });
@@ -60,6 +61,13 @@ await describe('Pool acquireTimeout', async () => {
       );
     });
 
+    it('should tag the error with the POOL_ACQUIRE_TIMEOUT code', () => {
+      assert.strictEqual(
+        (err as Error & { code?: string }).code,
+        'POOL_ACQUIRE_TIMEOUT'
+      );
+    });
+
     it('should free the queued callback from the connection queue', () => {
       assert.strictEqual(queuedAfterTimeout, 0);
     });
@@ -73,6 +81,76 @@ await describe('Pool acquireTimeout', async () => {
     });
   });
 
+  await describe('when a connection frees before the timeout', async () => {
+    const pool = driver.createPool({
+      ...config,
+      connectionLimit: 1,
+      acquireTimeout: 2000,
+    });
+    const held = await pool.promise().getConnection();
+
+    let waiterErr: Error | null = null;
+    let waiterGotConnection = false;
+    const waiter = new Promise<void>((resolve) => {
+      pool.getConnection((e, conn: PoolConnection) => {
+        waiterErr = e || null;
+        waiterGotConnection = Boolean(conn);
+        conn?.release();
+        resolve();
+      });
+    });
+
+    held.release();
+    await waiter;
+
+    // @ts-expect-error: internal access
+    const queuedAfter = pool._connectionQueue.length;
+
+    await pool.promise().end();
+
+    it('should serve the waiter and disarm the timeout', () => {
+      assert.strictEqual(waiterErr, null);
+      assert.ok(waiterGotConnection);
+      assert.strictEqual(queuedAfter, 0);
+    });
+  });
+
+  await describe('when the held connection is destroyed while a request waits', async () => {
+    const pool = driver.createPool({
+      ...config,
+      connectionLimit: 1,
+      acquireTimeout: 2000,
+    });
+    const held = await pool.promise().getConnection();
+
+    let waiterErr: Error | null = null;
+    let waiterGotConnection = false;
+    const waiter = new Promise<void>((resolve) => {
+      pool.getConnection((e, conn: PoolConnection) => {
+        waiterErr = e || null;
+        waiterGotConnection = Boolean(conn);
+        conn?.release();
+        resolve();
+      });
+    });
+
+    // Removing the only connection dequeues the waiter to be re-served with a
+    // fresh connection; its acquireTimeout must be disarmed on the way out.
+    held.destroy();
+    await waiter;
+
+    // @ts-expect-error: internal access
+    const queuedAfter = pool._connectionQueue.length;
+
+    await pool.promise().end();
+
+    it('should re-serve the waiter without a timeout error', () => {
+      assert.strictEqual(waiterErr, null);
+      assert.ok(waiterGotConnection);
+      assert.strictEqual(queuedAfter, 0);
+    });
+  });
+
   await describe('disabled by default', async () => {
     const pool = driver.createPool({ ...config, connectionLimit: 1 });
     const held = await pool.promise().getConnection();
@@ -83,7 +161,7 @@ await describe('Pool acquireTimeout', async () => {
       pool.getConnection((e, conn: PoolConnection) => {
         waiterErr = e || null;
         waiterGotConnection = Boolean(conn);
-        if (conn) conn.release();
+        conn?.release();
         resolve();
       });
     });
