@@ -151,6 +151,61 @@ await describe('Pool acquireTimeout', async () => {
     });
   });
 
+  await describe('under connection churn', async () => {
+    const acquireTimeout = 300;
+    const pool = driver.createPool({
+      ...config,
+      connectionLimit: 1,
+      acquireTimeout,
+    });
+
+    const outcome = await new Promise<{ ms: number; code?: string }>(
+      (resolve) => {
+        pool.getConnection((err, holder: PoolConnection) => {
+          if (err) return resolve({ ms: -1 });
+
+          const start = Date.now();
+          let current = holder;
+          let done = false;
+
+          pool.getConnection((e, conn: PoolConnection) => {
+            done = true;
+            conn?.release();
+            resolve({
+              ms: Date.now() - start,
+              code: (e as Error & { code?: string })?.code,
+            });
+          });
+
+          // Repeatedly steal the freed slot so the waiter keeps re-entering
+          // getConnection; the absolute deadline must still bound the wait.
+          let iterations = 0;
+          const churn = setInterval(() => {
+            if (done || iterations >= 8) {
+              clearInterval(churn);
+              return;
+            }
+            iterations++;
+            current.destroy();
+            pool.getConnection((_e, stolen: PoolConnection) => {
+              if (stolen) current = stolen;
+            });
+          }, 150);
+        });
+      }
+    );
+
+    await pool.promise().end();
+
+    it('should time out at the deadline despite re-entry', () => {
+      assert.strictEqual(outcome.code, 'POOL_ACQUIRE_TIMEOUT');
+      assert.ok(
+        outcome.ms < acquireTimeout * 3,
+        `waited ${outcome.ms}ms, expected the wait to stay near ${acquireTimeout}ms`
+      );
+    });
+  });
+
   await describe('disabled by default', async () => {
     const pool = driver.createPool({ ...config, connectionLimit: 1 });
     const held = await pool.promise().getConnection();
