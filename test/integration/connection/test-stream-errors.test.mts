@@ -38,7 +38,6 @@ await describe('Stream Errors', async () => {
             host: 'localhost',
             // @ts-expect-error: internal access
             port: server._port,
-            // @ts-expect-error: TODO: implement typings
             ssl: false,
           });
           clientConnection?.query(query, (_err) => {

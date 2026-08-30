@@ -32,7 +32,6 @@ await describe('Disconnects', async () => {
             host: 'localhost',
             // @ts-expect-error: internal access
             port: server._port,
-            // @ts-expect-error: TODO: implement typings
             ssl: false,
           });
           connection.query<RowDataPacket[]>(
