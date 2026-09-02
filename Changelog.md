@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.24.3](https://github.com/sidorares/node-mysql2/compare/v3.24.2...v3.24.3) (2026-09-01)
+
+
+### Bug Fixes
+
+* **typings:** PoolCluster node events emit a string nodeId ([#4513](https://github.com/sidorares/node-mysql2/issues/4513)) ([1281e1e](https://github.com/sidorares/node-mysql2/commit/1281e1eab672b2bde0b859efa38be5ed5a6946a5))
+
 ## [3.24.2](https://github.com/sidorares/node-mysql2/compare/v3.24.1...v3.24.2) (2026-08-24)
 
 
