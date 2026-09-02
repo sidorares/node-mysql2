@@ -1,9 +1,11 @@
 import type { TypeCastField, TypeCastNext } from '../../../index.js';
 import { describe, it, strict } from 'poku';
 import {
+  _Entry,
   _hashKey,
   clearCache,
   getParser,
+  setMaxCache,
 } from '../../../lib/parsers/parser_cache.js';
 
 interface CacheField {
@@ -343,6 +345,165 @@ describe('Parser cache', () => {
       true,
       'schema'
     );
+  });
+
+  it('confirms every part of the metadata when a bucket entry is checked', () => {
+    const listOptions: CacheOptions = { ...baseOptions, dateStrings: ['DATE'] };
+    const entry = new _Entry(
+      {},
+      'binary',
+      [idField, valueField],
+      listOptions,
+      baseConfig
+    );
+    const matches = (
+      type: string,
+      fields: CacheField[],
+      options: CacheOptions,
+      config: CacheConfig
+    ): boolean => entry.matches(type, fields, options, config);
+
+    strict.equal(
+      matches('binary', [idField, valueField], listOptions, baseConfig),
+      true
+    );
+    strict.equal(
+      matches(
+        'binary',
+        [{ ...idField }, { ...valueField }],
+        listOptions,
+        baseConfig
+      ),
+      true,
+      'fresh column objects with equal metadata'
+    );
+    strict.equal(
+      matches('text', [idField, valueField], listOptions, baseConfig),
+      false,
+      'protocol'
+    );
+    strict.equal(
+      matches(
+        'binary',
+        [idField, valueField],
+        { ...listOptions, nestTables: '_' },
+        baseConfig
+      ),
+      false,
+      'nestTables'
+    );
+    strict.equal(
+      matches(
+        'binary',
+        [idField, valueField],
+        { ...listOptions, timezone: 'Z' },
+        baseConfig
+      ),
+      false,
+      'timezone'
+    );
+    strict.equal(
+      matches('binary', [idField], listOptions, baseConfig),
+      false,
+      'column count'
+    );
+    strict.equal(
+      matches(
+        'binary',
+        [idField, valueField],
+        { ...listOptions, dateStrings: ['DATETIME'] },
+        baseConfig
+      ),
+      false,
+      'dateStrings list contents'
+    );
+    strict.equal(
+      matches(
+        'binary',
+        [idField, valueField],
+        { ...listOptions, dateStrings: ['DATE', 'DATETIME'] },
+        baseConfig
+      ),
+      false,
+      'dateStrings list length'
+    );
+    strict.equal(
+      matches(
+        'binary',
+        [idField, valueField],
+        { ...listOptions, dateStrings: true },
+        baseConfig
+      ),
+      false,
+      'dateStrings list against boolean'
+    );
+    for (const [name, field] of [
+      ['name', { ...valueField, name: 'other' }],
+      ['columnType', { ...valueField, columnType: 253 }],
+      ['characterSet', { ...valueField, characterSet: 224 }],
+      ['flags', { ...valueField, flags: 32 }],
+      ['decimals', { ...valueField, decimals: 6 }],
+      ['extendedTypeName', { ...valueField, extendedTypeName: 'uuid' }],
+      ['extendedFormat', { ...valueField, extendedFormat: 'json' }],
+    ] as [string, CacheField][]) {
+      strict.equal(
+        matches('binary', [idField, field], listOptions, baseConfig),
+        false,
+        name
+      );
+    }
+
+    const nested = new _Entry(
+      {},
+      'text',
+      [idField, valueField],
+      { ...baseOptions, nestTables: true },
+      baseConfig
+    );
+    strict.equal(
+      nested.matches(
+        'text',
+        [idField, { ...valueField, table: 'other' }],
+        { ...baseOptions, nestTables: true },
+        baseConfig
+      ),
+      false,
+      'table with nestTables'
+    );
+  });
+
+  it('hashes columns without names or extended metadata', () => {
+    const unnamed: CacheField = {
+      ...idField,
+      name: undefined as unknown as string,
+    };
+    strict.equal(
+      typeof _hashKey('text', [unnamed], baseOptions, baseConfig),
+      'number'
+    );
+    strict.notEqual(
+      _hashKey('text', [unnamed], baseOptions, baseConfig),
+      _hashKey('text', [idField], baseOptions, baseConfig)
+    );
+  });
+
+  it('resizes the cache through setMaxCache', () => {
+    clearCache();
+    const first = compile(base);
+    setMaxCache(1);
+    strict.equal(
+      compile(base),
+      first,
+      'the entry survives a resize that keeps it'
+    );
+    compile({ ...base, type: 'text' });
+    strict.notEqual(
+      compile(base),
+      first,
+      'the oldest entry is evicted at capacity'
+    );
+    setMaxCache(15000);
+    clearCache();
   });
 
   it('confirms the full metadata on a hash collision', () => {
