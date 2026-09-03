@@ -94,6 +94,7 @@ export interface Pool extends Connection {
 
   releaseConnection(connection: PoolConnection): void;
 
+  on(event: 'error', listener: (err: NodeJS.ErrnoException) => any): this;
   on(event: 'connection', listener: (connection: PoolConnection) => any): this;
   on(event: 'acquire', listener: (connection: PoolConnection) => any): this;
   on(event: 'release', listener: (connection: PoolConnection) => any): this;
