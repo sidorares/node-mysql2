@@ -146,7 +146,57 @@ The classic alternatives — a pool of pre-allocated send buffers, or serializin
 
 The receive path already avoids per-packet allocation (§3.8): complete packets are views over the socket chunk delivered through one reused `Packet`; only a packet spanning chunk boundaries allocates (~one per 64KB chunk), and pooling those buffers is off the table because BLOB values and column definitions alias them for arbitrarily long (§5.2c).
 
-## 8. Repro
+## 8. Round three: per-query overhead, dates, short strings, TLS and compression (branch `perf/hotspots`, Sep 2026)
+
+Fresh profiles of v3.24.2 with the same harnesses. The receive path for large scans was already dominated by string materialization and GC (§5), so this round went after what the profiles showed next: the fixed cost every query pays, local-time `Date` construction, sub-8-byte strings, and two connection-level costs the row harnesses never see.
+
+**Where small-query time went (replay, `SELECT * FROM t_cols10 WHERE id = 500`, 1 row × 10 columns).** `Query.start` 14% (the `Object.assign({}, config, queryOptions)` merge of 45 config keys: 1.7µs, and the object it produces reads 6× slower than a literal), the parser-cache lookup 25% (`keyFromFields` + `lru.get` on a ~450-character key: 2.4µs for 10 columns) plus 4.5% for the lazy `schema`/`table` decodes that only the key needed.
+
+### Changes
+
+1. **Options merge as a fixed-shape literal** (`ConnectionConfig.queryOptions`). Same keys, same order, same overlay semantics as `Object.assign`, built from a literal so V8 allocates one in-object layout: 1.7µs → 0.1µs, and every later `options.x` read is a monomorphic in-object load. A unit test pins the key list to the constructor's.
+2. **Parser cache keyed by an integer hash with full-signature verification** (`lib/parsers/parser_cache.js`). The hash covers exactly what the code generators bake in (options, per column: type, charset, flags, decimals, name, MariaDB extended metadata, table only when `nestTables`); a hit is confirmed against the metadata stored in the entry, so a collision can never return a parser compiled for other columns (unit-tested with a brute-forced collision). 2.5µs → 0.4µs at 10 columns, 22µs → 3.6µs at 100. Two fixes fell out: `decimals` was missing from the old key (binary protocol + `dateStrings`, a `DATETIME(3)` and a `DATETIME(6)` column with the same name could share a parser), and `schema` (never used by the generated code) no longer forces a string decode per column per query.
+3. **Local-time dates through a per-hour offset cache** (`lib/parsers/local_date.js`). `new Date(y, m, d, h, mi, s, ms)` costs ~180ns, almost all of it the wall-time→UTC conversion; the offset is constant across any wall-clock hour without a DST transition. The value is computed as wall-clock ms (a civil-day formula that matches `MakeDay`/`MakeTime` exactly, incl. overflow of day/hour/minute), the hour's offset is looked up in a `Map`, and the `Date` is built from a number (~75ns). An hour enters the cache only after the real constructor reports the same offset at its start, middle and end; hours containing a transition keep the constructor. The cache is dropped when `process.env.TZ` changes (checked once per result set with date columns). Verified against the constructor over 128M instants across 31 zones (30-minute DST, negative DST, skipped days, Chatham, Casablanca), with a permanent unit test over six zones.
+4. **Short all-ASCII strings via `String.fromCharCode`** (`StringParser.decodeShort`). A native `utf8Slice` costs ~55ns whatever the length, mostly the JS→C++ transition; for ≤8 ASCII bytes `String.fromCharCode` with fixed arity is 14–24ns. Routed at the two call sites (`readLengthCodedString`, column names) so `decode()` itself is unchanged: an earlier version that branched inside `decode()` cost the long-string path 5% by pushing it over V8's inlining budget. Non-ASCII short values pay 0–5ns for the failed attempt (the first byte is checked before anything else).
+5. **TLS secure context cached per `ssl` config object** (`lib/base/connection.js`). `tls.createSecureContext` re-parses every CA per connection: 137µs for an empty config, 6.7ms for the bundled Amazon RDS profile (120 certificates). Pooled connections share the config object, so they now share the context; the cached material is compared by identity on every use, so replacing `ssl.ca` (or any other field) rebuilds it.
+6. **Compressed protocol without the thread-pool detour for small payloads** (`lib/compressed_protocol.js`). Every packet went through a queue, `process.nextTick` and an async zlib call (32µs round trip to inflate 256 bytes, 128µs to deflate). Payloads under 50 bytes are sent uncompressed without touching zlib (the server applies the same rule), deflate runs inline up to 4KB (≤31µs) and inflate up to 16KB (≤27µs); larger payloads and anything queued behind an in-flight async step keep the ordered async path.
+
+### Measured results
+
+Isolated replay (client CPU only, interleaved best-of-2 against v3.24.2):
+
+| Scenario                         | v3.24.2     | This round   | Δ         |
+| -------------------------------- | ----------- | ------------ | --------- |
+| 1 row × 10 cols                  | 90.6k ops/s | **212–218k** | **2.4×**  |
+| 100 rows × 10 cols               | 18.2k       | 20.5k        | +13%      |
+| 100k rows × DATETIME/DATE        | 11.9        | 16.2         | +36%      |
+| 1M rows × 3 cols (short varchar) | 4.2         | 4.7          | +12%      |
+| 100k rows × 10 cols (long text)  | 17.7        | 17.8         | unchanged |
+
+E2E on MySQL 9 (`bench-compress-tls.js`, interleaved, machine under test-suite load):
+
+| Scenario                                  | v3.24.2             | This round              |
+| ----------------------------------------- | ------------------- | ----------------------- |
+| `ping` over a compressed connection       | 124µs CPU / 308µs   | 54µs CPU / 293µs        |
+| `SELECT 1+1` over a compressed connection | 196µs CPU / 443µs   | 95µs CPU / 327µs        |
+| new TLS connection, Amazon RDS profile    | 9.2ms CPU / 13–15ms | 1.8–2.3ms CPU / 4–7.5ms |
+| new TLS connection, plain `{}` ssl        | 2.1ms CPU           | 1.9–2.0ms CPU           |
+
+All 244 test files pass in six configurations (default, `MYSQL_USE_COMPRESSION=1`, `STATIC_PARSER=1` and `MYSQL_USE_TLS=1` on MySQL 8.3; default on MariaDB LTS and MySQL 5.7), plus lint and typecheck.
+
+### Negative results
+
+- `parseFloat`/`parseIntNoBigCheck` with a local `offset` variable instead of `this.offset` per digit: identical speed, V8 already keeps the field in a register across the loop.
+- Branching inside `decode()` for short strings: −5% on every long string (inlining budget), fixed by routing at the call sites (change 4).
+- `new Date(number)` is ~49ns and `Date.UTC` ~36ns, so the date cache's floor is the `Date` allocation itself; the civil-day arithmetic replaced `Date.UTC` to stay under 80ns.
+
+### Still open
+
+- Per-row dispatch is now a small share (`Command.execute` ~3%); string materialization (~55ns per value, the C++ transition) and GC of the result itself dominate large scans, as before.
+- Prepared-statement first execution still costs two round trips; MariaDB accepts statement id −1 for "last prepared", which would allow pipelining `PREPARE`+`EXECUTE` there.
+- TLS session resumption across pooled connections would save the certificate work that remains in `tls-connect-plain` (~1.9ms CPU per connection).
+
+## 9. Repro
 
 ```sh
 docker run -d --name mysql83-bench -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=test -p 3308:3306 mysql:8.3
