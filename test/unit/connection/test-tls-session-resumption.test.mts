@@ -5,10 +5,14 @@ import net from 'node:net';
 import path from 'node:path';
 import tls from 'node:tls';
 import { fileURLToPath } from 'node:url';
-import { describe, it, strict } from 'poku';
+import { describe, it, skip, strict } from 'poku';
 import BaseConnection from '../../../lib/base/connection.js';
 import ConnectionConfig from '../../../lib/connection_config.js';
 import TlsSessionSlot from '../../../lib/tls_session_cache.js';
+
+if (typeof Deno !== 'undefined') {
+  skip('Deno: node:tls does not resume sessions');
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const certs = path.join(__dirname, '../../fixtures/ssl/chain');
@@ -16,6 +20,7 @@ const ca = fs.readFileSync(path.join(certs, 'ca.pem'), 'utf8');
 
 type Ssl = {
   ca: string;
+  maxVersion?: string;
   minVersion?: string;
   rejectUnauthorized?: boolean;
   verifyIdentity?: boolean;
@@ -136,6 +141,18 @@ await describe('TLS session resumption', async () => {
 
     strict.equal(full.error, undefined);
     strict.equal(full.socket.isSessionReused(), false);
+    strict.equal(resumed.socket.isSessionReused(), true);
+  });
+
+  await it('should resume a TLS 1.2 session issued during the handshake', async () => {
+    ssl.maxVersion = 'TLSv1.2';
+    const full = await upgrade(ssl);
+    const resumed = await upgrade(ssl);
+
+    strict.equal(full.error, undefined);
+    strict.equal(full.socket.getProtocol(), 'TLSv1.2');
+    strict.equal(full.socket.isSessionReused(), false);
+    strict.equal(resumed.socket.getProtocol(), 'TLSv1.2');
     strict.equal(resumed.socket.isSessionReused(), true);
   });
 
