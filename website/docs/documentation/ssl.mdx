@@ -73,6 +73,21 @@ Following profiles are included in the package:
 
 - `Amazon RDS` - in this case https://s3.amazonaws.com/rds-downloads/mysql-ssl-ca-cert.pem CA cert is used
 
+## TLS Session Resumption
+
+Every new TLS connection normally runs a full handshake, in which the server sends its certificate chain and the client verifies it. **MySQL2** keeps the session ticket issued at the end of a successful handshake in memory and presents it on later connections to the same server, which lets the server skip the certificate exchange and, on TLS 1.2, one round trip. This happens automatically and is never persisted to disk.
+
+A session is only reused when the new connection shares the **same `ssl` object**, host and port as the one that established it, together with the same `rejectUnauthorized` and `verifyIdentity` settings, so a session established under a lax configuration is never resumed by a strict one. Connections created by a pool or a pool cluster already share their `ssl` object. When you create connections one by one, reuse a single `ssl` object to get the same benefit:
+
+```ts
+const ssl = { ca: fs.readFileSync(__dirname + '/mysql-ca.crt') };
+
+const first = await mysql.createConnection({ host: 'localhost', ssl });
+const second = await mysql.createConnection({ host: 'localhost', ssl });
+```
+
+A server that rejects or no longer knows the ticket silently falls back to a full handshake, and a failed handshake drops the cached session.
+
 ## Ignoring Unauthorized SSL Errors
 
 You can also connect to a MySQL server without providing an appropriate CA to trust. **This is highly discouraged** as being insecure.
