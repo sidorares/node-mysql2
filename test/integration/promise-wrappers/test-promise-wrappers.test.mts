@@ -259,6 +259,7 @@ await describe('testEventsPool', async () => {
       acquire: 0,
       connection: 0,
       enqueue: 0,
+      error: 0,
       release: 0,
     };
     for (const eventName in expectedListeners) {
@@ -292,6 +293,14 @@ await describe('testEventsPool', async () => {
         }.bind(pool)
       )
       .once(
+        'error',
+        function (err: Error) {
+          strict.equal(this, pool);
+          strict.equal(err.message, 'pool error');
+          ++events;
+        }.bind(pool)
+      )
+      .once(
         'release',
         function () {
           strict.equal(this, pool);
@@ -302,9 +311,10 @@ await describe('testEventsPool', async () => {
     pool.pool.emit('acquire');
     pool.pool.emit('connection');
     pool.pool.emit('enqueue');
+    pool.pool.emit('error', new Error('pool error'));
     pool.pool.emit('release');
 
-    strict.equal(events, 4, 'wrong number of pool connection events');
+    strict.equal(events, 5, 'wrong number of pool connection events');
 
     for (const eventName in expectedListeners) {
       strict.equal(
