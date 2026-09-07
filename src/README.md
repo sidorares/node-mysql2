@@ -60,7 +60,7 @@ Merge, then port each change to its twin in `src`. Files not transcribed yet nee
 
 The existing test suite, unchanged, is the acceptance test. The `src:test` scripts build `dist`, copy the tests next to it and run them there, so every relative import in a test resolves to the built output instead of the shipped JavaScript. `FILTER` works as usual, a MySQL server is needed as for `npm test`, and the run only makes sense once the entry points and everything they import exist in `src`.
 
-The dedicated workflow typechecks and builds `src` on every pull request that touches it, then loads the built entry points on Node.js 14 through 24 once they exist. The regular workflows never look at `src`.
+The dedicated workflow typechecks and builds `src` on every pull request that touches it, then loads the built entry points on the Node.js versions the regular CI already tests, once they exist. The regular workflows never look at `src`.
 
 ## Known questions
 
