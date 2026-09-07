@@ -1,0 +1,88 @@
+name: CI - src (TypeScript)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/ci-src.yml'
+      - 'src/**'
+      - 'tools/src/**'
+  push:
+    branches: [master, js-to-ts]
+
+  workflow_dispatch:
+
+jobs:
+  src:
+    runs-on: ubuntu-latest
+    name: Typecheck and build
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Cache dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run src:typecheck
+
+      - name: Build
+        run: npm run src:build
+
+  smoke:
+    needs: src
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18, 20, 22, 24]
+
+    name: Load dist on Node.js ${{ matrix.node-version }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Node.js 22 to install and build
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Cache dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: npm-linux-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-linux-
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run src:build
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          package-manager-cache: false
+
+      - name: Load the built entry points
+        run: |
+          if [ ! -f dist/index.js ]; then
+            echo "dist/index.js is not transcribed yet: nothing to load"
+            exit 0
+          fi
+          node -e "require('./dist/index.js'); require('./dist/promise.js'); console.log('loaded on', process.version)"

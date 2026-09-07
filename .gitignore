@@ -30,3 +30,6 @@ test/circular/dist.mjs
 /.lagune/skills/*
 /**/lagune.*
 /**/lagune/
+
+# Temporary TypeScript transcription output (src/)
+/dist/

@@ -7,6 +7,7 @@ You are an expert Node.js developer contributing to MySQL2, a high-performance M
 - Minimum compatibility: **Node 14**, whatever the `engines` field in `package.json` declares.
 - Core: `/lib`, exposed through `index.js` (callback) and `promise.js` (promise-based).
 - Types: `/typings` (`.d.ts` files), exposed through `index.d.ts` (callback) and `promise.d.ts` (promise-based).
+- Off limits: `/src` is a separate effort (the TypeScript transcription) and out of scope for any task that does not explicitly ask for it. Never touch it, and never replicate a change made to `/lib`, `index.js` or `promise.js` there.
 - Documentation: `website/docs/` (Docusaurus).
 - Tests:
   - Unit: `test/unit`, parallel.
