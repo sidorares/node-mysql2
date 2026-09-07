@@ -1,0 +1,28 @@
+{
+  "include": ["**/*.ts"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "../dist",
+    "target": "es2020",
+    "lib": ["es2020"],
+    "module": "node16",
+    "moduleResolution": "node16",
+    "types": ["node"],
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": false,
+    "sourceMap": false,
+    "removeComments": false,
+    "newLine": "lf",
+    "noEmitOnError": true
+  }
+}
