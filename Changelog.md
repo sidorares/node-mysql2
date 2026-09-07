@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.24.4](https://github.com/sidorares/node-mysql2/compare/v3.24.3...v3.24.4) (2026-09-07)
+
+
+### Performance Improvements
+
+* per-query overhead, local dates, short strings, TLS context and compression ([#4522](https://github.com/sidorares/node-mysql2/issues/4522)) ([2387daf](https://github.com/sidorares/node-mysql2/commit/2387daf8dc8403783f4238aef4ba22e103cc2fec))
+* reuse TLS sessions across connections to the same server ([#4529](https://github.com/sidorares/node-mysql2/issues/4529)) ([9178c82](https://github.com/sidorares/node-mysql2/commit/9178c824cf4a7c04c0e04b0586661c56b694056f))
+
 ## [3.24.3](https://github.com/sidorares/node-mysql2/compare/v3.24.2...v3.24.3) (2026-09-01)
 
 
