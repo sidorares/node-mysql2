@@ -20,6 +20,11 @@
     "test:coverage": "c8 npm test",
     "test:build": "rollup -c",
     "typecheck": "cd \"test/tsc-build\" && tsc -p \"tsconfig.json\" && cd .. && tsc -p \"tsconfig.json\" --noEmit",
+    "src:typecheck": "tsc -p src/tsconfig.json --noEmit && tsc -p tools/src/tsconfig.json",
+    "src:build": "tsx tools/src/clean.mts && tsc -p src/tsconfig.json",
+    "src:test": "npm run src:build && tsx tools/src/prepare-tests.mts && poku --config=tools/src/poku.config.mts",
+    "src:test:bun": "npm run src:build && tsx tools/src/prepare-tests.mts && bun poku --config=tools/src/poku.config.mts",
+    "src:test:deno": "npm run src:build && tsx tools/src/prepare-tests.mts && deno run -A npm:poku --config=tools/src/poku.config.mts",
     "benchmark": "node ./benchmarks/benchmark.js",
     "wait-port": "wait-on"
   },
