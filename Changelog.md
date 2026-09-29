@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.24.5](https://github.com/sidorares/node-mysql2/compare/v3.24.4...v3.24.5) (2026-09-29)
+
+
+### Bug Fixes
+
+* strip the brackets from an IPv6 host in a connection URI ([#4570](https://github.com/sidorares/node-mysql2/issues/4570)) ([b1c39c8](https://github.com/sidorares/node-mysql2/commit/b1c39c88a743df6b9bbe73703c9da29eba067204))
+
 ## [3.24.4](https://github.com/sidorares/node-mysql2/compare/v3.24.3...v3.24.4) (2026-09-07)
 
 
