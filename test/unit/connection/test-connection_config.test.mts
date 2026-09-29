@@ -80,6 +80,13 @@ describe('ConnectionConfig', () => {
     );
   });
 
+  it('should parse bracketed IPv6 host from URL', () => {
+    strict.strictEqual(
+      ConnectionConfig.parseUrl('mysql://test:pass@[::1]:3306/database').host,
+      '::1'
+    );
+  });
+
   it('should parse host from URL', () => {
     strict.strictEqual(
       ConnectionConfig.parseUrl(
