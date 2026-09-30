@@ -67,3 +67,32 @@ await describe('Pool Release Idle Connection With An Unlimited Pool', async () =
 
   await promisePool.end();
 });
+
+await describe('Pool Idle Sweeper Delay', async () => {
+  const pool = createPool({ connectionLimit: 3, idleTimeout: 60000 });
+  const promisePool = pool.promise();
+  const connection = await promisePool.getConnection();
+
+  connection.release();
+
+  // @ts-expect-error: internal access
+  const delayAfterRelease = pool._nextIdleSweepDelay();
+
+  // @ts-expect-error: internal access
+  pool._freeConnections.get(0).lastActiveTime = Date.now() - 60000;
+  // @ts-expect-error: internal access
+  const delayAtIdleTimeout = pool._nextIdleSweepDelay();
+
+  it('should sweep at least once a second while connections are idle', () => {
+    strict.equal(delayAfterRelease, 1000);
+  });
+
+  it('should sweep right away once the oldest idle connection reaches idleTimeout', () => {
+    strict.ok(
+      delayAtIdleTimeout <= 1,
+      `expected <= 1, got ${delayAtIdleTimeout}`
+    );
+  });
+
+  await promisePool.end();
+});
