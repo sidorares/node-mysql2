@@ -96,3 +96,45 @@ await describe('Pool Idle Sweeper Delay', async () => {
 
   await promisePool.end();
 });
+
+await describe('Pool Idle Sweeper Rescheduling', async () => {
+  const pool = createPool({ connectionLimit: 3, idleTimeout: 1000 });
+  const promisePool = pool.promise();
+  const first = await promisePool.getConnection();
+  const second = await promisePool.getConnection();
+
+  first.release();
+  second.release();
+
+  // @ts-expect-error: internal access
+  pool._freeConnections.get(0).lastActiveTime = Date.now() - 2000;
+  // @ts-expect-error: internal access
+  pool._sweepIdleConnections();
+
+  // @ts-expect-error: internal access
+  const freeConnsWhileIdle = pool._freeConnections.length;
+  // @ts-expect-error: internal access
+  const timerWhileIdle = pool._removeIdleTimeoutConnectionsTimer;
+
+  // @ts-expect-error: internal access
+  pool._freeConnections.get(0).lastActiveTime = Date.now() - 2000;
+  // @ts-expect-error: internal access
+  pool._sweepIdleConnections();
+
+  // @ts-expect-error: internal access
+  const freeConnsWhenEmpty = pool._freeConnections.length;
+  // @ts-expect-error: internal access
+  const timerWhenEmpty = pool._removeIdleTimeoutConnectionsTimer;
+
+  it('should reschedule the sweeper while connections are still idle', () => {
+    strict.equal(freeConnsWhileIdle, 1);
+    strict.ok(timerWhileIdle, 'sweeper timer should be running');
+  });
+
+  it('should leave no timer once the free queue is empty', () => {
+    strict.equal(freeConnsWhenEmpty, 0);
+    strict.equal(timerWhenEmpty, null);
+  });
+
+  await promisePool.end();
+});
