@@ -46,6 +46,29 @@ export interface PoolOptions extends ConnectionOptions {
   resetOnRelease?: boolean;
 }
 
+/**
+ * A snapshot of the pool's current state, useful for monitoring and diagnostics.
+ */
+export interface PoolStats {
+  /** Total number of connections currently managed by the pool (active + idle). */
+  all: number;
+
+  /** Number of connections currently idle and available for use. */
+  free: number;
+
+  /** Number of `getConnection` requests waiting in the queue. */
+  queued: number;
+
+  /** The configured maximum number of connections (`connectionLimit`). */
+  connectionLimit: number;
+
+  /** The configured maximum queue length (`queueLimit`). 0 means unlimited. */
+  queueLimit: number;
+
+  /** Whether the pool has been closed via `pool.end()`. */
+  closed: boolean;
+}
+
 declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
   getConnection(
     callback: (
@@ -60,6 +83,14 @@ declare class Pool extends QueryableBase(ExecutableBase(EventEmitter)) {
     callback?: (err: NodeJS.ErrnoException | null, ...args: any[]) => any
   ): void;
 
+  /**
+   * Returns a snapshot of the pool's current state for monitoring and diagnostics.
+   *
+   * @example
+   * const stats = pool.getStats();
+   * console.log(`${stats.free}/${stats.all} connections free, ${stats.queued} queued`);
+   */
+  getStats(): PoolStats;
   [Symbol.dispose](): void;
 
   on(event: string, listener: (...args: any[]) => void): this;
