@@ -17,7 +17,7 @@ await describe('Signed Tinyint', async () => {
     await new Promise<void>((resolve, reject) => {
       connection.execute<RowDataPacket[]>(
         'SELECT * from signed_ints',
-        [5],
+        [],
         (err, _rows) => {
           if (err) return reject(err);
           rows = _rows;
