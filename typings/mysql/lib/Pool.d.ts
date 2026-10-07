@@ -39,6 +39,12 @@ export interface PoolOptions extends ConnectionOptions {
   queueLimit?: number;
 
   /**
+   * The milliseconds a queued `getConnection` request waits for a connection to become available before failing with a
+   * `POOL_ACQUIRE_TIMEOUT` error. Only applies while waiting in the queue. If set to 0, requests wait indefinitely. (Default: 0)
+   */
+  acquireTimeout?: number;
+
+  /**
    * Whether to reset the connection state (user variables, temporary tables, transactions, etc.) when
    * releasing the connection back to the pool. This ensures each connection starts clean for the next user.
    * Requires MySQL 5.7.3+. (Default: false)
