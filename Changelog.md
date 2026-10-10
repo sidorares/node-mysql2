@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.24.6](https://github.com/sidorares/node-mysql2/compare/v3.24.5...v3.24.6) (2026-10-10)
+
+
+### Bug Fixes
+
+* allocate a new LOCAL INFILE terminator packet per write ([#4580](https://github.com/sidorares/node-mysql2/issues/4580)) ([8c068ef](https://github.com/sidorares/node-mysql2/commit/8c068efa427f1a6afef250beda6716b8520f07d9)), closes [#4568](https://github.com/sidorares/node-mysql2/issues/4568)
+
 ## [3.24.5](https://github.com/sidorares/node-mysql2/compare/v3.24.4...v3.24.5) (2026-09-29)
 
 
