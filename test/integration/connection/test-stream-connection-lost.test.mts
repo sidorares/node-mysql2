@@ -1,68 +1,82 @@
-import type { QueryError } from '../../../index.js';
-import process from 'node:process';
-import { skip, strict, test } from 'poku';
-import { createConnection, getMysqlVersion } from '../../common.test.mjs';
+import type { Readable } from 'node:stream';
+import type { Connection, QueryError } from '../../../index.js';
+import { describe, it, skip, strict } from 'poku';
+import { createConnection, createServer } from '../../common.test.mjs';
 
-if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
-  skip('Skipping test for PlanetScale');
-}
+if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 
-await test('query stream errors when the connection is lost mid-stream', async () => {
-  const connection = createConnection({
-    multipleStatements: true,
-  });
-  // the connection itself still reports the error
-  connection.on('error', () => {});
-
-  const mySqlVersion = await getMysqlVersion(connection);
-  if (mySqlVersion.major < 8) {
-    skip('MySQL >= 8.0 required to use CTE');
-  }
-
-  // MariaDB names the CTE depth limit max_recursive_iterations
-  const recursionVariable = mySqlVersion.isMariaDB
-    ? 'max_recursive_iterations'
-    : 'cte_max_recursion_depth';
-
-  // big and hard to compress enough to fill the socket buffers, so the server
-  // blocks writing while the stream is paused and drops the connection after
-  // net_write_timeout
-  const largeQuery = `
-    SET SESSION ${recursionVariable} = 100000, net_write_timeout = 1;
-    WITH RECURSIVE cte (n) AS (
-      SELECT 1
-      UNION ALL
-      SELECT n + 1
-      FROM cte
-      WHERE n < 100000
-    )
-    SELECT n, CONCAT(SHA2(n, 512), SHA2(-n, 512), SHA2(n * 3, 512), SHA2(n * 7, 512)) AS s
-    FROM cte;
-  `;
-
-  const stream = connection.query(largeQuery).stream();
-
-  const error = await new Promise<QueryError | null>((resolve) => {
-    const timeout = setTimeout(() => resolve(null), 15000);
-    let paused = false;
-    stream.on('data', () => {
-      if (paused) return;
-      paused = true;
-      stream.pause();
-      setTimeout(() => stream.resume(), 3000);
-    });
+const streamError = (stream: Readable) =>
+  new Promise<QueryError | undefined>((resolve) => {
+    let error: QueryError | undefined;
     stream.on('error', (err: QueryError) => {
-      clearTimeout(timeout);
-      resolve(err);
+      error = err;
     });
-    stream.on('end', () => {
-      clearTimeout(timeout);
-      resolve(null);
-    });
+    stream.on('close', () => resolve(error));
   });
 
-  // @ts-expect-error: TODO: implement typings
-  connection.close();
+await describe('Query streams when the connection is lost mid-stream', async () => {
+  let activeError: QueryError | undefined;
+  let queuedError: QueryError | undefined;
 
-  strict.ok(error, 'stream should error instead of hanging or ending');
+  await new Promise<void>((resolve) => {
+    const server = createServer(
+      async () => {
+        const connection: Connection = createConnection({
+          // the mock server runs on this host, not on MYSQL_HOST
+          host: 'localhost',
+          // @ts-expect-error: internal access
+          port: server._port,
+          // @ts-expect-error: TODO: implement typings
+          ssl: false,
+        });
+        connection.on('error', () => {});
+
+        const active = connection.query('active').stream();
+        const queued = connection.query('queued').stream();
+
+        [activeError, queuedError] = await Promise.all([
+          streamError(active),
+          streamError(queued),
+        ]);
+
+        // @ts-expect-error: TODO: implement typings
+        server.close();
+        resolve();
+      },
+      (conn) => {
+        conn.on('query', () => {
+          // @ts-expect-error: TODO: implement typings
+          conn.writeColumns([
+            {
+              catalog: 'def',
+              schema: '',
+              table: '',
+              orgTable: '',
+              name: 'n',
+              orgName: '',
+              characterSet: 63,
+              columnLength: 1,
+              columnType: 8,
+              flags: 129,
+              decimals: 0,
+            },
+          ]);
+          // @ts-expect-error: TODO: implement typings
+          conn.writeTextRow(['1']);
+          // @ts-expect-error: internal access
+          conn.stream.destroy();
+        });
+      }
+    );
+  });
+
+  it('should error the active stream', () => {
+    strict.equal(activeError?.fatal, true);
+    strict.equal(activeError?.code, 'PROTOCOL_CONNECTION_LOST');
+  });
+
+  it('should error the queued stream', () => {
+    strict.equal(queuedError?.fatal, true);
+    strict.equal(queuedError?.code, 'PROTOCOL_CONNECTION_LOST');
+  });
 });
