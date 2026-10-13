@@ -381,11 +381,11 @@ For `ProcedureCallPacket<RowDataPacket[]>`, please see the following examples.
 
 <hr />
 
-### QueryValues
+### QueryValues and ExecuteValues
 
 <Stability level={2} />
 
-The `QueryValues` type represents the allowed types for query parameter values:
+The types for the `values` argument to `.query()` and `.execute()` respectively:
 
 ```ts
 import mysql, { RowDataPacket, QueryValues } from 'mysql2';
@@ -406,7 +406,7 @@ conn.query<RowDataPacket[]>(
 );
 ```
 
-The `QueryValues` type includes the following types:
+`QueryValues` accepts:
 
 - `string`
 - `number`
@@ -414,10 +414,23 @@ The `QueryValues` type includes the following types:
 - `boolean`
 - `Date`
 - `null`
+- `undefined`
 - `Blob`
 - `Buffer`
-- `({} | null)[]` (array of values)
-- `{ [key: string]: QueryValues }` (named placeholders)
+- `Uint8Array`
+- `Raw` (raw SQL fragments, from `sql-escaper`)
+- `({} | null | undefined)[]` (array of values)
+- `{ [key: string]: unknown }` (named placeholders)
+
+`ExecuteValues` accepts the same types with these exceptions:
+
+- No `undefined`. Passing `undefined` as a bind parameter throws `TypeError: Bind parameters must not contain undefined. To pass SQL NULL specify JS null`.
+- No `Raw`. Prepared statements send values separately from the SQL text, so raw fragments can't be spliced in.
+- Nested arrays use `ExecuteValues[]` rather than `({} | null | undefined)[]`.
+
+:::note
+`.query()` substitutes `undefined` as `NULL` in the generated SQL, while `.execute()` throws. Prefer explicit `null` to keep behavior consistent between the two.
+:::
 
 <hr />
 
