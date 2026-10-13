@@ -3,6 +3,12 @@ import type { Connection, QueryError, RowDataPacket } from '../../../index.js';
 import { describe, it, skip, strict } from 'poku';
 import { createConnection, createServer } from '../../common.test.mjs';
 
+type AfterLoss = {
+  rows: RowDataPacket[];
+  error: QueryError | undefined;
+  timerAtLoss: unknown;
+};
+
 if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 
 const column = {
@@ -28,52 +34,64 @@ const streamError = (stream: Readable) =>
     stream.on('close', () => resolve(error));
   });
 
-const consumeAfterConnectionLoss = (respond: (conn: Connection) => void) =>
-  new Promise<{ rows: RowDataPacket[]; error: QueryError | undefined }>(
-    (resolve) => {
-      const server = createServer(
-        async () => {
-          const connection: Connection = createConnection({
-            // the mock server runs on this host, not on MYSQL_HOST
-            host: 'localhost',
-            // @ts-expect-error: internal access
-            port: server._port,
-            // @ts-expect-error: TODO: implement typings
-            ssl: false,
-          });
-          connection.on('error', () => {});
+const writePartialResult = (conn: Connection, values: string[]) => {
+  // @ts-expect-error: TODO: implement typings
+  conn.writeColumns([column]);
+  for (const n of values) {
+    // @ts-expect-error: TODO: implement typings
+    conn.writeTextRow([n]);
+  }
+};
 
-          const rows: RowDataPacket[] = [];
-          const buffered = connection
-            .query('buffered')
-            .stream({ highWaterMark: 1 });
-
+const consumeAfterConnectionLoss = (
+  respond: (conn: Connection) => void,
+  timeout?: number
+) =>
+  new Promise<AfterLoss>((resolve) => {
+    const server = createServer(
+      async () => {
+        const connection: Connection = createConnection({
+          // the mock server runs on this host, not on MYSQL_HOST
+          host: 'localhost',
           // @ts-expect-error: internal access
-          connection.stream.once('close', () => {
-            buffered.on('data', (row: RowDataPacket) => rows.push(row));
-          });
-
-          const error = await streamError(buffered);
-
+          port: server._port,
           // @ts-expect-error: TODO: implement typings
-          server.close();
-          resolve({ rows, error });
-        },
-        (conn) => {
-          conn.on('query', () => {
-            // one chunk, so the response is already buffered while the stream is paused
-            // @ts-expect-error: internal access
-            conn.stream.cork();
-            respond(conn);
-            // @ts-expect-error: internal access
-            conn.stream.uncork();
-            // @ts-expect-error: internal access
-            conn.stream.end();
-          });
-        }
-      );
-    }
-  );
+          ssl: false,
+        });
+        connection.on('error', () => {});
+
+        const rows: RowDataPacket[] = [];
+        const query = connection.query({ sql: 'buffered', timeout });
+        const buffered = query.stream({ highWaterMark: 1 });
+        let timerAtLoss: unknown;
+
+        // @ts-expect-error: internal access
+        connection.stream.once('close', () => {
+          // @ts-expect-error: internal access
+          timerAtLoss = query.queryTimeout;
+          buffered.on('data', (row: RowDataPacket) => rows.push(row));
+        });
+
+        const error = await streamError(buffered);
+
+        // @ts-expect-error: TODO: implement typings
+        server.close();
+        resolve({ rows, error, timerAtLoss });
+      },
+      (conn) => {
+        conn.on('query', () => {
+          // one chunk, so the response is already buffered while the stream is paused
+          // @ts-expect-error: internal access
+          conn.stream.cork();
+          respond(conn);
+          // @ts-expect-error: internal access
+          conn.stream.uncork();
+          // @ts-expect-error: internal access
+          conn.stream.end();
+        });
+      }
+    );
+  });
 
 await describe('Query streams when the connection is lost mid-stream', async () => {
   let activeError: QueryError | undefined;
@@ -225,14 +243,9 @@ await describe('Query streams when the connection is lost after the whole result
 });
 
 await describe('Query streams when the connection is lost after part of the result is buffered', async () => {
-  const { rows, error } = await consumeAfterConnectionLoss((conn) => {
-    // @ts-expect-error: TODO: implement typings
-    conn.writeColumns([column]);
-    for (const n of ['1', '2', '3']) {
-      // @ts-expect-error: TODO: implement typings
-      conn.writeTextRow([n]);
-    }
-  });
+  const { rows, error } = await consumeAfterConnectionLoss((conn) =>
+    writePartialResult(conn, ['1', '2', '3'])
+  );
 
   it('should deliver the rows received before the connection was lost', () => {
     strict.deepEqual(rows, [{ n: 1 }, { n: 2 }, { n: 3 }]);
@@ -244,42 +257,28 @@ await describe('Query streams when the connection is lost after part of the resu
   });
 });
 
-await describe('Query streams with a timeout when the connection is lost', async () => {
-  let timerAfterLoss: unknown;
+await describe('Query streams when the connection is lost with a full stream buffer', async () => {
+  const { rows, error } = await consumeAfterConnectionLoss((conn) =>
+    writePartialResult(conn, ['1'])
+  );
 
-  await new Promise<void>((resolve) => {
-    const server = createServer(
-      async () => {
-        const connection: Connection = createConnection({
-          // the mock server runs on this host, not on MYSQL_HOST
-          host: 'localhost',
-          // @ts-expect-error: internal access
-          port: server._port,
-          // @ts-expect-error: TODO: implement typings
-          ssl: false,
-        });
-        connection.on('error', () => {});
-
-        const timed = connection.query({ sql: 'timed', timeout: 60000 });
-        await streamError(timed.stream());
-
-        // @ts-expect-error: internal access
-        timerAfterLoss = timed.queryTimeout;
-
-        // @ts-expect-error: TODO: implement typings
-        server.close();
-        resolve();
-      },
-      (conn) => {
-        conn.on('query', () => {
-          // @ts-expect-error: internal access
-          conn.stream.destroy();
-        });
-      }
-    );
+  it('should deliver the rows received before the connection was lost', () => {
+    strict.deepEqual(rows, [{ n: 1 }]);
   });
 
+  it('should error the stream after the buffered rows', () => {
+    strict.equal(error?.fatal, true);
+    strict.equal(error?.code, 'PROTOCOL_CONNECTION_LOST');
+  });
+});
+
+await describe('Query streams with a timeout when the connection is lost', async () => {
+  const { timerAtLoss } = await consumeAfterConnectionLoss(
+    (conn) => writePartialResult(conn, ['1', '2', '3']),
+    60000
+  );
+
   it('should clear the query timeout', () => {
-    strict.equal(timerAfterLoss, null);
+    strict.equal(timerAtLoss, null);
   });
 });
