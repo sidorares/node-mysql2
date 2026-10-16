@@ -360,8 +360,8 @@ export interface ConnectionOptions {
    * `ST_X()/ST_Y()` on MySQL >= 8.0.12.
    *
    * `true` swaps SRID 4326 and 4269, an array swaps exactly those SRIDs.
-   * Leave off (default) on MySQL 5.7, MySQL <= 8.0.11 and MariaDB, where
-   * points are stored in input order and no swap is needed.
+   * Ignored on MySQL 5.7, MySQL <= 8.0.11 and MariaDB, where points are
+   * stored in input order and no swap is needed.
    *
    * (Default: false)
    */

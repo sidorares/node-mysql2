@@ -192,4 +192,4 @@ connection.query(
 );
 ```
 
-Passing `true` swaps SRID 4326 and 4269. Passing an array swaps exactly those SRIDs, for example `[4326]` or a custom SRS id. Leave it off (the default) on MySQL 5.7, MySQL 8.0.11, and MariaDB, where points are stored in input order and no swap is needed.
+Passing `true` swaps SRID 4326 and 4269. Passing an array swaps exactly those SRIDs, for example `[4326]` or a custom SRS id. Leave it off (the default) on MySQL 5.7, MySQL 8.0.11, and MariaDB, where points are stored in input order and no swap is needed. The driver also ignores the option on those servers, so enabling it on a mixed setup does not flip points that are already correct.
