@@ -46,37 +46,104 @@ const buildWKBLineString = (
   return Buffer.concat([sridBuf, byteOrder, wkbType, numPointsBuf, coords]);
 };
 
-describe('parseGeometryValue: SRID 4326 axis order (fixes #2959)', () => {
-  it('should match ST_X/ST_Y for SRID 4326 point (swap lon/lat storage)', () => {
-    const lat = -33.3109317;
-    const lon = 117.3461733;
-    const payload = buildWKBPoint(4326, lon, lat);
-    const { buffer, start, end } = buildGeometryPacket(payload);
-    const packet = new Packet(0, buffer, start, end);
-    const result = packet.parseGeometryValue() as { x: number; y: number };
+const buildWKBPolygon = (
+  srid: number,
+  rings: Array<Array<{ x: number; y: number }>>
+): Buffer => {
+  const sridBuf = Buffer.alloc(4);
+  sridBuf.writeUInt32LE(srid);
+  const byteOrder = Buffer.from([0x01]);
+  const wkbType = Buffer.alloc(4);
+  wkbType.writeUInt32LE(3);
+  const numRingsBuf = Buffer.alloc(4);
+  numRingsBuf.writeUInt32LE(rings.length);
+  const parts: Buffer[] = [sridBuf, byteOrder, wkbType, numRingsBuf];
+  rings.forEach((ring) => {
+    const numPointsBuf = Buffer.alloc(4);
+    numPointsBuf.writeUInt32LE(ring.length);
+    const coords = Buffer.alloc(16 * ring.length);
+    ring.forEach((p, i) => {
+      coords.writeDoubleLE(p.x, i * 16);
+      coords.writeDoubleLE(p.y, i * 16 + 8);
+    });
+    parts.push(numPointsBuf, coords);
+  });
+  return Buffer.concat(parts);
+};
 
-    strict.strictEqual(result.x, lat);
-    strict.strictEqual(result.y, lon);
+const parsePoint = (
+  srid: number,
+  xWire: number,
+  yWire: number,
+  swap: boolean | number[] | undefined
+): { x: number; y: number } => {
+  const payload = buildWKBPoint(srid, xWire, yWire);
+  const { buffer, start, end } = buildGeometryPacket(payload);
+  const packet = new Packet(0, buffer, start, end);
+  return packet.parseGeometryValue(swap);
+};
+
+describe('parseGeometryValue: opt-in geographic axis swap (fixes #2959)', () => {
+  it('keeps wire order by default for SRID 4326 (safe for 5.7/MariaDB)', () => {
+    const result = parsePoint(4326, 117.3461733, -33.3109317, undefined);
+
+    strict.strictEqual(result.x, 117.3461733);
+    strict.strictEqual(result.y, -33.3109317);
   });
 
-  it('should not swap for SRID 0 point', () => {
-    const payload = buildWKBPoint(0, -35.3109317, 101.3461733);
-    const { buffer, start, end } = buildGeometryPacket(payload);
-    const packet = new Packet(0, buffer, start, end);
-    const result = packet.parseGeometryValue() as { x: number; y: number };
+  it('swaps SRID 4326 point with swap=true to match ST_X/ST_Y', () => {
+    const result = parsePoint(4326, 117.3461733, -33.3109317, true);
+
+    strict.strictEqual(result.x, -33.3109317);
+    strict.strictEqual(result.y, 117.3461733);
+  });
+
+  it('swaps SRID 4269 point with swap=true', () => {
+    const result = parsePoint(4269, 101.3461733, -35.3109317, true);
 
     strict.strictEqual(result.x, -35.3109317);
     strict.strictEqual(result.y, 101.3461733);
   });
 
-  it('should swap each point in SRID 4326 linestring', () => {
+  it('does not swap SRID 0, 3006 or 7084 with swap=true', () => {
+    const zero = parsePoint(0, -35.3109317, 101.3461733, true);
+    strict.strictEqual(zero.x, -35.3109317);
+    strict.strictEqual(zero.y, 101.3461733);
+
+    const projected = parsePoint(3006, 1.0, 2.0, true);
+    strict.strictEqual(projected.x, 1.0);
+    strict.strictEqual(projected.y, 2.0);
+
+    const longLat = parsePoint(7084, 1.0, 2.0, true);
+    strict.strictEqual(longLat.x, 1.0);
+    strict.strictEqual(longLat.y, 2.0);
+  });
+
+  it('swaps only listed SRIDs with swap=[4326]', () => {
+    const swapped = parsePoint(4326, 117.3461733, -33.3109317, [4326]);
+    strict.strictEqual(swapped.x, -33.3109317);
+    strict.strictEqual(swapped.y, 117.3461733);
+
+    const untouched = parsePoint(4269, 101.3461733, -35.3109317, [4326]);
+    strict.strictEqual(untouched.x, 101.3461733);
+    strict.strictEqual(untouched.y, -35.3109317);
+  });
+
+  it('swaps a custom long-lat SRS with swap=[custom]', () => {
+    const result = parsePoint(9999, 10.0, 20.0, [9999]);
+
+    strict.strictEqual(result.x, 20.0);
+    strict.strictEqual(result.y, 10.0);
+  });
+
+  it('swaps each point in SRID 4326 linestring with swap=true', () => {
     const payload = buildWKBLineString(4326, [
       { x: 117.3461733, y: -33.3109317 },
       { x: 101.3461733, y: -35.3109317 },
     ]);
     const { buffer, start, end } = buildGeometryPacket(payload);
     const packet = new Packet(0, buffer, start, end);
-    const result = packet.parseGeometryValue() as Array<{
+    const result = packet.parseGeometryValue(true) as Array<{
       x: number;
       y: number;
     }>;
@@ -89,8 +156,8 @@ describe('parseGeometryValue: SRID 4326 axis order (fixes #2959)', () => {
     strict.strictEqual(result[1].y, 101.3461733);
   });
 
-  it('should not swap linestring for SRID 0', () => {
-    const payload = buildWKBLineString(0, [{ x: 1.0, y: 2.0 }]);
+  it('keeps linestring wire order by default', () => {
+    const payload = buildWKBLineString(4326, [{ x: 1.0, y: 2.0 }]);
     const { buffer, start, end } = buildGeometryPacket(payload);
     const packet = new Packet(0, buffer, start, end);
     const result = packet.parseGeometryValue() as Array<{
@@ -100,5 +167,24 @@ describe('parseGeometryValue: SRID 4326 axis order (fixes #2959)', () => {
 
     strict.strictEqual(result[0].x, 1.0);
     strict.strictEqual(result[0].y, 2.0);
+  });
+
+  it('swaps SRID 4326 polygon ring with swap=true', () => {
+    const payload = buildWKBPolygon(4326, [
+      [
+        { x: 117.3461733, y: -33.3109317 },
+        { x: 101.3461733, y: -35.3109317 },
+      ],
+    ]);
+    const { buffer, start, end } = buildGeometryPacket(payload);
+    const packet = new Packet(0, buffer, start, end);
+    const result = packet.parseGeometryValue(true) as Array<
+      Array<{ x: number; y: number }>
+    >;
+
+    strict.strictEqual(result[0][0].x, -33.3109317);
+    strict.strictEqual(result[0][0].y, 117.3461733);
+    strict.strictEqual(result[0][1].x, -35.3109317);
+    strict.strictEqual(result[0][1].y, 101.3461733);
   });
 });

@@ -171,3 +171,25 @@ const pool = mysql.createPool({
 
 By default, calling end on a pool connection will result in a warning being emitted and the connection being released back to the pool. This is for compatibility with mysqljs/mysql.
 By providing `gracefulEnd: true` when creating the pool, calling end on a pooled connection will actually close the connection instead of releasing it back to the pool.
+
+## Geographic geometry axis order
+
+MySQL 8.0.12 and later stores geographic coordinates with longitude in X and latitude in Y, while `ST_X()` and `ST_Y()` return them in SRS defined order (lat, lon for SRID 4326). By default the driver returns the stored wire order, so `x` can look swapped compared to `ST_X()`.
+
+Set `swapGeometryAxisOrder` to get `ST_X()` and `ST_Y()` order instead:
+
+```js
+const connection = mysql.createConnection({
+  user: 'test',
+  database: 'test',
+  swapGeometryAxisOrder: true,
+});
+
+// per query override works the same way
+connection.query(
+  { sql: 'SELECT pos FROM places', swapGeometryAxisOrder: true },
+  onRows
+);
+```
+
+Passing `true` swaps SRID 4326 and 4269. Passing an array swaps exactly those SRIDs, for example `[4326]` or a custom SRS id. Leave it off (the default) on MySQL 5.7, MySQL 8.0.11, and MariaDB, where points are stored in input order and no swap is needed.
