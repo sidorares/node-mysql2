@@ -156,6 +156,15 @@ export interface QueryOptions {
    * The timezone used to store local dates. (Default: 'local')
    */
   timezone?: Timezone;
+
+  /**
+   * Swap x/y for geographic SRS axis order so `{x,y}` matches
+   * `ST_X()/ST_Y()` on MySQL >= 8.0.12.
+   * Overrides the same option set at the connection level.
+   *
+   * (Default: false)
+   */
+  swapGeometryAxisOrder?: boolean | number[];
 }
 
 export interface StreamOptions {
