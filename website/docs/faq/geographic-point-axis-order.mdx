@@ -1,0 +1,32 @@
+# Why are `x` and `y` swapped for geographic points?
+
+In MySQL 8.0 and later, a `POINT` with a geographic SRID such as `4326` (WGS 84) follows the axis order of its spatial reference system. For SRID `4326` that order is **latitude, longitude**, so `ST_X()` returns the latitude and `ST_Y()` returns the longitude.
+
+MySQL2 decodes geometry values from the [internal storage format](https://dev.mysql.com/doc/refman/8.4/en/gis-data-formats.html#gis-internal-format), which always stores the longitude first. A geographic point is therefore returned as `{ x: longitude, y: latitude }`, which differs from what `ST_X()` and `ST_Y()` return for the same value.
+
+Points with SRID `0` (Cartesian) are not affected: `x` and `y` match `ST_X()` and `ST_Y()`.
+
+```js
+const [rows] = await connection.query(
+  "SELECT ST_GeomFromText('POINT(-31.95 115.86)', 4326) AS p, ST_X(ST_GeomFromText('POINT(-31.95 115.86)', 4326)) AS lat"
+);
+
+console.log(rows[0].lat); // -31.95
+console.log(rows[0].p); // { x: 115.86, y: -31.95 }
+```
+
+To get named coordinates, read them by name rather than position:
+
+```js
+const { x: longitude, y: latitude } = rows[0].p;
+```
+
+Alternatively, let the server return them with `ST_Latitude()` and `ST_Longitude()`:
+
+```sql
+SELECT ST_Latitude(location) AS latitude, ST_Longitude(location) AS longitude FROM places;
+```
+
+:::tip
+Mapping libraries often expect `[latitude, longitude]` (e.g. Leaflet's `L.latLng`), while GeoJSON expects `[longitude, latitude]`.
+:::
