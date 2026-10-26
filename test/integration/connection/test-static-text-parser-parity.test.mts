@@ -49,7 +49,7 @@ await describe('Static text parser parity', async () => {
       js JSON,
       en ENUM('a', 'b'),
       nul VARCHAR(8)
-    )
+    ) CHARACTER SET utf8mb4
   `);
   await connection.query(`
     INSERT INTO static_parity VALUES
