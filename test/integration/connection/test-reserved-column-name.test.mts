@@ -1,9 +1,9 @@
+import type { Connection } from '../../../index.js';
 import { createRequire } from 'node:module';
 import { describe, it, strict } from 'poku';
 import { createConnection, createServer } from '../../common.test.mjs';
 
 const require = createRequire(import.meta.url);
-// @ts-expect-error: internal module
 const ServerStatus = require('../../../lib/constants/server_status.js');
 
 type ColumnDef = {
@@ -38,10 +38,8 @@ const RESERVED_QUERY = 'SELECT 1 AS `__proto__`';
 const OK_QUERY = 'SELECT 2 AS ok';
 const RESERVED_ERROR = /private property/;
 
-type MockServer = ReturnType<typeof createServer>;
-
 const withServer = (
-  handler: (conn: any) => void,
+  handler: (conn: Connection) => void,
   run: (port: number, done: () => void) => void
 ): Promise<void> =>
   new Promise<void>((resolve) => {
@@ -56,7 +54,6 @@ const withServer = (
       },
       (conn) => handler(conn)
     );
-    void (server as MockServer);
   });
 
 await describe('Reserved column name (e.g. `__proto__`)', async () => {
@@ -122,7 +119,9 @@ await describe('Reserved column name (e.g. `__proto__`)', async () => {
         conn.on('query', (q: string) => {
           if (q.includes('__proto__')) {
             // first result set: reserved column, EOF with MORE_RESULTS
+            // @ts-expect-error: server-side helper missing from the typings
             conn.writeColumns([column('__proto__')]);
+            // @ts-expect-error: server-side helper missing from the typings
             conn.writeTextRow(['1']);
             conn.writeEof(0, ServerStatus.SERVER_MORE_RESULTS_EXISTS);
             // second result set: valid, must be consumed before the error
@@ -167,8 +166,8 @@ await describe('Reserved column name (e.g. `__proto__`)', async () => {
           payload.writeUInt16LE(0, 11); // num params
           payload.writeUInt8(0, 13); // reserved
           payload.writeUInt16LE(0, 14); // warnings
-          // @ts-expect-error: internal access
           const Packets =
+            // @ts-expect-error: internal access with a runtime fallback
             conn.constructor.Packets ??
             require('../../../lib/packets/index.js');
           const packet = new Packets.Packet(0, payload, 0, payload.length);
@@ -176,13 +175,15 @@ await describe('Reserved column name (e.g. `__proto__`)', async () => {
           conn.writePacket(
             Packets.ColumnDefinition.toPacket(
               column('__proto__'),
-              // @ts-expect-error: internal access
+              // @ts-expect-error: internal access (same call shape as
+              // lib's own server-side writeColumns helper)
               conn.serverConfig.encoding
             )
           );
           conn.writeEof();
         });
         conn.on('stmt_execute', () => {
+          // @ts-expect-error: `binary` flag is missing from the typings
           conn.writeTextResult([{ 1: '1' }], [column('__proto__')], true);
         });
         conn.on('query', (q: string) => {
