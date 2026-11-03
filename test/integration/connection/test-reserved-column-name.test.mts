@@ -40,16 +40,20 @@ const RESERVED_ERROR = /private property/;
 
 const withServer = (
   handler: (conn: Connection) => void,
-  run: (port: number, done: () => void) => void
+  run: (port: number, done: (err?: unknown) => void) => void
 ): Promise<void> =>
-  new Promise<void>((resolve) => {
+  new Promise<void>((resolve, reject) => {
     const server = createServer(
       () => {
         // @ts-expect-error: internal access
-        run(server._port, () => {
+        run(server._port, (err) => {
           // @ts-expect-error: internal access
           server._server.close();
-          resolve();
+          if (err) {
+            reject(err instanceof Error ? err : new Error(String(err)));
+          } else {
+            resolve();
+          }
         });
       },
       (conn) => handler(conn)
@@ -69,14 +73,26 @@ await describe('Reserved column name (e.g. `__proto__`)', async () => {
         });
       },
       (port, done) => {
-        const connection = createConnection({ port });
+        const connection = createConnection({
+          port,
+          // @ts-expect-error: TODO: implement typings
+          ssl: false,
+        });
         connection.query(RESERVED_QUERY, (err1) => {
-          strict.match(String(err1 && err1.message), RESERVED_ERROR);
-          connection.query(OK_QUERY, (err2, rows) => {
-            strict.ifError(err2 ?? undefined);
-            strict.deepEqual(rows, [{ ok: 2 }]);
-            connection.end(() => done());
-          });
+          try {
+            strict.match(String(err1 && err1.message), RESERVED_ERROR);
+            connection.query(OK_QUERY, (err2, rows) => {
+              try {
+                strict.ifError(err2 ?? undefined);
+                strict.deepEqual(rows, [{ ok: 2 }]);
+                connection.end(() => done());
+              } catch (e) {
+                connection.end(() => done(e));
+              }
+            });
+          } catch (e) {
+            connection.end(() => done(e));
+          }
         });
       }
     );
@@ -97,17 +113,30 @@ await describe('Reserved column name (e.g. `__proto__`)', async () => {
         });
       },
       (port, done) => {
-        const connection = createConnection({ port, disableEval: true });
-        connection.on('error', () => {
-          strict.fail('connection must not emit a fatal error');
+        const connection = createConnection({
+          port,
+          disableEval: true,
+          // @ts-expect-error: TODO: implement typings
+          ssl: false,
+        });
+        connection.on('error', (err) => {
+          done(err ?? new Error('connection emitted a fatal error'));
         });
         connection.query(RESERVED_QUERY, (err1) => {
-          strict.match(String(err1 && err1.message), RESERVED_ERROR);
-          connection.query(OK_QUERY, (err2, rows) => {
-            strict.ifError(err2 ?? undefined);
-            strict.deepEqual(rows, [{ ok: 2 }]);
-            connection.end(() => done());
-          });
+          try {
+            strict.match(String(err1 && err1.message), RESERVED_ERROR);
+            connection.query(OK_QUERY, (err2, rows) => {
+              try {
+                strict.ifError(err2 ?? undefined);
+                strict.deepEqual(rows, [{ ok: 2 }]);
+                connection.end(() => done());
+              } catch (e) {
+                connection.end(() => done(e));
+              }
+            });
+          } catch (e) {
+            connection.end(() => done(e));
+          }
         });
       }
     );
@@ -135,19 +164,29 @@ await describe('Reserved column name (e.g. `__proto__`)', async () => {
         const connection = createConnection({
           port,
           multipleStatements: true,
+          // @ts-expect-error: TODO: implement typings
+          ssl: false,
         });
-        connection.on('error', () => {
-          strict.fail('connection must not emit a fatal error');
+        connection.on('error', (err) => {
+          done(err ?? new Error('connection emitted a fatal error'));
         });
         connection.query(
           `${RESERVED_QUERY}; ${OK_QUERY}`,
           (err1: Error | null) => {
-            strict.match(String(err1 && err1.message), RESERVED_ERROR);
-            connection.query(OK_QUERY, (err2, rows) => {
-              strict.ifError(err2 ?? undefined);
-              strict.deepEqual(rows, [{ ok: 2 }]);
-              connection.end(() => done());
-            });
+            try {
+              strict.match(String(err1 && err1.message), RESERVED_ERROR);
+              connection.query(OK_QUERY, (err2, rows) => {
+                try {
+                  strict.ifError(err2 ?? undefined);
+                  strict.deepEqual(rows, [{ ok: 2 }]);
+                  connection.end(() => done());
+                } catch (e) {
+                  connection.end(() => done(e));
+                }
+              });
+            } catch (e) {
+              connection.end(() => done(e));
+            }
           }
         );
       }
@@ -192,17 +231,29 @@ await describe('Reserved column name (e.g. `__proto__`)', async () => {
         });
       },
       (port, done) => {
-        const connection = createConnection({ port });
-        connection.on('error', () => {
-          strict.fail('connection must not emit a fatal error');
+        const connection = createConnection({
+          port,
+          // @ts-expect-error: TODO: implement typings
+          ssl: false,
+        });
+        connection.on('error', (err) => {
+          done(err ?? new Error('connection emitted a fatal error'));
         });
         connection.execute(RESERVED_QUERY, [], (err1: Error | null) => {
-          strict.match(String(err1 && err1.message), RESERVED_ERROR);
-          connection.query(OK_QUERY, (err2, rows) => {
-            strict.ifError(err2 ?? undefined);
-            strict.deepEqual(rows, [{ ok: 2 }]);
-            connection.end(() => done());
-          });
+          try {
+            strict.match(String(err1 && err1.message), RESERVED_ERROR);
+            connection.query(OK_QUERY, (err2, rows) => {
+              try {
+                strict.ifError(err2 ?? undefined);
+                strict.deepEqual(rows, [{ ok: 2 }]);
+                connection.end(() => done());
+              } catch (e) {
+                connection.end(() => done(e));
+              }
+            });
+          } catch (e) {
+            connection.end(() => done(e));
+          }
         });
       }
     );
