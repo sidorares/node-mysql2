@@ -222,8 +222,15 @@ await describe('Reserved column name (e.g. `__proto__`)', async () => {
           conn.writeEof();
         });
         conn.on('stmt_execute', () => {
-          // @ts-expect-error: `binary` flag is missing from the typings
-          conn.writeTextResult([{ 1: '1' }], [column('__proto__')], true);
+          // Write a valid LONGLONG binary row directly. The mock server's
+          // writeTextResult helper cannot encode this binary column type.
+          const Packets = require('../../../lib/packets/index.js');
+          // @ts-expect-error: server-side helper missing from the typings
+          conn.writeColumns([column('__proto__')]);
+          const payload = Buffer.alloc(14);
+          payload.writeBigInt64LE(1n, 6); // binary-row header + null bitmap
+          conn.writePacket(new Packets.Packet(0, payload, 0, payload.length));
+          conn.writeEof();
         });
         conn.on('query', (q: string) => {
           strict.equal(q, OK_QUERY);
