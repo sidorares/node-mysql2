@@ -28,6 +28,7 @@ interface Types {
   0xfd: string;
   0xfe: string;
   0xff: string;
+  [key: number]: string;
 
   DECIMAL: number;
   TINY: number;
