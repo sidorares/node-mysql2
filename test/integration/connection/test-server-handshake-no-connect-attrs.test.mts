@@ -47,9 +47,10 @@ class ServerHandshakeNoAttrs extends Command {
       undefined,
       'connectAttributes should be undefined when server does not advertise CONNECT_ATTRS'
     );
-    strict.ok(
+    strict.equal(
       clientReply.clientFlags & ClientConstants.CONNECT_ATTRS,
-      'raw clientFlags should still contain the CONNECT_ATTRS bit the client sent'
+      0,
+      'client should not announce CONNECT_ATTRS when the server does not advertise it'
     );
 
     connection.writeOk();
