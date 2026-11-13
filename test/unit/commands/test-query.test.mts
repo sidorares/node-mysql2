@@ -1,22 +1,44 @@
 import { describe, it, strict } from 'poku';
 import Query from '../../../lib/commands/query.js';
 
+const rowPacket = { isEOF: () => false };
+const eofPacket = { isEOF: () => true, eofStatusFlags: () => 0 };
+
+const createFailingQuery = (thrown: unknown) => {
+  const reported: Array<[Error | null, unknown]> = [];
+  const query = new Query({}, (err: Error | null, res: unknown) => {
+    reported.push([err, res]);
+  });
+
+  query._rowParser = new (class FailingRowParser {
+    next() {
+      throw thrown;
+    }
+  })();
+
+  return { query, reported };
+};
+
 describe('Query command', () => {
-  it('should pass error to callback when row parser throws', () => {
+  it('should report a row parser error once the result set ends', () => {
     const testError = new Error('something happened');
-    const testQuery = new Query({}, (err: Error | null, res: unknown) => {
-      strict.equal(err, testError);
-      strict.equal(res, null);
-    });
+    const { query, reported } = createFailingQuery(testError);
 
-    testQuery._rowParser = new (class FailingRowParser {
-      next() {
-        throw testError;
-      }
-    })();
+    query.row(rowPacket);
+    query.row(rowPacket);
+    strict.deepEqual(reported, [], 'rows are still arriving');
 
-    testQuery.row({
-      isEOF: () => false,
-    });
+    query.row(eofPacket);
+    strict.deepEqual(reported, [[testError, null]]);
+  });
+
+  it('should report an error when the row parser throws a falsy value', () => {
+    const { query, reported } = createFailingQuery(null);
+
+    query.row(rowPacket);
+    query.row(eofPacket);
+
+    strict.equal(reported.length, 1);
+    strict.ok(reported[0][0] instanceof Error);
   });
 });
