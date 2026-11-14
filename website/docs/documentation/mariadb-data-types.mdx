@@ -95,6 +95,29 @@ const connection = mysql.createConnection({
 });
 ```
 
+MariaDB applies the same JSON format to any character or binary string column
+that has a column-level `CHECK (JSON_VALID(col))` constraint, so those columns
+are parsed too. For a binary column (`BLOB`, `VARBINARY`, `BINARY`), the stored
+bytes are decoded as UTF-8, the encoding the JSON specification defines:
+
+```js
+// CREATE TABLE t (b LONGBLOB CHECK (JSON_VALID(b)))
+const [rows] = await connection.query('SELECT b FROM t');
+// rows[0].b is an object, e.g. { s: 'café' }
+```
+
+To receive the raw bytes of such a column instead, read it as a buffer in a
+`typeCast` function, or cast it in the query:
+
+```js
+const [rows] = await connection.query({
+  sql: 'SELECT b FROM t',
+  typeCast: (field, next) =>
+    field.extendedFormat === 'json' ? field.buffer() : next(),
+});
+// or: SELECT CAST(b AS BINARY) AS b FROM t
+```
+
 Objects bound as parameters are automatically serialized with
 `JSON.stringify()`:
 
