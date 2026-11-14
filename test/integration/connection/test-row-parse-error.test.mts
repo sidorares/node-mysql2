@@ -75,6 +75,18 @@ await describe('Row parse error', async () => {
     strict.equal(await isStillUsable(connection), true);
   });
 
+  await it('clears the query timeout', async () => {
+    const pendingTimeout = await new Promise((resolve) => {
+      const query = connection.query(
+        { sql: threeRows, typeCast: failOnEveryRow, timeout: 60000 },
+        // @ts-expect-error: internal access
+        () => resolve(query.queryTimeout)
+      );
+    });
+
+    strict.equal(pendingTimeout, null);
+  });
+
   it('the connection reports no protocol error', () => {
     strict.deepEqual(connectionErrors, []);
   });
