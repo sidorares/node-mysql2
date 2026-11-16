@@ -1,3 +1,4 @@
+import type { TypeCastField, TypeCastNext } from '../../../index.js';
 import { describe, it, strict } from 'poku';
 import ConnectionConfig from '../../../lib/connection_config.js';
 
@@ -70,5 +71,38 @@ describe('ConnectionConfig.queryOptions', () => {
     );
 
     strict.deepEqual(copy, { typeCast: false, custom: 1, rowsAsArray: true });
+  });
+
+  const connectionTypeCast = (_field: TypeCastField, next: TypeCastNext) =>
+    next();
+
+  it('keeps the connection typeCast when the query leaves it undefined or null', () => {
+    for (const typeCast of [connectionTypeCast, true, false]) {
+      const withTypeCast = new ConnectionConfig({ typeCast });
+      for (const unset of [undefined, null]) {
+        strict.equal(
+          ConnectionConfig.queryOptions(withTypeCast, { typeCast: unset })
+            .typeCast,
+          typeCast
+        );
+        strict.equal(
+          ConnectionConfig.queryOptions({ typeCast }, { typeCast: unset })
+            .typeCast,
+          typeCast,
+          'plain merge'
+        );
+      }
+    }
+  });
+
+  it('lets any other query typeCast replace the connection one', () => {
+    const withFunction = new ConnectionConfig({ typeCast: connectionTypeCast });
+    const queryTypeCast = (_field: TypeCastField, next: TypeCastNext) => next();
+    for (const typeCast of [true, false, queryTypeCast]) {
+      strict.equal(
+        ConnectionConfig.queryOptions(withFunction, { typeCast }).typeCast,
+        typeCast
+      );
+    }
   });
 });

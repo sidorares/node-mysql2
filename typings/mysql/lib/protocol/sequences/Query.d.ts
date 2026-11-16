@@ -78,6 +78,8 @@ export interface QueryOptions {
    *
    * It is not recommended (and may go away / change in the future) to disable type casting, but you can currently do so on either the connection or query level.
    *
+   * A query-level value replaces the connection-level one, a function included. Left out or `undefined`, the connection-level value applies.
+   *
    * ---
    *
    * You can also specify a function to do the type casting yourself:
