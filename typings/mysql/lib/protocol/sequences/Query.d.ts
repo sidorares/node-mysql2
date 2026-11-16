@@ -59,11 +59,8 @@ export interface QueryOptions {
 
   /**
    * The maximum time, in milliseconds, that the query may take, counted from when it starts running until its whole
-   * result has been received (for `query().stream()`, until the stream ends). It is not reset when data arrives.
-   *
-   * When the time is reached, the query fails with a `PROTOCOL_SEQUENCE_TIMEOUT` error. This timeout is handled by the
-   * client, not the MySQL protocol: the query is not cancelled on the server, and the connection stays open. Later
-   * commands on the same connection run once the server has finished the timed-out query.
+   * result has been received. It is not reset when data arrives. With `stream()`, receiving pauses while the consumer
+   * falls behind, so that time counts too.
    */
   timeout?: number;
 
