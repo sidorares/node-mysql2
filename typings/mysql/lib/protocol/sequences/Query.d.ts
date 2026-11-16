@@ -59,10 +59,9 @@ export interface QueryOptions {
   namedPlaceholders?: boolean;
 
   /**
-   * Every operation takes an optional inactivity timeout option. This allows you to specify appropriate timeouts for
-   * operations. It is important to note that these timeouts are not part of the MySQL protocol, and rather timeout
-   * operations through the client. This means that when a timeout is reached, the connection it occurred on will be
-   * destroyed and no further operations can be performed.
+   * The maximum time, in milliseconds, that the query may take, counted from when it starts running until its whole
+   * result has been received. It is not reset when data arrives. With `stream()`, receiving pauses while the consumer
+   * falls behind, so that time counts too.
    */
   timeout?: number;
 
