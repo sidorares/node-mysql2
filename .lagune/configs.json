@@ -3,12 +3,13 @@
   "categories": ["owasp", "javascript"],
   "checkers": {
     "ignore": [
-      "test",
       ".claude",
       ".agents",
-      "tools",
-      "fixtures",
       "benchmarks",
+      "fixtures",
+      "scripts",
+      "tools",
+      "test",
       "website",
       "poku.config.js"
     ]

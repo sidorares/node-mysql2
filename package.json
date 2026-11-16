@@ -26,7 +26,8 @@
     "src:test:bun": "npm run src:build && tsx tools/src/prepare-tests.mts && bun poku --config=tools/src/poku.config.mts",
     "src:test:deno": "npm run src:build && tsx tools/src/prepare-tests.mts && deno run -A npm:poku --config=tools/src/poku.config.mts",
     "benchmark": "node ./benchmarks/benchmark.js",
-    "wait-port": "wait-on"
+    "wait-port": "wait-on",
+    "checkout": "bash scripts/checkout.sh"
   },
   "repository": {
     "type": "git",
