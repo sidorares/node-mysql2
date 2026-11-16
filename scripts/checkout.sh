@@ -1,14 +1,14 @@
 #!/bin/bash
-# Usage: npm run checkout -- [--eject] <owner>/<branch>
+# Usage: npm run checkout -- [--eject] <owner>:<branch> (or <owner>/<branch>)
 
 set -euo pipefail
 
 eject=false
 if [[ ${1-} == '--eject' ]]; then eject=true && shift; fi
 
-readonly target=${1:?'missing <owner>/<branch>'}
-readonly owner=${target%%/*}
-readonly branch=${target#*/}
+readonly target=${1:?'missing <owner>:<branch>'}
+readonly owner=${target%%[/:]*}
+readonly branch=${target#*[/:]}
 
 if [[ $eject == true ]]; then
   if [[ $(git branch --show-current) == "$branch" ]]; then git switch master; fi
