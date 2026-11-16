@@ -48,8 +48,8 @@ export const ExternalCodeEmbed: FC<ExternalCodeEmbedProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(true);
   const { siteConfig } = useDocusaurusContext();
-  const baseUrl = siteConfig.baseUrl.replace(/\/$/, '');
-  const finalURL = /^\//.test(url) ? `${baseUrl}${url}` : url;
+  const baseUrl = siteConfig.baseUrl.replace(/\/$/u, '');
+  const finalURL = /^\//u.test(url) ? `${baseUrl}${url}` : url;
 
   useEffect(() => {
     const controller = new AbortController();

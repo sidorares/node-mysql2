@@ -1,7 +1,7 @@
 import type { FC, JSX } from 'react';
 import Link from '@docusaurus/Link';
 import {
-  AlertTriangle,
+  TriangleExclamationPoint,
   Lightbulb,
   LightbulbOff,
   Microscope,
@@ -51,7 +51,7 @@ export const Stability: FC<StabilityProps> = ({ level, message }) => {
   > = {
     0: {
       title: 'Deprecated',
-      icon: <AlertTriangle />,
+      icon: <TriangleExclamationPoint />,
     },
     1: {
       title: 'Experimental',
