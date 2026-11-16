@@ -145,6 +145,18 @@ export interface QueryOptions {
   bigNumberStrings?: boolean;
 
   /**
+   * DECIMAL and NEWDECIMAL types will be returned as numbers if this option is set to `true` ( default: `false`).
+   */
+  decimalNumbers?: boolean;
+
+  /**
+   * Force JSON to be returned as string
+   *
+   * (Default: false)
+   */
+  jsonStrings?: boolean;
+
+  /**
    * Force date types (TIMESTAMP, DATETIME, DATE) to be returned as strings rather then inflated into JavaScript Date
    * objects. Can be true/false or an array of type names to keep as strings.
    *

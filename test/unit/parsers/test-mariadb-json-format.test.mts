@@ -46,6 +46,7 @@ const binaryRowPacket = () => {
 
 const fields = [jsonField];
 const options = {};
+const jsonStrings = { jsonStrings: true };
 
 // the compiled row classes are untyped internals
 const jsonOf = (row: object): unknown => (row as { j: unknown }).j;
@@ -58,8 +59,8 @@ describe('MariaDB extended JSON format parsing', () => {
   });
 
   it('text parser should respect jsonStrings', () => {
-    const Parser = getTextParser(fields, options, { jsonStrings: true });
-    const row = new Parser(fields).next(textRowPacket(), fields, options);
+    const Parser = getTextParser(fields, jsonStrings, jsonStrings);
+    const row = new Parser(fields).next(textRowPacket(), fields, jsonStrings);
     strict.equal(jsonOf(row), JSON.stringify(value));
   });
 
@@ -70,8 +71,8 @@ describe('MariaDB extended JSON format parsing', () => {
   });
 
   it('binary parser should respect jsonStrings', () => {
-    const Parser = getBinaryParser(fields, options, { jsonStrings: true });
-    const row = new Parser().next(binaryRowPacket(), fields, options);
+    const Parser = getBinaryParser(fields, jsonStrings, jsonStrings);
+    const row = new Parser().next(binaryRowPacket(), fields, jsonStrings);
     strict.equal(jsonOf(row), JSON.stringify(value));
   });
 
@@ -82,10 +83,8 @@ describe('MariaDB extended JSON format parsing', () => {
   });
 
   it('static text parser should respect jsonStrings', () => {
-    const parser = getStaticTextParser(fields, options, {
-      jsonStrings: true,
-    });
-    const row = parser.next(textRowPacket(), fields, options);
+    const parser = getStaticTextParser(fields, jsonStrings, jsonStrings);
+    const row = parser.next(textRowPacket(), fields, jsonStrings);
     strict.equal(jsonOf(row), JSON.stringify(value));
   });
 
@@ -96,10 +95,8 @@ describe('MariaDB extended JSON format parsing', () => {
   });
 
   it('static binary parser should respect jsonStrings', () => {
-    const Parser = getStaticBinaryParser(fields, options, {
-      jsonStrings: true,
-    });
-    const row = new Parser().next(binaryRowPacket(), fields, options);
+    const Parser = getStaticBinaryParser(fields, jsonStrings, jsonStrings);
+    const row = new Parser().next(binaryRowPacket(), fields, jsonStrings);
     strict.equal(jsonOf(row), JSON.stringify(value));
   });
 });

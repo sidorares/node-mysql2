@@ -169,11 +169,12 @@ for (const [label, field] of [
     });
 
     it('jsonStrings still returns the raw (always exact) text', () => {
-      const Parser = getTextParser(fields, options, {
+      const jsonStrings = { jsonStrings: true };
+      const Parser = getTextParser(fields, jsonStrings, {
         supportBigNumbers: true,
         jsonStrings: true,
       });
-      const row = new Parser(fields).next(textRowPacket(), fields, options);
+      const row = new Parser(fields).next(textRowPacket(), fields, jsonStrings);
       strict.equal(jsonOf(row), raw.toString('utf8'));
     });
 

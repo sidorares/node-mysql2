@@ -29,6 +29,7 @@ interface CacheOptions {
     boolean | number | ((field: TypeCastField, next: TypeCastNext) => unknown);
   timezone?: string;
   decimalNumbers?: boolean | object;
+  jsonStrings?: boolean;
   dateStrings?: boolean | string | string[];
 }
 
@@ -232,7 +233,7 @@ describe('Parser cache', () => {
         { ...baseOptions, dateStrings: ['DATE', 'DATETIME'] },
         baseConfig,
       ],
-      ['config jsonStrings', baseOptions, { ...baseConfig, jsonStrings: true }],
+      ['jsonStrings', { ...baseOptions, jsonStrings: true }, baseConfig],
     ];
     const inputs: Input[] = variants.map(([, options, config]) => ({
       ...base,
