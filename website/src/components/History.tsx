@@ -80,7 +80,7 @@ export const History: FC<HistoryProps> = ({ records, open }) => {
           {records.map((record, index) => (
             <tr key={`record:${index}`}>
               <td>
-                <strong>v{record.version.replace(/[^0-9.]/g, '')}</strong>
+                <strong>v{record.version.replace(/[^0-9.]/gu, '')}</strong>
               </td>
               <td>
                 <div className='changes'>

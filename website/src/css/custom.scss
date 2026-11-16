@@ -29,6 +29,18 @@
   --ifm-table-background: transparent !important;
 }
 
+code[class*='language-'],
+pre[class*='language-'] {
+  font-size: 0.85em;
+
+  .token {
+    &.comment {
+      font-size: 0.9em;
+      font-style: normal !important;
+    }
+  }
+}
+
 [data-theme='light'] {
   code[class*='language-'],
   pre[class*='language-'] {
@@ -55,18 +67,6 @@
       &.number {
         color: #0550ae !important;
       }
-    }
-  }
-}
-
-code[class*='language-'],
-pre[class*='language-'] {
-  font-size: 0.85em;
-
-  .token {
-    &.comment {
-      font-size: 0.9em;
-      font-style: normal !important;
     }
   }
 }

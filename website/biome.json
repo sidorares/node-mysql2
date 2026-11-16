@@ -20,12 +20,14 @@
     "enabled": true,
     "domains": {
       "qwik": "none",
+      "reactNative": "none",
       "solid": "none"
     },
     "rules": {
       "preset": "all",
       "complexity": {
         "noExcessiveCognitiveComplexity": "off",
+        "noImportantStyles": "off",
         "noUselessFragments": "off"
       },
       "correctness": {
@@ -52,6 +54,7 @@
       "style": {
         "noCommonJs": "off",
         "noDefaultExport": "off",
+        "noHexColors": "off",
         "noIncrementDecrement": "off",
         "noJsxLiterals": "off",
         "noNonNullAssertion": "off",
@@ -73,6 +76,7 @@
         "noReactSpecificProps": "off",
         "noShadow": "off",
         "useAwait": "error",
+        "useExpect": "off",
         "useIsArray": "error"
       }
     }
