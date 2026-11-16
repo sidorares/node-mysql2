@@ -101,6 +101,7 @@ export const createConnection = function (args?: ConnectionOptions) {
     nestTables: args && args.nestTables,
     ssl: (args && args.ssl) ?? config.ssl,
     jsonStrings: args && args.jsonStrings,
+    swapGeometryAxisOrder: args && args.swapGeometryAxisOrder,
     disableEval,
     flags: args && args.flags,
   };
