@@ -12,10 +12,25 @@ if (typeof Deno !== 'undefined') skip('Deno: process is not terminated');
 // capability flags sent by the ClickHouse server reported in #3988
 const clickHouseFlags = 19433992;
 const noConnectAttrsFlags = 0xffffff & ~ClientConstants.CONNECT_ATTRS;
+const serverRequestFlags =
+  ClientConstants.FOUND_ROWS |
+  ClientConstants.IGNORE_SPACE |
+  ClientConstants.INTERACTIVE |
+  ClientConstants.LOCAL_FILES |
+  ClientConstants.MULTI_STATEMENTS |
+  ClientConstants.MULTI_RESULTS |
+  ClientConstants.PS_MULTI_RESULTS;
+
+type ChangeUser = {
+  user: string;
+  database: string;
+  authPluginName: string;
+  hasTrailingData: boolean;
+};
 
 type Observed = {
   handshakeFlags?: number;
-  changeUserHasTrailingData?: boolean;
+  changeUser?: ChangeUser;
 };
 
 class FakeServer extends Command {
@@ -55,16 +70,20 @@ class FakeServer extends Command {
     return FakeServer.prototype.dispatchCommands;
   }
 
-  // COM_CHANGE_USER layout for a client using SECURE_CONNECTION and PLUGIN_AUTH:
-  // command, user, auth token, database, charset, auth plugin name, then
-  // connection attributes only when CONNECT_ATTRS was negotiated
   readChangeUser(packet: typeof Packet.prototype, connection: Connection) {
-    packet.readNullTerminatedString('utf8');
-    packet.readBuffer(packet.readInt8());
-    packet.readNullTerminatedString('utf8');
-    packet.readInt16();
-    packet.readNullTerminatedString('latin1');
-    this.observed.changeUserHasTrailingData = packet.haveMoreData();
+    const user = packet.readNullTerminatedString('utf8');
+    const authTokenLength = packet.readInt8();
+    packet.skip(authTokenLength);
+    const database = packet.readNullTerminatedString('utf8');
+    const charsetNumberLength = 2;
+    packet.skip(charsetNumberLength);
+    const authPluginName = packet.readNullTerminatedString('latin1');
+    this.observed.changeUser = {
+      user,
+      database,
+      authPluginName,
+      hasTrailingData: packet.haveMoreData(),
+    };
     connection.writeOk();
   }
 
@@ -105,14 +124,18 @@ const startFakeServer = async (serverFlags: number, observed: Observed) => {
   return { port, close };
 };
 
-await describe('Client capability flags against a ClickHouse server', async () => {
+const connectAndQuery = async (
+  serverFlags: number,
+  options: { multipleStatements?: boolean } = {}
+) => {
   const observed: Observed = {};
-  const server = await startFakeServer(clickHouseFlags, observed);
+  const server = await startFakeServer(serverFlags, observed);
   const connection = mysql
     .createConnection({
       port: server.port,
       user: 'test_user',
       database: 'test_db',
+      ...options,
     })
     .promise();
 
@@ -120,19 +143,42 @@ await describe('Client capability flags against a ClickHouse server', async () =
   await connection.end();
   await server.close();
 
-  it('should only announce flags the server advertises', () => {
+  return observed.handshakeFlags ?? -1;
+};
+
+await describe('Client capability flags against a ClickHouse server', async () => {
+  const handshakeFlags = await connectAndQuery(clickHouseFlags, {
+    multipleStatements: true,
+  });
+
+  it('should only announce layout flags the server advertises', () => {
     strict.equal(
-      (observed.handshakeFlags ?? -1) & ~clickHouseFlags,
-      0,
-      'handshake response contains flags the server did not advertise'
+      handshakeFlags &
+        ~(clickHouseFlags | ClientConstants.PROTOCOL_41 | serverRequestFlags),
+      0
     );
   });
 
-  it('should not announce SESSION_TRACK', () => {
-    strict.equal(
-      (observed.handshakeFlags ?? -1) & ClientConstants.SESSION_TRACK,
-      0
-    );
+  it('should not announce CONNECT_ATTRS or SESSION_TRACK', () => {
+    strict.equal(handshakeFlags & ClientConstants.CONNECT_ATTRS, 0);
+    strict.equal(handshakeFlags & ClientConstants.SESSION_TRACK, 0);
+  });
+
+  it('should keep request flags the server does not advertise', () => {
+    strict.equal(clickHouseFlags & ClientConstants.IGNORE_SPACE, 0);
+    strict.equal(clickHouseFlags & ClientConstants.MULTI_STATEMENTS, 0);
+    strict.notEqual(handshakeFlags & ClientConstants.IGNORE_SPACE, 0);
+    strict.notEqual(handshakeFlags & ClientConstants.MULTI_STATEMENTS, 0);
+  });
+});
+
+await describe('Client capability flags against a server without PROTOCOL_41', async () => {
+  const handshakeFlags = await connectAndQuery(
+    clickHouseFlags & ~ClientConstants.PROTOCOL_41
+  );
+
+  it('should keep PROTOCOL_41 since only the 4.1 layout is written', () => {
+    strict.notEqual(handshakeFlags & ClientConstants.PROTOCOL_41, 0);
   });
 });
 
@@ -152,6 +198,9 @@ await describe('changeUser() against a server without CONNECT_ATTRS', async () =
   await server.close();
 
   it('should not send connection attributes in COM_CHANGE_USER', () => {
-    strict.equal(observed.changeUserHasTrailingData, false);
+    strict.equal(observed.changeUser?.user, 'changed_user');
+    strict.equal(observed.changeUser?.database, 'test_db');
+    strict.equal(observed.changeUser?.authPluginName, 'mysql_native_password');
+    strict.equal(observed.changeUser?.hasTrailingData, false);
   });
 });
