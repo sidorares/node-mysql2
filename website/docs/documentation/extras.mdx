@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Extra Features
 
 ## Named placeholders
@@ -25,6 +28,101 @@ connection.query('select ? + ? as z', [1, 1], (err, rows) => {
 });
 ```
 
+---
+
+## Expanding an object at any placeholder
+
+:::warning Never expand user-controlled keys
+
+Object expansion turns keys into SQL identifiers. Untrusted keys let an attacker choose which columns a query reads or changes, exposing or overwriting data outside the intended operation.
+
+**Never pass a request body or another object with user-controlled keys directly to `expand()` or a `SET ?` assignment.** Build an object with keys fixed by your code and validate user-supplied values before binding them.
+
+:::
+
+`query()` and `format()` expand a bound plain object or `Map` into `` `key` = value `` pairs only inside a `SET` or `ON DUPLICATE KEY UPDATE` assignment list. Everywhere else, unmarked objects are converted to quoted strings, such as `'[object Object]'` for a plain object or `'[object Map]'` for a `Map`.
+
+To expand one object at any `?`, mark it with `mysql.expand()`. Only the marked value expands, and every other object in the statement keeps the default behavior:
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import { createConnection, expand, format } from 'mysql2/promise';
+
+const connection = await createConnection({ /* your config */ });
+
+await connection.query('SELECT * FROM users WHERE ? AND status = ?', [
+  expand({ role: 'admin' }),
+  'active',
+]);
+// SELECT * FROM users WHERE `role` = 'admin' AND status = 'active'
+
+format('?', [expand({ id: 1 })]);
+// `id` = 1
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({ /* your config */ });
+
+connection.query('SELECT * FROM users WHERE ? AND status = ?', [
+  mysql.expand({ role: 'admin' }),
+  'active',
+]);
+// SELECT * FROM users WHERE `role` = 'admin' AND status = 'active'
+
+mysql.format('?', [mysql.expand({ id: 1 })]);
+// `id` = 1
+```
+
+  </TabItem>
+</Tabs>
+
+- `mysql2/promise` exports the same `expand()`.
+- A mark expands with the `stringifyObjects` option enabled as well.
+- With named placeholders, pass the mark under its name. A lone object is read as the named values themselves:
+
+  ```js
+  connection.query(
+    { sql: 'SELECT * FROM users WHERE :filter', namedPlaceholders: true },
+    { filter: mysql.expand({ role: 'admin' }) }
+  );
+  // SELECT * FROM users WHERE `role` = 'admin'
+  ```
+
+- A mark nested inside an array, a `Set`, an object, or a `Map` does not expand. `expand()` rejects non-object values, `null`, arrays, `Set` instances, dates, `Uint8Array` instances (including buffers), `raw()` values, and existing marks with a `TypeError`.
+- A mark created by your own copy of **SQL Escaper** expands in the copy **MySQL2** uses.
+
+Prepared statements reject marked values with a `TypeError`, whether prepared automatically or explicitly. Use `query()` instead.
+
+### 🚫 Unsafe counterexample
+
+:::danger SQL injection through unrestricted object expansion
+
+Validate that an ID has the expected scalar type before binding it. Under unrestricted object expansion, the condition below matches every row instead of filtering by ID.
+
+```js
+// `id` arrives as { id: true } from a JSON request body
+connection.query('SELECT * FROM users WHERE id = ?', [id]);
+// Unsafe unrestricted expansion:
+// SELECT * FROM users WHERE id = `id` = true
+// Current MySQL2 default:
+// SELECT * FROM users WHERE id = '[object Object]'
+```
+
+- Please, **do not copy this pattern**.
+
+:::
+
+See the [`expand` section of the **SQL Escaper** README](https://github.com/mysqljs/sql-escaper#expand) for the full behavior.
+
+---
+
 ## Receiving rows as array of columns instead of hash with column name as key:
 
 ```js
@@ -40,6 +138,8 @@ connection.query(options, (err, results) => {
   */
 });
 ```
+
+---
 
 ## Sending tabular data with 'load infile' and local stream:
 
@@ -95,6 +195,8 @@ connection.query(
   onInserted
 );
 ```
+
+---
 
 ## Connecting using custom stream:
 
@@ -157,9 +259,13 @@ TypeError: cb is not a function
 
 Use the modern return-style function shown above.
 
+---
+
 ## In addition to password `createConnection()`, `createPool()` and `changeUser()` accept `passwordSha1` option.
 
 This is useful when implementing proxies as plaintext password might be not available.
+
+---
 
 ## Graceful pool connection end
 

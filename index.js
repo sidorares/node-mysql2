@@ -42,6 +42,7 @@ exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
 exports.format = SqlString.format;
 exports.raw = SqlString.raw;
+exports.expand = SqlString.expand;
 
 exports.__defineGetter__(
   'createConnectionPromise',

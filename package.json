@@ -64,7 +64,7 @@
     "long": "^5.3.2",
     "lru.min": "^1.1.4",
     "named-placeholders": "^1.1.6",
-    "sql-escaper": "^1.5.1"
+    "sql-escaper": "^1.7.0"
   },
   "peerDependencies": {
     "@types/node": ">= 8"

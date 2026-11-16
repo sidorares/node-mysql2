@@ -184,6 +184,7 @@ exports.escape = SqlString.escape;
 exports.escapeId = SqlString.escapeId;
 exports.format = SqlString.format;
 exports.raw = SqlString.raw;
+exports.expand = SqlString.expand;
 exports.Connection = PromiseConnection;
 exports.PoolConnection = PromisePoolConnection;
 exports.PromisePool = PromisePool;

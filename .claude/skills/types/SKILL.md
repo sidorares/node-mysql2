@@ -33,8 +33,8 @@ Every type below is importable from the library. Check this inventory before rea
 | Auth        | `AuthPlugin`, `authPlugins`                                                                                                                         | `lib/Auth.d.ts`                                         |
 | Server      | `Server`, `OkPacketParams`, `ErrorPacketParams`                                                                                                     | `lib/Server.d.ts`, `lib/protocol/packets/params/*.d.ts` |
 | Tracing     | `QueryTraceContext`, `ExecuteTraceContext`, `ConnectTraceContext`, `PoolConnectTraceContext`                                                        | `lib/Tracing.d.ts`                                      |
-| Utilities   | `escape()`, `escapeId()`, `format()`, `raw()`, `setMaxParserCache()`, `clearParserCache()`                                                          | `index.d.ts`                                            |
-| SQL escaper | `Raw`, `SqlValue`, `Timezone`                                                                                                                       | re-export from `sql-escaper`                            |
+| Utilities   | `escape()`, `escapeId()`, `format()`, `raw()`, `expand()`, `setMaxParserCache()`, `clearParserCache()`                                              | `index.d.ts`                                            |
+| SQL escaper | `Expand`, `Raw`, `SqlValue`, `Timezone`                                                                                                             | re-export from `sql-escaper`                            |
 | Factory     | `createConnection()`, `createPool()`, `createPoolCluster()`, `createServer()`                                                                       | `index.d.ts`                                            |
 | Config      | `ConnectionConfig` (interface with static methods: `mergeFlags`, `getDefaultFlags`, `getCharsetNumber`, `getSSLProfile`, `parseUrl`)                | `index.d.ts`                                            |
 

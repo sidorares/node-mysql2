@@ -26,8 +26,9 @@ import {
   escapeId as SqlStringEscapeId,
   format as SqlStringFormat,
   raw as SqlStringRaw,
+  expand as SqlStringExpand,
 } from 'sql-escaper';
-export type { Raw, SqlValue, Timezone } from 'sql-escaper';
+export type { Expand, Raw, SqlValue, Timezone } from 'sql-escaper';
 
 export {
   ConnectionOptions,
@@ -68,6 +69,7 @@ export const escape: typeof SqlStringEscape;
 export const escapeId: typeof SqlStringEscapeId;
 export const format: typeof SqlStringFormat;
 export const raw: typeof SqlStringRaw;
+export const expand: typeof SqlStringExpand;
 
 export interface ConnectionConfig extends ConnectionOptions {
   mergeFlags(defaultFlags: string[], userFlags: string[] | string): number;
