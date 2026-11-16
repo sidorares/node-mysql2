@@ -71,6 +71,15 @@ pre[class*='language-'] {
   }
 }
 
+// A block inside any item makes MDX wrap every item of the list in `<p>`
+.markdown li > p {
+  margin-top: 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
 .navbar__brand {
   margin-right: 0;
 }

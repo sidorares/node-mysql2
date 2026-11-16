@@ -1,7 +1,7 @@
 import { Sequence } from './Sequence.js';
 import { OkPacket, RowDataPacket, FieldPacket } from '../packets/index.js';
 import { Readable } from 'stream';
-import { Raw, Timezone } from 'sql-escaper';
+import { Expand, Raw, Timezone } from 'sql-escaper';
 import { TypeCast } from '../../parsers/typeCast.js';
 import { TypedParameterValue } from '../../TypedParameter.js';
 
@@ -31,6 +31,7 @@ export type QueryValues =
   | Buffer
   | Uint8Array
   | Raw
+  | Expand
   | ({} | null | undefined)[]
   | { [key: string]: QueryValues };
 
