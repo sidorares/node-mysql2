@@ -123,6 +123,32 @@ See the [`expand` section of the **SQL Escaper** README](https://github.com/mysq
 
 ---
 
+## The `NO_BACKSLASH_ESCAPES` SQL mode
+
+Under the [`NO_BACKSLASH_ESCAPES`](https://dev.mysql.com/doc/refman/8.4/en/sql-mode.html#sqlmode_no_backslash_escapes) SQL mode, a backslash in a string is an ordinary character. A connection follows the mode the server reports in its status flags, and `query()`, `connection.format()` and `connection.escape()` escape a quote by doubling it while the mode is on:
+
+```js
+await connection.query("SET SESSION sql_mode = 'NO_BACKSLASH_ESCAPES'");
+
+connection.escape("it's C:\\");
+// 'it''s C:\'
+```
+
+A query's values are escaped for the mode when the query is sent, so a query queued behind a mode change follows it.
+
+:::warning Cases the status flags miss
+
+- A stored procedure or function that changes `sql_mode` can leave the server reporting its own mode after it returns, until the next statement that sets `sql_mode`.
+- `init_connect` runs after the handshake, so a mode it sets is seen only once a statement returns.
+- A multiple-statement query that changes the mode is escaped for the mode in effect before it runs.
+- `pool.escape()`, `pool.format()`, `mysql.escape()` and `mysql.format()` have no connection, so they always escape with backslashes.
+
+Prepared statements (`execute()`) send values separately from the SQL and are not affected.
+
+:::
+
+---
+
 ## Receiving rows as array of columns instead of hash with column name as key:
 
 ```js
