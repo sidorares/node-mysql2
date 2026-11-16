@@ -43,16 +43,16 @@ await describe('binary protocol keeps leading zeros in TIME fractional seconds',
   );
 
   it('keeps fractions below 0.1s', () => {
-    strict.equal(rows[0].centiseconds, '01:02:03.05');
-    strict.equal(rows[0].milliseconds, '01:02:03.001');
+    strict.equal(rows[0].centiseconds, '01:02:03.050000');
+    strict.equal(rows[0].milliseconds, '01:02:03.001000');
     strict.equal(rows[0].microseconds, '01:02:03.000123');
     strict.equal(rows[0].beyondOneDay, '123:23:45.000001');
   });
 
-  it('still trims trailing zeros', () => {
-    strict.equal(rows[0].tenths, '01:02:03.5');
-    strict.equal(rows[0].negative, '-01:23:44.88');
-    strict.equal(rows[0].zero, '00:00:00');
+  it('keeps trailing zeros to the column fraction digits', () => {
+    strict.equal(rows[0].tenths, '01:02:03.500000');
+    strict.equal(rows[0].negative, '-01:23:44.880000');
+    strict.equal(rows[0].zero, '00:00:00.000000');
   });
 
   await connection.end();
