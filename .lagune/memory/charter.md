@@ -83,10 +83,7 @@ A control is held even when a reason to skip it feels reasonable:
 
 ## Governance
 
-This charter guides every security phase (detect, plan, harden, verify) and every contribution that touches a security surface: query escaping and parameterization, packet parsing, the row-parser code generation, authentication, TLS, `LOCAL INFILE`, and the dependency set. It supersedes ad hoc decisions.
-
-No change may weaken a principle without an explicit, reviewed decision recorded here. A fix or a feature that touches one of these surfaces MUST ship with tests that would fail without it, and any change to observable behavior MUST be checked for backward compatibility, since the driver targets Node 14 and above and holds to API compatibility for a very large installed base. A change that could break existing behavior is flagged before release even when it looks minor.
-
-This charter is reconciled, never appended. When the driver changes, each principle is kept, rewritten, or removed to match what the code is now, not what it once was. Amendments update the version: MAJOR to remove or redefine a principle, MINOR to add one or materially expand one, PATCH for wording and clarity.
+- This charter guides every security decision in each Lagune phase, and every change to it is reviewed and approved by the maintainer.
+- It holds only what a deterministic check cannot capture, so it never repeats a control that linters or automated tools already enforce.
 
 Version: 1.1.0 | Ratified: 2026-07-17
