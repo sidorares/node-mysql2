@@ -77,6 +77,9 @@ a `BLOB` keeps the bytes intact, which matters for `VARBINARY` and MariaDB
 await connection.execute('INSERT INTO t (raw) VALUES (?)', [T.BLOB(buffer)]);
 ```
 
+A `Buffer`, any typed array such as `Uint8Array` or `Float32Array`, and a
+`DataView` already travel as a `BLOB` of the bytes they view, without a factory.
+
 ## Available types
 
 Each factory takes the value and returns a parameter you pass in place of it.

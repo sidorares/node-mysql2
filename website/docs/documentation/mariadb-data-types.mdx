@@ -140,13 +140,15 @@ const [rows] = await connection.query(
 // rows[0].v === '[1.5,-2.25,3.75]'
 ```
 
-To insert a vector, bind a `Buffer` with the packed float32 values (or use
+To insert a vector, bind a `Float32Array` of the values (or use
 `VEC_FromText()` with a JSON-style string):
 
 ```js
-const vector = [1.5, -2.25, 3.75];
-const buffer = Buffer.alloc(vector.length * 4);
-vector.forEach((value, i) => buffer.writeFloatLE(value, i * 4));
-
-await connection.execute('INSERT INTO embeddings (v) VALUES (?)', [buffer]);
+await connection.execute('INSERT INTO embeddings (v) VALUES (?)', [
+  new Float32Array([1.5, -2.25, 3.75]),
+]);
 ```
+
+A typed array is sent in the host's byte order, which is little-endian on x64
+and arm64, the order MariaDB stores. On a big-endian host, pack the values into
+a `Buffer` with `buffer.writeFloatLE()` instead.

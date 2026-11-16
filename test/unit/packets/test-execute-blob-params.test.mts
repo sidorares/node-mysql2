@@ -30,6 +30,19 @@ describe('Execute packet: parameter encoding round-trip', () => {
     strict.deepEqual(parsed.values[0], Buffer.from([0x80, 0xff]));
   });
 
+  it('should send typed array and DataView parameters as the bytes they view', () => {
+    const floats = new Float32Array([0, 1.5, -2.25, 0]).subarray(1, 3);
+    const view = new DataView(
+      new Uint8Array([0x00, 0x80, 0xff, 0x42]).buffer,
+      1,
+      2
+    );
+    const execute = new Execute(1, [floats, view], 224, 'local');
+    const parsed = reparse(execute);
+    strict.deepEqual(parsed.values[0], Buffer.from('0000c03f000010c0', 'hex'));
+    strict.deepEqual(parsed.values[1], Buffer.from([0x80, 0xff]));
+  });
+
   it('should send JSON objects as strings when jsonAsString is set', () => {
     const value = { a: [1, 'x'] };
     // MariaDB rejects the JSON parameter type; jsonAsString keeps the

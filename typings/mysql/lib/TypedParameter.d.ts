@@ -12,7 +12,7 @@ export interface TypedParameterValue {
 }
 
 export type TypedParameterInput =
-  string | number | bigint | boolean | Date | Buffer | Uint8Array | null;
+  string | number | bigint | boolean | Date | Buffer | ArrayBufferView | null;
 
 export interface TypedParameterFactory {
   (value: TypedParameterInput): TypedParameterValue;

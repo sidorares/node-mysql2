@@ -46,5 +46,22 @@ await describe(async () => {
     );
   });
 
+  await it('Execute PS binds a Float32Array to a VECTOR column', async () => {
+    await connection.query(
+      'CREATE TEMPORARY TABLE vector_bind_test (v VECTOR(4))'
+    );
+    await connection.execute('INSERT INTO vector_bind_test (v) VALUES (?)', [
+      new Float32Array(expectedArray),
+    ]);
+    const [_rows] = await connection.execute<VectorRow[]>(
+      'SELECT v AS test FROM vector_bind_test'
+    );
+    strict.equal(
+      compareFLoatsArray(_rows[0].test, expectedArray),
+      true,
+      `${_rows[0].test} should be equal to ${expectedArray}`
+    );
+  });
+
   await connection.end();
 });
