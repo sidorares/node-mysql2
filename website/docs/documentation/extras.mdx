@@ -50,7 +50,7 @@ To expand one object at any `?`, mark it with `mysql.expand()`. Only the marked 
 ```js
 import { createConnection, expand, format } from 'mysql2/promise';
 
-const connection = await createConnection({ /* your config */ });
+const connection = await createConnection({/* your config */});
 
 await connection.query('SELECT * FROM users WHERE ? AND status = ?', [
   expand({ role: 'admin' }),
@@ -68,7 +68,7 @@ format('?', [expand({ id: 1 })]);
 ```js
 const mysql = require('mysql2');
 
-const connection = mysql.createConnection({ /* your config */ });
+const connection = mysql.createConnection({/* your config */});
 
 connection.query('SELECT * FROM users WHERE ? AND status = ?', [
   mysql.expand({ role: 'admin' }),
