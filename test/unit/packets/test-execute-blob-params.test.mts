@@ -22,6 +22,14 @@ describe('Execute packet: parameter encoding round-trip', () => {
     strict.equal(parsed.values[2], null);
   });
 
+  it('should send Uint8Array parameters as BLOB', () => {
+    const bytes = new Uint8Array([0x00, 0x80, 0xff, 0x42]).subarray(1, 3);
+    const execute = new Execute(1, [bytes], 224, 'local');
+    const parsed = reparse(execute);
+    strict.ok(Buffer.isBuffer(parsed.values[0]));
+    strict.deepEqual(parsed.values[0], Buffer.from([0x80, 0xff]));
+  });
+
   it('should send JSON objects as strings when jsonAsString is set', () => {
     const value = { a: [1, 'x'] };
     // MariaDB rejects the JSON parameter type; jsonAsString keeps the
