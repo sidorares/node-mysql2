@@ -103,3 +103,22 @@ describe('LOCAL INFILE stream factory without a stream', () => {
     });
   }
 });
+
+await describe('LOCAL INFILE connection error after the file is sent', async () => {
+  await it('reaches the application instead of the load', async () => {
+    const connection = createQueueingConnection([], 0);
+    const stream = Readable.from([]);
+    const sent = new Promise((resolve) => stream.once('end', resolve));
+
+    new Query({
+      sql: '',
+      infileStreamFactory: () => stream,
+    })._streamLocalInfile(connection, 'rows.csv');
+    await sent;
+
+    strict.throws(
+      () => connection.emit('error', new Error('connection reset')),
+      /connection reset/
+    );
+  });
+});
