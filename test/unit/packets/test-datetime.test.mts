@@ -32,3 +32,50 @@ describe('DateTime packet parsing', () => {
     strict.equal(packet.offset, packet.end);
   });
 });
+
+describe('DateTime packet parsing as a string', () => {
+  const Types = { DATE: 10, DATETIME: 12 };
+  const packetFor = (bytes: number[]) => {
+    const buf = Buffer.concat([Buffer.alloc(4), Buffer.from(bytes)]);
+    return new Packets.Packet(0, buf, 0, buf.length);
+  };
+  const microseconds = (value: number) => {
+    const bytes = Buffer.alloc(4);
+    bytes.writeUInt32LE(value);
+    return [...bytes];
+  };
+  const cases: [string, number[], number, string | null, number][] = [
+    ['2026-03-08', [4, 0xea, 0x07, 3, 8], 0, ' ', Types.DATE],
+    [
+      '2026-03-08T09:31:05',
+      [7, 0xea, 0x07, 3, 8, 9, 31, 5],
+      0,
+      'T',
+      Types.DATETIME,
+    ],
+    [
+      '2026-03-08 09:31:05.250',
+      [11, 0xea, 0x07, 3, 8, 9, 31, 5, ...microseconds(250000)],
+      3,
+      ' ',
+      Types.DATETIME,
+    ],
+    ['0007-01-02 03:04:05', [7, 7, 0, 1, 2, 3, 4, 5], 0, null, Types.DATETIME],
+    [
+      '2026-150-08 09:31:05',
+      [7, 0xea, 0x07, 150, 8, 9, 31, 5],
+      0,
+      ' ',
+      Types.DATETIME,
+    ],
+  ];
+
+  for (const [expected, bytes, decimals, timeSep, columnType] of cases) {
+    it(`should read ${expected}`, () => {
+      strict.equal(
+        packetFor(bytes).readDateTimeString(decimals, timeSep, columnType),
+        expected
+      );
+    });
+  }
+});
