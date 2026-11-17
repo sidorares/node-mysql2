@@ -61,7 +61,7 @@ describe('Query command', () => {
     testQuery._rowParser = new FailingRowParser(null);
 
     testQuery.row(rowPacket);
-    strict.equal(testQuery.row(lastEOFPacket), null);
+    strict.equal(testQuery.row(lastEOFPacket, connection), null);
 
     strict.equal(calls.length, 1);
     strict.ok(calls[0][0] instanceof Error);
