@@ -1,4 +1,8 @@
-import type { ResultSetHeader, RowDataPacket } from '../../../../index.js';
+import type {
+  Connection,
+  ResultSetHeader,
+  RowDataPacket,
+} from '../../../../index.js';
 import process from 'node:process';
 import { PassThrough, Readable } from 'node:stream';
 import { describe, it, skip, strict } from 'poku';
@@ -138,7 +142,25 @@ await describe('Load Infile stream clean-up', async () => {
 
   await promiseConnection.query('SET GLOBAL local_infile = true');
 
-  for (const cause of ['the server', 'a socket error'] as const) {
+  const endConnectionDuringLoad = {
+    'the server': async (lostConnection: Connection) => {
+      await promiseConnection.query(
+        `KILL CONNECTION ${lostConnection.threadId}`
+      );
+    },
+    'a socket error': (lostConnection: Connection) => {
+      // @ts-expect-error: internal access
+      lostConnection.stream.destroy(new Error('socket failed'));
+    },
+    'the application': (lostConnection: Connection, stream: PassThrough) => {
+      lostConnection.destroy();
+      stream.write('2\n');
+    },
+  };
+
+  for (const [cause, endConnection] of Object.entries(
+    endConnectionDuringLoad
+  )) {
     await describe(`when ${cause} ends the connection during a load`, async () => {
       const lostConnection = createConnection();
       lostConnection.on('error', () => {});
@@ -158,13 +180,7 @@ await describe('Load Infile stream clean-up', async () => {
       });
       await new Promise<void>((resolve) => stream.once('resume', resolve));
       stream.write('1\n');
-      if (cause === 'the server') {
-        await promiseConnection.query(
-          `KILL CONNECTION ${lostConnection.threadId}`
-        );
-      } else {
-        lostSocket.destroy(new Error('socket failed'));
-      }
+      await endConnection(lostConnection, stream);
       const err = await failure;
 
       it('fails the load', () => {
