@@ -61,6 +61,7 @@ const binaryRowPacket = (payload = raw) => {
 
 const fields = [jsonField];
 const options = {};
+const jsonStrings = { jsonStrings: true };
 
 // the compiled row classes are untyped internals
 const jsonOf = (row: object): unknown => (row as { j: unknown }).j;
@@ -73,8 +74,8 @@ describe('MariaDB extended JSON format parsing', () => {
   });
 
   it('text parser should respect jsonStrings', () => {
-    const Parser = getTextParser(fields, options, { jsonStrings: true });
-    const row = new Parser(fields).next(textRowPacket(), fields, options);
+    const Parser = getTextParser(fields, jsonStrings, jsonStrings);
+    const row = new Parser(fields).next(textRowPacket(), fields, jsonStrings);
     strict.equal(jsonOf(row), JSON.stringify(value));
   });
 
@@ -85,8 +86,8 @@ describe('MariaDB extended JSON format parsing', () => {
   });
 
   it('binary parser should respect jsonStrings', () => {
-    const Parser = getBinaryParser(fields, options, { jsonStrings: true });
-    const row = new Parser().next(binaryRowPacket(), fields, options);
+    const Parser = getBinaryParser(fields, jsonStrings, jsonStrings);
+    const row = new Parser().next(binaryRowPacket(), fields, jsonStrings);
     strict.equal(jsonOf(row), JSON.stringify(value));
   });
 
@@ -97,10 +98,8 @@ describe('MariaDB extended JSON format parsing', () => {
   });
 
   it('static text parser should respect jsonStrings', () => {
-    const parser = getStaticTextParser(fields, options, {
-      jsonStrings: true,
-    });
-    const row = parser.next(textRowPacket(), fields, options);
+    const parser = getStaticTextParser(fields, jsonStrings, jsonStrings);
+    const row = parser.next(textRowPacket(), fields, jsonStrings);
     strict.equal(jsonOf(row), JSON.stringify(value));
   });
 
@@ -111,10 +110,8 @@ describe('MariaDB extended JSON format parsing', () => {
   });
 
   it('static binary parser should respect jsonStrings', () => {
-    const Parser = getStaticBinaryParser(fields, options, {
-      jsonStrings: true,
-    });
-    const row = new Parser().next(binaryRowPacket(), fields, options);
+    const Parser = getStaticBinaryParser(fields, jsonStrings, jsonStrings);
+    const row = new Parser().next(binaryRowPacket(), fields, jsonStrings);
     strict.equal(jsonOf(row), JSON.stringify(value));
   });
 });
@@ -123,48 +120,56 @@ describe('MariaDB extended JSON format parsing in a binary column', () => {
   const binaryFields = [binaryJsonField];
 
   for (const jsonStrings of [false, true]) {
-    const config = { jsonStrings };
+    const queryOptions = { jsonStrings };
     const expected = jsonStrings
       ? JSON.stringify(nonAsciiValue)
       : nonAsciiValue;
     const mode = jsonStrings ? 'with jsonStrings' : 'when parsing';
 
     it(`text parser should decode UTF-8 ${mode}`, () => {
-      const Parser = getTextParser(binaryFields, options, config);
+      const Parser = getTextParser(binaryFields, queryOptions, queryOptions);
       const row = new Parser(binaryFields).next(
         textRowPacket(nonAsciiRaw),
         binaryFields,
-        options
+        queryOptions
       );
       strict.deepEqual(jsonOf(row), expected);
     });
 
     it(`binary parser should decode UTF-8 ${mode}`, () => {
-      const Parser = getBinaryParser(binaryFields, options, config);
+      const Parser = getBinaryParser(binaryFields, queryOptions, queryOptions);
       const row = new Parser().next(
         binaryRowPacket(nonAsciiRaw),
         binaryFields,
-        options
+        queryOptions
       );
       strict.deepEqual(jsonOf(row), expected);
     });
 
     it(`static text parser should decode UTF-8 ${mode}`, () => {
-      const parser = getStaticTextParser(binaryFields, options, config);
+      const parser = getStaticTextParser(
+        binaryFields,
+        queryOptions,
+        queryOptions
+      );
       const row = parser.next(
         textRowPacket(nonAsciiRaw),
         binaryFields,
-        options
+        queryOptions
       );
       strict.deepEqual(jsonOf(row), expected);
     });
 
     it(`static binary parser should decode UTF-8 ${mode}`, () => {
-      const Parser = getStaticBinaryParser(binaryFields, options, config);
+      const Parser = getStaticBinaryParser(
+        binaryFields,
+        queryOptions,
+        queryOptions
+      );
       const row = new Parser().next(
         binaryRowPacket(nonAsciiRaw),
         binaryFields,
-        options
+        queryOptions
       );
       strict.deepEqual(jsonOf(row), expected);
     });
