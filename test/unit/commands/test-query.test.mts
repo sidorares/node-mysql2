@@ -7,9 +7,9 @@ const connection = { serverStatus: 0 };
 
 class FailingRowParser {
   calls = 0;
-  error: Error;
+  error: unknown;
 
-  constructor(error: Error) {
+  constructor(error: unknown) {
     this.error = error;
   }
 
@@ -52,5 +52,18 @@ describe('Query command', () => {
 
     strict.equal(testQuery.row(lastEOFPacket, connection), null);
     strict.deepEqual(errors, [testError]);
+  });
+
+  it('should report an error when the row parser throws a falsy value', () => {
+    const calls: unknown[][] = [];
+    const testQuery = new Query({}, (...args: unknown[]) => calls.push(args));
+
+    testQuery._rowParser = new FailingRowParser(null);
+
+    testQuery.row(rowPacket);
+    strict.equal(testQuery.row(lastEOFPacket), null);
+
+    strict.equal(calls.length, 1);
+    strict.ok(calls[0][0] instanceof Error);
   });
 });
