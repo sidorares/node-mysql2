@@ -29,12 +29,12 @@ await describe('dateStrings: binary protocol keeps the 00:00:00 time of DATETIME
 
   await it('keeps 00:00:00 for TIMESTAMP at midnight', () => {
     strict.equal(rows[0].ts, '2026-05-31 00:00:00');
-    strict.equal(rows[0].ts6, '2026-05-31 00:00:00');
+    strict.equal(rows[0].ts6, '2026-05-31 00:00:00.000000');
   });
 
   await it('keeps 00:00:00 for DATETIME at midnight', () => {
     strict.equal(rows[0].dt, '2026-05-31 00:00:00');
-    strict.equal(rows[0].dt3, '2026-05-31 00:00:00');
+    strict.equal(rows[0].dt3, '2026-05-31 00:00:00.000');
   });
 
   await it('returns DATE without a time component', () => {
