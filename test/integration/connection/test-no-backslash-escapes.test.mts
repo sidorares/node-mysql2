@@ -143,6 +143,28 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     await connection.end();
   });
 
+  await describe('a toSqlString() that queues a query and formats', async () => {
+    const callbackConnection = createConnection();
+    const connection = callbackConnection.promise();
+
+    await it('should escape the nested value for the mode the query is sent in', async () => {
+      const nested: Raw = {
+        toSqlString: () => {
+          callbackConnection.query('SELECT 1');
+          return callbackConnection.format('?', [attack]);
+        },
+      };
+      const setMode = connection.query(enableMode);
+      const select = connection.query<RowDataPacket[]>(matchesOther, [nested]);
+      await setMode;
+      const [rows] = await select;
+
+      strict.equal(rows.length, 0);
+    });
+
+    await connection.end();
+  });
+
   await describe('a toSqlString() that passes the mode on', async () => {
     const connection = createConnection().promise();
 
