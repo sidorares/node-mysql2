@@ -15,6 +15,7 @@ const unsignedValues = [
   2n ** 32n - 1n,
   2n ** 32n,
   2n ** 53n - 1n, // MAX_SAFE_INTEGER
+  2n ** 53n,
   2n ** 53n + 1n, // first unsafe integer
   2n ** 63n,
   2n ** 64n - 1n,
@@ -26,6 +27,7 @@ const signedValues = [
   -1n,
   2n ** 53n - 1n,
   -(2n ** 53n) + 1n, // MIN_SAFE_INTEGER
+  -(2n ** 53n),
   2n ** 53n + 1n,
   -(2n ** 53n) - 1n,
   2n ** 63n - 1n,
