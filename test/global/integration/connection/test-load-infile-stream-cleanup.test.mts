@@ -52,7 +52,7 @@ await describe('Load Infile stream clean-up', async () => {
   const loadFiles = async (count: number) => {
     const streams: Readable[] = [];
 
-    await promiseConnection.query({
+    const [results] = await promiseConnection.query<ResultSetHeader[]>({
       sql: Array.from({ length: count }, () => load).join('; '),
       infileStreamFactory: () => {
         const stream = createRows();
@@ -61,11 +61,11 @@ await describe('Load Infile stream clean-up', async () => {
       },
     });
 
-    return streams;
+    return { streams, results };
   };
 
   await it('releases every stream of a query with several loads', async () => {
-    const streams = await loadFiles(3);
+    const { streams } = await loadFiles(3);
 
     strict.equal(streams.length, 3);
     strict.equal(streams.every(hasNoLoadListeners), true);
@@ -84,7 +84,7 @@ await describe('Load Infile stream clean-up', async () => {
     const onWarning = (warning: Error) => warnings.push(warning);
 
     process.on('warning', onWarning);
-    const streams = await loadFiles(12);
+    const { streams } = await loadFiles(12);
     await new Promise((resolve) => setImmediate(resolve));
     process.removeListener('warning', onWarning);
 
@@ -97,12 +97,13 @@ await describe('Load Infile stream clean-up', async () => {
     );
   });
 
-  await it('loads every file', async () => {
-    const [rows] = await promiseConnection.query<RowDataPacket[]>(
-      `SELECT COUNT(*) AS loaded FROM ${table}`
-    );
+  await it('loads every file of a query with several loads', async () => {
+    const { results } = await loadFiles(3);
 
-    strict.equal(rows[0].loaded, 42);
+    strict.deepEqual(
+      results.map((result) => result.affectedRows),
+      [2, 2, 2]
+    );
   });
 
   await it('releases the stream of a load the server rejects', async () => {
@@ -136,11 +137,6 @@ await describe('Load Infile stream clean-up', async () => {
   }
 
   await promiseConnection.query(`DROP TABLE IF EXISTS ${rejectingTable}`);
-  await promiseConnection.query('SET GLOBAL local_infile = ?', [
-    originalLocalInfile,
-  ]);
-
-  await promiseConnection.query('SET GLOBAL local_infile = true');
 
   const endConnectionDuringLoad = {
     'the server': async (lostConnection: Connection) => {
@@ -162,8 +158,9 @@ await describe('Load Infile stream clean-up', async () => {
     endConnectionDuringLoad
   )) {
     await describe(`when ${cause} ends the connection during a load`, async () => {
+      const connectionErrors: Error[] = [];
       const lostConnection = createConnection();
-      lostConnection.on('error', () => {});
+      lostConnection.on('error', (error) => connectionErrors.push(error));
       await lostConnection.promise().query('SELECT 1');
       // @ts-expect-error: internal access
       const lostSocket = lostConnection.stream;
@@ -178,21 +175,36 @@ await describe('Load Infile stream clean-up', async () => {
           (err) => resolve(err)
         );
       });
-      await new Promise<void>((resolve) => stream.once('resume', resolve));
+      const streaming = await Promise.race([
+        new Promise<boolean>((resolve) =>
+          stream.once('resume', () => resolve(true))
+        ),
+        failure.then(() => false),
+      ]);
       stream.write('1\n');
       await endConnection(lostConnection, stream);
       const err = await failure;
+
+      it('streams the file before the connection ends', () => {
+        strict.equal(streaming, true);
+      });
 
       it('fails the load', () => {
         strict.ok(err instanceof Error);
       });
 
       it('ignores a stream error raised before the socket has closed', () => {
+        const connectionErrorCount = connectionErrors.length;
+
         strict.doesNotThrow(() => stream.emit('error', new Error('too late')));
-        strict.equal(hasNoLoadListeners(stream), true);
+        strict.equal(connectionErrors.length, connectionErrorCount);
       });
 
       await lostSocketClosed;
+
+      it('releases the stream once the socket has closed', () => {
+        strict.equal(hasNoLoadListeners(stream), true);
+      });
 
       it('ignores a stream error raised after the socket has closed', () => {
         strict.doesNotThrow(() => stream.emit('error', new Error('too late')));
