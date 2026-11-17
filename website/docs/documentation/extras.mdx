@@ -123,6 +123,56 @@ See the [`expand` section of the **SQL Escaper** README](https://github.com/mysq
 
 ---
 
+## The `NO_BACKSLASH_ESCAPES` SQL mode
+
+Under the [`NO_BACKSLASH_ESCAPES`](https://dev.mysql.com/doc/refman/8.4/en/sql-mode.html#sqlmode_no_backslash_escapes) SQL mode, a backslash in a string is an ordinary character. A connection follows the mode the server reports in its status flags, and `query()`, `connection.format()` and `connection.escape()` escape a quote by doubling it while the mode is on:
+
+```js
+await connection.query("SET SESSION sql_mode = 'NO_BACKSLASH_ESCAPES'");
+
+connection.escape("it's C:\\");
+// 'it''s C:\'
+```
+
+A query's values are escaped when `query()` is called. A query queued behind a mode change is escaped for both modes, and the one matching the mode at send time is sent.
+
+:::warning Cases the status flags miss
+
+- A stored procedure or function that changes `sql_mode` can leave the server reporting its own mode after it returns, until the next statement that sets `sql_mode`.
+- `init_connect` runs after the handshake, so a mode it sets is seen only once a statement returns.
+- A multiple-statement query that changes the mode is escaped for the mode in effect before it runs.
+
+Prepared statements (`execute()`) send values separately from the SQL and are not affected.
+
+:::
+
+:::warning Escaping outside `query()`
+
+- `connection.escape()` and `connection.format()` escape for the last mode the connection reported, so their output is only valid on that connection, and only once any queued mode change has finished. Prefer placeholders, or wait for the mode change before escaping.
+- A custom `queryFormat` runs once, in `query()`, and escapes for the mode in effect at that moment, even when the query is queued behind a mode change.
+- `pool.escape()` and `pool.format()` always escape with backslashes.
+- So do `mysql.escape()` and `mysql.format()`, unless they receive the mode as their last argument.
+- A value with `toSqlString()` receives the connection's mode to pass on, or it can build its nested SQL with `connection.format()`:
+
+  ```js
+  const subquery = {
+    toSqlString: (sqlMode) =>
+      mysql.format(
+        'SELECT id FROM users WHERE name = ?',
+        [name],
+        false,
+        'local',
+        sqlMode
+      ),
+  };
+
+  connection.query('SELECT * FROM posts WHERE author_id IN (?)', [subquery]);
+  ```
+
+:::
+
+---
+
 ## Receiving rows as array of columns instead of hash with column name as key:
 
 ```js
