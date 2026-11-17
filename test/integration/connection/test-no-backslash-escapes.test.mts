@@ -1,5 +1,8 @@
-import type { RowDataPacket } from '../../../index.js';
+import type { Raw, RowDataPacket } from '../../../index.js';
+import type { QueryTraceContext } from '../../../typings/mysql/lib/Tracing.js';
+import diagnostics_channel from 'node:diagnostics_channel';
 import { describe, it, strict } from 'poku';
+import { format } from '../../../index.js';
 import { createConnection } from '../../common.test.mjs';
 
 type ValueRow = RowDataPacket & { value: string };
@@ -76,6 +79,107 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
       strict.equal(rows[0].value, values[1]);
     });
 
+    await connection.end();
+  });
+
+  await describe('queued queries whose values change after the call', async () => {
+    const connection = createConnection().promise();
+
+    await it('should send each value as it was when query() was called', async () => {
+      const params: number[] = [];
+      const setMode = connection.query(enableMode);
+      const selects = [1, 2, 3].map((id) => {
+        params[0] = id;
+        return connection.query<RowDataPacket[]>('SELECT ? AS value', params);
+      });
+      await setMode;
+      const results = await Promise.all(selects);
+
+      strict.deepEqual(
+        results.map(([rows]) => rows[0].value),
+        [1, 2, 3]
+      );
+    });
+
+    await connection.end();
+  });
+
+  await describe('a nested connection.format() in a queued query', async () => {
+    const callbackConnection = createConnection();
+    const connection = callbackConnection.promise();
+
+    await it('should escape for the mode the query is sent in', async () => {
+      const nested: Raw = {
+        toSqlString: () => callbackConnection.format('?', [attack]),
+      };
+      const setMode = connection.query(enableMode);
+      const select = connection.query<RowDataPacket[]>(matchesOther, [nested]);
+      await setMode;
+      const [rows] = await select;
+
+      strict.equal(rows.length, 0);
+    });
+
+    await connection.end();
+  });
+
+  await describe('a toSqlString() that passes the mode on', async () => {
+    const connection = createConnection().promise();
+
+    await it('should escape the nested value for the mode', async () => {
+      const nested: Raw = {
+        toSqlString: (sqlMode) =>
+          format('?', [attack], false, 'local', sqlMode),
+      };
+      await connection.query(enableMode);
+      const [rows] = await connection.query<RowDataPacket[]>(matchesOther, [
+        nested,
+      ]);
+
+      strict.equal(rows.length, 0);
+    });
+
+    await connection.end();
+  });
+
+  await describe('the traced query text', async () => {
+    const connection = createConnection().promise();
+    const traced: string[] = [];
+    const subscribers = {
+      start(context: object) {
+        traced.push((context as QueryTraceContext).query);
+      },
+      end() {},
+      asyncStart() {},
+      asyncEnd(context: object) {
+        traced.push((context as QueryTraceContext).query);
+      },
+      error() {},
+    };
+    const hasTracingChannel =
+      typeof diagnostics_channel.tracingChannel === 'function';
+
+    if (hasTracingChannel) {
+      diagnostics_channel.tracingChannel('mysql2:query').subscribe(subscribers);
+    }
+
+    await it('should be the SQL sent after a queued mode change', async () => {
+      const setMode = connection.query(enableMode);
+      const select = connection.query('SELECT ? AS value', ["it's"]);
+      await setMode;
+      await select;
+
+      strict.equal(
+        !hasTracingChannel || traced.includes("SELECT 'it''s' AS value"),
+        true
+      );
+    });
+
+    if (hasTracingChannel) {
+      diagnostics_channel
+        .tracingChannel('mysql2:query')
+        .unsubscribe(subscribers);
+    }
     await connection.end();
   });
 
