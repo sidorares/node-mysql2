@@ -110,6 +110,21 @@ await describe('MariaDB extended type metadata', async () => {
     await connection.execute(`DELETE FROM \`${table}\` WHERE i4 IS NULL`);
   });
 
+  await it('execute: should accept a Float32Array for a VECTOR column', async () => {
+    await connection.execute(`DELETE FROM \`${table}\` WHERE i4 IS NULL`);
+    await connection.execute(`INSERT INTO \`${table}\` (v) VALUES (?)`, [
+      new Float32Array(vectorFloats),
+    ]);
+    const [rows] = await connection.execute<TypesRow[]>(
+      `SELECT v FROM \`${table}\` WHERE i4 IS NULL`
+    );
+    strict.deepEqual(
+      vectorFloats.map((_, i) => rows[0].v.readFloatLE(i * 4)),
+      vectorFloats
+    );
+    await connection.execute(`DELETE FROM \`${table}\` WHERE i4 IS NULL`);
+  });
+
   await it('typeCast: should receive extended metadata', async () => {
     const seen = new Map<string, [string | undefined, string | undefined]>();
     await connection.query({
