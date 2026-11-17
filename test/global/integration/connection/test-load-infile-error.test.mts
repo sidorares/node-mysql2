@@ -116,6 +116,29 @@ await describe('Load Infile error', async () => {
     await promiseConnection.query(`DELETE FROM ${table}`);
   });
 
+  for (const outcome of ['failed', 'succeeded'] as const) {
+    await it(`ignores a stream error raised after a load that ${outcome}`, async () => {
+      const stream =
+        outcome === 'failed'
+          ? createFailingStream()
+          : Readable.from([Buffer.from('8\n')]);
+      const loading = promiseConnection.query({
+        sql: `LOAD DATA LOCAL INFILE 'done.csv' INTO TABLE ${table} (id)`,
+        infileStreamFactory: () => stream,
+      });
+
+      if (outcome === 'failed') {
+        await strict.rejects(loading, /stream failed/);
+      } else {
+        await loading;
+      }
+
+      strict.doesNotThrow(() => stream.emit('error', new Error('too late')));
+      strict.equal(await isStillUsable(connection), true);
+      await promiseConnection.query(`DELETE FROM ${table}`);
+    });
+  }
+
   await it('clears the query timeout', async () => {
     const pendingTimeout = await new Promise((resolve) => {
       const query = connection.query(

@@ -6,6 +6,11 @@ import BaseConnection from '../../../lib/base/connection.js';
 import Query from '../../../lib/commands/query.js';
 import ConnectionConfig from '../../../lib/connection_config.js';
 
+const factoriesWithoutStream = [
+  ['returns nothing', () => undefined],
+  ['is async', async () => Readable.from([])],
+] as const;
+
 function createQueueingConnection(written: Buffer[], sequenceId: number) {
   const config = new ConnectionConfig({
     host: 'localhost',
@@ -41,6 +46,12 @@ function createQueueingConnection(written: Buffer[], sequenceId: number) {
 const terminatorSequenceIds = (written: Buffer[][]) =>
   written.map((buffers) => buffers[buffers.length - 1][3]);
 
+const socketListeners = (connection: BaseConnection) => ({
+  close: connection.stream.listenerCount('close'),
+  pause: connection.stream.listenerCount('pause'),
+  drain: connection.stream.listenerCount('drain'),
+});
+
 await describe('LOCAL INFILE terminator packet', async () => {
   it('keeps each connection sequence id when no stream factory is set', () => {
     const written: Buffer[][] = [[], []];
@@ -74,5 +85,40 @@ await describe('LOCAL INFILE terminator packet', async () => {
     await Promise.all(ended);
 
     strict.deepEqual(terminatorSequenceIds(written), [7, 42]);
+  });
+});
+
+describe('LOCAL INFILE stream factory without a stream', () => {
+  for (const [behavior, infileStreamFactory] of factoriesWithoutStream) {
+    it(`leaves nothing on the socket when the factory ${behavior}`, () => {
+      const connection = createQueueingConnection([], 0);
+      const listenersBeforeLoad = socketListeners(connection);
+      const query = new Query({ sql: '', infileStreamFactory }, () => {});
+
+      strict.throws(
+        () => query._streamLocalInfile(connection, 'rows.csv'),
+        TypeError
+      );
+      strict.deepEqual(socketListeners(connection), listenersBeforeLoad);
+    });
+  }
+});
+
+await describe('LOCAL INFILE connection error after the file is sent', async () => {
+  await it('reaches the application instead of the load', async () => {
+    const connection = createQueueingConnection([], 0);
+    const stream = Readable.from([]);
+    const sent = new Promise((resolve) => stream.once('end', resolve));
+
+    new Query({
+      sql: '',
+      infileStreamFactory: () => stream,
+    })._streamLocalInfile(connection, 'rows.csv');
+    await sent;
+
+    strict.throws(
+      () => connection.emit('error', new Error('connection reset')),
+      /connection reset/
+    );
   });
 });
