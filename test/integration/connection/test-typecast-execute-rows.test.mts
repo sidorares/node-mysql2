@@ -53,3 +53,28 @@ await describe('typeCast on execute reads every row', async () => {
 
   await connection.end();
 });
+
+await describe('typeCast set on the connection with a query override', async () => {
+  const connection = createConnection({
+    typeCast: (field: TypeCastField, next) =>
+      field.name === 'label' ? `${field.string()}!` : next(),
+  }).promise();
+  const sql = "SELECT 1 AS id, 'one' AS label";
+
+  for (const typeCast of [true, false, undefined]) {
+    await it(`reads rows with a query typeCast of ${typeCast}`, async () => {
+      await strict.doesNotReject(connection.execute<Row[]>({ sql, typeCast }));
+    });
+  }
+
+  await it('applies the connection typeCast when the query sets undefined', async () => {
+    const [rows] = await connection.execute<Row[]>({
+      sql,
+      typeCast: undefined,
+    });
+
+    strict.equal(rows[0].label, 'one!');
+  });
+
+  await connection.end();
+});
