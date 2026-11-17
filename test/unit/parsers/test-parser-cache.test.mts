@@ -33,6 +33,7 @@ interface CacheOptions {
 }
 
 interface CacheConfig {
+  typeCast?: (field: TypeCastField, next: TypeCastNext) => unknown;
   supportBigNumbers?: boolean;
   bigNumberStrings?: boolean;
   timezone?: string;
@@ -485,6 +486,31 @@ describe('Parser cache', () => {
       _hashKey('text', [unnamed], baseOptions, baseConfig),
       _hashKey('text', [idField], baseOptions, baseConfig)
     );
+  });
+
+  it('compiles once when the connection typeCast replaces the query one', () => {
+    const config: CacheConfig = {
+      ...baseConfig,
+      typeCast: (_: TypeCastField, next: TypeCastNext) => next(),
+    };
+    const typeCastAtCompile: string[] = [];
+    clearCache();
+    for (let i = 0; i < 3; i++) {
+      getParser(
+        'binary',
+        base.fields,
+        { ...baseOptions },
+        config,
+        (_: CacheField[], options: CacheOptions) => {
+          typeCastAtCompile.push(typeof options.typeCast);
+          options.typeCast = config.typeCast;
+          return {};
+        }
+      );
+    }
+    clearCache();
+
+    strict.deepEqual(typeCastAtCompile, ['function']);
   });
 
   it('resizes the cache through setMaxCache', () => {
