@@ -104,6 +104,26 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     await connection.end();
   });
 
+  await describe('a query on an idle connection', async () => {
+    const connection = createConnection().promise();
+
+    await it('should read each value once', async () => {
+      let reads = 0;
+      const value: Raw = {
+        toSqlString: () => {
+          reads++;
+          return '1';
+        },
+      };
+      await connection.query('SELECT 1');
+      await connection.query('SELECT ? AS value', [value]);
+
+      strict.equal(reads, 1);
+    });
+
+    await connection.end();
+  });
+
   await describe('a nested connection.format() in a queued query', async () => {
     const callbackConnection = createConnection();
     const connection = callbackConnection.promise();
