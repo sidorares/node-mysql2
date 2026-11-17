@@ -157,7 +157,13 @@ Prepared statements (`execute()`) send values separately from the SQL and are no
   ```js
   const subquery = {
     toSqlString: (sqlMode) =>
-      mysql.format('SELECT id FROM users WHERE name = ?', [name], false, 'local', sqlMode),
+      mysql.format(
+        'SELECT id FROM users WHERE name = ?',
+        [name],
+        false,
+        'local',
+        sqlMode
+      ),
   };
 
   connection.query('SELECT * FROM posts WHERE author_id IN (?)', [subquery]);
