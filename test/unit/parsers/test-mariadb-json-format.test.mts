@@ -24,22 +24,37 @@ const jsonField = {
   extendedFormat: 'json',
 };
 
+// A binary column (BLOB, VARBINARY) with a json_valid check is flagged as
+// JSON too, with the BINARY charset
+const binaryJsonField = {
+  ...jsonField,
+  characterSet: 63,
+  encoding: 'binary',
+};
+
 const value = { tag: 'x', nums: [1, 2, 3] };
 const raw = Buffer.from(JSON.stringify(value), 'utf8');
 strict.ok(raw.length < 251);
 
-const textRowPacket = () => {
-  const buf = Buffer.concat([Buffer.alloc(4), Buffer.from([raw.length]), raw]);
+const nonAsciiValue = { s: 'café ☕' };
+const nonAsciiRaw = Buffer.from(JSON.stringify(nonAsciiValue), 'utf8');
+
+const textRowPacket = (payload = raw) => {
+  const buf = Buffer.concat([
+    Buffer.alloc(4),
+    Buffer.from([payload.length]),
+    payload,
+  ]);
   return new Packet(0, buf, 0, buf.length);
 };
 
-const binaryRowPacket = () => {
+const binaryRowPacket = (payload = raw) => {
   const buf = Buffer.concat([
     Buffer.alloc(4),
     Buffer.from([0]), // status byte
     Buffer.from([0]), // null bitmap
-    Buffer.from([raw.length]),
-    raw,
+    Buffer.from([payload.length]),
+    payload,
   ]);
   return new Packet(0, buf, 0, buf.length);
 };
@@ -99,4 +114,64 @@ describe('MariaDB extended JSON format parsing', () => {
     const row = new Parser().next(binaryRowPacket(), fields, jsonStrings);
     strict.equal(jsonOf(row), JSON.stringify(value));
   });
+});
+
+describe('MariaDB extended JSON format parsing in a binary column', () => {
+  const binaryFields = [binaryJsonField];
+
+  for (const jsonStrings of [false, true]) {
+    const queryOptions = { jsonStrings };
+    const expected = jsonStrings
+      ? JSON.stringify(nonAsciiValue)
+      : nonAsciiValue;
+    const mode = jsonStrings ? 'with jsonStrings' : 'when parsing';
+
+    it(`text parser should decode UTF-8 ${mode}`, () => {
+      const Parser = getTextParser(binaryFields, queryOptions, queryOptions);
+      const row = new Parser(binaryFields).next(
+        textRowPacket(nonAsciiRaw),
+        binaryFields,
+        queryOptions
+      );
+      strict.deepEqual(jsonOf(row), expected);
+    });
+
+    it(`binary parser should decode UTF-8 ${mode}`, () => {
+      const Parser = getBinaryParser(binaryFields, queryOptions, queryOptions);
+      const row = new Parser().next(
+        binaryRowPacket(nonAsciiRaw),
+        binaryFields,
+        queryOptions
+      );
+      strict.deepEqual(jsonOf(row), expected);
+    });
+
+    it(`static text parser should decode UTF-8 ${mode}`, () => {
+      const parser = getStaticTextParser(
+        binaryFields,
+        queryOptions,
+        queryOptions
+      );
+      const row = parser.next(
+        textRowPacket(nonAsciiRaw),
+        binaryFields,
+        queryOptions
+      );
+      strict.deepEqual(jsonOf(row), expected);
+    });
+
+    it(`static binary parser should decode UTF-8 ${mode}`, () => {
+      const Parser = getStaticBinaryParser(
+        binaryFields,
+        queryOptions,
+        queryOptions
+      );
+      const row = new Parser().next(
+        binaryRowPacket(nonAsciiRaw),
+        binaryFields,
+        queryOptions
+      );
+      strict.deepEqual(jsonOf(row), expected);
+    });
+  }
 });

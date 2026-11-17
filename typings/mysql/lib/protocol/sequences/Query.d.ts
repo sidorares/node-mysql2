@@ -15,7 +15,7 @@ export type ExecuteValues =
   | null
   | Blob
   | Buffer
-  | Uint8Array
+  | ArrayBufferView
   | ExecuteValues[]
   | { [key: string]: ExecuteValues };
 

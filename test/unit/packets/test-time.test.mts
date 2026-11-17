@@ -28,3 +28,26 @@ describe('Time packet parsing', () => {
     });
   }
 });
+
+describe('Time packet parsing to the column fraction digits', () => {
+  const testCases = [
+    ['01:23:45.000', 3, '0b000004000008000000000001172d'], // CONVERT('01:23:45', TIME(3))
+    ['01:23:45.050', 3, '0f00000400000c000000000001172d50c30000'], // CONVERT('01:23:45.05', TIME(3))
+    ['-01:23:44.880', 3, '0f00000400000c010000000001172c806d0d00'], // CONVERT('-01:23:44.88', TIME(3))
+    ['01:23:45.001000', 6, '0f00000400000c000000000001172de8030000'], // CONVERT('01:23:45.001', TIME(6))
+    ['-121:23:45.0', 1, '0b000004000008010500000001172d'], // CONVERT('-121:23:45', TIME(1))
+    ['01:23:45', 0, '0b000004000008000000000001172d'], // CONVERT('01:23:45', TIME)
+    ['00:00:00.00', 2, '03000004000000'], // CONVERT('00:00:00', TIME(2))
+    ['01:23:45.05', 31, '0f00000400000c000000000001172d50c30000'], // an expression with no fixed fraction digits
+  ] as const;
+
+  for (const [expected, decimals, buffer] of testCases) {
+    it(`should parse time string ${expected} with ${decimals} fraction digits`, () => {
+      const buf = Buffer.from(buffer, 'hex');
+      const packet = new Packets.Packet(4, buf, 0, buf.length);
+      packet.readInt16(); // unused
+      const d = packet.readTimeString(false, decimals);
+      strict.equal(d, expected);
+    });
+  }
+});

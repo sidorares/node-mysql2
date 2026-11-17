@@ -20,7 +20,7 @@ await describe('Regression #617', async () => {
     const expected = [
       {
         id: 1,
-        date: '2017-07-26 09:36:42',
+        date: '2017-07-26 09:36:42.000',
         name: 'John',
       },
       {

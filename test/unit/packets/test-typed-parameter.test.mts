@@ -195,6 +195,33 @@ describe('TypedParameter: non-integer encoders', () => {
     );
   });
 
+  it('writes the bytes of a Uint8Array for the binary types', () => {
+    const bytes = new Uint8Array([0, 1, 0xff, 3]).subarray(1, 3);
+
+    strict.deepEqual(
+      wire(TypedParameter.BLOB(bytes)),
+      Buffer.from([2, 1, 0xff])
+    );
+    strict.deepEqual(
+      wire(TypedParameter.VECTOR(bytes)),
+      Buffer.from([2, 1, 0xff])
+    );
+  });
+
+  it('writes the bytes a typed array or DataView views for the binary types', () => {
+    const floats = new Float32Array([0, 1.5, 0]).subarray(1, 2);
+    const view = new DataView(new Uint8Array([0, 1, 0xff, 3]).buffer, 1, 2);
+
+    strict.deepEqual(
+      wire(TypedParameter.VECTOR(floats)),
+      Buffer.from([4, 0x00, 0x00, 0xc0, 0x3f])
+    );
+    strict.deepEqual(
+      wire(TypedParameter.BLOB(view)),
+      Buffer.from([2, 1, 0xff])
+    );
+  });
+
   it('writes a length coded string for a non-utf8 encoding', () => {
     const parameter = toParameter(
       TypedParameter.VARCHAR('café'),

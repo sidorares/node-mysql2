@@ -95,6 +95,36 @@ await describe('MariaDB extended type metadata', async () => {
     await connection.execute(`DELETE FROM \`${table}\` WHERE i4 IS NULL`);
   });
 
+  await it('execute: should accept a plain Uint8Array for a VECTOR column', async () => {
+    await connection.execute(`DELETE FROM \`${table}\` WHERE i4 IS NULL`);
+    await connection.execute(`INSERT INTO \`${table}\` (v) VALUES (?)`, [
+      new Uint8Array(vector),
+    ]);
+    const [rows] = await connection.execute<TypesRow[]>(
+      `SELECT v FROM \`${table}\` WHERE i4 IS NULL`
+    );
+    strict.deepEqual(
+      vectorFloats.map((_, i) => rows[0].v.readFloatLE(i * 4)),
+      vectorFloats
+    );
+    await connection.execute(`DELETE FROM \`${table}\` WHERE i4 IS NULL`);
+  });
+
+  await it('execute: should accept a Float32Array for a VECTOR column', async () => {
+    await connection.execute(`DELETE FROM \`${table}\` WHERE i4 IS NULL`);
+    await connection.execute(`INSERT INTO \`${table}\` (v) VALUES (?)`, [
+      new Float32Array(vectorFloats),
+    ]);
+    const [rows] = await connection.execute<TypesRow[]>(
+      `SELECT v FROM \`${table}\` WHERE i4 IS NULL`
+    );
+    strict.deepEqual(
+      vectorFloats.map((_, i) => rows[0].v.readFloatLE(i * 4)),
+      vectorFloats
+    );
+    await connection.execute(`DELETE FROM \`${table}\` WHERE i4 IS NULL`);
+  });
+
   await it('typeCast: should receive extended metadata', async () => {
     const seen = new Map<string, [string | undefined, string | undefined]>();
     await connection.query({
@@ -128,6 +158,80 @@ await describe('MariaDB extended type metadata: jsonStrings', async () => {
   });
 
   await jsonStringsConnection.end();
+});
+
+await describe('MariaDB extended type metadata: JSON in a binary column', async () => {
+  const binaryTable = 'mariadb_extended_metadata_binary_json_test';
+  const document = { s: 'café ☕' };
+  const text = JSON.stringify(document);
+
+  await connection.query(`DROP TABLE IF EXISTS \`${binaryTable}\``);
+  await connection.query(
+    `CREATE TABLE \`${binaryTable}\` (b LONGBLOB CHECK (json_valid(b)), vb VARBINARY(100) CHECK (json_valid(vb)), plain LONGBLOB)`
+  );
+  await connection.execute(
+    `INSERT INTO \`${binaryTable}\` (b, vb, plain) VALUES (?, ?, ?)`,
+    [Buffer.from(text), Buffer.from(text), Buffer.from(text)]
+  );
+
+  const jsonStringsConnection = createConnection({
+    jsonStrings: true,
+  }).promise();
+
+  await it('query: should decode the JSON text as UTF-8', async () => {
+    const [rows] = await connection.query<RowDataPacket[]>(
+      `SELECT b, vb FROM \`${binaryTable}\``
+    );
+    strict.deepEqual(rows[0].b, document);
+    strict.deepEqual(rows[0].vb, document);
+  });
+
+  await it('execute: should decode the JSON text as UTF-8', async () => {
+    const [rows] = await connection.execute<RowDataPacket[]>(
+      `SELECT b, vb FROM \`${binaryTable}\``
+    );
+    strict.deepEqual(rows[0].b, document);
+    strict.deepEqual(rows[0].vb, document);
+  });
+
+  await it('jsonStrings: should return the JSON text decoded as UTF-8', async () => {
+    const [rows] = await jsonStringsConnection.query<RowDataPacket[]>(
+      `SELECT b, vb FROM \`${binaryTable}\``
+    );
+    strict.equal(rows[0].b, text);
+    strict.equal(rows[0].vb, text);
+    const [executeRows] = await jsonStringsConnection.execute<RowDataPacket[]>(
+      `SELECT b, vb FROM \`${binaryTable}\``
+    );
+    strict.equal(executeRows[0].b, text);
+    strict.equal(executeRows[0].vb, text);
+  });
+
+  await it('typeCast: should still give access to the raw bytes', async () => {
+    const [rows] = await connection.query<RowDataPacket[]>({
+      sql: `SELECT b FROM \`${binaryTable}\``,
+      typeCast: (field, next) =>
+        field.extendedFormat === 'json' ? field.buffer() : next(),
+    });
+    strict.deepEqual(rows[0].b, Buffer.from(text));
+  });
+
+  await it('CAST AS BINARY: should return the raw bytes', async () => {
+    const [rows] = await connection.query<RowDataPacket[]>(
+      `SELECT CAST(b AS BINARY) AS raw FROM \`${binaryTable}\``
+    );
+    strict.deepEqual(rows[0].raw, Buffer.from(text));
+  });
+
+  await it('should leave a binary column without the JSON format as a Buffer', async () => {
+    const [rows] = await connection.query<RowDataPacket[]>(
+      `SELECT plain FROM \`${binaryTable}\``
+    );
+    strict.deepEqual(rows[0].plain, Buffer.from(text));
+  });
+
+  await jsonStringsConnection.end();
+  await connection.query(`DROP TABLE IF EXISTS \`${binaryTable}\``);
 });
 
 await connection.query(`DROP TABLE IF EXISTS \`${table}\``);
