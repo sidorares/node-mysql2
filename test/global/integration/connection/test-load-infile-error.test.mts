@@ -122,15 +122,15 @@ await describe('Load Infile error', async () => {
         outcome === 'failed'
           ? createFailingStream()
           : Readable.from([Buffer.from('8\n')]);
-      const load = promiseConnection.query({
+      const loading = promiseConnection.query({
         sql: `LOAD DATA LOCAL INFILE 'done.csv' INTO TABLE ${table} (id)`,
         infileStreamFactory: () => stream,
       });
 
       if (outcome === 'failed') {
-        await strict.rejects(load, /stream failed/);
+        await strict.rejects(loading, /stream failed/);
       } else {
-        await load;
+        await loading;
       }
 
       strict.doesNotThrow(() => stream.emit('error', new Error('too late')));

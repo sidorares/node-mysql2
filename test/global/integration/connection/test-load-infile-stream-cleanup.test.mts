@@ -31,7 +31,6 @@ await describe('Load Infile stream clean-up', async () => {
   );
   const originalLocalInfile = savedLocalInfile[0].backup;
 
-  await promiseConnection.query('SET GLOBAL local_infile = true');
   await promiseConnection.query(`DROP TABLE IF EXISTS ${table}`);
   await promiseConnection.query(`CREATE TABLE ${table} (id INT)`);
   await promiseConnection.query(`DROP TABLE IF EXISTS ${rejectingTable}`);
@@ -39,6 +38,7 @@ await describe('Load Infile stream clean-up', async () => {
   await promiseConnection.query(
     `CREATE TRIGGER ${rejectingTable}_reject BEFORE INSERT ON ${rejectingTable} FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'row rejected'`
   );
+  await promiseConnection.query('SET GLOBAL local_infile = true');
 
   // @ts-expect-error: internal access
   const socket = connection.stream;
