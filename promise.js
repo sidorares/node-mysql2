@@ -40,9 +40,6 @@ function createConnectionPromise(opts) {
   });
 }
 
-// note: the callback of "changeUser" is not called on success
-// hence there is no possibility to call "resolve"
-
 function createPromisePool(opts) {
   const corePool = createPool(opts);
   const thePromise = opts.Promise || Promise;

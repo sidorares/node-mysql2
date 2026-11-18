@@ -77,7 +77,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   await describe('a mode change queued before the query', async () => {
     const connection = createConnection().promise();
 
-    await it('should escape for the mode when the query is sent', async () => {
+    await it('should keep the value as it was', async () => {
       const setMode = connection.query(enableMode);
       const select = connection.query<ValueRow[]>('SELECT ? AS value', [
         values[1],
@@ -137,7 +137,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     const callbackConnection = createConnection();
     const connection = callbackConnection.promise();
 
-    await it('should escape for the mode the query is sent in', async () => {
+    await it('should keep the nested value inside its string literal', async () => {
       const nested: Raw = {
         toSqlString: () => callbackConnection.format('?', [attack]),
       };
@@ -156,7 +156,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     const callbackConnection = createConnection();
     const connection = callbackConnection.promise();
 
-    await it('should escape the nested value for the mode the query is sent in', async () => {
+    await it('should keep the nested value inside its string literal', async () => {
       const nested: Raw = {
         toSqlString: () => {
           callbackConnection.query('SELECT 1');
@@ -177,7 +177,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   await describe('a toSqlString() that passes the mode on', async () => {
     const connection = createConnection().promise();
 
-    await it('should escape the nested value for the mode', async () => {
+    await it('should keep the nested value inside its string literal', async () => {
       const nested: Raw = {
         toSqlString: (sqlMode) =>
           format('?', [attack], false, 'local', sqlMode),
@@ -282,6 +282,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
         .tracingChannel('mysql2:query')
         .unsubscribe(subscribers);
     }
+
     await connection.end();
   });
 

@@ -32,7 +32,7 @@ await describe('NO_BACKSLASH_ESCAPES in the global SQL mode', async () => {
     const connection = createConnection().promise();
     const select = connection.query<ValueRow[]>('SELECT ? AS value', [value]);
 
-    await it('should escape for the mode', async () => {
+    await it('should keep the value as it was', async () => {
       const [rows] = await select;
 
       strict.equal(rows[0].value, value);

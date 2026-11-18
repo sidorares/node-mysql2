@@ -147,7 +147,7 @@ connection.escape('C:\\dir');
 // REPLACE('C:\%dir', '\%', LEFT('\%', 1))
 ```
 
-A value keeps its meaning whether the mode is on or off, even after a stored routine, `init_connect`, or an earlier statement in a multiple-statement query changes it.
+A value keeps its meaning even after a stored routine, `init_connect`, or an earlier statement in a multiple-statement query changes the mode.
 
 :::warning Limits
 
