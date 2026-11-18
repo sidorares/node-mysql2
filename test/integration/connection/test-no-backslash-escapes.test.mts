@@ -7,7 +7,7 @@ import {
   escape as escapeFromPromise,
   format as formatFromPromise,
 } from '../../../promise.js';
-import { createConnection } from '../../common.test.mjs';
+import { createConnection, createPool } from '../../common.test.mjs';
 
 type ValueRow = RowDataPacket & { value: string };
 
@@ -207,6 +207,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
       name: string;
       sqlMode: Parameters<typeof format>[4];
     }[] = [
+      { name: 'undefined', sqlMode: undefined },
       // @ts-expect-error: testing runtime behavior when the last argument is null
       { name: 'null', sqlMode: null },
       { name: 'an empty object', sqlMode: {} },
@@ -325,5 +326,85 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     });
 
     await connection.end();
+  });
+
+  await describe('a value escaped for a mode the session is not in', async () => {
+    const admin = createConnection().promise();
+
+    await admin.query('DROP PROCEDURE IF EXISTS mode_mismatch_sets_nbe');
+    await admin.query('DROP PROCEDURE IF EXISTS mode_mismatch_sets_default');
+    await admin.query(
+      `CREATE PROCEDURE mode_mismatch_sets_nbe() BEGIN ${enableMode}; SELECT 1; END`
+    );
+    await admin.query(
+      'CREATE PROCEDURE mode_mismatch_sets_default() BEGIN SET SESSION sql_mode = DEFAULT; SELECT 1; END'
+    );
+
+    await describe('pool.escape() in a session in the mode', async () => {
+      const pool = createPool({ connectionLimit: 1 }).promise();
+
+      await it('should keep the value inside its string literal', async () => {
+        await pool.query(enableMode);
+        const [rows] = await pool.query<RowDataPacket[]>(
+          `SELECT 1 AS matched FROM DUAL WHERE ${pool.escape(attack)} = 'other'`
+        );
+
+        strict.equal(rows.length, 0);
+      });
+
+      await pool.end();
+    });
+
+    await describe('a value bound after a mode change in the same multiple-statement query', async () => {
+      const connection = createConnection({
+        multipleStatements: true,
+      }).promise();
+
+      await it('should keep the value inside its string literal', async () => {
+        const [results] = await connection.query<RowDataPacket[][]>(
+          `${enableMode}; ${matchesOther}`,
+          [attack]
+        );
+
+        strict.equal(results[1].length, 0);
+      });
+
+      await connection.end();
+    });
+
+    await describe('a value bound after a routine left its own mode in the status flag', async () => {
+      const connection = createConnection().promise();
+
+      await it('should keep the value inside its string literal', async () => {
+        await connection.query('CALL mode_mismatch_sets_nbe()');
+        const [rows] = await connection.query<RowDataPacket[]>(matchesOther, [
+          attack,
+        ]);
+
+        strict.equal(rows.length, 0);
+      });
+
+      await connection.end();
+    });
+
+    await describe('a value bound after a routine restored the default inside a session in the mode', async () => {
+      const connection = createConnection().promise();
+
+      await it('should keep the value inside its string literal', async () => {
+        await connection.query(enableMode);
+        await connection.query('CALL mode_mismatch_sets_default()');
+        const [rows] = await connection.query<RowDataPacket[]>(matchesOther, [
+          attack,
+        ]);
+
+        strict.equal(rows.length, 0);
+      });
+
+      await connection.end();
+    });
+
+    await admin.query('DROP PROCEDURE IF EXISTS mode_mismatch_sets_nbe');
+    await admin.query('DROP PROCEDURE IF EXISTS mode_mismatch_sets_default');
+    await admin.end();
   });
 });
