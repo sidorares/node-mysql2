@@ -29,3 +29,10 @@
 - **Category:** SQL injection (CWE-89) from escaping written for a different SQL mode than the session's (CWE-116)
 - **What it is:** Since [#4684](https://github.com/sidorares/node-mysql2/pull/4684), the driver escapes values for the session's `NO_BACKSLASH_ESCAPES` SQL mode. The connection keeps the server status flags from every OK and EOF packet, and while the flag is on it escapes a quote by doubling it instead of putting a backslash in front of it. A query queued behind another command is escaped for both modes, and the version matching the flag at send time is the one sent. Prepared statements are unaffected, because their values never enter the SQL text.
 - **Closed:** 2026-11-18
+
+### Backtracking trailing-zero trim on server TIME fractions
+
+- **Classification:** Medium
+- **Category:** Regular expression denial of service (CWE-1333)
+- **What it is:** The TIME reader trims the trailing zeros of the server's microseconds with the pattern `0+$`, which the regex checker rates as unsafe: quadratic backtracking on a search. The pattern dates from v2.3.1. In the pending release, [#4677](https://github.com/sidorares/node-mysql2/pull/4677) made the reader use the column's reported fraction digits and left the trim only as the fallback, where before it ran on every TIME value with a fraction.
+- **Closed:** 2026-11-18

@@ -16,6 +16,9 @@ describe('Time packet parsing', () => {
     ['01:23:45.001', '0f00000400000c000000000001172de8030000'], // DATE_ADD(CONVERT('01:23:45', TIME), INTERVAL 0.001 SECOND)
     ['-01:23:45.000123', '0f00000400000c010000000001172d7b000000'], // CONVERT('-01:23:45.000123', TIME(6))
     ['123:23:45.000001', '0f00000400000c000500000003172d01000000'], // CONVERT('123:23:45.000001', TIME(6))
+    ['01:23:45.4294967295', '0f00000400000c000000000001172dffffffff'], // microseconds only a hostile server sends, up to the largest 32-bit value
+    ['01:23:45.1', '0f00000400000c000000000001172d00ca9a3b'],
+    ['01:23:45.1000000001', '0f00000400000c000000000001172d01ca9a3b'],
   ] as const;
 
   for (const [expected, buffer] of testCases) {
