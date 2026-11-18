@@ -152,7 +152,7 @@ A value keeps its meaning even after a stored routine, `init_connect`, or an ear
 :::warning Limits
 
 - The server accepts that expression wherever a value is allowed, but not where the syntax takes only a quoted string, such as `IDENTIFIED BY`. Such a statement fails with a syntax error.
-- When a query has values to bind, a quote that follows an odd number of backslashes in the query's own text, as in `'it\'s'`, makes the query throw a `TypeError`, because the two modes read that text differently. Pass that text as a value instead.
+- When `query()` or `format()` has values to bind, a quote that follows an odd number of backslashes in the SQL text, as in `'it\'s'`, makes it throw a `TypeError`, because the two modes read that text differently. Pass that text as a value instead.
 - `mysql.escape()` and `mysql.format()` write backslash escapes only when their last argument sets `noBackslashEscapes: false`, which is safe only on a session you know is outside the mode.
 - A value with `toSqlString()` receives the same SQL mode to pass on to the `mysql.format()` or `mysql.escape()` calls that build its SQL.
 
