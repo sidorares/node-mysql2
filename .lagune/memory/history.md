@@ -22,3 +22,10 @@
 - **Category:** Mass assignment through caller-chosen column names (CWE-915)
 - **What it is:** Since [#4669](https://github.com/sidorares/node-mysql2/pull/4669), both entry points export `expand()`. A value wrapped in it becomes `` `key` = value `` pairs at any `?` placeholder, no longer only inside a `SET` or `ON DUPLICATE KEY UPDATE` list. Each key is quoted as an identifier (a key with a dot becomes a qualified table and column name) and each value is escaped, even with `stringifyObjects` on. The mark is a property under a global symbol, so only code can create it: parsed JSON or a query string cannot forge one. `execute()` rejects a mark among its parameters with a `TypeError`.
 - **Closed:** 2026-11-18
+
+### Escaping that follows the session's NO_BACKSLASH_ESCAPES mode
+
+- **Classification:** Critical
+- **Category:** SQL injection (CWE-89) from escaping written for a different SQL mode than the session's (CWE-116)
+- **What it is:** Since [#4684](https://github.com/sidorares/node-mysql2/pull/4684), the driver escapes values for the session's `NO_BACKSLASH_ESCAPES` SQL mode. The connection keeps the server status flags from every OK and EOF packet, and while the flag is on it escapes a quote by doubling it instead of putting a backslash in front of it. A query queued behind another command is escaped for both modes, and the version matching the flag at send time is the one sent. Prepared statements are unaffected, because their values never enter the SQL text.
+- **Closed:** 2026-11-18

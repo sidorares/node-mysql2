@@ -111,12 +111,12 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
       strict.equal(promiseStatement, '`id` = 1');
     });
 
-    it('should render the reported JSON value as 3.16 did', () => {
+    it('should render the reported JSON value as one string literal', () => {
       const statement = mysqlp.format('?', [
         mysqlp.expand({ foo: JSON.stringify([['bar', 123]]) }, ['foo']),
       ]);
 
-      strict.equal(statement, '`foo` = \'[[\\"bar\\",123]]\'');
+      strict.equal(statement, '`foo` = \'[["bar",123]]\'');
     });
 
     it('should honor a mark created by the ESM build of SQL Escaper', () => {
