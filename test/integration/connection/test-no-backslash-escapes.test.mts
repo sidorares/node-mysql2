@@ -3,14 +3,12 @@ import type { QueryTraceContext } from '../../../typings/mysql/lib/Tracing.js';
 import diagnostics_channel from 'node:diagnostics_channel';
 import { describe, it, strict } from 'poku';
 import { escape, format } from '../../../index.js';
-import {
-  escape as escapeFromPromise,
-  format as formatFromPromise,
-} from '../../../promise.js';
+import { escape as escapeFromPromise } from '../../../promise.js';
 import { createConnection, createPool } from '../../common.test.mjs';
 
 type ValueRow = RowDataPacket & { value: string };
 
+const noBackslashEscapes = { noBackslashEscapes: true };
 const enableMode =
   "SET SESSION sql_mode = CONCAT(@@SESSION.sql_mode, ',NO_BACKSLASH_ESCAPES')";
 const disableMode =
@@ -19,10 +17,44 @@ const attack = "x\\' OR 1=1 -- ";
 const values = ["it's", 'C:\\dir\\', attack, '\\\'"\n\0'];
 const matchesOther = "SELECT 1 AS matched FROM DUAL WHERE ? = 'other'";
 const escapedForBothModes = "REPLACE('it''s C:\\%', '\\%', LEFT('\\%', 1))";
+const escapedWithBackslashes = "'it\\'s C:\\\\'";
+const quoteAfterBackslash = "SELECT 'it\\'s' AS value";
 
 await describe('NO_BACKSLASH_ESCAPES', async () => {
-  await describe('a session in the mode', async () => {
+  await describe('a connection without the noBackslashEscapes option', async () => {
     const connection = createConnection().promise();
+    const pool = createPool().promise();
+    const escapers = [
+      {
+        name: 'connection.escape()',
+        escape: connection.escape.bind(connection),
+      },
+      { name: 'pool.escape()', escape: pool.escape.bind(pool) },
+      { name: 'the mysql2 escape()', escape },
+      { name: 'the mysql2/promise escape()', escape: escapeFromPromise },
+    ];
+
+    for (const { name, escape: escapeValue } of escapers) {
+      it(`should escape with backslashes through ${name}`, () => {
+        strict.equal(escapeValue("it's C:\\"), escapedWithBackslashes);
+      });
+    }
+
+    await it('should send a quote after a backslash in the query text along with values to bind', async () => {
+      const [rows] = await connection.query<ValueRow[]>(
+        `${quoteAfterBackslash}, ? AS other`,
+        ['x']
+      );
+
+      strict.equal(rows[0].value, "it's");
+    });
+
+    await connection.end();
+    await pool.end();
+  });
+
+  await describe('a session in the mode', async () => {
+    const connection = createConnection(noBackslashEscapes).promise();
 
     await it('should keep every value as it was', async () => {
       await connection.query(enableMode);
@@ -53,7 +85,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('a session that leaves the mode', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
     await it('should escape the same way as in the mode', async () => {
       await connection.query(enableMode);
@@ -75,7 +107,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('a mode change queued before the query', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
     await it('should keep the value as it was', async () => {
       const setMode = connection.query(enableMode);
@@ -92,7 +124,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('queued queries whose values change after the call', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
     await it('should send each value as it was when query() was called', async () => {
       const params: number[] = [];
@@ -114,7 +146,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('a query on an idle connection', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
     await it('should read each value once', async () => {
       let reads = 0;
@@ -134,7 +166,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('a nested connection.format() in a queued query', async () => {
-    const callbackConnection = createConnection();
+    const callbackConnection = createConnection(noBackslashEscapes);
     const connection = callbackConnection.promise();
 
     await it('should keep the nested value inside its string literal', async () => {
@@ -153,7 +185,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('a toSqlString() that queues a query and formats', async () => {
-    const callbackConnection = createConnection();
+    const callbackConnection = createConnection(noBackslashEscapes);
     const connection = callbackConnection.promise();
 
     await it('should keep the nested value inside its string literal', async () => {
@@ -175,7 +207,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('a toSqlString() that passes the mode on', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
     await it('should keep the nested value inside its string literal', async () => {
       const nested: Raw = {
@@ -193,60 +225,8 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     await connection.end();
   });
 
-  await describe('the module-level escape() and format() in the mode', async () => {
-    const connection = createConnection().promise();
-    const entryPoints = [
-      { name: 'mysql2', escape, format },
-      {
-        name: 'mysql2/promise',
-        escape: escapeFromPromise,
-        format: formatFromPromise,
-      },
-    ];
-    const lastArguments: {
-      name: string;
-      sqlMode: Parameters<typeof format>[4];
-    }[] = [
-      { name: 'undefined', sqlMode: undefined },
-      // @ts-expect-error: testing runtime behavior when the last argument is null
-      { name: 'null', sqlMode: null },
-      { name: 'an empty object', sqlMode: {} },
-      { name: 'only ansiQuotes', sqlMode: { ansiQuotes: true } },
-      {
-        name: 'an undefined noBackslashEscapes',
-        sqlMode: { noBackslashEscapes: undefined },
-      },
-    ];
-
-    for (const entryPoint of entryPoints) {
-      for (const { name: kind, sqlMode } of lastArguments) {
-        await it(`should keep a value as it was through ${entryPoint.name} with ${kind} as the last argument`, async () => {
-          await connection.query(enableMode);
-          const escaped = entryPoint.escape(attack, false, 'local', sqlMode);
-          const [escapedRows] = await connection.query<ValueRow[]>(
-            `SELECT ${escaped} AS value`
-          );
-          const [formattedRows] = await connection.query<ValueRow[]>(
-            entryPoint.format(
-              'SELECT ? AS value',
-              [attack],
-              false,
-              'local',
-              sqlMode
-            )
-          );
-
-          strict.equal(escapedRows[0].value, attack);
-          strict.equal(formattedRows[0].value, attack);
-        });
-      }
-    }
-
-    await connection.end();
-  });
-
   await describe('the traced query text', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
     const traced: string[] = [];
     const subscribers = {
       start(context: object) {
@@ -288,18 +268,17 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('a quote after a backslash in the query text', async () => {
-    const connection = createConnection().promise();
-    const text = "SELECT 'it\\'s' AS value";
+    const connection = createConnection(noBackslashEscapes).promise();
 
     await it('should be sent as written when the query has no values', async () => {
-      const [rows] = await connection.query<ValueRow[]>(text);
+      const [rows] = await connection.query<ValueRow[]>(quoteAfterBackslash);
 
       strict.equal(rows[0].value, "it's");
     });
 
     await it('should reject the query when it has values to bind', async () => {
       await strict.rejects(
-        connection.query(`${text}, ? AS other`, ['x']),
+        connection.query(`${quoteAfterBackslash}, ? AS other`, ['x']),
         TypeError
       );
     });
@@ -309,7 +288,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
 
   await describe('a custom queryFormat', async () => {
     let calls = 0;
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
     connection.config.queryFormat = (sql: string) => {
       calls++;
@@ -341,15 +320,22 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     );
 
     await describe('pool.escape() in a session in the mode', async () => {
-      const pool = createPool({ connectionLimit: 1 }).promise();
+      const pool = createPool({
+        ...noBackslashEscapes,
+        connectionLimit: 1,
+      }).promise();
 
       await it('should keep the value inside its string literal', async () => {
         await pool.query(enableMode);
-        const [rows] = await pool.query<RowDataPacket[]>(
+        const [escapedRows] = await pool.query<RowDataPacket[]>(
           `SELECT 1 AS matched FROM DUAL WHERE ${pool.escape(attack)} = 'other'`
         );
+        const [boundRows] = await pool.query<RowDataPacket[]>(matchesOther, [
+          attack,
+        ]);
 
-        strict.equal(rows.length, 0);
+        strict.equal(escapedRows.length, 0);
+        strict.equal(boundRows.length, 0);
       });
 
       await pool.end();
@@ -357,6 +343,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
 
     await describe('a value bound after a mode change in the same multiple-statement query', async () => {
       const connection = createConnection({
+        ...noBackslashEscapes,
         multipleStatements: true,
       }).promise();
 
@@ -373,7 +360,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     });
 
     await describe('a value bound after a routine left its own mode in the status flag', async () => {
-      const connection = createConnection().promise();
+      const connection = createConnection(noBackslashEscapes).promise();
 
       await it('should keep the value inside its string literal', async () => {
         await connection.query('CALL mode_mismatch_sets_nbe()');
@@ -388,7 +375,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     });
 
     await describe('a value bound after a routine restored the default inside a session in the mode', async () => {
-      const connection = createConnection().promise();
+      const connection = createConnection(noBackslashEscapes).promise();
 
       await it('should keep the value inside its string literal', async () => {
         await connection.query(enableMode);

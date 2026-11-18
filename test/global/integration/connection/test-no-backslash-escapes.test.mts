@@ -10,6 +10,7 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 }
 
 const value = "C:\\dir\\ it's";
+const noBackslashEscapes = { noBackslashEscapes: true };
 
 await describe('NO_BACKSLASH_ESCAPES in the global SQL mode', async () => {
   const admin = createConnection().promise();
@@ -23,7 +24,7 @@ await describe('NO_BACKSLASH_ESCAPES in the global SQL mode', async () => {
   );
 
   await describe('a query sent before the handshake', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
     const select = connection.query<ValueRow[]>('SELECT ? AS value', [value]);
 
     await it('should keep the value as it was', async () => {
@@ -36,7 +37,7 @@ await describe('NO_BACKSLASH_ESCAPES in the global SQL mode', async () => {
   });
 
   await describe('a change of user', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
     await it('should keep a value as it was in the mode it restores', async () => {
       await connection.query("SET SESSION sql_mode = ''");

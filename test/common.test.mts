@@ -101,6 +101,7 @@ export const createConnection = function (args?: ConnectionOptions) {
     nestTables: args && args.nestTables,
     ssl: (args && args.ssl) ?? config.ssl,
     jsonStrings: args && args.jsonStrings,
+    noBackslashEscapes: args && args.noBackslashEscapes,
     disableEval,
     flags: args && args.flags,
   };
@@ -179,6 +180,7 @@ export const getConfig = function (input?: ConnectionOptions | PoolOptions) {
     idleTimeout: args && args.idleTimeout,
     resetOnRelease: args && (args as PoolOptions).resetOnRelease,
     jsonStrings: args && args.jsonStrings,
+    noBackslashEscapes: args && args.noBackslashEscapes,
     disableEval,
     gracefulEnd: args && args.gracefulEnd,
   };
