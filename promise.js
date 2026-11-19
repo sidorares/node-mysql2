@@ -1,6 +1,6 @@
 'use strict';
 
-const SqlString = require('sql-escaper');
+const SqlString = require('./lib/sql_string.js');
 const EventEmitter = require('events').EventEmitter;
 const parserCache = require('./lib/parsers/parser_cache.js');
 const PoolCluster = require('./lib/pool_cluster.js');
@@ -39,9 +39,6 @@ function createConnectionPromise(opts) {
     });
   });
 }
-
-// note: the callback of "changeUser" is not called on success
-// hence there is no possibility to call "resolve"
 
 function createPromisePool(opts) {
   const corePool = createPool(opts);
