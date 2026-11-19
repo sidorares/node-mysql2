@@ -196,7 +196,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
       diagnostics_channel.tracingChannel('mysql2:query').subscribe(subscribers);
     }
 
-    await it('should be the SQL sent after a queued mode change', async () => {
+    await it('should be the SQL sent to the server', async () => {
       const setMode = connection.query(enableMode);
       const select = connection.query('SELECT ? AS value', ["it's"]);
 
@@ -246,7 +246,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
       return sql;
     };
 
-    await it('should run once per query when the mode changes before the send', async () => {
+    await it('should run once per query', async () => {
       const setMode = connection.query(enableMode);
       const select = connection.query('SELECT 1');
 
