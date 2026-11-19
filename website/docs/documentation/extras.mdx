@@ -137,9 +137,9 @@ See the [`expand` section of the **SQL Escaper** README](https://github.com/mysq
 
 ## The `NO_BACKSLASH_ESCAPES` SQL mode
 
-Under the [`NO_BACKSLASH_ESCAPES`](https://dev.mysql.com/doc/refman/8.4/en/sql-mode.html#sqlmode_no_backslash_escapes) SQL mode, a backslash in a string is an ordinary character. Supporting that mode is an intentional opt-in: the default escaping puts a backslash before each quote, so it is valid only on a session outside the mode.
+Under the [`NO_BACKSLASH_ESCAPES`](https://dev.mysql.com/doc/refman/8.4/en/sql-mode.html#sqlmode_no_backslash_escapes) SQL mode, a backslash in a string is an ordinary character. Since their creation, **mysqljs/mysql**, **MySQL2** and **mysqljs/sqlstring** have intentionally never supported that mode: their escaping puts a backslash before each quote, so it is valid only on a session outside the mode, and it remains the default.
 
-When the server may run in the mode, enable the `noBackslashEscapes` option. `query()`, `connection.escape()`, `connection.format()`, `pool.escape()` and `pool.format()` then write every value in a form both modes read the same way, as do `mysql.escape()` and `mysql.format()` when their last argument is `{ noBackslashEscapes: true }`. A quote is doubled, and a value holding a backslash becomes an expression that rebuilds it:
+When the server may run in the mode, opt in with the `noBackslashEscapes` option. `query()`, `connection.escape()`, `connection.format()`, `pool.escape()` and `pool.format()` then write every value in a form both modes read the same way, as do `mysql.escape()` and `mysql.format()` when their last argument is `{ noBackslashEscapes: true }`. A quote is doubled, and a value holding a backslash becomes an expression that rebuilds it:
 
 ```js
 const connection = mysql.createConnection({
@@ -161,6 +161,8 @@ A value in that form keeps its meaning even after a stored routine, `init_connec
 - The server accepts that expression wherever a value is allowed, but not where the syntax takes only a quoted string, such as `IDENTIFIED BY`. Such a statement fails with a syntax error.
 - When `query()` or `format()` has values to bind, a quote that follows an odd number of backslashes in the SQL text, as in `'it\'s'`, makes it throw a `TypeError`, because the two modes read that text differently. Pass that text as a value instead.
 - A value with `toSqlString()` receives the same SQL mode to pass on to the `mysql.format()` or `mysql.escape()` calls that build its SQL.
+
+When a `PoolCluster` query fails during formatting, the callback receives the error. If you did not pass a callback, listen for `error` on the returned query. The promise API rejects the query.
 
 Prepared statements (`execute()`) send values separately from the SQL and are not affected.
 
