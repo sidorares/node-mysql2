@@ -282,6 +282,29 @@ describe('Packet.parseFloat() precision', () => {
     });
   });
 
+  describe('Doubles with 16 or 17 significant digits', () => {
+    it('should round like parseFloat when the digits exceed MAX_SAFE_INTEGER', () => {
+      const testCases = [
+        '98060875.56922297',
+        '9263831313559.277',
+        '93.22183262430359',
+        '-97228.28566287259',
+        '944088884221428.1',
+        '19788412680228396',
+      ];
+
+      for (const input of testCases) {
+        const result = parseFloatFromString(input);
+
+        strict.strictEqual(
+          result,
+          parseFloat(input),
+          `Failed for "${input}": expected ${parseFloat(input)} but got ${result}`
+        );
+      }
+    });
+  });
+
   describe('Regression tests: ensure existing functionality works', () => {
     it('should handle simple integers', () => {
       const testCases = ['0', '1', '42', '123', '999999'];
