@@ -139,7 +139,7 @@ See the [`expand` section of the **SQL Escaper** README](https://github.com/mysq
 
 Under the [`NO_BACKSLASH_ESCAPES`](https://dev.mysql.com/doc/refman/8.4/en/sql-mode.html#sqlmode_no_backslash_escapes) SQL mode, a backslash in a string is an ordinary character. The default escaping puts a backslash before each quote, so it is valid only on a session outside that mode.
 
-When the server may run in the mode, enable the `noBackslashEscapes` option. `query()`, `connection.escape()`, `connection.format()`, `pool.escape()` and `pool.format()` then write every value in a form both modes read the same way. A quote is doubled, and a value holding a backslash becomes an expression that rebuilds it:
+When the server may run in the mode, enable the `noBackslashEscapes` option. `query()`, `connection.escape()`, `connection.format()`, `pool.escape()` and `pool.format()` then write every value in a form both modes read the same way, as do `mysql.escape()` and `mysql.format()` when their last argument is `{ noBackslashEscapes: true }`. A quote is doubled, and a value holding a backslash becomes an expression that rebuilds it:
 
 ```js
 const connection = mysql.createConnection({
@@ -154,7 +154,7 @@ connection.escape('C:\\dir');
 // REPLACE('C:\%dir', '\%', LEFT('\%', 1))
 ```
 
-The option never reads the mode from the server's status flags, which can lag behind the mode a session is really in, so a value keeps its meaning even after a stored routine, `init_connect`, or an earlier statement in a multiple-statement query changes the mode. `mysql.escape()` and `mysql.format()` write the same form when their last argument is `{ noBackslashEscapes: true }`.
+A value in that form keeps its meaning even after a stored routine, `init_connect`, or an earlier statement in a multiple-statement query changes the mode.
 
 :::warning Limits
 

@@ -38,7 +38,7 @@ await describe('Regression #4126 — object placeholders expand in SET assignmen
       );
     });
 
-    connection.end();
+    await connection.promise().end();
   });
 
   await describe('end-to-end execution', async () => {
@@ -54,12 +54,11 @@ await describe('Regression #4126 — object placeholders expand in SET assignmen
         values: ['domains', { id: 1, domain: 'test.com' }],
         timeout: 16000,
       });
-
-      strict.equal(result.affectedRows, 1);
-
       const [rows] = await pool.query<DomainRow[]>(
         'SELECT id, domain FROM domains'
       );
+
+      strict.equal(result.affectedRows, 1);
       strict.equal(rows.length, 1);
       strict.equal(rows[0].id, 1);
       strict.equal(rows[0].domain, 'test.com');
@@ -75,13 +74,11 @@ await describe('Regression #4126 — object placeholders expand in SET assignmen
         'UPDATE docs SET modified = UTC_TIMESTAMP(), ? WHERE id = ?',
         [{ foo: 'bar' }, 123]
       );
-
-      strict.equal(result.affectedRows, 1);
-
       const [rows] = await pool.query<DocRow[]>(
         'SELECT id, foo, modified IS NOT NULL AS hasModified FROM docs'
       );
 
+      strict.equal(result.affectedRows, 1);
       strict.equal(rows.length, 1);
       strict.equal(rows[0].foo, 'bar');
       strict.equal(rows[0].hasModified, 1);

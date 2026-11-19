@@ -42,6 +42,7 @@ await describe('NO_BACKSLASH_ESCAPES in the global SQL mode', async () => {
     await it('should keep a value as it was in the mode it restores', async () => {
       await connection.query("SET SESSION sql_mode = ''");
       await connection.changeUser({});
+
       const [rows] = await connection.query<ValueRow[]>('SELECT ? AS value', [
         value,
       ]);
