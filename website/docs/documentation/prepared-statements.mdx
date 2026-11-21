@@ -56,7 +56,7 @@ Without an explicit `TypedParameter` or an adopted server-reported integer type,
 - `boolean` -> `TINY` (0 for false, 1 for true)
 - `object` -> depending on prototype:
   - `Date` -> `DATETIME`
-  - JSON-like objects and arrays -> `JSON` on MySQL, or JSON-serialized `VAR_STRING` on MariaDB
+  - Plain objects, arrays, and objects with a `toJSON()` method -> `JSON` on MySQL, or JSON-serialized `VAR_STRING` on MariaDB
   - `Buffer`, typed arrays, and `DataView` -> `BLOB`, containing only the bytes they view
 - Other -> `VAR_STRING`
 
