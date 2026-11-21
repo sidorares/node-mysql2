@@ -25,6 +25,11 @@ const values: [string, Record<string, unknown>][] = [
       '{"constructor":"part","__proto__":{"item":true},"prototype":"data"}'
     ),
   ],
+  ['array-like shape', JSON.parse('{"constructor":"part","length":4}')],
+  [
+    'buffer-like shape',
+    JSON.parse('{"constructor":"part","type":"Buffer","data":[1,2]}'),
+  ],
 ];
 
 for (const jsonAsString of [false, true]) {
