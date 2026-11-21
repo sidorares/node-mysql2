@@ -49,16 +49,18 @@ Note that you should not use statement after connection reset (`changeUser()`, [
 
 ## Serialization of bind parameters
 
-The bind parameter values passed to `execute` are serialized JS -> MySQL as:
+Without an explicit `TypedParameter` or an adopted server-reported integer type, the bind parameter values passed to `execute` are serialized JS -> MySQL as:
 
 - `null` -> `NULL`
 - `number` -> `DOUBLE`
 - `boolean` -> `TINY` (0 for false, 1 for true)
 - `object` -> depending on prototype:
   - `Date` -> `DATETIME`
-  - `JSON` like object - `JSON`
-  - `Buffer` -> `VAR_STRING`
+  - Plain objects, arrays, and objects with a `toJSON()` method -> `JSON` on MySQL, or JSON-serialized `VAR_STRING` on MariaDB
+  - `Buffer`, typed arrays, and `DataView` -> `BLOB`, containing only the bytes they view
 - Other -> `VAR_STRING`
+
+When the server reports an integer type for a placeholder, the driver can adopt that type for an integer value that fits it. For example, MySQL 8.0+ reports an integer type for a `LIMIT ?` placeholder, so an integer passed there is not sent as `DOUBLE`. An explicit `TypedParameter` takes precedence over both inference and server-reported types. See [Typed Parameters](./typed-parameters.mdx) for the adoption rules and available factories.
 
 Passing in `undefined` or a `function` will result in an error.
 
