@@ -144,6 +144,35 @@ For testing **coverage**:
 npm run test:coverage
 ```
 
+#### MySQL Server via Docker
+
+If you prefer not to install **MySQL Server**, you can run only the database in a temporary container and keep running the tests on your machine, which is the fastest way to iterate on a change:
+
+```sh
+# Start a MySQL Server with an empty "test" database
+docker compose -f test/docker-compose.yml up -d mysql
+
+# Wait until it accepts connections
+node tools/wait-up.js
+
+# Run the tests (the container's root user has no password, so keep `CI` unset)
+npm test
+
+# Remove the container when you are done
+npm run test:docker:down
+```
+
+> [!TIP]
+> If port `3306` is already in use, for example by a local **MySQL Server**, start the container on another port and point the tests to it:
+>
+> ```sh
+> docker run -d --name mysql2-test -e MYSQL_DATABASE=test -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -p 3307:3306 mysql:lts
+>
+> export MYSQL_PORT=3307
+> ```
+>
+> Then remove it with `docker rm -f mysql2-test`.
+
 #### Docker
 
 You can easily run tests through **Node.js**, **Bun**, and **Deno** via **Docker**:
