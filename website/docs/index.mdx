@@ -385,6 +385,7 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
   idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  maxLifetime: 0, // max lifetime of a connection, in milliseconds, the default value 0 (unlimited)
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
@@ -411,6 +412,7 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
   idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  maxLifetime: 0, // max lifetime of a connection, in milliseconds, the default value 0 (unlimited)
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
@@ -438,6 +440,7 @@ import mysql from 'mysql2/promise';
     connectionLimit: 10,
     maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
     idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+    maxLifetime: 0, // max lifetime of a connection, in milliseconds, the default value 0 (unlimited)
     queueLimit: 0,
     enableKeepAlive: true,
     keepAliveInitialDelay: 0,
@@ -467,6 +470,7 @@ import mysql from 'mysql2';
     connectionLimit: 10,
     maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
     idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+    maxLifetime: 0, // max lifetime of a connection, in milliseconds, the default value 0 (unlimited)
     queueLimit: 0,
     enableKeepAlive: true,
     keepAliveInitialDelay: 0,

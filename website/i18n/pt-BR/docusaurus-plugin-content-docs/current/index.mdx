@@ -224,6 +224,7 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   maxIdle: 10, // Máximo de conexões inativas; o valor padrão é o mesmo que "connectionLimit"
   idleTimeout: 60000, // Tempo limite das conexões inativas em milissegundos; o valor padrão é "60000"
+  maxLifetime: 0, // Tempo máximo de vida de uma conexão em milissegundos; o valor padrão é "0" (ilimitado)
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
@@ -245,6 +246,7 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   maxIdle: 10, // Máximo de conexões inativas; o valor padrão é o mesmo que "connectionLimit"
   idleTimeout: 60000, // Tempo limite das conexões inativas em milissegundos; o valor padrão é "60000"
+  maxLifetime: 0, // Tempo máximo de vida de uma conexão em milissegundos; o valor padrão é "0" (ilimitado)
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,

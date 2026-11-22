@@ -177,6 +177,7 @@ export const getConfig = function (input?: ConnectionOptions | PoolOptions) {
     connectionLimit: args && args.connectionLimit,
     maxIdle: args && args.maxIdle,
     idleTimeout: args && args.idleTimeout,
+    maxLifetime: args && (args as PoolOptions).maxLifetime,
     resetOnRelease: args && (args as PoolOptions).resetOnRelease,
     jsonStrings: args && args.jsonStrings,
     disableEval,

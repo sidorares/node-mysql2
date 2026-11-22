@@ -33,6 +33,15 @@ export interface PoolOptions extends ConnectionOptions {
   idleTimeout?: number;
 
   /**
+   * The maximum lifetime of a pooled connection, in milliseconds. A connection that outlives it is closed
+   * when released or before being handed out again, never while in use, and is replaced on demand. Unlike
+   * `idleTimeout`, it also recycles busy connections, letting a pool rebalance across load-balanced or
+   * failed-over servers. Each connection's lifetime is shortened by a random jitter of up to 5% so a pool
+   * does not expire at once. If set to 0, connections have no maximum lifetime. (Default: 0)
+   */
+  maxLifetime?: number;
+
+  /**
    * The maximum number of connection requests the pool will queue before returning an error from getConnection. If set to 0, there
    * is no limit to the number of queued connection requests. (Default: 0)
    */

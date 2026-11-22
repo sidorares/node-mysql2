@@ -224,6 +224,7 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   maxIdle: 10, // 最大空闲连接数，默认等于 `connectionLimit`
   idleTimeout: 60000, // 空闲连接超时，以毫秒为单位，默认值为 60000 ms
+  maxLifetime: 0, // 连接的最大存活时间，以毫秒为单位，默认值为 0（不限制）
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
@@ -245,6 +246,7 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   maxIdle: 10, // 最大空闲连接数，默认等于 `connectionLimit`
   idleTimeout: 60000, // 空闲连接超时，以毫秒为单位，默认值为 60000 ms
+  maxLifetime: 0, // 连接的最大存活时间，以毫秒为单位，默认值为 0（不限制）
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
