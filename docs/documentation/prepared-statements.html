@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.2">
 <title data-rh="true">Prepared Statements | Quickstart</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://sidorares.github.io/node-mysql2/docs/documentation/prepared-statements"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" property="og:locale:alternate" content="zh_CN"><meta data-rh="true" property="og:locale:alternate" content="pt_BR"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Prepared Statements | Quickstart"><meta data-rh="true" name="description" content="Automatic creation, cached and re-used by connection"><meta data-rh="true" property="og:description" content="Automatic creation, cached and re-used by connection"><link data-rh="true" rel="icon" href="/node-mysql2/img/favicon.svg"><link data-rh="true" rel="canonical" href="https://sidorares.github.io/node-mysql2/docs/documentation/prepared-statements"><link data-rh="true" rel="alternate" href="https://sidorares.github.io/node-mysql2/docs/documentation/prepared-statements" hreflang="en"><link data-rh="true" rel="alternate" href="https://sidorares.github.io/node-mysql2/zh-CN/docs/documentation/prepared-statements" hreflang="zh-CN"><link data-rh="true" rel="alternate" href="https://sidorares.github.io/node-mysql2/pt-BR/docs/documentation/prepared-statements" hreflang="pt-BR"><link data-rh="true" rel="alternate" href="https://sidorares.github.io/node-mysql2/docs/documentation/prepared-statements" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Prepared Statements","item":"https://sidorares.github.io/node-mysql2/docs/documentation/prepared-statements"}]}</script><link rel="stylesheet" href="/node-mysql2/assets/css/styles.2377c910.css">
-<script src="/node-mysql2/assets/js/runtime~main.976713ee.js" defer="defer"></script>
+<script src="/node-mysql2/assets/js/runtime~main.522746f5.js" defer="defer"></script>
 <script src="/node-mysql2/assets/js/main.530d0101.js" defer="defer"></script>
 </head>
 <body>
@@ -23,7 +23,7 @@
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="configuration">Configuration<a href="#configuration" class="hash-link" aria-label="Direct link to Configuration" title="Direct link to Configuration" translate="no">​</a></h2>
 <p><code>maxPreparedStatements</code> : We keep the cached statements in a <a href="https://github.com/isaacs/node-lru-cache" target="_blank" rel="noopener noreferrer" class="">lru-cache</a>. Default size is <code>16000</code> but you can use this option to override it. Any statements that are dropped from cache will be <code>closed</code>.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="serialization-of-bind-parameters">Serialization of bind parameters<a href="#serialization-of-bind-parameters" class="hash-link" aria-label="Direct link to Serialization of bind parameters" title="Direct link to Serialization of bind parameters" translate="no">​</a></h2>
-<p>The bind parameter values passed to <code>execute</code> are serialized JS -&gt; MySQL as:</p>
+<p>Without an explicit <code>TypedParameter</code> or an adopted server-reported integer type, the bind parameter values passed to <code>execute</code> are serialized JS -&gt; MySQL as:</p>
 <ul>
 <li class=""><code>null</code> -&gt; <code>NULL</code></li>
 <li class=""><code>number</code> -&gt; <code>DOUBLE</code></li>
@@ -31,12 +31,13 @@
 <li class=""><code>object</code> -&gt; depending on prototype:<!-- -->
 <ul>
 <li class=""><code>Date</code> -&gt; <code>DATETIME</code></li>
-<li class=""><code>JSON</code> like object - <code>JSON</code></li>
-<li class=""><code>Buffer</code> -&gt; <code>VAR_STRING</code></li>
+<li class="">Plain objects, arrays, and objects with a <code>toJSON()</code> method -&gt; <code>JSON</code> on MySQL, or JSON-serialized <code>VAR_STRING</code> on MariaDB</li>
+<li class=""><code>Buffer</code>, typed arrays, and <code>DataView</code> -&gt; <code>BLOB</code>, containing only the bytes they view</li>
 </ul>
 </li>
 <li class="">Other -&gt; <code>VAR_STRING</code></li>
 </ul>
+<p>When the server reports an integer type for a placeholder, the driver can adopt that type for an integer value that fits it. For example, MySQL 8.0+ reports an integer type for a <code>LIMIT ?</code> placeholder, so an integer passed there is not sent as <code>DOUBLE</code>. An explicit <code>TypedParameter</code> takes precedence over both inference and server-reported types. See <a class="" href="/node-mysql2/docs/documentation/typed-parameters">Typed Parameters</a> for the adoption rules and available factories.</p>
 <p>Passing in <code>undefined</code> or a <code>function</code> will result in an error.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="prepared-statements-helper">Prepared Statements Helper<a href="#prepared-statements-helper" class="hash-link" aria-label="Direct link to Prepared Statements Helper" title="Direct link to Prepared Statements Helper" translate="no">​</a></h2>
 <p>MySQL2 provides <code>execute</code> helper which will prepare and query the statement. You can also manually prepare / unprepare statement with <code>prepare</code> / <code>unprepare</code> methods.</p>
