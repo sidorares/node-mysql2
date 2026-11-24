@@ -15,7 +15,14 @@ const isDestroyed = (timer: NodeJS.Timeout): boolean => {
 await describe('Pool end clears the idle sweeper timer', async () => {
   const pool = createPool({ connectionLimit: 2, maxIdle: 1 });
 
-  it('starts the sweeper on construction when maxIdle < connectionLimit', () => {
+  it('leaves the sweeper unscheduled while no connection is idle', () => {
+    strict.equal(idleSweeperTimer(pool), undefined);
+  });
+
+  // @ts-expect-error: internal access
+  pool._removeIdleTimeoutConnections();
+
+  it('starts the sweeper once there is something to sweep', () => {
     const timer = idleSweeperTimer(pool);
 
     strict.ok(timer, 'sweeper timer should be running');
