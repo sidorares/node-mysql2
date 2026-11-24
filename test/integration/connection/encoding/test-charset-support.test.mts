@@ -7,22 +7,30 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
   skip('PlanetScale: unsupported non-UTF8 charsets');
 }
 
-type ByteRow = RowDataPacket & { byte: number; utf8: string };
+type DecodedRow = RowDataPacket & Record<string, string>;
 type EchoRow = RowDataPacket & { bytes: string; text: string };
 
+const toHex = (byte: number) =>
+  byte.toString(16).toUpperCase().padStart(2, '0');
+
 await describe('HP8 connections follow the server hp8 table', async () => {
+  const candidates = Array.from({ length: 256 - 0x20 }, (_, i) => 0x20 + i);
   const utf8Connection = createConnection().promise();
-  const [table] = await utf8Connection.query<ByteRow[]>(
-    `WITH RECURSIVE n (byte) AS (SELECT 32 UNION ALL SELECT byte + 1 FROM n WHERE byte < 255)
-     SELECT byte, CONVERT(CONVERT(UNHEX(HEX(byte)) USING hp8) USING utf8mb4) AS utf8 FROM n`
+  const [[decoded]] = await utf8Connection.query<DecodedRow[]>(
+    `SELECT ${candidates
+      .map(
+        (byte) =>
+          `CONVERT(CONVERT(X'${toHex(byte)}' USING hp8) USING utf8mb4) AS b${byte}`
+      )
+      .join(', ')}`
   );
   await utf8Connection.end();
 
-  const defined = table.filter((row) => row.utf8 !== '?' || row.byte === 0x3f);
-  const text = defined.map((row) => row.utf8).join('');
-  const bytes = defined
-    .map((row) => row.byte.toString(16).toUpperCase().padStart(2, '0'))
-    .join('');
+  const defined = candidates
+    .map((byte) => ({ byte, char: decoded[`b${byte}`] }))
+    .filter(({ byte, char }) => char !== '?' || byte === 0x3f);
+  const text = defined.map(({ char }) => char).join('');
+  const bytes = defined.map(({ byte }) => toHex(byte)).join('');
 
   const connection = createConnection({ charset: 'HP8' }).promise();
 
