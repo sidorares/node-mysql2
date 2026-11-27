@@ -1,4 +1,5 @@
 import type { SslOptions } from '../../../index.js';
+import { constants } from 'node:crypto';
 import { describe, it, strict } from 'poku';
 import TlsSessionSlot from '../../../lib/tls_session_cache.js';
 
@@ -117,24 +118,25 @@ describe('TLS session cache', () => {
     strict.equal(slot(ssl).get(), undefined);
   });
 
-  for (const name of [
-    'ca',
-    'cert',
-    'ciphers',
-    'crl',
-    'ecdhCurve',
-    'key',
-    'maxVersion',
-    'minVersion',
-    'passphrase',
-    'pfx',
-    'sigalgs',
-  ] as const) {
+  for (const [name, value] of Object.entries({
+    ca: 'CHANGED',
+    cert: 'CHANGED',
+    ciphers: 'CHANGED',
+    crl: 'CHANGED',
+    ecdhCurve: 'CHANGED',
+    key: 'CHANGED',
+    maxVersion: 'CHANGED',
+    minVersion: 'CHANGED',
+    passphrase: 'CHANGED',
+    pfx: 'CHANGED',
+    secureOptions: constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    sigalgs: 'CHANGED',
+  })) {
     it(`should forget the session when ${name} changes`, () => {
       const ssl: SslOptions = { ca: 'CA' };
 
       slot(ssl).set(session);
-      ssl[name] = 'CHANGED';
+      Object.assign(ssl, { [name]: value });
 
       strict.equal(slot(ssl).get(), undefined);
     });

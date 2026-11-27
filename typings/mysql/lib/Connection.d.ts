@@ -70,6 +70,11 @@ export interface SslOptions {
   sigalgs?: string;
 
   /**
+   * A bitmask of `SSL_OP_*` flags from `crypto.constants` that changes the OpenSSL protocol behavior, e.g. `crypto.constants.SSL_OP_NO_TLSv1_2`
+   */
+  secureOptions?: number;
+
+  /**
    * You can also connect to a MySQL server without properly providing the appropriate CA to trust. You should not do this.
    */
   rejectUnauthorized?: boolean;
