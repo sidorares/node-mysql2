@@ -22,7 +22,10 @@ const hasNoLoadListeners = (stream: Readable) =>
   stream.listenerCount('data') === 0 && stream.listenerCount('end') === 0;
 
 await describe('Load Infile stream clean-up', async () => {
-  const connection = createConnection({ multipleStatements: true });
+  const connection = createConnection({
+    multipleStatements: true,
+    pipelining: false,
+  });
   const promiseConnection = connection.promise();
   const { isMariaDB } = await getMysqlVersion(promiseConnection);
 
@@ -159,7 +162,7 @@ await describe('Load Infile stream clean-up', async () => {
   )) {
     await describe(`when ${cause} ends the connection during a load`, async () => {
       const connectionErrors: Error[] = [];
-      const lostConnection = createConnection();
+      const lostConnection = createConnection({ pipelining: false });
       lostConnection.on('error', (error) => connectionErrors.push(error));
       await lostConnection.promise().query('SELECT 1');
       // @ts-expect-error: internal access

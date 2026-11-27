@@ -88,6 +88,7 @@ await test('load data infile backpressure on local stream', async () => {
   const connection = driver.createConnection({
     ...config,
     multipleStatements: true,
+    pipelining: false,
     stream: interceptor,
   });
 
