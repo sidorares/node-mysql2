@@ -103,6 +103,7 @@ export const createConnection = function (args?: ConnectionOptions) {
     jsonStrings: args && args.jsonStrings,
     disableEval,
     flags: args && args.flags,
+    maxPreparedStatements: args && args.maxPreparedStatements,
   };
 
   const conn = driver.createConnection(params);
