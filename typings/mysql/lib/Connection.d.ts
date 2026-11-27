@@ -304,6 +304,13 @@ export interface ConnectionOptions {
 
   isServer?: boolean;
 
+  /**
+   * Maximum number of prepared statements cached per connection. The cache grows
+   * as statements are prepared, and the least recently used statement is closed
+   * once the limit is reached. Must be a positive integer.
+   *
+   * (Default: 16000)
+   */
   maxPreparedStatements?: number;
 
   namedPlaceholders?: boolean;
