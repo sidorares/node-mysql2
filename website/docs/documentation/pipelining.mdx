@@ -1,0 +1,197 @@
+---
+tags: [Pipelining, Performance, query, execute, prepare]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Stability } from '@site/src/components/Stability';
+
+# Pipelining
+
+<Stability
+  level={1}
+  message='Pipelining is experimental and off by default. Its behavior may change in a minor release.'
+/>
+
+By default, a connection sends one command and waits for its result before it sends the next one. With `pipelining` enabled, a connection writes the commands queued behind the current one without waiting, so concurrent commands on the same connection share network round trips.
+
+Results, errors and callbacks stay the same: every command still gets its own result, in the order the commands were issued.
+
+## When It Helps
+
+Pipelining only speeds up commands that are queued at the same time on one connection, such as a `Promise.all()` over many queries. Code that awaits each query before issuing the next one never has more than one command queued, so it runs exactly as before.
+
+The gain grows with the round-trip time to the server. In local tests with 64 concurrent commands on one connection, throughput rose 5 to 10 times on MySQL and MariaDB. Proxies that forward one command at a time, such as ProxySQL and MaxScale, gain much less.
+
+## Enabling Pipelining
+
+<Tabs>
+  <TabItem value='Promise' default>
+
+```js
+import mysql from 'mysql2/promise';
+
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  // highlight-next-line
+  pipelining: true,
+});
+
+const results = await Promise.all(
+  [1, 2, 3].map((id) =>
+    connection.execute('SELECT * FROM users WHERE id = ?', [id])
+  )
+);
+
+await connection.end();
+```
+
+  </TabItem>
+  <TabItem value='Callback'>
+
+```js
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  // highlight-next-line
+  pipelining: true,
+});
+
+let pending = 3;
+for (const id of [1, 2, 3]) {
+  connection.execute('SELECT * FROM users WHERE id = ?', [id], (err, rows) => {
+    if (err) throw err;
+    console.log(rows);
+    if (--pending === 0) connection.end();
+  });
+}
+```
+
+  </TabItem>
+</Tabs>
+
+The option sets how many commands a connection may have in flight, including the one whose result is being read:
+
+| Value                                    | Effect                        |
+| ---------------------------------------- | ----------------------------- |
+| unset, `false`, `null`, `0` or `1`       | Off (default)                 |
+| `true`                                   | Up to 32 commands in flight   |
+| An integer of `2` or more                | Up to that many commands      |
+| A digit string, such as `?pipelining=16` | The same, for connection URLs |
+
+Any other value, such as a negative number, a fraction or a non-numeric string, throws a `TypeError` when the connection is created.
+
+## What Is Pipelined
+
+A command is written ahead only when nothing in front of it can change how it is encoded or how the server runs it. Every other command waits for the commands in front of it to finish, exactly as it would without pipelining.
+
+These commands can be pipelined:
+
+- `execute()` of a statement this connection has already prepared. The first `execute()` of a new SQL text prepares it first, so it waits for the prepare to complete.
+- `prepare()` when the SQL text is plain ASCII.
+- `query()` when the SQL text, after placeholders are filled in, is plain ASCII, and its values escape the same way with and without the `NO_BACKSLASH_ESCAPES` SQL mode. String values that contain quotes, backslashes or control characters do not qualify, so prefer `execute()` for such values.
+
+In each case, the statement must start with one of `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `REPLACE`, `WITH`, `VALUES`, `TABLE`, `SHOW`, `DESCRIBE`, `DESC` or `EXPLAIN`. With `multipleStatements: true`, SQL text that contains a `;` is never pipelined.
+
+A connection with a custom `queryFormat` function pipelines `execute()` and `prepare()` only.
+
+### Statements That Wait
+
+Any other statement acts as a barrier: it is sent once the commands in front of it have finished, and nothing is written behind it until it finishes. This covers, among others:
+
+- `SET`, including `SET NAMES` and `SET sql_mode`, and `USE`.
+- `BEGIN`, `START TRANSACTION`, `COMMIT`, `ROLLBACK` and `SAVEPOINT`.
+- `CALL`, `LOCK TABLES`, and schema changes such as `CREATE`, `ALTER` and `DROP`.
+- Statements that start with a comment or a parenthesis.
+- `ping()`, `changeUser()` and `reset()`.
+
+Because a session change never has commands written behind it, pipelining does not change how the commands after it are encoded or escaped.
+
+## Transactions
+
+A connection does not pipeline while a transaction is open: once the server reports a transaction in progress, or that autocommit is off, commands run one at a time until the transaction ends.
+
+```js
+await Promise.all([
+  connection.query('START TRANSACTION'),
+  connection.execute(
+    'UPDATE accounts SET balance = balance - ? WHERE id = ?',
+    [100, 1]
+  ),
+  connection.execute(
+    'UPDATE accounts SET balance = balance + ? WHERE id = ?',
+    [100, 2]
+  ),
+  connection.query('COMMIT'),
+]);
+// Each statement here was sent only after the one before it finished.
+```
+
+A server that does not report its autocommit state, such as a test server built with `mysql.createServer()` that leaves the status flags at `0`, is treated as if a transaction were always open, so that connection never pipelines.
+
+## Errors and `destroy()`
+
+As without pipelining, a failed command does not stop the commands queued behind it. The difference is what `destroy()` can still stop. Without pipelining, queued commands that were never sent do not run. With pipelining, commands already written cannot be called back: they may have run on the server even though their callbacks receive an error. The same applies when the connection fails.
+
+If a write must not run after an earlier failure, issue it after the earlier command's result, or run both in a transaction.
+
+## Timeouts
+
+A command's `timeout` starts when the command reaches the front of the queue, that is, when its result is the next one to be read. Time spent waiting behind other commands, whether written ahead or not, does not count.
+
+## LOAD DATA LOCAL INFILE
+
+With pipelining enabled, a connection no longer advertises the `LOCAL_FILES` capability, so the server rejects `LOAD DATA LOCAL INFILE`. Passing an explicit `LOCAL_FILES` flag keeps the capability and turns pipelining off for that connection instead.
+
+Use a separate connection without pipelining for imports, and let the stream factory open the file your application chose rather than the path the server names:
+
+```js
+import fs from 'node:fs';
+import mysql from 'mysql2/promise';
+
+const importer = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+});
+
+await importer.query({
+  sql: "LOAD DATA LOCAL INFILE 'users.csv' INTO TABLE users FIELDS TERMINATED BY ','",
+  infileStreamFactory: () => fs.createReadStream('./imports/users.csv'),
+});
+```
+
+A connection that did not negotiate `LOCAL_FILES` never sends a local file. If a server asks for one anyway, the connection fails with a `PROTOCOL_UNREQUESTED_LOCAL_INFILE` error.
+
+## Compression and TLS
+
+Pipelining works with `compress: true`, with `ssl`, and with both together.
+
+## Pools
+
+The `pipelining` option of a pool applies to each of its connections. However, `pool.query()` and `pool.execute()` hand a connection to one command at a time, so they never pipeline. To pipeline through a pool, get a connection and issue concurrent commands on it:
+
+```js
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  database: 'test',
+  pipelining: true,
+});
+
+const connection = await pool.getConnection();
+try {
+  const results = await Promise.all(
+    ids.map((id) =>
+      connection.execute('SELECT * FROM users WHERE id = ?', [id])
+    )
+  );
+} finally {
+  connection.release();
+}
+```
