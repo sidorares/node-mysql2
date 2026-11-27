@@ -1,5 +1,6 @@
 import { describe, it, strict } from 'poku';
 import ConnectionConfig from '../../../lib/connection_config.js';
+import ClientConstants from '../../../lib/constants/client.js';
 import SSLProfiles from '../../../lib/constants/ssl_profiles.js';
 
 describe('ConnectionConfig', () => {
@@ -102,6 +103,38 @@ describe('ConnectionConfig', () => {
         String.raw`fml://test:pass@wordA@www.example.com/database%24`
       ).database,
       'database$'
+    );
+  });
+});
+
+describe('ConnectionConfig: flags string', () => {
+  const { FOUND_ROWS, MULTI_STATEMENTS } = ClientConstants;
+  const defaults = new ConnectionConfig({}).clientFlags;
+  const flagsFrom = (flags: string) =>
+    new ConnectionConfig({ flags }).clientFlags;
+
+  it('removes a default flag and adds a new one', () => {
+    strict.equal(
+      flagsFrom('-FOUND_ROWS,MULTI_STATEMENTS'),
+      (defaults & ~FOUND_ROWS) | MULTI_STATEMENTS
+    );
+  });
+
+  it('ignores case, spaces and repeated commas between flags', () => {
+    strict.equal(
+      flagsFrom(' -found_rows , ,,\tmulti_statements, '),
+      (defaults & ~FOUND_ROWS) | MULTI_STATEMENTS
+    );
+  });
+
+  it('ignores unknown flags', () => {
+    strict.equal(flagsFrom('NO_SUCH_FLAG,'), defaults);
+  });
+
+  it('parses a long run of whitespace without backtracking', () => {
+    strict.equal(
+      flagsFrom(`${' '.repeat(200_000)}-FOUND_ROWS`),
+      defaults & ~FOUND_ROWS
     );
   });
 });
