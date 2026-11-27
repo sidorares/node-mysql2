@@ -135,6 +135,8 @@ export interface ConnectionOptions {
   /**
    * The charset for the connection. This is called 'collation' in the SQL-level of MySQL (like utf8mb4_unicode_ci).
    * A charset name (like utf8mb4) uses a fixed collation (utf8mb4_general_ci), not the server's default.
+   * ARMSCII8, DEC8, EUCJPMS, GEOSTD8, KEYBCS2 and SWE7 are rejected with a TypeError: no available encoder
+   * matches the server's table for them. Columns in those charsets still work over a UTF8MB4 connection.
    * (Default: 'UTF8MB4_UNICODE_CI')
    */
   charset?: string;
@@ -315,6 +317,13 @@ export interface ConnectionOptions {
 
   isServer?: boolean;
 
+  /**
+   * Maximum number of prepared statements cached per connection. The cache grows
+   * as statements are prepared, and the least recently used statement is closed
+   * once the limit is reached. Must be a positive integer.
+   *
+   * (Default: 16000)
+   */
   maxPreparedStatements?: number;
 
   namedPlaceholders?: boolean;
