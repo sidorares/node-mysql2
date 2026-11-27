@@ -2,3 +2,5 @@ website/
 Changelog.md
 test/circular/dist.mjs
 .lagune/
+benchmarks/realworld/results/
+benchmarks/realworld/profiles/
