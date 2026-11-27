@@ -38,7 +38,7 @@ await describe('Regression #4126 — object placeholders expand in SET assignmen
       );
     });
 
-    connection.end();
+    await connection.promise().end();
   });
 
   await describe('end-to-end execution', async () => {
@@ -54,12 +54,11 @@ await describe('Regression #4126 — object placeholders expand in SET assignmen
         values: ['domains', { id: 1, domain: 'test.com' }],
         timeout: 16000,
       });
-
-      strict.equal(result.affectedRows, 1);
-
       const [rows] = await pool.query<DomainRow[]>(
         'SELECT id, domain FROM domains'
       );
+
+      strict.equal(result.affectedRows, 1);
       strict.equal(rows.length, 1);
       strict.equal(rows[0].id, 1);
       strict.equal(rows[0].domain, 'test.com');
@@ -75,13 +74,11 @@ await describe('Regression #4126 — object placeholders expand in SET assignmen
         'UPDATE docs SET modified = UTC_TIMESTAMP(), ? WHERE id = ?',
         [{ foo: 'bar' }, 123]
       );
-
-      strict.equal(result.affectedRows, 1);
-
       const [rows] = await pool.query<DocRow[]>(
         'SELECT id, foo, modified IS NOT NULL AS hasModified FROM docs'
       );
 
+      strict.equal(result.affectedRows, 1);
       strict.equal(rows.length, 1);
       strict.equal(rows[0].foo, 'bar');
       strict.equal(rows[0].hasModified, 1);
@@ -100,8 +97,12 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
     const namedConnection = createConnection({ namedPlaceholders: true });
 
     it('should expand a marked object at a lone ? through mysql2 and mysql2/promise', () => {
-      const callbackStatement = mysql.format('?', [mysql.expand({ id: 1 })]);
-      const promiseStatement = mysqlp.format('?', [mysqlp.expand({ id: 1 })]);
+      const callbackStatement = mysql.format('?', [
+        mysql.expand({ id: 1 }, ['id']),
+      ]);
+      const promiseStatement = mysqlp.format('?', [
+        mysqlp.expand({ id: 1 }, ['id']),
+      ]);
 
       strict.equal(callbackStatement, '`id` = 1');
       strict.equal(promiseStatement, '`id` = 1');
@@ -109,7 +110,7 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
 
     it('should render the reported JSON value as 3.16 did', () => {
       const statement = mysqlp.format('?', [
-        mysqlp.expand({ foo: JSON.stringify([['bar', 123]]) }),
+        mysqlp.expand({ foo: JSON.stringify([['bar', 123]]) }, ['foo']),
       ]);
 
       strict.equal(statement, '`foo` = \'[[\\"bar\\",123]]\'');
@@ -126,7 +127,7 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
 
     it('should keep an unmarked object inert in the same statement', () => {
       const statement = mysql.format('SELECT * FROM users WHERE ? AND id = ?', [
-        mysql.expand({ role: 'admin' }),
+        mysql.expand({ role: 'admin' }, ['role']),
         { id: 1 },
       ]);
 
@@ -139,7 +140,7 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
     it('should expand a mark on a connection with stringifyObjects', () => {
       const statement = stringifyingConnection.format(
         'SELECT * FROM users WHERE ?',
-        [mysql.expand({ id: 1 })]
+        [mysql.expand({ id: 1 }, ['id'])]
       );
 
       strict.equal(statement, 'SELECT * FROM users WHERE `id` = 1');
@@ -148,7 +149,7 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
     it('should expand a mark under a named placeholder', () => {
       const statement = namedConnection.format(
         'SELECT * FROM users WHERE :filter',
-        { filter: mysql.expand({ id: 1 }) }
+        { filter: mysql.expand({ id: 1 }, ['id']) }
       );
 
       strict.equal(statement, 'SELECT * FROM users WHERE `id` = 1');
@@ -156,6 +157,90 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
 
     await stringifyingConnection.promise().end();
     await namedConnection.promise().end();
+  });
+
+  describe('allowed columns', () => {
+    const entryPoints = [
+      { name: 'mysql2', expand: mysql.expand, format: mysql.format },
+      { name: 'mysql2/promise', expand: mysqlp.expand, format: mysqlp.format },
+    ];
+    const invalidColumns: { name: string; columns: unknown }[] = [
+      { name: 'a missing list', columns: undefined },
+      { name: 'a string', columns: 'name' },
+      { name: 'an array holding a number', columns: [1] },
+      { name: 'null', columns: null },
+      { name: 'a Set', columns: new Set(['name']) },
+    ];
+    const nonObjectBodies: { name: string; value: unknown }[] = [
+      { name: 'an array', value: ['Ana'] },
+      { name: 'a string', value: 'Ana' },
+    ];
+
+    for (const { name, expand, format } of entryPoints) {
+      describe(`through ${name}`, () => {
+        it('should leave every key outside the allowed columns out of the statement', () => {
+          const statement = format('UPDATE users SET ? WHERE id = ?', [
+            expand({ name: 'Ana', role: 'admin', is_admin: 1 }, ['name']),
+            1,
+          ]);
+
+          strict.equal(
+            statement,
+            "UPDATE users SET `name` = 'Ana' WHERE id = 1"
+          );
+        });
+
+        it('should leave an allowed column the object lacks out of the statement', () => {
+          const statement = format('UPDATE users SET ? WHERE id = ?', [
+            expand({ name: 'Ana' }, ['name', 'email']),
+            1,
+          ]);
+
+          strict.equal(
+            statement,
+            "UPDATE users SET `name` = 'Ana' WHERE id = 1"
+          );
+        });
+
+        it('should expand only the allowed keys of a Map', () => {
+          const statement = format('?', [
+            expand(
+              new Map([
+                ['name', 'Ana'],
+                ['role', 'admin'],
+              ]),
+              ['name']
+            ),
+          ]);
+
+          strict.equal(statement, "`name` = 'Ana'");
+        });
+
+        it('should never expand an allowed key the object only inherits', () => {
+          const body: Record<string, unknown> = Object.setPrototypeOf(
+            { name: 'Ana' },
+            { role: 'admin' }
+          );
+          const statement = format('?', [expand(body, ['name', 'role'])]);
+
+          strict.equal(statement, "`name` = 'Ana'");
+        });
+
+        for (const { name: kind, columns } of invalidColumns) {
+          it(`should reject ${kind} as the allowed columns with a TypeError`, () => {
+            // @ts-expect-error: testing runtime behavior when the allowed columns are not an array of strings
+            strict.throws(() => expand({ name: 'Ana' }, columns), TypeError);
+          });
+        }
+
+        for (const { name: kind, value } of nonObjectBodies) {
+          it(`should still reject ${kind} as the value with a TypeError`, () => {
+            // @ts-expect-error: testing runtime behavior when a request body is not an object
+            strict.throws(() => expand(value, ['0']), TypeError);
+          });
+        }
+      });
+    }
   });
 
   await describe('end-to-end execution', async () => {
@@ -171,7 +256,7 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
 
       const [rows] = await pool.query<AccountRow[]>(
         'SELECT id FROM accounts WHERE ?',
-        [mysql.expand({ role: 'admin' })]
+        [mysql.expand({ role: 'admin' }, ['role'])]
       );
 
       strict.deepEqual(
@@ -193,7 +278,7 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
       await strict.rejects(
         pool.execute({
           sql: 'SELECT id FROM accounts WHERE id = ?',
-          values: [mysql.expand({ id: 1 })],
+          values: [mysql.expand({ id: 1 }, ['id'])],
         }),
         {
           name: 'TypeError',
@@ -233,7 +318,7 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
             await strict.rejects(
               namespace.execute({
                 sql: 'SELECT ? AS id',
-                values: [mysql.expand({ id: 1 })],
+                values: [mysql.expand({ id: 1 }, ['id'])],
               }),
               TypeError
             );
@@ -255,11 +340,11 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
     const connection = createConnection().promise();
     const statement = await connection.prepare('SELECT ? AS id');
     const cases = [
-      { name: 'CommonJS marks', values: [mysql.expand({ id: 1 })] },
+      { name: 'CommonJS marks', values: [mysql.expand({ id: 1 }, ['id'])] },
       { name: 'ESM marks', values: [expandFromEsm({ id: 1 })] },
       {
         name: 'marks in an array-like parameter list',
-        values: { 0: mysql.expand({ id: 1 }), length: 1 },
+        values: { 0: mysql.expand({ id: 1 }, ['id']), length: 1 },
       },
     ];
 
@@ -292,7 +377,7 @@ await describe('Regression #4126: expand() marks one object to expand at any pla
 
     it('should throw for a marked value before executing the statement', () => {
       strict.throws(
-        () => statement.execute([mysql.expand({ id: 1 })]),
+        () => statement.execute([mysql.expand({ id: 1 }, ['id'])]),
         TypeError
       );
     });

@@ -69,7 +69,9 @@ export const escape: typeof SqlStringEscape;
 export const escapeId: typeof SqlStringEscapeId;
 export const format: typeof SqlStringFormat;
 export const raw: typeof SqlStringRaw;
-export const expand: typeof SqlStringExpand;
+export const expand: (
+  ...args: Required<Parameters<typeof SqlStringExpand>>
+) => ReturnType<typeof SqlStringExpand>;
 
 export interface ConnectionConfig extends ConnectionOptions {
   mergeFlags(defaultFlags: string[], userFlags: string[] | string): number;

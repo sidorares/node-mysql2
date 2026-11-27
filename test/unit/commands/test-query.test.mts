@@ -3,7 +3,6 @@ import Query from '../../../lib/commands/query.js';
 
 const rowPacket = { isEOF: () => false };
 const lastEOFPacket = { isEOF: () => true, eofStatusFlags: () => 0 };
-const connection = { serverStatus: 0 };
 
 class FailingRowParser {
   calls = 0;
@@ -33,7 +32,7 @@ describe('Query command', () => {
     strict.equal(rowParser.calls, 1);
     strict.deepEqual(calls, []);
 
-    strict.equal(testQuery.row(lastEOFPacket, connection), null);
+    strict.equal(testQuery.row(lastEOFPacket), null);
     strict.deepEqual(calls, [[testError]]);
   });
 
@@ -50,7 +49,7 @@ describe('Query command', () => {
     testQuery.row(rowPacket);
     strict.deepEqual(errors, []);
 
-    strict.equal(testQuery.row(lastEOFPacket, connection), null);
+    strict.equal(testQuery.row(lastEOFPacket), null);
     strict.deepEqual(errors, [testError]);
   });
 
@@ -61,7 +60,7 @@ describe('Query command', () => {
     testQuery._rowParser = new FailingRowParser(null);
 
     testQuery.row(rowPacket);
-    strict.equal(testQuery.row(lastEOFPacket, connection), null);
+    strict.equal(testQuery.row(lastEOFPacket), null);
 
     strict.equal(calls.length, 1);
     strict.ok(calls[0][0] instanceof Error);

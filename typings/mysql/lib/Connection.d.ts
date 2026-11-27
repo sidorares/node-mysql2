@@ -164,6 +164,11 @@ export interface ConnectionOptions {
   stringifyObjects?: boolean;
 
   /**
+   * Escape every value in a form that reads the same with or without the `NO_BACKSLASH_ESCAPES` SQL mode. Enable it when the server may run in that mode. (Default: false)
+   */
+  noBackslashEscapes?: boolean;
+
+  /**
    * Allow connecting to MySQL instances that ask for the old (insecure) authentication method. (Default: false)
    */
   insecureAuth?: boolean;

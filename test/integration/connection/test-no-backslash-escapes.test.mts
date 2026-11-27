@@ -2,11 +2,13 @@ import type { Raw, RowDataPacket } from '../../../index.js';
 import type { QueryTraceContext } from '../../../typings/mysql/lib/Tracing.js';
 import diagnostics_channel from 'node:diagnostics_channel';
 import { describe, it, strict } from 'poku';
-import { format } from '../../../index.js';
-import { createConnection } from '../../common.test.mjs';
+import { escape, format } from '../../../index.js';
+import { escape as escapeFromPromise } from '../../../promise.js';
+import { createConnection, createPool } from '../../common.test.mjs';
 
 type ValueRow = RowDataPacket & { value: string };
 
+const noBackslashEscapes = { noBackslashEscapes: true };
 const enableMode =
   "SET SESSION sql_mode = CONCAT(@@SESSION.sql_mode, ',NO_BACKSLASH_ESCAPES')";
 const disableMode =
@@ -14,13 +16,49 @@ const disableMode =
 const attack = "x\\' OR 1=1 -- ";
 const values = ["it's", 'C:\\dir\\', attack, '\\\'"\n\0'];
 const matchesOther = "SELECT 1 AS matched FROM DUAL WHERE ? = 'other'";
+const escapedForBothModes = "REPLACE('it''s C:\\%', '\\%', LEFT('\\%', 1))";
+const escapedWithBackslashes = "'it\\'s C:\\\\'";
+const quoteAfterBackslash = "SELECT 'it\\'s' AS value";
 
 await describe('NO_BACKSLASH_ESCAPES', async () => {
-  await describe('a session in the mode', async () => {
+  await describe('without the noBackslashEscapes option', async () => {
     const connection = createConnection().promise();
+    const pool = createPool().promise();
+    const escapers = [
+      {
+        name: 'connection.escape()',
+        escape: connection.escape.bind(connection),
+      },
+      { name: 'pool.escape()', escape: pool.escape.bind(pool) },
+      { name: 'the mysql2 escape()', escape },
+      { name: 'the mysql2/promise escape()', escape: escapeFromPromise },
+    ];
 
-    await it('should escape strings for the mode', async () => {
+    for (const { name, escape: escapeValue } of escapers) {
+      it(`should escape with backslashes through ${name}`, () => {
+        strict.equal(escapeValue("it's C:\\"), escapedWithBackslashes);
+      });
+    }
+
+    await it('should send a quote after a backslash in the query text along with values to bind', async () => {
+      const [rows] = await connection.query<ValueRow[]>(
+        `${quoteAfterBackslash}, ? AS other`,
+        ['x']
+      );
+
+      strict.equal(rows[0].value, "it's");
+    });
+
+    await connection.end();
+    await pool.end();
+  });
+
+  await describe('a session in the mode', async () => {
+    const connection = createConnection(noBackslashEscapes).promise();
+
+    await it('should keep every value as it was', async () => {
       await connection.query(enableMode);
+
       const escaped = connection.escape("it's C:\\");
       const results = await Promise.all(
         values.map((value) =>
@@ -28,7 +66,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
         )
       );
 
-      strict.equal(escaped, "'it''s C:\\'");
+      strict.equal(escaped, escapedForBothModes);
       strict.deepEqual(
         results.map(([rows]) => rows[0].value),
         values
@@ -37,6 +75,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
 
     await it('should keep a value that ends in a backslash quote inside its string', async () => {
       await connection.query(enableMode);
+
       const [rows] = await connection.query<RowDataPacket[]>(matchesOther, [
         attack,
       ]);
@@ -48,42 +87,30 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('a session that leaves the mode', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
-    await it('should escape with backslashes again', async () => {
+    await it('should escape the same way as in the mode', async () => {
       await connection.query(enableMode);
       await connection.query(disableMode);
+
       const escaped = connection.escape("it's C:\\");
       const [rows] = await connection.query<ValueRow[]>('SELECT ? AS value', [
         values[3],
       ]);
-
-      strict.equal(escaped, "'it\\'s C:\\\\'");
-      strict.equal(rows[0].value, values[3]);
-    });
-
-    await connection.end();
-  });
-
-  await describe('a mode change queued before the query', async () => {
-    const connection = createConnection().promise();
-
-    await it('should escape for the mode when the query is sent', async () => {
-      const setMode = connection.query(enableMode);
-      const select = connection.query<ValueRow[]>('SELECT ? AS value', [
-        values[1],
+      const [matches] = await connection.query<RowDataPacket[]>(matchesOther, [
+        attack,
       ]);
-      await setMode;
-      const [rows] = await select;
 
-      strict.equal(rows[0].value, values[1]);
+      strict.equal(escaped, escapedForBothModes);
+      strict.equal(rows[0].value, values[3]);
+      strict.equal(matches.length, 0);
     });
 
     await connection.end();
   });
 
   await describe('queued queries whose values change after the call', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
     await it('should send each value as it was when query() was called', async () => {
       const params: number[] = [];
@@ -92,7 +119,9 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
         params[0] = id;
         return connection.query<RowDataPacket[]>('SELECT ? AS value', params);
       });
+
       await setMode;
+
       const results = await Promise.all(selects);
 
       strict.deepEqual(
@@ -105,7 +134,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('a query on an idle connection', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
     await it('should read each value once', async () => {
       let reads = 0;
@@ -115,6 +144,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
           return '1';
         },
       };
+
       await connection.query('SELECT 1');
       await connection.query('SELECT ? AS value', [value]);
 
@@ -124,56 +154,17 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     await connection.end();
   });
 
-  await describe('a nested connection.format() in a queued query', async () => {
-    const callbackConnection = createConnection();
-    const connection = callbackConnection.promise();
-
-    await it('should escape for the mode the query is sent in', async () => {
-      const nested: Raw = {
-        toSqlString: () => callbackConnection.format('?', [attack]),
-      };
-      const setMode = connection.query(enableMode);
-      const select = connection.query<RowDataPacket[]>(matchesOther, [nested]);
-      await setMode;
-      const [rows] = await select;
-
-      strict.equal(rows.length, 0);
-    });
-
-    await connection.end();
-  });
-
-  await describe('a toSqlString() that queues a query and formats', async () => {
-    const callbackConnection = createConnection();
-    const connection = callbackConnection.promise();
-
-    await it('should escape the nested value for the mode the query is sent in', async () => {
-      const nested: Raw = {
-        toSqlString: () => {
-          callbackConnection.query('SELECT 1');
-          return callbackConnection.format('?', [attack]);
-        },
-      };
-      const setMode = connection.query(enableMode);
-      const select = connection.query<RowDataPacket[]>(matchesOther, [nested]);
-      await setMode;
-      const [rows] = await select;
-
-      strict.equal(rows.length, 0);
-    });
-
-    await connection.end();
-  });
-
   await describe('a toSqlString() that passes the mode on', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
-    await it('should escape the nested value for the mode', async () => {
+    await it('should keep the nested value inside its string literal', async () => {
       const nested: Raw = {
         toSqlString: (sqlMode) =>
           format('?', [attack], false, 'local', sqlMode),
       };
+
       await connection.query(enableMode);
+
       const [rows] = await connection.query<RowDataPacket[]>(matchesOther, [
         nested,
       ]);
@@ -185,7 +176,7 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
   });
 
   await describe('the traced query text', async () => {
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
     const traced: string[] = [];
     const subscribers = {
       start(context: object) {
@@ -205,9 +196,10 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
       diagnostics_channel.tracingChannel('mysql2:query').subscribe(subscribers);
     }
 
-    await it('should be the SQL sent after a queued mode change', async () => {
+    await it('should be the SQL sent to the server', async () => {
       const setMode = connection.query(enableMode);
       const select = connection.query('SELECT ? AS value', ["it's"]);
+
       await setMode;
       await select;
 
@@ -222,34 +214,24 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
         .tracingChannel('mysql2:query')
         .unsubscribe(subscribers);
     }
+
     await connection.end();
   });
 
-  await describe('the status reported at the end of a result set', async () => {
-    const connection = createConnection().promise();
+  await describe('a quote after a backslash in the query text', async () => {
+    const connection = createConnection(noBackslashEscapes).promise();
 
-    await it('should follow the mode the last row reports', async () => {
-      await connection.query(enableMode);
-      // @ts-expect-error: internal access
-      connection.connection.serverStatus = 0;
-      await connection.query('SELECT 1');
-      const escaped = connection.escape("it's");
+    await it('should be sent as written when the query has no values', async () => {
+      const [rows] = await connection.query<ValueRow[]>(quoteAfterBackslash);
 
-      strict.equal(escaped, "'it''s'");
+      strict.equal(rows[0].value, "it's");
     });
 
-    await connection.end();
-  });
-
-  await describe('a reset', async () => {
-    const connection = createConnection().promise();
-
-    await it('should follow the mode the reset restores', async () => {
-      await connection.query(enableMode);
-      await connection.reset();
-      const escaped = connection.escape("it's");
-
-      strict.equal(escaped, "'it\\'s'");
+    await it('should reject the query when it has values to bind', async () => {
+      await strict.rejects(
+        connection.query(`${quoteAfterBackslash}, ? AS other`, ['x']),
+        TypeError
+      );
     });
 
     await connection.end();
@@ -257,16 +239,17 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
 
   await describe('a custom queryFormat', async () => {
     let calls = 0;
-    const connection = createConnection().promise();
+    const connection = createConnection(noBackslashEscapes).promise();
 
     connection.config.queryFormat = (sql: string) => {
       calls++;
       return sql;
     };
 
-    await it('should run once per query when the mode changes before the send', async () => {
+    await it('should run once per query', async () => {
       const setMode = connection.query(enableMode);
       const select = connection.query('SELECT 1');
+
       await setMode;
       await select;
 
@@ -274,5 +257,96 @@ await describe('NO_BACKSLASH_ESCAPES', async () => {
     });
 
     await connection.end();
+  });
+
+  await describe('a value escaped for a mode the session is not in', async () => {
+    const admin = createConnection().promise();
+
+    await admin.query('DROP PROCEDURE IF EXISTS mode_mismatch_sets_nbe');
+    await admin.query('DROP PROCEDURE IF EXISTS mode_mismatch_sets_default');
+    await admin.query(
+      `CREATE PROCEDURE mode_mismatch_sets_nbe() BEGIN ${enableMode}; SELECT 1; END`
+    );
+    await admin.query(
+      'CREATE PROCEDURE mode_mismatch_sets_default() BEGIN SET SESSION sql_mode = DEFAULT; SELECT 1; END'
+    );
+
+    await describe('pool.escape() and pool.query() in a session in the mode', async () => {
+      const pool = createPool({
+        ...noBackslashEscapes,
+        connectionLimit: 1,
+      }).promise();
+
+      await it('should keep the value inside its string literal', async () => {
+        await pool.query(enableMode);
+
+        const [escapedRows] = await pool.query<RowDataPacket[]>(
+          `SELECT 1 AS matched FROM DUAL WHERE ${pool.escape(attack)} = 'other'`
+        );
+        const [boundRows] = await pool.query<RowDataPacket[]>(matchesOther, [
+          attack,
+        ]);
+
+        strict.equal(escapedRows.length, 0);
+        strict.equal(boundRows.length, 0);
+      });
+
+      await pool.end();
+    });
+
+    await describe('a value bound after a mode change in the same multiple-statement query', async () => {
+      const connection = createConnection({
+        ...noBackslashEscapes,
+        multipleStatements: true,
+      }).promise();
+
+      await it('should keep the value inside its string literal', async () => {
+        const [results] = await connection.query<RowDataPacket[][]>(
+          `${enableMode}; ${matchesOther}`,
+          [attack]
+        );
+
+        strict.equal(results[1].length, 0);
+      });
+
+      await connection.end();
+    });
+
+    await describe('a value bound after a routine left its own mode in the status flag', async () => {
+      const connection = createConnection(noBackslashEscapes).promise();
+
+      await it('should keep the value inside its string literal', async () => {
+        await connection.query('CALL mode_mismatch_sets_nbe()');
+
+        const [rows] = await connection.query<RowDataPacket[]>(matchesOther, [
+          attack,
+        ]);
+
+        strict.equal(rows.length, 0);
+      });
+
+      await connection.end();
+    });
+
+    await describe('a value bound after a routine restored the default inside a session in the mode', async () => {
+      const connection = createConnection(noBackslashEscapes).promise();
+
+      await it('should keep the value inside its string literal', async () => {
+        await connection.query(enableMode);
+        await connection.query('CALL mode_mismatch_sets_default()');
+
+        const [rows] = await connection.query<RowDataPacket[]>(matchesOther, [
+          attack,
+        ]);
+
+        strict.equal(rows.length, 0);
+      });
+
+      await connection.end();
+    });
+
+    await admin.query('DROP PROCEDURE IF EXISTS mode_mismatch_sets_nbe');
+    await admin.query('DROP PROCEDURE IF EXISTS mode_mismatch_sets_default');
+    await admin.end();
   });
 });
