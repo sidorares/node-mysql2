@@ -6,7 +6,7 @@ As part of the connection options, you can specify the `ssl` object property or 
 ssl?: string | SslOptions;
 ```
 
-See full list of [SslOptions](https://github.com/sidorares/node-mysql2/blob/master/typings/mysql/lib/Connection.d.ts#L24-L80), which are in the same format as [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options).
+See full list of [SslOptions](https://github.com/sidorares/node-mysql2/blob/master/typings/mysql/lib/Connection.d.ts#L26-L92), which are in the same format as [tls.createSecureContext](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options).
 
 ## SSL Options
 
@@ -42,6 +42,22 @@ const connection = await mysql.createConnection({
   },
 });
 ```
+
+## Key Exchange Groups
+
+`ecdhCurve` sets the groups offered for the key exchange, as a colon-separated list in order of preference, for example `'P-256'` or `'X25519:P-256'`. A TLS 1.3 client only sends key shares for its first groups, so when the server accepts none of them it answers with a HelloRetryRequest and every connection pays an extra round trip. Putting a group the server accepts first avoids it:
+
+```ts
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  ssl: {
+    ca: fs.readFileSync(__dirname + '/mysql-ca.crt'),
+    ecdhCurve: 'P-256',
+  },
+});
+```
+
+Unlike `tls.DEFAULT_ECDH_CURVE`, it only affects the connections that use this `ssl` object, not every other TLS client and server in the process.
 
 ## SSL Certificate Bundle
 

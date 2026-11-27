@@ -5,6 +5,7 @@
 
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
+import { PxfObject } from 'tls';
 import { Timezone } from 'sql-escaper';
 import { Query, QueryError } from './protocol/sequences/Query.js';
 import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
@@ -26,7 +27,7 @@ export interface SslOptions {
   /**
    * A string or buffer holding the PFX or PKCS12 encoded private key, certificate and CA certificates
    */
-  pfx?: string;
+  pfx?: string | Buffer | Array<string | Buffer | PxfObject>;
 
   /**
    * Either a string/buffer or list of strings/Buffers holding the PEM encoded private key(s) to use
@@ -49,14 +50,24 @@ export interface SslOptions {
   ca?: string | string[] | Buffer | Buffer[];
 
   /**
-   * Either a string or list of strings of PEM encoded CRLs (Certificate Revocation List)
+   * Either a string/Buffer or list of strings/Buffers of PEM encoded CRLs (Certificate Revocation List)
    */
-  crl?: string | string[];
+  crl?: string | string[] | Buffer | Buffer[];
 
   /**
    * A string describing the ciphers to use or exclude
    */
   ciphers?: string;
+
+  /**
+   * A colon-separated list of the groups offered for the key exchange, in order of preference, e.g. `'P-256'` or `'X25519:P-256'`
+   */
+  ecdhCurve?: string;
+
+  /**
+   * A colon-separated list of the signature algorithms offered to the server, e.g. `'ECDSA+SHA256:RSA-PSS+SHA256'`
+   */
+  sigalgs?: string;
 
   /**
    * You can also connect to a MySQL server without properly providing the appropriate CA to trust. You should not do this.
