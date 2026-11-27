@@ -338,7 +338,7 @@ export interface ConnectionOptions {
    * statement, and `query()` whose SQL is the same in every escaping mode,
    * are pipelined; anything else waits as before. Enabling it stops
    * advertising `LOCAL_FILES`, so `LOAD DATA LOCAL INFILE` is refused, and it
-   * has no effect with `compress` or an explicit `LOCAL_FILES` flag.
+   * has no effect with an explicit `LOCAL_FILES` flag.
    * Commands are pipelined per connection: a pool still hands each connection
    * to one caller at a time.
    */
