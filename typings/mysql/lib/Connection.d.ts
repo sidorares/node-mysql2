@@ -5,6 +5,7 @@
 
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
+import { PxfObject } from 'tls';
 import { Timezone } from 'sql-escaper';
 import { Query, QueryError } from './protocol/sequences/Query.js';
 import { Prepare, PrepareStatementInfo } from './protocol/sequences/Prepare.js';
@@ -26,7 +27,7 @@ export interface SslOptions {
   /**
    * A string or buffer holding the PFX or PKCS12 encoded private key, certificate and CA certificates
    */
-  pfx?: string;
+  pfx?: string | Buffer | Array<string | Buffer | PxfObject>;
 
   /**
    * Either a string/buffer or list of strings/Buffers holding the PEM encoded private key(s) to use
@@ -49,14 +50,29 @@ export interface SslOptions {
   ca?: string | string[] | Buffer | Buffer[];
 
   /**
-   * Either a string or list of strings of PEM encoded CRLs (Certificate Revocation List)
+   * Either a string/Buffer or list of strings/Buffers of PEM encoded CRLs (Certificate Revocation List)
    */
-  crl?: string | string[];
+  crl?: string | string[] | Buffer | Buffer[];
 
   /**
    * A string describing the ciphers to use or exclude
    */
   ciphers?: string;
+
+  /**
+   * A colon-separated list of the groups offered for the key exchange, in order of preference, e.g. `'P-256'` or `'X25519:P-256'`
+   */
+  ecdhCurve?: string;
+
+  /**
+   * A colon-separated list of the signature algorithms offered to the server, e.g. `'ECDSA+SHA256:RSA-PSS+SHA256'`
+   */
+  sigalgs?: string;
+
+  /**
+   * A bitmask of `SSL_OP_*` flags from `crypto.constants` that changes the OpenSSL protocol behavior, e.g. `crypto.constants.SSL_OP_NO_TLSv1_2`
+   */
+  secureOptions?: number;
 
   /**
    * You can also connect to a MySQL server without properly providing the appropriate CA to trust. You should not do this.
@@ -124,6 +140,8 @@ export interface ConnectionOptions {
   /**
    * The charset for the connection. This is called 'collation' in the SQL-level of MySQL (like utf8mb4_unicode_ci).
    * A charset name (like utf8mb4) uses a fixed collation (utf8mb4_general_ci), not the server's default.
+   * ARMSCII8, DEC8, EUCJPMS, GEOSTD8, KEYBCS2 and SWE7 are rejected with a TypeError: no available encoder
+   * matches the server's table for them. Columns in those charsets still work over a UTF8MB4 connection.
    * (Default: 'UTF8MB4_UNICODE_CI')
    */
   charset?: string;
@@ -304,6 +322,13 @@ export interface ConnectionOptions {
 
   isServer?: boolean;
 
+  /**
+   * Maximum number of prepared statements cached per connection. The cache grows
+   * as statements are prepared, and the least recently used statement is closed
+   * once the limit is reached. Must be a positive integer.
+   *
+   * (Default: 16000)
+   */
   maxPreparedStatements?: number;
 
   namedPlaceholders?: boolean;

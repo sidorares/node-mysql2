@@ -1,5 +1,6 @@
 import { describe, it, strict } from 'poku';
 import ConnectionConfig from '../../../lib/connection_config.js';
+import ClientConstants from '../../../lib/constants/client.js';
 import SSLProfiles from '../../../lib/constants/ssl_profiles.js';
 
 describe('ConnectionConfig', () => {
@@ -102,6 +103,88 @@ describe('ConnectionConfig', () => {
         String.raw`fml://test:pass@wordA@www.example.com/database%24`
       ).database,
       'database$'
+    );
+  });
+});
+
+describe('ConnectionConfig: flags string', () => {
+  const { FOUND_ROWS, MULTI_STATEMENTS } = ClientConstants;
+  const defaults = new ConnectionConfig({}).clientFlags;
+  const flagsFrom = (flags: string) =>
+    new ConnectionConfig({ flags }).clientFlags;
+
+  it('removes a default flag and adds a new one', () => {
+    strict.equal(
+      flagsFrom('-FOUND_ROWS,MULTI_STATEMENTS'),
+      (defaults & ~FOUND_ROWS) | MULTI_STATEMENTS
+    );
+  });
+
+  it('ignores case, spaces and repeated commas between flags', () => {
+    strict.equal(
+      flagsFrom(' -found_rows , ,,\tmulti_statements, '),
+      (defaults & ~FOUND_ROWS) | MULTI_STATEMENTS
+    );
+  });
+
+  it('ignores unknown flags', () => {
+    strict.equal(flagsFrom('NO_SUCH_FLAG,'), defaults);
+  });
+
+  it('parses a long run of whitespace without backtracking', () => {
+    strict.equal(
+      flagsFrom(`${' '.repeat(200_000)}-FOUND_ROWS`),
+      defaults & ~FOUND_ROWS
+    );
+  });
+});
+
+describe('ConnectionConfig: maxPreparedStatements', () => {
+  const isLimitError = (err: unknown) =>
+    err instanceof TypeError &&
+    err.message === 'maxPreparedStatements must be a positive integer';
+
+  it('should default to 16000', () => {
+    strict.equal(new ConnectionConfig({}).maxPreparedStatements, 16000);
+  });
+
+  it('should accept a positive integer', () => {
+    strict.equal(
+      new ConnectionConfig({ maxPreparedStatements: 1 }).maxPreparedStatements,
+      1
+    );
+    strict.equal(
+      new ConnectionConfig(
+        'mysql://test:pass@localhost/db?maxPreparedStatements=64'
+      ).maxPreparedStatements,
+      64
+    );
+  });
+
+  for (const maxPreparedStatements of [
+    0,
+    -1,
+    1.5,
+    NaN,
+    Infinity,
+    '100',
+    null,
+  ]) {
+    it(`should reject ${String(maxPreparedStatements)} instead of falling back to the default`, () => {
+      strict.throws(
+        () => new ConnectionConfig({ maxPreparedStatements }),
+        isLimitError
+      );
+    });
+  }
+
+  it('should reject 0 from a URL', () => {
+    strict.throws(
+      () =>
+        new ConnectionConfig(
+          'mysql://test:pass@localhost/db?maxPreparedStatements=0'
+        ),
+      isLimitError
     );
   });
 });

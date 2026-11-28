@@ -45,7 +45,9 @@ Note that you should not use statement after connection reset (`changeUser()`, [
 
 ## Configuration
 
-`maxPreparedStatements` : We keep the cached statements in a [lru-cache](https://github.com/isaacs/node-lru-cache). Default size is `16000` but you can use this option to override it. Any statements that are dropped from cache will be `closed`.
+`maxPreparedStatements` : Each connection keeps its prepared statements in an LRU cache that grows as statements are prepared, up to this limit. Default is `16000`, and the value must be a positive integer. Once the limit is reached, the least recently used statement is dropped from the cache and `closed`.
+
+Keep the limit in mind across connections: the MySQL server caps prepared statements for all connections together with [`max_prepared_stmt_count`](https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html#sysvar_max_prepared_stmt_count) (default `16382`).
 
 ## Serialization of bind parameters
 
