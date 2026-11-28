@@ -18,17 +18,13 @@ const columns = [
   },
 ];
 
-async function startGatedServer() {
+async function startRespondingServer() {
   // @ts-expect-error: TODO: implement typings
   const server = mysql.createServer();
 
-  let onQuery: () => void;
-  const queryReceived = new Promise<void>((resolve) => {
-    onQuery = resolve;
-  });
-  let onRelease: () => void;
-  const releaseGate = new Promise<void>((resolve) => {
-    onRelease = resolve;
+  let onResultSent: () => void;
+  const resultSent = new Promise<void>((resolve) => {
+    onResultSent = resolve;
   });
 
   server.on('connection', (conn) => {
@@ -38,10 +34,10 @@ async function startGatedServer() {
       characterSet: 8,
     });
     conn.on('query', () => {
-      onQuery();
-      void releaseGate.then(() => {
-        conn.writeTextResult([{ a: 42 }], columns);
-      });
+      // @ts-expect-error: internal access
+      conn.sequenceId = 1;
+      conn.writeTextResult([{ a: 42 }], columns);
+      onResultSent();
     });
   });
 
@@ -58,26 +54,18 @@ async function startGatedServer() {
   });
 
   return {
-    server,
     port,
-    queryReceived,
-    release: () => {
-      onRelease();
-    },
+    resultSent,
+    close: () =>
+      new Promise<void>((resolve) => {
+        // @ts-expect-error: internal access
+        server._server.close(() => resolve());
+      }),
   };
 }
 
-async function settle() {
-  for (let i = 0; i < 5; i++) {
-    await new Promise<void>((resolve) => {
-      setImmediate(resolve);
-    });
-  }
-  await Promise.resolve();
-}
-
 await describe('timed query result arriving after destroy() calls back', async () => {
-  const { server, port, queryReceived, release } = await startGatedServer();
+  const { port, resultSent, close } = await startRespondingServer();
 
   const connection = mysql.createConnection({
     host: '127.0.0.1',
@@ -86,16 +74,29 @@ await describe('timed query result arriving after destroy() calls back', async (
   });
   connection.on('error', () => {});
 
+  // Wait for handshake to complete, then pause the client socket so the result
+  // packet is delivered only after destroy() has cleared the query timer.
+  await new Promise<void>((resolve, reject) => {
+    connection.connect((err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
+
   let calls = 0;
   let callbackError: NodeJS.ErrnoException | null = null;
   let callbackRows: unknown = null;
-  connection.query({ sql: 'SELECT 42 AS a', timeout: 5000 }, (err, rows) => {
-    calls++;
-    callbackError = err;
-    callbackRows = rows;
+  const callbackSettled = new Promise<void>((resolve) => {
+    connection.query({ sql: 'SELECT 42 AS a', timeout: 5000 }, (err, rows) => {
+      calls++;
+      callbackError = err;
+      callbackRows = rows;
+      resolve();
+    });
   });
 
-  await queryReceived;
+  connection.pause();
+  await resultSent;
 
   // @ts-expect-error: internal access
   const command = connection._command;
@@ -104,8 +105,8 @@ await describe('timed query result arriving after destroy() calls back', async (
   connection.destroy();
   strict.equal(command.queryTimeout, null);
 
-  release();
-  await settle();
+  connection.resume();
+  await callbackSettled;
 
   await it('calls the callback exactly once with the rows', () => {
     strict.equal(calls, 1);
@@ -113,12 +114,11 @@ await describe('timed query result arriving after destroy() calls back', async (
     strict.deepEqual(callbackRows, [{ a: 42 }]);
   });
 
-  // @ts-expect-error: TODO: implement typings
-  server.close();
+  await close();
 });
 
 await describe('timed query result arriving after destroy() resolves the promise', async () => {
-  const { server, port, queryReceived, release } = await startGatedServer();
+  const { port, resultSent, close } = await startRespondingServer();
 
   const connection = mysql.createConnection({
     host: '127.0.0.1',
@@ -127,31 +127,28 @@ await describe('timed query result arriving after destroy() resolves the promise
   });
   connection.on('error', () => {});
 
-  let settledRows: unknown = null;
-  let settledError: unknown = null;
-  connection
-    .promise()
-    .query({ sql: 'SELECT 42 AS a', timeout: 5000 })
-    .then(
-      ([rows]) => {
-        settledRows = rows;
-      },
-      (err) => {
-        settledError = err;
-      }
-    );
+  await new Promise<void>((resolve, reject) => {
+    connection.connect((err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
 
-  await queryReceived;
+  const queryPromise = connection
+    .promise()
+    .query({ sql: 'SELECT 42 AS a', timeout: 5000 });
+
+  connection.pause();
+  await resultSent;
 
   connection.destroy();
-  release();
-  await settle();
+  connection.resume();
+
+  const [settledRows] = await queryPromise;
 
   await it('resolves with the rows instead of staying pending', () => {
-    strict.equal(settledError, null);
     strict.deepEqual(settledRows, [{ a: 42 }]);
   });
 
-  // @ts-expect-error: TODO: implement typings
-  server.close();
+  await close();
 });
