@@ -30,6 +30,7 @@ const config: {
   password: string;
   database: string;
   compress: boolean;
+  pipelining: number | undefined;
   port: number;
   disableEval: boolean;
   ssl?: {
@@ -42,6 +43,7 @@ const config: {
   password: (process.env.CI ? process.env.MYSQL_PASSWORD : '') || '',
   database: process.env.MYSQL_DATABASE || 'test',
   compress: process.env.MYSQL_USE_COMPRESSION === '1',
+  pipelining: process.env.MYSQL_USE_PIPELINING === '1' ? 32 : undefined,
   port: Number(process.env.MYSQL_PORT) || 3306,
   disableEval,
 };
@@ -104,6 +106,7 @@ export const createConnection = function (args?: ConnectionOptions) {
     disableEval,
     flags: args && args.flags,
     maxPreparedStatements: args && args.maxPreparedStatements,
+    pipelining: args.pipelining ?? config.pipelining,
   };
 
   const conn = driver.createConnection(params);
@@ -182,6 +185,7 @@ export const getConfig = function (input?: ConnectionOptions | PoolOptions) {
     jsonStrings: args && args.jsonStrings,
     disableEval,
     gracefulEnd: args && args.gracefulEnd,
+    pipelining: args.pipelining ?? config.pipelining,
   };
 
   return params;

@@ -14,7 +14,7 @@ if (`${process.env.MYSQL_CONNECTION_URL}`.includes('pscale_pw_')) {
 }
 
 await describe('Load Infile', async () => {
-  const connection = createConnection();
+  const connection = createConnection({ pipelining: false });
   const table = 'load_data_test';
 
   const [savedLocalInfile] = await connection

@@ -126,7 +126,7 @@ describe('Execute local excess-arity failure lifecycle', () => {
     prepare.onResult = (_error: unknown, result: typeof statement) => {
       statement = result;
     };
-    prepare.prepareDone({ _statements: { set: () => {} } });
+    prepare.prepareDone({ _statements: new Map() });
     if (!statement) throw new Error('Expected prepared statement');
     strict.equal(statement.parameterCount, 2);
     strict.equal(statement.parameters.length, 1);

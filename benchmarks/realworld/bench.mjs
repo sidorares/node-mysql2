@@ -14,6 +14,7 @@ const DRIVER_OPTION_VALUES = {
   timezone: ['Z', 'local'],
   dateStrings: ['true', 'false'],
   trace: ['true', 'false'],
+  pipelining: ['16', '32', '64', '128'],
   maxPreparedStatements: ['16', '128', '16000'],
 };
 

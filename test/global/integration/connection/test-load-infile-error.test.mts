@@ -31,7 +31,10 @@ const isStillUsable = async (connection: Connection) => {
 };
 
 await describe('Load Infile error', async () => {
-  const connection = createConnection({ multipleStatements: true });
+  const connection = createConnection({
+    multipleStatements: true,
+    pipelining: false,
+  });
   const promiseConnection = connection.promise();
   const connectionErrors: Error[] = [];
 

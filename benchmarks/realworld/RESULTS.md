@@ -101,7 +101,7 @@ Throughput on a 100k-row result: 2.0M rows/s (mysql2 on Node), 3.2M (mysql2 on B
 
 ### Pipelining spike: one connection, 64 concurrent callers
 
-A prototype of opt-in pipelining (a `pipelining` connection option) is in [#4707](https://github.com/sidorares/node-mysql2/pull/4707), which carries its design and verification. Results, mysql2 at depth 64 vs off vs Bun.SQL (which always pipelines):
+A prototype of opt-in pipelining is in [#4707](https://github.com/sidorares/node-mysql2/pull/4707) (`pipelining` connection option, `lib/base/connection.js`, `lib/connection_config.js`; see "Spike design" below). Results, mysql2 at depth 64 vs off vs Bun.SQL (which always pipelines):
 
 | 1 connection, 64 callers     | `SELECT 1` ops/s | PK read ops/s | PK p99   | PK client µs/op | 50 rows ops/s | 100 wide rows ops/s |
 | ---------------------------- | ---------------- | ------------- | -------- | --------------- | ------------- | ------------------- |
@@ -116,6 +116,18 @@ A prototype of opt-in pipelining (a `pipelining` connection option) is in [#4707
 - PK reads and 50-row lists are now **server-bound** for both drivers: one connection is one MySQL thread, at 99–100% in every pipelined cell. Client CPU per op is the comparison that is left: mysql2 8.4–8.5 µs vs Bun.SQL 5.8 µs on PK reads.
 - **Wide rows barely move** (Node 1.9k → 2.3k/s): they are client-decode-bound (above), which pipelining cannot help.
 - `query()` pipelines only when its SQL is identical in both escaping modes (numbers, plain identifiers); the PK benchmark's numeric id qualifies, a string with a quote would not.
+
+#### Spike design and safety
+
+- **What is pipelined:** `execute()` once its statement id is known (a cached `PREPARE` resolves synchronously, so repeat executes pipeline immediately; a first-time `PREPARE` is sent and its `EXECUTE` waits for the id), `prepare`, and `query()` whose SQL is the same whether or not the server is in `NO_BACKSLASH_ESCAPES`. Everything else (handshake, `ping`, change user, reset, quit, binlog) is a barrier: it waits for all in-flight commands, and nothing is sent past it until it starts.
+- **Why the `query()` rule:** client-side escaping depends on the server's last reported `NO_BACKSLASH_ESCAPES` status. A query written while an earlier `SET sql_mode` is still in flight would be escaped for the wrong mode — an injection risk. The repository's `test-no-backslash-escapes` test caught exactly this in the first version of the spike. Prepared statements bind values server-side and are unaffected.
+- **`LOAD DATA LOCAL`:** a pipelined command already in the server's buffer would be read as file contents, so enabling `pipelining` stops advertising `LOCAL_FILES` (the server then refuses `LOCAL INFILE`), and pipelining switches itself off if `LOCAL_FILES` is set explicitly.
+- **Writes are coalesced** by corking the socket until the end of the tick.
+- **Timeouts** start when the command becomes current, not when it is written, so a `timeout` still measures the command's own execution and not the time queued behind others.
+- **Semantics that change when you opt in:** an error does not stop the commands behind it (MySQL executes each independently — never pipeline a transaction's statements from concurrent callers, which is already unsafe today); `destroy()` with commands in flight lets every command already written complete (up to the depth) instead of 1.
+- **Pool:** the pool still hands each connection to one caller at a time, so `pool.query()` does not pipeline yet. Making it dispatch onto busy connections (as Bun.SQL's pool does) is the next step and needs its own design.
+- **Verification:** `pipeline-check.mjs` (result ordering, error isolation, prepare/execute, a 10k-row result among small queries, `LOAD DATA LOCAL` refusal, barriers, transactions, `destroy()`) passes on Node and Bun. The full test suite passes unchanged with the option off (265 files). With pipelining **forced on for every connection** (`FORCE_PIPELINING=1 ./docker-test-suite.sh`), 260 pass; the 5 failures are the four `LOAD DATA LOCAL` tests (by design) and `test-connect-sha1`, whose fake server asserts that the client does not send its second query before the first result. `test-pool-disconnect` is flaky on unmodified `HEAD` as well (2 of 6 runs fail there, 1 of 6 with the spike).
+- **Not done:** unit/integration tests for the option itself, documentation, pool dispatch, MariaDB's `PREPARE`+`EXECUTE` pipelining (statement id −1).
 
 ### Statement cache size and connection setup
 

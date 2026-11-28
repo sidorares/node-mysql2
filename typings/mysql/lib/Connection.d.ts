@@ -331,6 +331,22 @@ export interface ConnectionOptions {
    */
   maxPreparedStatements?: number;
 
+  /**
+   * Experimental. Lets a connection write queued commands without waiting for
+   * earlier results: `true` allows up to 32 commands in flight, a number sets
+   * the limit (2 or more). Only `execute()` with an already prepared
+   * statement, `prepare()` of ASCII SQL, and `query()` whose formatted SQL is
+   * ASCII and the same in every escaping mode are pipelined, and only for
+   * statements such as SELECT, INSERT, UPDATE or DELETE outside a
+   * transaction. Session changes such as SET or USE, transaction statements
+   * and anything else wait as before. Enabling it stops
+   * advertising `LOCAL_FILES`, so `LOAD DATA LOCAL INFILE` is refused, and it
+   * has no effect with an explicit `LOCAL_FILES` flag.
+   * Commands are pipelined per connection: a pool still hands each connection
+   * to one caller at a time.
+   */
+  pipelining?: boolean | number;
+
   namedPlaceholders?: boolean;
 
   nestTables?: boolean | string;

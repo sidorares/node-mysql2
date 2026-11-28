@@ -52,7 +52,7 @@ The server tuning (no binlog, relaxed fsync, no performance schema) lowers serve
 | `--scenario`                       | filter the suite's jobs to these scenarios (repeatable)                                                                                                                                      |
 | `--reps`, `--warmup`, `--duration` | repetitions (run order is shuffled per repetition), seconds of warmup and of measurement                                                                                                     |
 | `--rates`                          | arrival rates for `openloop`, e.g. `5000,20000,40000,60000`                                                                                                                                  |
-| `--no-trace`, `--opt=key=value`    | mysql2 options: `trace`, `timezone` (`Z`/`local`), `dateStrings`, `maxPreparedStatements` (16/128/16000)                                                                                     |
+| `--no-trace`, `--opt=key=value`    | mysql2 options: `trace`, `timezone` (`Z`/`local`), `dateStrings`, `pipelining` (16/32/64/128), `maxPreparedStatements` (16/128/16000)                                                        |
 | `--profile <dir>`                  | write a `.cpuprofile` per run (`--cpu-prof` works on Node and Bun); summarize with `node profile-summary.mjs <file>`                                                                         |
 
 Environment: `BENCH_CLIENT_CPUS` (default `8-9`), `BENCH_SERVER_CONTAINER`, `BENCH_NODE_IMAGE`, `BENCH_BUN_IMAGE`.
@@ -82,3 +82,17 @@ Environment: `BENCH_CLIENT_CPUS` (default `8-9`), `BENCH_SERVER_CONTAINER`, `BEN
 Load profiles: `c1` (1 caller, 1 connection: pure latency), `c8` (8 callers, pool 8), `c64` (64 callers, pool 16: a busy web process), `sweep` (1–1024 callers, pool ≤ 16), `openloop` (Poisson arrivals at a fixed rate; latency is measured from the scheduled arrival, so queueing is included and coordinated omission is avoided), `pipeline` (64 callers on one connection).
 
 mysql2 runs in two modes: `query()` (text protocol, client-side escaping) and `execute()` (server-side prepared statements, binary protocol). Bun.SQL tagged templates always use prepared statements, so `execute()` is the like-for-like comparison.
+
+## Pipelining spike
+
+[#4707](https://github.com/sidorares/node-mysql2/pull/4707) adds an opt-in `pipelining` connection option (see [RESULTS.md](RESULTS.md#pipelining-spike-one-connection-64-concurrent-callers) for design and results). Two tools verify it against the benchmark server:
+
+```sh
+docker run --rm --network container:mysql2-bench -v "$PWD/../..":/w:ro -w /w/benchmarks/realworld \
+  node:24-bookworm-slim node pipeline-check.mjs      # ordering, errors, barriers, LOCAL INFILE, destroy
+./docker-test-suite.sh                               # full test suite in Linux, option off
+FORCE_PIPELINING=1 ./docker-test-suite.sh            # same, with pipelining forced on every connection
+./docker-test-suite.sh test/integration/some.test.mts
+```
+
+`docker-test-suite.sh` needs a `test` database (`docker exec mysql2-bench mysql -uroot -e 'CREATE DATABASE test'`) and copies the working tree into the container so `node_modules` is installed for Linux; it caps the container at 800 MB and Poku at 4 concurrent files because a full parallel run can exhaust the shared VM's memory.
