@@ -1,12 +1,7 @@
+import type { SslOptions } from '../../../index.js';
+import { constants } from 'node:crypto';
 import { describe, it, strict } from 'poku';
 import TlsSessionSlot from '../../../lib/tls_session_cache.js';
-
-type Ssl = {
-  ca?: string;
-  cert?: string;
-  key?: string;
-  minVersion?: string;
-};
 
 type Policy = {
   host?: string;
@@ -18,7 +13,7 @@ type Policy = {
 const session = Buffer.from('ticket-1');
 const newerSession = Buffer.from('ticket-2');
 
-const slot = (ssl: Ssl, policy: Policy = {}) =>
+const slot = (ssl: SslOptions, policy: Policy = {}) =>
   new TlsSessionSlot(
     ssl,
     policy.host ?? 'db.example',
@@ -33,7 +28,7 @@ describe('TLS session cache', () => {
   });
 
   it('should return the stored session for the same ssl object, peer and policy', () => {
-    const ssl: Ssl = { ca: 'CA' };
+    const ssl: SslOptions = { ca: 'CA' };
 
     slot(ssl).set(session);
 
@@ -41,7 +36,7 @@ describe('TLS session cache', () => {
   });
 
   it('should keep the newest session', () => {
-    const ssl: Ssl = { ca: 'CA' };
+    const ssl: SslOptions = { ca: 'CA' };
 
     slot(ssl).set(session);
     slot(ssl).set(newerSession);
@@ -50,7 +45,7 @@ describe('TLS session cache', () => {
   });
 
   it('should separate peers by host and port', () => {
-    const ssl: Ssl = { ca: 'CA' };
+    const ssl: SslOptions = { ca: 'CA' };
 
     slot(ssl).set(session);
 
@@ -59,7 +54,7 @@ describe('TLS session cache', () => {
   });
 
   it('should never hand a session established under a lax policy to a strict one', () => {
-    const ssl: Ssl = { ca: 'CA' };
+    const ssl: SslOptions = { ca: 'CA' };
 
     slot(ssl, { rejectUnauthorized: false, verifyIdentity: false }).set(
       session
@@ -89,7 +84,7 @@ describe('TLS session cache', () => {
   });
 
   it('should treat a missing verifyIdentity like false', () => {
-    const ssl: Ssl = { ca: 'CA' };
+    const ssl: SslOptions = { ca: 'CA' };
 
     new TlsSessionSlot(ssl, 'db.example', 3306, true, undefined).set(session);
 
@@ -103,7 +98,7 @@ describe('TLS session cache', () => {
   });
 
   it('should forget every session when the certificate material changes', () => {
-    const ssl: Ssl = { ca: 'CA', minVersion: 'TLSv1.2' };
+    const ssl: SslOptions = { ca: 'CA', minVersion: 'TLSv1.2' };
 
     slot(ssl).set(session);
     slot(ssl, { host: 'other.example' }).set(session);
@@ -123,8 +118,42 @@ describe('TLS session cache', () => {
     strict.equal(slot(ssl).get(), undefined);
   });
 
+  for (const [name, value] of Object.entries({
+    ca: 'CHANGED',
+    cert: 'CHANGED',
+    ciphers: 'CHANGED',
+    crl: 'CHANGED',
+    ecdhCurve: 'CHANGED',
+    key: 'CHANGED',
+    maxVersion: 'CHANGED',
+    minVersion: 'CHANGED',
+    passphrase: 'CHANGED',
+    pfx: 'CHANGED',
+    secureOptions: constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    sigalgs: 'CHANGED',
+  })) {
+    it(`should forget the session when ${name} changes`, () => {
+      const ssl: SslOptions = { ca: 'CA' };
+
+      slot(ssl).set(session);
+      Object.assign(ssl, { [name]: value });
+
+      strict.equal(slot(ssl).get(), undefined);
+    });
+  }
+
+  it('should keep the session when only a connect option changes', () => {
+    const ssl: SslOptions = { ca: 'CA', rejectUnauthorized: true };
+
+    slot(ssl).set(session);
+    ssl.rejectUnauthorized = false;
+    ssl.verifyIdentity = true;
+
+    strict.equal(slot(ssl).get(), session);
+  });
+
   it('should bind a session to the material and policy of its own handshake', () => {
-    const ssl: Ssl = { ca: 'CA' };
+    const ssl: SslOptions = { ca: 'CA' };
     const handshake = slot(ssl, { rejectUnauthorized: false });
 
     ssl.ca = 'OTHER CA';
@@ -141,7 +170,7 @@ describe('TLS session cache', () => {
   });
 
   it('should drop a single peer', () => {
-    const ssl: Ssl = { ca: 'CA' };
+    const ssl: SslOptions = { ca: 'CA' };
 
     slot(ssl).set(session);
     slot(ssl, { host: 'other.example' }).set(session);
@@ -156,7 +185,7 @@ describe('TLS session cache', () => {
   });
 
   it('should keep at most 100 peers per ssl object', () => {
-    const ssl: Ssl = { ca: 'CA' };
+    const ssl: SslOptions = { ca: 'CA' };
 
     for (let port = 1; port <= 101; port++) {
       slot(ssl, { port }).set(session);
