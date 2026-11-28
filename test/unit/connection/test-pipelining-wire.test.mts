@@ -164,6 +164,9 @@ const writtenAhead = (connection: Connection) => {
 const affectedRows = (result: unknown) =>
   (result as ResultSetHeader).affectedRows;
 
+const endOfTick = () =>
+  new Promise<void>((resolve) => process.nextTick(resolve));
+
 await describe('Pipelining: writes queued commands before earlier replies', async () => {
   const server = await startScriptedServer();
   const connection = await connectTo(server.port, { pipelining: 4 });
@@ -173,7 +176,13 @@ await describe('Pipelining: writes queued commands before earlier replies', asyn
 
   const results = Array.from({ length: 6 }, (_, i) => db.query(`SELECT ${i}`));
 
-  it('writes up to the depth without waiting', () => {
+  it('writes nothing ahead before the calling code has finished', () => {
+    strict.deepEqual(writtenAhead(connection), []);
+  });
+
+  await it('writes up to the depth at the end of the tick, without waiting for a reply', async () => {
+    await endOfTick();
+
     strict.deepEqual(writtenAhead(connection), [
       'SELECT 1',
       'SELECT 2',
@@ -233,7 +242,9 @@ await describe('Pipelining: session-changing statements are barriers', async () 
   const setNames = db.query('SET NAMES latin1');
   const after = db.query('SELECT 2');
 
-  it('writes no SET behind a command in flight', () => {
+  await it('writes no SET behind a command in flight', async () => {
+    await endOfTick();
+
     strict.deepEqual(writtenAhead(connection), []);
   });
 
@@ -279,6 +290,7 @@ await describe('Pipelining: text that depends on session state is a barrier', as
         db.query('SELECT ? AS v', [value]),
         db.query('SELECT 3'),
       ];
+      await endOfTick();
 
       strict.deepEqual(writtenAhead(connection), expected);
 
@@ -310,6 +322,8 @@ await describe('Pipelining: nothing is pipelined inside a transaction', async ()
   const queries = [db.query('SELECT 2'), db.query('SELECT 3')];
 
   await it('waits for each reply while the server reports an open transaction', async () => {
+    await endOfTick();
+
     strict.deepEqual(writtenAhead(connection), []);
 
     await server.waitForPackets(2);
@@ -366,7 +380,9 @@ await describe('Pipelining: a query timeout starts when the command becomes curr
     timedDone()
   );
 
-  it('holds no timer while the command waits behind another', () => {
+  await it('holds no timer while the command waits behind another', async () => {
+    await endOfTick();
+
     strict.deepEqual(writtenAhead(connection), ['SELECT 2']);
     // @ts-expect-error: internal access
     strict.equal(timed.queryTimeout, null);

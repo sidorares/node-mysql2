@@ -178,6 +178,29 @@ await describe('Pipelining: a callback that adds commands', async () => {
   await connection.promise().end();
 });
 
+await describe('Pipelining: a queued command that fails before it is sent', async () => {
+  const connection = createConnection({ pipelining: 32 });
+  const db = connection.promise();
+  await db.execute('SELECT ? AS v', [1]);
+
+  await it('reports to listeners attached after the call and keeps the connection', async () => {
+    const before = db.query('SELECT 1 AS v');
+    const events: string[] = [];
+    const failing = connection.execute('SELECT ? AS v', [1, 2]);
+    failing.on('error', (error) => events.push(error.constructor.name));
+    failing.on('end', () => events.push('end'));
+    const after = db.execute('SELECT ? AS v', [3]);
+
+    strict.deepEqual(
+      await Promise.all([valueOrErrorCode(before), valueOrErrorCode(after)]),
+      [1, 3]
+    );
+    strict.deepEqual(events, ['RangeError', 'end']);
+  });
+
+  connection.destroy();
+});
+
 await describe('Pipelining: LOAD DATA LOCAL', async () => {
   const db = createConnection({ pipelining: 32 }).promise();
   await db.query('CREATE TEMPORARY TABLE test_pipelining_infile (a INT)');
