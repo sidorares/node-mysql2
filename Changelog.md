@@ -1,5 +1,42 @@
 # Changelog
 
+## [3.25.0](https://github.com/sidorares/node-mysql2/compare/v3.24.6...v3.25.0) (2026-11-28)
+
+
+### Features
+
+* expand an object marked in placeholders ([#4669](https://github.com/sidorares/node-mysql2/issues/4669)) ([f0feca2](https://github.com/sidorares/node-mysql2/commit/f0feca211bcb5d63b3dc9c25fba875e7bbe50ab5))
+* reject excess prepared-statement bind parameters ([#4591](https://github.com/sidorares/node-mysql2/issues/4591)) ([9906f1e](https://github.com/sidorares/node-mysql2/commit/9906f1e2a7c55b75cd80b15e1b577295f0e58199)), closes [#4589](https://github.com/sidorares/node-mysql2/issues/4589)
+* **ssl:** forward ecdhCurve, sigalgs, secureOptions, pfx and crl to the secure context ([#4711](https://github.com/sidorares/node-mysql2/issues/4711)) ([d96287a](https://github.com/sidorares/node-mysql2/commit/d96287a45d6cc6afd0760df019df5130ff546eb8)), closes [#2394](https://github.com/sidorares/node-mysql2/issues/2394)
+
+
+### Bug Fixes
+
+* bind a plain Uint8Array parameter as BLOB ([#4676](https://github.com/sidorares/node-mysql2/issues/4676)) ([3df8fc4](https://github.com/sidorares/node-mysql2/commit/3df8fc44ffb2e0377b28534999c963cd543c56f1))
+* bind typed array and DataView parameters as the bytes they view ([#4679](https://github.com/sidorares/node-mysql2/issues/4679)) ([8b62839](https://github.com/sidorares/node-mysql2/commit/8b62839efd7965c9c28fda84688476ea00565ed8))
+* **config:** check own properties in getSSLProfile and getCharsetNumber ([#4694](https://github.com/sidorares/node-mysql2/issues/4694)) ([727c412](https://github.com/sidorares/node-mysql2/commit/727c4120ad0ca192a7fca8a44d237986be472cd9))
+* consume the response after a LOCAL INFILE failure ([#4661](https://github.com/sidorares/node-mysql2/issues/4661)) ([a7839ff](https://github.com/sidorares/node-mysql2/commit/a7839ffdebb4efee1219969049f34cfe677b8f51))
+* decode MariaDB JSON in binary columns as UTF-8 ([#4663](https://github.com/sidorares/node-mysql2/issues/4663)) ([25c88d2](https://github.com/sidorares/node-mysql2/commit/25c88d2dc42b76d6318378b55a69c1b1ffa354d9))
+* encode JSON objects with shadowed constructors ([#4688](https://github.com/sidorares/node-mysql2/issues/4688)) ([da0f872](https://github.com/sidorares/node-mysql2/commit/da0f872bc112ae21e453d81d383118153baad0c9))
+* escape values for the session's `NO_BACKSLASH_ESCAPES` SQL mode ([#4684](https://github.com/sidorares/node-mysql2/issues/4684)) ([ef0dfa4](https://github.com/sidorares/node-mysql2/commit/ef0dfa494a4fd30d82fa8ce5af3d2e46049d85ea))
+* honor per-query decimalNumbers and jsonStrings ([#4675](https://github.com/sidorares/node-mysql2/issues/4675)) ([a1234e6](https://github.com/sidorares/node-mysql2/commit/a1234e65e53f87494fc72fefd403c5982f5a2a76))
+* keep a date or time's fraction digits under execute ([#4677](https://github.com/sidorares/node-mysql2/issues/4677)) ([51bc44d](https://github.com/sidorares/node-mysql2/commit/51bc44daab1db222aa9a46702bef78047d27c6a3))
+* map hp8 to hproman8 and reject charsets without a matching encoder ([#4704](https://github.com/sidorares/node-mysql2/issues/4704)) ([ef31454](https://github.com/sidorares/node-mysql2/commit/ef31454fba83e0c8c7e0072f86bbbaa9aef844d8))
+* only announce client capabilities that the server supports ([#4626](https://github.com/sidorares/node-mysql2/issues/4626)) ([f4f9714](https://github.com/sidorares/node-mysql2/commit/f4f971402e8158d4133dc64fd0ae0e8e1b39f2a3))
+* parse 16 and 17 digit floats like parseFloat ([#4687](https://github.com/sidorares/node-mysql2/issues/4687)) ([bd144d5](https://github.com/sidorares/node-mysql2/commit/bd144d54cbed483c1b03a81f7bd20edfbb1cf3a1))
+* parse the flags option without a backtracking regular expression ([#4714](https://github.com/sidorares/node-mysql2/issues/4714)) ([ca2deb9](https://github.com/sidorares/node-mysql2/commit/ca2deb985f9606715c21239650fb317ef28734a1))
+* reject bind parameters that have no encoding ([#4690](https://github.com/sidorares/node-mysql2/issues/4690)) ([8e9cf2e](https://github.com/sidorares/node-mysql2/commit/8e9cf2e147858729b5268293b40beade8efb7f70))
+* release a LOCAL INFILE stream when its load ends ([#4685](https://github.com/sidorares/node-mysql2/issues/4685)) ([f11f669](https://github.com/sidorares/node-mysql2/commit/f11f669c98f6fc7e31dc5e51a291b3cf7b86450d))
+* resolve the connection typeCast before the parser cache key ([#4681](https://github.com/sidorares/node-mysql2/issues/4681)) ([4cc59ff](https://github.com/sidorares/node-mysql2/commit/4cc59ff99c7c23071d4709c8e6b767fdbe7051ed))
+* typeCast false under execute, a throwing typeCast, and static parser parity ([#4683](https://github.com/sidorares/node-mysql2/issues/4683)) ([b39481f](https://github.com/sidorares/node-mysql2/commit/b39481fe8b1bbbe310adcc20aa28611434acadf6))
+
+
+### Performance Improvements
+
+* build date and time strings without arrays ([#4682](https://github.com/sidorares/node-mysql2/issues/4682)) ([f2bdc77](https://github.com/sidorares/node-mysql2/commit/f2bdc77f46fbec9b160f057b5dcd49dc3f808790))
+* grow the prepared statement cache on demand ([#4710](https://github.com/sidorares/node-mysql2/issues/4710)) ([186505d](https://github.com/sidorares/node-mysql2/commit/186505d2bd01f3564a67f6917515747769d1709c)), closes [#4708](https://github.com/sidorares/node-mysql2/issues/4708)
+* skip Long for safe BIGINT strings and reuse binary typeCast fields ([#4678](https://github.com/sidorares/node-mysql2/issues/4678)) ([caf5c5b](https://github.com/sidorares/node-mysql2/commit/caf5c5bbaaff60a6d16504296d03f2f81ecbc98e))
+
 ## [3.24.6](https://github.com/sidorares/node-mysql2/compare/v3.24.5...v3.24.6) (2026-10-13)
 
 
