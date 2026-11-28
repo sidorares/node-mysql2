@@ -138,3 +138,53 @@ await describe('query timer is cleared when destroy() is called', async () => {
   // @ts-expect-error: TODO: implement typings
   server.close();
 });
+
+await describe('callback-less timed query still reports an error when the connection is lost', async () => {
+  // @ts-expect-error: TODO: implement typings
+  const server = mysql.createServer();
+
+  server.on('connection', (conn) => {
+    conn.on('error', () => {});
+    conn.serverHandshake({
+      serverVersion: '8.0.42',
+    });
+    conn.on('query', () => {
+      conn.stream.destroy();
+    });
+  });
+
+  const port = await new Promise<number>((resolve, reject) => {
+    // @ts-expect-error: TODO: implement typings
+    server.listen(0, '127.0.0.1', () => {
+      // @ts-expect-error: internal access
+      const address = server._server.address();
+      if (address === null || typeof address === 'string') {
+        return reject(new Error('unexpected server address'));
+      }
+      resolve(address.port);
+    });
+  });
+
+  const connection = mysql.createConnection({
+    host: '127.0.0.1',
+    port,
+    user: 'test_user',
+  });
+  connection.on('error', () => {});
+
+  const query = connection.query({ sql: 'SELECT 1', timeout: 50 });
+
+  const queryError = await new Promise<NodeJS.ErrnoException>((resolve) => {
+    query.on('error', (err) => {
+      resolve(err);
+    });
+  });
+
+  await it('emits PROTOCOL_SEQUENCE_TIMEOUT instead of hanging silently', () => {
+    strict.equal(queryError.code, 'PROTOCOL_SEQUENCE_TIMEOUT');
+  });
+
+  connection.destroy();
+  // @ts-expect-error: TODO: implement typings
+  server.close();
+});
